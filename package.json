@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check",
-    "format": "biome format --write"
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit",
+    "check:lines": "bun .github/scripts/check-file-limits.ts",
+    "check:all": "bun run lint && bun run type-check && bun run check:lines"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.102.8",
@@ -19,7 +21,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
