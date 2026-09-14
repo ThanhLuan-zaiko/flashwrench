@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import type { AdminRoleRow } from "@/lib/auth/admin-users.repository";
 import type {
   PublicUser,
   RegisterInput,
@@ -62,6 +63,22 @@ export function makeSessionTokens(
     accessToken: "access-token",
     refreshToken: "fw1.cGF5bG9hZA.c2VjcmV0",
     familyId: "22222222-2222-4222-8222-222222222222",
+    ...overrides,
+  };
+}
+
+export function makeAdminRoleRow(
+  overrides?: Partial<AdminRoleRow>,
+): AdminRoleRow {
+  return {
+    role: "mechanic",
+    month_bucket: "2026-09",
+    created_at: new Date("2026-09-10T00:00:00.000Z"),
+    user_id: "33333333-3333-4333-8333-333333333333",
+    full_name: "Tran Van Tho",
+    phone: "0901111222",
+    email: "tho@example.com",
+    status: "pending_verification",
     ...overrides,
   };
 }

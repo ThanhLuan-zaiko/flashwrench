@@ -47,9 +47,9 @@ export function LoginForm() {
     login.mutate(
       { identifier: identifier.trim(), password },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success("Đăng nhập thành công", "Chào mừng bạn quay lại.");
-          router.push("/");
+          router.push(data.user.role === "admin" ? "/admin" : "/");
           router.refresh();
         },
         onError: (error) => {

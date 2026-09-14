@@ -1,4 +1,5 @@
 import { mock } from "bun:test";
+import type { AdminRoleRow } from "@/lib/auth/admin-users.repository";
 import type {
   RefreshSessionRow,
   UserSessionRow,
@@ -111,6 +112,37 @@ export function defaultUserRow(): UserRow {
   return makeUserRow();
 }
 
+export const adminStubs = {
+  rolePages: [] as AdminRoleRow[],
+};
+
+export const adminUsersRepoMocks = {
+  listRolePage: mock(
+    async (
+      _role: string,
+      _monthBucket: string,
+      _limit: number,
+    ): Promise<AdminRoleRow[]> => adminStubs.rolePages,
+  ),
+  setIdStatus: mock(
+    async (
+      _userId: string,
+      _status: string,
+      _tokenVersion: number | null,
+      _updatedAt: Date,
+    ): Promise<void> => undefined,
+  ),
+  setRoleStatus: mock(
+    async (
+      _role: string,
+      _monthBucket: string,
+      _createdAt: Date,
+      _userId: string,
+      _status: string,
+    ): Promise<void> => undefined,
+  ),
+};
+
 export function resetServiceMocks(): void {
   serviceStubs.phoneOwner = null;
   serviceStubs.emailOwner = null;
@@ -119,7 +151,9 @@ export function resetServiceMocks(): void {
   serviceStubs.sessionRow = null;
   serviceStubs.rotateApplied = true;
   serviceStubs.userSessions = [];
+  adminStubs.rolePages = [];
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
+  for (const fn of Object.values(adminUsersRepoMocks)) fn.mockClear();
 }

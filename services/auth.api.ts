@@ -79,6 +79,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
+// Shared JSON request with one auto-refresh retry. Used by auth calls
+// above and by feature API clients such as services/admin.api.ts.
+export function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
+  return request<T>(path, init);
+}
+
 export function registerRequest(payload: RegisterPayload) {
   return request<{ user: PublicUser }>("/api/auth/register", {
     method: "POST",

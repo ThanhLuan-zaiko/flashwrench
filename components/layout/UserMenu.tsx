@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FiLoader, FiLogIn, FiLogOut, FiUser } from "react-icons/fi";
+import { FiLoader, FiLogIn, FiLogOut, FiShield, FiUser } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { useLogout, useMe } from "@/hooks/auth";
 import { LOGIN_HREF, LOGIN_LABEL } from "./site-header.constants";
@@ -125,6 +125,17 @@ export function UserMenu() {
             )}
           </div>
           <div className="p-2">
+            {user.role === "admin" && (
+              <Link
+                href="/admin"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              >
+                <FiShield aria-hidden="true" className="h-4 w-4 shrink-0" />
+                Trang quản trị
+              </Link>
+            )}
             <Link
               href="/account"
               role="menuitem"

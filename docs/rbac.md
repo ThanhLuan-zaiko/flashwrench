@@ -70,7 +70,51 @@ export async function GET() {
 Tài khoản `locked` bị `authenticate()` chặn từ trước nên guard chỉ cần
 kiểm tra role.
 
-## 4. Seed admin đầu tiên
+## 4. Trang quản trị (`/admin`)
+
+Khu vực admin có layout riêng (`app/admin/layout.tsx`) verify
+server-side: chưa đăng nhập thì redirect `/login`, sai role thì trả panel
+403, chỉ `admin` mới thấy nội dung.
+
+| URL | Nội dung |
+|---|---|
+| `/admin` | Dashboard tổng quan (số liệu vận hành) |
+| `/admin/users` | Quản lý người dùng: duyệt thợ, khóa/mở khóa tài khoản |
+| `/admin/services` | Cấu hình dịch vụ: bảng giá, loại hình sửa chữa |
+
+Sidebar dùng `Link` nên mỗi mục có URL riêng, deep-link và refresh giữ
+nguyên trang. Cuối sidebar có nút "Về trang chủ" (`/`) để quay lại giao
+diện khách. Đăng nhập thành công với `role === "admin"` tự chuyển tới
+`/admin` (xem `LoginForm`), các role khác về `/` như cũ.
+
+## 5. API quản trị người dùng
+
+Mọi route đều yêu cầu `requireRole("admin")` và tuân thủ layering:
+repository (`lib/auth/admin-users.repository.ts`, chỉ CQL) →
+service (`lib/auth/admin-users.service.ts`, nghiệp vụ) →
+route handler (mỏng) → `services/admin.api.ts` (fetch) →
+`hooks/admin.ts` (`useAdminUsers`, `useAdminUserAction`).
+
+Danh sách đọc từ bảng `users_by_role` theo từng partition
+`(role, month_bucket)` rồi gộp, sắp xếp mới nhất trước — không dùng
+`ALLOW FILTERING`.
+
+| Endpoint | Phương thức | Tham số | Ý nghĩa |
+|---|---|---|---|
+| `/api/admin/users` | `GET` | `role=all\|customer\|mechanic\|dispatcher\|admin`, `status`, `months` (1–24, mặc định 6), `limit` (1–100, mặc định 50) | Liệt kê người dùng mới nhất trước |
+| `/api/admin/users/[userId]` | `PATCH` | `{ "action": "approve" \| "lock" \| "unlock" }` | Đổi trạng thái một tài khoản |
+
+Luật nghiệp vụ của `applyAdminUserAction`:
+
+- `approve`: chỉ khi `status` đang `pending_verification` → `active`.
+  Dùng cho tab "Duyệt thợ" (`role=mechanic`, `status=pending_verification`).
+- `lock`: khóa tài khoản đang `active` (hoặc chờ duyệt) → `locked`,
+  đồng thời tăng `token_version` để đá mọi phiên đang đăng nhập.
+- `unlock`: chỉ mở tài khoản đang `locked` → `active`.
+- Không bao giờ tác động tài khoản của chính mình hoặc tài khoản
+  `admin` khác (trả `403`).
+
+## 6. Seed admin đầu tiên
 
 Script `bun run seed:admin` (`scripts/seed-admin.ts`) tạo đúng 1 admin
 khởi động. Luồng: đọc env → `seedAdmin()` trong
@@ -78,7 +122,7 @@ khởi động. Luồng: đọc env → `seedAdmin()` trong
 `users_by_phone`, `users_by_email`, `users_by_role` bằng LWT + batch
 giống đăng ký thường.
 
-### 4.1. Biến môi trường (xem `.env.example`)
+### 6.1. Biến môi trường (xem `.env.example`)
 
 | Biến | Bắt buộc | Mặc định | Ý nghĩa |
 |---|---|---|---|
@@ -89,7 +133,7 @@ giống đăng ký thường.
 | `SEED_ADMIN_ENFORCE_SINGLE_ADMIN` | Không | `true` | `true` thì từ chối khi đã có admin khác |
 | `SEED_ADMIN_LOOKBACK_MONTHS` | Không | `12` | Số bucket tháng gần nhất để quét admin |
 
-### 4.2. Chạy ở dev
+### 6.2. Chạy ở dev
 
 ```bash
 # Thêm vào .env.local (file này bị gitignore, không commit):
@@ -104,7 +148,7 @@ bun run seed:admin
 
 Bun tự load `.env.local` nên không cần export tay.
 
-### 4.3. Tính idempotent (chạy lại an toàn)
+### 6.3. Tính idempotent (chạy lại an toàn)
 
 | Tình huống | Kết quả | Exit code |
 |---|---|---|
@@ -115,7 +159,7 @@ Bun tự load `.env.local` nên không cần export tay.
 | Dữ liệu không đạt validation | `invalid` kèm chi tiết từng field | `1` |
 | Thiếu biến môi trường | Báo tên biến còn thiếu | `1` |
 
-### 4.4. Deploy doanh nghiệp
+### 6.4. Deploy doanh nghiệp
 
 - **Không** dùng file `.env.local` trên server. Inject cùng tên biến
   `SEED_ADMIN_*` từ Secrets Manager (Vault / AWS Secrets Manager /
