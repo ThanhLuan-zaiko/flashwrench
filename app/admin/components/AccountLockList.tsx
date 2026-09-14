@@ -51,7 +51,7 @@ export function AccountLockList() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div>
         <label
           htmlFor="admin-user-search"
@@ -70,7 +70,7 @@ export function AccountLockList() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Nhập số điện thoại, email hoặc họ tên…"
-            className="w-full rounded-lg border border-zinc-300 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+            className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white py-2 pr-3 pl-10 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500"
           />
         </div>
       </div>
@@ -78,7 +78,7 @@ export function AccountLockList() {
       {query.isPending ? (
         <output
           aria-label="Đang tải danh sách tài khoản"
-          className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-zinc-500 dark:text-zinc-400"
+          className="flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-4 py-10 text-sm text-zinc-500 motion-safe:animate-pulse dark:bg-zinc-900 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -87,20 +87,20 @@ export function AccountLockList() {
           Đang tải danh sách tài khoản…
         </output>
       ) : query.isError ? (
-        <div className="px-4 py-6 text-center">
+        <div className="rounded-xl bg-zinc-100 px-4 py-6 text-center dark:bg-zinc-900">
           <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
             Không tải được danh sách. Vui lòng thử lại.
           </p>
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="mt-3 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="mt-3 min-h-[44px] rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             Tải lại
           </button>
         </div>
       ) : users.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 px-4 py-10 text-center dark:border-zinc-700">
+        <div className="rounded-xl bg-zinc-100 px-4 py-10 text-center dark:bg-zinc-900">
           <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
             Không tìm thấy tài khoản phù hợp.
           </p>
@@ -109,7 +109,7 @@ export function AccountLockList() {
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+        <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
           {users.map((item) => (
             <AdminUserCard
               key={item.id}

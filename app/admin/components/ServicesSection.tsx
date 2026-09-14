@@ -1,78 +1,68 @@
-import { FiDollarSign, FiLayers, FiToggleRight } from "react-icons/fi";
+"use client";
 
-const PRICE_GROUPS = [
+import {
+  FiCheckCircle,
+  FiDollarSign,
+  FiLayers,
+  FiPauseCircle,
+} from "react-icons/fi";
+import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { ServicePricesCard } from "./bento/ServicePricesCard";
+import { ServicesHeroCard } from "./bento/ServicesHeroCard";
+import { type ServiceStat, ServicesStatCard } from "./bento/ServicesStatCard";
+import { ServiceTypesCard } from "./bento/ServiceTypesCard";
+
+const SERVICE_STATS: ServiceStat[] = [
   {
-    title: "Bảo dưỡng tại nhà",
-    hint: "Thay dầu, lọc gió, kiểm tra tổng quát.",
+    id: "groups",
+    label: "Nhóm dịch vụ",
+    value: "3",
+    hint: "Bảo dưỡng · Sửa chữa · Cứu hộ",
     icon: FiLayers,
   },
   {
-    title: "Sửa chữa lưu động",
-    hint: "Phanh, ắc quy, lốp, điện lạnh, chẩn đoán.",
-    icon: FiDollarSign,
+    id: "active",
+    label: "Đang áp dụng",
+    value: "3/3",
+    hint: "Hiển thị cho khách hàng",
+    icon: FiCheckCircle,
   },
   {
-    title: "Cứu hộ khẩn cấp",
-    hint: "Giá mở cửa, giá theo km và phụ phí đêm.",
-    icon: FiToggleRight,
+    id: "paused",
+    label: "Tạm tắt",
+    value: "0",
+    hint: "Không có nhóm nào bị ẩn",
+    icon: FiPauseCircle,
+  },
+  {
+    id: "prices",
+    label: "Mục giá",
+    value: "—",
+    hint: "Chờ API danh mục",
+    icon: FiDollarSign,
   },
 ];
 
+// Bento overview: big type statement, hero plus stats, catalogue cards.
 export function ServicesSection() {
-  return (
-    <div className="flex flex-col gap-4">
-      <section
-        aria-label="Loại hình sửa chữa"
-        className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950"
-      >
-        <div className="border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Loại hình sửa chữa
-          </h2>
-          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-            Bật hoặc tắt từng loại hình cung cấp cho khách hàng.
-          </p>
-        </div>
-        <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-          {PRICE_GROUPS.map((group) => {
-            const Icon = group.icon;
-            return (
-              <li
-                key={group.title}
-                className="flex items-center gap-3 px-4 py-3 transition-colors duration-200 hover:bg-zinc-50 dark:hover:bg-zinc-900"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
-                  <Icon aria-hidden="true" className="h-5 w-5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                    {group.title}
-                  </span>
-                  <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
-                    {group.hint}
-                  </span>
-                </span>
-                <span className="shrink-0 rounded-full border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
-                  Đang áp dụng
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+  const rootRef = useBentoReveal<HTMLDivElement>();
 
-      <section
-        aria-label="Bảng giá dịch vụ"
-        className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
-      >
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-          Bảng giá dịch vụ
-        </h2>
-        <p className="mt-3 rounded-lg border border-dashed border-zinc-300 px-3 py-6 text-center text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-          Chưa có mục giá nào. Bảng giá chi tiết sẽ hiển thị tại đây khi API
-          danh mục dịch vụ được kết nối.
-        </p>
-      </section>
+  return (
+    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
+      <BigTypeHeader
+        eyebrow="Cấu hình dịch vụ"
+        title="Giá rõ, bật tắt gọn."
+        subtitle="Ba nhóm dịch vụ, một bảng giá minh bạch cho mọi khách hàng."
+      />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+        <ServicesHeroCard />
+        {SERVICE_STATS.map((stat) => (
+          <ServicesStatCard key={stat.id} stat={stat} />
+        ))}
+        <ServiceTypesCard />
+        <ServicePricesCard />
+      </div>
     </div>
   );
 }

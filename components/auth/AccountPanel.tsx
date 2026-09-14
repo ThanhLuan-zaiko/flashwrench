@@ -18,6 +18,7 @@ import {
   useRevokeSession,
   useSessions,
 } from "@/hooks/auth";
+import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { FormAlert } from "./FormAlert";
 
 function formatDate(value: string | null): string {
@@ -32,6 +33,7 @@ function formatDate(value: string | null): string {
 export function AccountPanel() {
   const router = useRouter();
   const toast = useToast();
+  const rootRef = useBentoReveal<HTMLDivElement>();
   const me = useMe();
   const sessions = useSessions(me.data != null);
   const logout = useLogout();
@@ -112,8 +114,14 @@ export function AccountPanel() {
   const busy = logout.isPending || logoutAll.isPending;
 
   return (
-    <div className="flex flex-col gap-6">
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+    <div
+      ref={rootRef}
+      className="grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-4"
+    >
+      <section
+        data-reveal
+        className="rounded-2xl border border-zinc-200 bg-white p-5 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+      >
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Thông tin tài khoản
@@ -127,25 +135,25 @@ export function AccountPanel() {
           </Link>
         </div>{" "}
         <dl className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-          <div>
+          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
             <dt className="text-zinc-500 dark:text-zinc-400">Họ và tên</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.fullName}
             </dd>
           </div>
-          <div>
+          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
             <dt className="text-zinc-500 dark:text-zinc-400">Số điện thoại</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.phone}
             </dd>
           </div>
-          <div>
+          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
             <dt className="text-zinc-500 dark:text-zinc-400">Email</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.email}
             </dd>
           </div>
-          <div>
+          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
             <dt className="text-zinc-500 dark:text-zinc-400">Vai trò</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.role}
@@ -174,7 +182,10 @@ export function AccountPanel() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+      <section
+        data-reveal
+        className="rounded-2xl border border-zinc-200 bg-white p-5 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+      >
         <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-50">
           <FiMonitor aria-hidden="true" className="h-4 w-4" />
           Thiết bị đang đăng nhập
@@ -188,11 +199,11 @@ export function AccountPanel() {
             Đang tải danh sách thiết bị…
           </p>
         ) : (
-          <ul className="mt-3 divide-y divide-zinc-200 dark:divide-zinc-800">
+          <ul className="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
             {(sessions.data ?? []).map((s) => (
               <li
                 key={s.familyId}
-                className="flex items-center justify-between gap-3 py-3"
+                className="flex items-center justify-between gap-3 px-3 py-3"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
