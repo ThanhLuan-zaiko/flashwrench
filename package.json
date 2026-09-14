@@ -13,7 +13,8 @@
     "test": "bun run test:unit && bun run test:integration && bun run test:regression",
     "test:unit": "bash tests/run-suite.sh tests/unit",
     "test:integration": "bash tests/run-suite.sh tests/integration",
-    "test:regression": "bash tests/run-suite.sh tests/regression"
+    "test:regression": "bash tests/run-suite.sh tests/regression",
+    "seed:admin": "bun scripts/seed-admin.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.102.8",

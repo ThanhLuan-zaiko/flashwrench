@@ -1,5 +1,5 @@
 import { scylla } from "@/lib/db/client";
-import { monthBucket, type UserRow } from "./user.types";
+import { monthBucket, type UserRole, type UserRow } from "./user.types";
 
 function rowToUser(row: Record<string, unknown>): UserRow {
   const version = row.token_version;
@@ -56,6 +56,10 @@ export type CreateUserParams = {
   fullName: string;
 };
 
+export type CreateUserWithRoleParams = CreateUserParams & {
+  role: UserRole;
+};
+
 export type CreateUserOutcome =
   | { ok: true }
   | { ok: false; conflict: "phone" | "email" };
@@ -105,8 +109,10 @@ async function releaseEmail(email: string): Promise<void> {
 // Atomic register: lookup tables are claimed with LWT first, so concurrent
 // registers with the same phone/email cannot both succeed. The pre-check in
 // the service stays for friendly errors; this is the authoritative guard.
-export async function createUser(
-  params: CreateUserParams,
+// The role is an explicit parameter so callers cannot inject it from input:
+// public registration must always pass "customer".
+export async function createUserWithRole(
+  params: CreateUserWithRoleParams,
 ): Promise<CreateUserOutcome> {
   const phoneClaimed = await claimPhone(params.phone, params.userId);
   if (!phoneClaimed) return { ok: false, conflict: "phone" };
@@ -125,21 +131,23 @@ export async function createUser(
       [
         {
           query:
-            "INSERT INTO users_by_id (user_id, phone, email, password_hash, full_name, role, avatar_url, status, token_version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'customer', null, 'active', 0, ?, ?)",
+            "INSERT INTO users_by_id (user_id, phone, email, password_hash, full_name, role, avatar_url, status, token_version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, null, 'active', 0, ?, ?)",
           params: [
             params.userId,
             params.phone,
             params.email,
             params.passwordHash,
             params.fullName,
+            params.role,
             now,
             now,
           ],
         },
         {
           query:
-            "INSERT INTO users_by_role (role, month_bucket, created_at, user_id, full_name, phone, email, status) VALUES ('customer', ?, ?, ?, ?, ?, ?, 'active')",
+            "INSERT INTO users_by_role (role, month_bucket, created_at, user_id, full_name, phone, email, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'active')",
           params: [
+            params.role,
             bucket,
             now,
             params.userId,
@@ -156,6 +164,28 @@ export async function createUser(
     throw error;
   }
   return { ok: true };
+}
+
+// Public self-registration path. The role is hardcoded so users can only
+// ever become customers, even if they tamper with the request body.
+export async function createUser(
+  params: CreateUserParams,
+): Promise<CreateUserOutcome> {
+  return createUserWithRole({ ...params, role: "customer" });
+}
+
+// Single-partition read used by the seed guard: partition key is
+// (role, month_bucket), so no ALLOW FILTERING is needed.
+export async function hasAnyUserWithRole(
+  role: UserRole,
+  monthBucketValue: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "SELECT user_id FROM users_by_role WHERE role = ? AND month_bucket = ? LIMIT 1",
+    [role, monthBucketValue],
+    { prepare: true },
+  );
+  return result.rowLength > 0;
 }
 
 export async function bumpTokenVersion(userId: string): Promise<number> {
