@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { FiLoader, FiLock, FiLogIn } from "react-icons/fi";
+import { useToast } from "@/components/toast/useToast";
 import { useLogin } from "@/hooks/auth";
 import type { FieldErrors } from "@/lib/auth/user.types";
 import { validateLoginInput } from "@/lib/auth/validation";
@@ -12,6 +13,7 @@ import { FormAlert } from "./FormAlert";
 
 export function LoginForm() {
   const router = useRouter();
+  const toast = useToast();
   const login = useLogin();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -46,15 +48,23 @@ export function LoginForm() {
       { identifier: identifier.trim(), password },
       {
         onSuccess: () => {
+          toast.success("Đăng nhập thành công", "Chào mừng bạn quay lại.");
           router.push("/");
           router.refresh();
         },
         onError: (error) => {
-          if (error instanceof AuthApiError) setServerErrors(error.errors);
-          else
+          if (error instanceof AuthApiError) {
+            setServerErrors(error.errors);
+            toast.error(
+              "Đăng nhập thất bại",
+              error.errors.form ?? "Vui lòng kiểm tra lại thông tin.",
+            );
+          } else {
             setServerErrors({
               form: "Không đăng nhập được. Vui lòng thử lại.",
             });
+            toast.error("Đăng nhập thất bại", "Vui lòng thử lại sau.");
+          }
         },
       },
     );

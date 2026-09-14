@@ -10,6 +10,7 @@ import {
   FiShield,
   FiTrash2,
 } from "react-icons/fi";
+import { useToast } from "@/components/toast/useToast";
 import {
   useLogout,
   useLogoutAll,
@@ -30,6 +31,7 @@ function formatDate(value: string | null): string {
 
 export function AccountPanel() {
   const router = useRouter();
+  const toast = useToast();
   const me = useMe();
   const sessions = useSessions(me.data != null);
   const logout = useLogout();
@@ -39,6 +41,44 @@ export function AccountPanel() {
   function goLogin() {
     router.push("/login");
     router.refresh();
+  }
+
+  function handleLogout() {
+    logout.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Đã đăng xuất", "Hẹn gặp lại bạn.");
+        goLogin();
+      },
+      onError: () => {
+        toast.error("Đăng xuất thất bại", "Vui lòng thử lại sau.");
+      },
+    });
+  }
+
+  function handleLogoutAll() {
+    logoutAll.mutate(undefined, {
+      onSuccess: () => {
+        toast.success(
+          "Đã đăng xuất mọi thiết bị",
+          "Vui lòng đăng nhập lại để tiếp tục.",
+        );
+        goLogin();
+      },
+      onError: () => {
+        toast.error("Đăng xuất thất bại", "Vui lòng thử lại sau.");
+      },
+    });
+  }
+
+  function handleRevoke(familyId: string) {
+    revoke.mutate(familyId, {
+      onSuccess: () => {
+        toast.success("Đã thu hồi phiên đăng nhập.");
+      },
+      onError: () => {
+        toast.error("Thu hồi thất bại", "Vui lòng thử lại sau.");
+      },
+    });
   }
 
   if (me.isPending) {
@@ -116,7 +156,7 @@ export function AccountPanel() {
           <button
             type="button"
             disabled={busy}
-            onClick={() => logout.mutate(undefined, { onSuccess: goLogin })}
+            onClick={handleLogout}
             className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-all duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiLogOut aria-hidden="true" className="h-4 w-4" />
@@ -125,7 +165,7 @@ export function AccountPanel() {
           <button
             type="button"
             disabled={busy}
-            onClick={() => logoutAll.mutate(undefined, { onSuccess: goLogin })}
+            onClick={handleLogoutAll}
             className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             <FiShield aria-hidden="true" className="h-4 w-4" />
@@ -171,7 +211,7 @@ export function AccountPanel() {
                 <button
                   type="button"
                   disabled={revoke.isPending}
-                  onClick={() => revoke.mutate(s.familyId)}
+                  onClick={() => handleRevoke(s.familyId)}
                   aria-label={`Thu hồi phiên ${s.deviceLabel}`}
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-50 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 >

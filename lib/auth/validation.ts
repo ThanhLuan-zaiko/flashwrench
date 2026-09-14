@@ -19,7 +19,13 @@ export const REGISTER_LIMITS = {
 } as const;
 
 export function normalizePhone(raw: string): string {
-  return raw.trim().replace(/[\s.\-()]/g, "");
+  const cleaned = raw.trim().replace(/[\s.\-()]/g, "");
+  // Accept common VN formats for the same number: +849..., 849...,
+  // 00849... all map to 09... so dedup checks cannot be bypassed.
+  if (cleaned.startsWith("+84")) return `0${cleaned.slice(3)}`;
+  if (cleaned.startsWith("0084")) return `0${cleaned.slice(4)}`;
+  if (/^84\d{9}$/.test(cleaned)) return `0${cleaned.slice(2)}`;
+  return cleaned;
 }
 
 export function normalizeEmail(raw: string): string {

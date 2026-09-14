@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
+import { ToastProvider } from "@/components/toast/ToastProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,7 +22,10 @@ export const metadata: Metadata = {
   description: "Đặt lịch sửa xe lưu động, cứu hộ tận nơi nhanh chóng",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+// Explicit props on purpose: the generated `LayoutProps` global only
+// exists after `next dev`/`build` writes `.next/`, which CI checkouts and
+// fresh clones do not have. Depending on it breaks `tsc` there.
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="vi"
@@ -30,8 +35,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeInitScript />
         <QueryProvider>
-          <SiteHeader />
-          <div className="flex flex-1 flex-col">{children}</div>
+          <ToastProvider>
+            <SiteHeader />
+            <div className="flex flex-1 flex-col">{children}</div>
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>

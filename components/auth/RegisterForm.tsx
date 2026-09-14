@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { FiLoader, FiUserPlus } from "react-icons/fi";
+import { useToast } from "@/components/toast/useToast";
 import { useRegister } from "@/hooks/auth";
 import type { FieldErrors } from "@/lib/auth/user.types";
 import { validateRegisterInput } from "@/lib/auth/validation";
@@ -14,6 +15,7 @@ const EMPTY_ERRORS: FieldErrors = {};
 
 export function RegisterForm() {
   const router = useRouter();
+  const toast = useToast();
   const register = useRegister();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -61,13 +63,24 @@ export function RegisterForm() {
       },
       {
         onSuccess: () => {
+          toast.success(
+            "Tạo tài khoản thành công",
+            "Chào mừng bạn đến với FlashWrench.",
+          );
           router.push("/");
           router.refresh();
         },
         onError: (error) => {
-          if (error instanceof AuthApiError) setServerErrors(error.errors);
-          else
+          if (error instanceof AuthApiError) {
+            setServerErrors(error.errors);
+            toast.error(
+              "Không tạo được tài khoản",
+              error.errors.form ?? "Vui lòng kiểm tra lại thông tin.",
+            );
+          } else {
             setServerErrors({ form: "Không đăng ký được. Vui lòng thử lại." });
+            toast.error("Không tạo được tài khoản", "Vui lòng thử lại sau.");
+          }
         },
       },
     );

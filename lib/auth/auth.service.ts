@@ -107,13 +107,35 @@ export async function registerUser(
   }
 
   const userId = randomUUID();
-  await createUser({
+  const createdOutcome = await createUser({
     userId,
     phone,
     email,
     passwordHash: await hashPassword(input.password),
     fullName,
   });
+
+  if (!createdOutcome.ok) {
+    // Race loser path: the LWT claim is authoritative. Re-read so the
+    // response still tells which field is taken (phone, email, or both).
+    const [phoneOwnerNow, emailOwnerNow] = await Promise.all([
+      findUserIdByPhone(phone),
+      findUserIdByEmail(email),
+    ]);
+    const phoneTaken =
+      phoneOwnerNow !== null || createdOutcome.conflict === "phone";
+    const emailTaken =
+      emailOwnerNow !== null || createdOutcome.conflict === "email";
+    return {
+      ok: false,
+      status: 409,
+      errors: {
+        ...(phoneTaken ? { phone: "Số điện thoại này đã được đăng ký." } : {}),
+        ...(emailTaken ? { email: "Email này đã được đăng ký." } : {}),
+        form: "Thông tin này đã tồn tại. Vui lòng đăng nhập.",
+      },
+    };
+  }
 
   const created = await findUserById(userId);
   if (!created) {

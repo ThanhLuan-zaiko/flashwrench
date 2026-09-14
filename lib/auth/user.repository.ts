@@ -56,48 +56,106 @@ export type CreateUserParams = {
   fullName: string;
 };
 
-export async function createUser(params: CreateUserParams): Promise<void> {
+export type CreateUserOutcome =
+  | { ok: true }
+  | { ok: false; conflict: "phone" | "email" };
+
+function wasApplied(result: unknown): boolean {
+  const row = (result as { first: () => unknown }).first() as Record<
+    string,
+    unknown
+  > | null;
+  return row?.["[applied]"] === true;
+}
+
+async function claimPhone(phone: string, userId: string): Promise<boolean> {
+  const result = await scylla.execute(
+    "INSERT INTO users_by_phone (phone, user_id) VALUES (?, ?) IF NOT EXISTS",
+    [phone, userId],
+    { prepare: true },
+  );
+  return wasApplied(result);
+}
+
+async function claimEmail(email: string, userId: string): Promise<boolean> {
+  const result = await scylla.execute(
+    "INSERT INTO users_by_email (email, user_id) VALUES (?, ?) IF NOT EXISTS",
+    [email, userId],
+    { prepare: true },
+  );
+  return wasApplied(result);
+}
+
+async function releasePhone(phone: string): Promise<void> {
+  await scylla
+    .execute("DELETE FROM users_by_phone WHERE phone = ?", [phone], {
+      prepare: true,
+    })
+    .catch(() => undefined);
+}
+
+async function releaseEmail(email: string): Promise<void> {
+  await scylla
+    .execute("DELETE FROM users_by_email WHERE email = ?", [email], {
+      prepare: true,
+    })
+    .catch(() => undefined);
+}
+
+// Atomic register: lookup tables are claimed with LWT first, so concurrent
+// registers with the same phone/email cannot both succeed. The pre-check in
+// the service stays for friendly errors; this is the authoritative guard.
+export async function createUser(
+  params: CreateUserParams,
+): Promise<CreateUserOutcome> {
+  const phoneClaimed = await claimPhone(params.phone, params.userId);
+  if (!phoneClaimed) return { ok: false, conflict: "phone" };
+
+  const emailClaimed = await claimEmail(params.email, params.userId);
+  if (!emailClaimed) {
+    await releasePhone(params.phone);
+    return { ok: false, conflict: "email" };
+  }
+
   const now = new Date();
   const bucket = monthBucket(now);
 
-  await scylla.batch(
-    [
-      {
-        query:
-          "INSERT INTO users_by_id (user_id, phone, email, password_hash, full_name, role, avatar_url, status, token_version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'customer', null, 'active', 0, ?, ?)",
-        params: [
-          params.userId,
-          params.phone,
-          params.email,
-          params.passwordHash,
-          params.fullName,
-          now,
-          now,
-        ],
-      },
-      {
-        query: "INSERT INTO users_by_phone (phone, user_id) VALUES (?, ?)",
-        params: [params.phone, params.userId],
-      },
-      {
-        query: "INSERT INTO users_by_email (email, user_id) VALUES (?, ?)",
-        params: [params.email, params.userId],
-      },
-      {
-        query:
-          "INSERT INTO users_by_role (role, month_bucket, created_at, user_id, full_name, phone, email, status) VALUES ('customer', ?, ?, ?, ?, ?, ?, 'active')",
-        params: [
-          bucket,
-          now,
-          params.userId,
-          params.fullName,
-          params.phone,
-          params.email,
-        ],
-      },
-    ],
-    { prepare: true },
-  );
+  try {
+    await scylla.batch(
+      [
+        {
+          query:
+            "INSERT INTO users_by_id (user_id, phone, email, password_hash, full_name, role, avatar_url, status, token_version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'customer', null, 'active', 0, ?, ?)",
+          params: [
+            params.userId,
+            params.phone,
+            params.email,
+            params.passwordHash,
+            params.fullName,
+            now,
+            now,
+          ],
+        },
+        {
+          query:
+            "INSERT INTO users_by_role (role, month_bucket, created_at, user_id, full_name, phone, email, status) VALUES ('customer', ?, ?, ?, ?, ?, ?, 'active')",
+          params: [
+            bucket,
+            now,
+            params.userId,
+            params.fullName,
+            params.phone,
+            params.email,
+          ],
+        },
+      ],
+      { prepare: true },
+    );
+  } catch (error) {
+    await Promise.all([releasePhone(params.phone), releaseEmail(params.email)]);
+    throw error;
+  }
+  return { ok: true };
 }
 
 export async function bumpTokenVersion(userId: string): Promise<number> {

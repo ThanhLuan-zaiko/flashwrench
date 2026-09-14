@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { FiCheckCircle, FiKey, FiLoader } from "react-icons/fi";
+import { useToast } from "@/components/toast/useToast";
 import { useChangePassword } from "@/hooks/auth";
 import type { FieldErrors } from "@/lib/auth/user.types";
 import { validateChangePasswordInput } from "@/lib/auth/validation";
@@ -12,6 +13,7 @@ import { FormAlert } from "./FormAlert";
 const EMPTY_ERRORS: FieldErrors = {};
 
 export function ChangePasswordForm() {
+  const toast = useToast();
   const changePassword = useChangePassword();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -55,13 +57,24 @@ export function ChangePasswordForm() {
           setNewPassword("");
           setConfirmPassword("");
           setDone(true);
+          toast.success(
+            "Đổi mật khẩu thành công",
+            "Mọi thiết bị khác đã bị đăng xuất.",
+          );
         },
         onError: (error) => {
-          if (error instanceof AuthApiError) setServerErrors(error.errors);
-          else
+          if (error instanceof AuthApiError) {
+            setServerErrors(error.errors);
+            toast.error(
+              "Đổi mật khẩu thất bại",
+              error.errors.form ?? "Vui lòng kiểm tra lại thông tin.",
+            );
+          } else {
             setServerErrors({
               form: "Không đổi được mật khẩu. Vui lòng thử lại.",
             });
+            toast.error("Đổi mật khẩu thất bại", "Vui lòng thử lại sau.");
+          }
         },
       },
     );

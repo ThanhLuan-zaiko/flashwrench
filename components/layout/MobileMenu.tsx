@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { FiLogIn } from "react-icons/fi";
-import { LOGIN_HREF, LOGIN_LABEL } from "./site-header.constants";
+import { MobileMenuAuth } from "./MobileMenuAuth";
 import type { NavItem } from "./site-header.types";
 
 const ITEM_ENTER_DELAYS = [
@@ -72,14 +71,7 @@ export function MobileMenu({
                 : "motion-safe:translate-y-2 motion-safe:opacity-0"
             }`}
           >
-            <Link
-              href={LOGIN_HREF}
-              onClick={onNavigate}
-              className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-3 text-center text-base font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-            >
-              <FiLogIn aria-hidden="true" className="h-5 w-5 shrink-0" />
-              {LOGIN_LABEL}
-            </Link>
+            <MobileMenuAuth onNavigate={onNavigate} />
           </div>
         </div>
       </nav>
