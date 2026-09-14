@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS users_by_id (
   role          TEXT,
   avatar_url    TEXT,
   status        TEXT,
+  token_version INT, -- bump on password change / lock: kills old access tokens
   created_at    TIMESTAMP,
   updated_at    TIMESTAMP
 );
@@ -87,6 +88,14 @@ CREATE TABLE IF NOT EXISTS users_by_role (
   PRIMARY KEY ((role, month_bucket), created_at, user_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, user_id ASC);
 
+-- Distributed rate limiting without RAM or Redis: one row per
+-- (kind, ip, fixed window). Rows expire by TTL, so storage stays bounded.
+CREATE TABLE IF NOT EXISTS rate_limits (
+  bucket    TEXT PRIMARY KEY, -- e.g. "login:1.2.3.4:29247111"
+  count     INT,
+  window_ms BIGINT
+);
+
 -- Phone verification OTPs (app sets TTL: INSERT ... USING TTL 300)
 CREATE TABLE IF NOT EXISTS phone_otps (
   phone      TEXT PRIMARY KEY,
@@ -95,6 +104,30 @@ CREATE TABLE IF NOT EXISTS phone_otps (
   expires_at TIMESTAMP,
   created_at TIMESTAMP
 );
+
+-- Auth sessions: rotating opaque refresh tokens. The (user_id, family_id)
+-- partition is derived from the refresh token itself: one single-partition read.
+CREATE TABLE IF NOT EXISTS refresh_sessions (
+  user_id             UUID,
+  family_id           UUID,
+  token_hash          TEXT,
+  previous_token_hash TEXT,
+  device_label        TEXT,
+  created_at          TIMESTAMP,
+  rotated_at          TIMESTAMP,
+  expires_at          TIMESTAMP,
+  PRIMARY KEY ((user_id, family_id))
+);
+
+-- List / revoke every device of one user (the /account page).
+CREATE TABLE IF NOT EXISTS refresh_sessions_by_user (
+  user_id      UUID,
+  created_at   TIMESTAMP,
+  family_id    UUID,
+  device_label TEXT,
+  expires_at   TIMESTAMP,
+  PRIMARY KEY ((user_id), created_at, family_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, family_id ASC);
 
 -- ============================================================================
 -- 2. CUSTOMER VEHICLES (cars first)

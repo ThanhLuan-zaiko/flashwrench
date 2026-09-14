@@ -48,7 +48,7 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 - **No Joins:** Do not attempt SQL-like joins. Denormalize data if necessary.
 - **Partition Keys:** Always choose partition keys carefully to ensure even data distribution across the cluster.
 - **Client:** Use a ScyllaDB/Cassandra compatible Node.js driver (e.g., `cassandra-driver` or a modern Bun-compatible alternative).
-- **Migrations:** Keep schema creation scripts in `lib/db/migrations/`.
+- **Schema changes (dev):** Edit `schema.cql` directly and reset via `reset_data.sh`. Do NOT create migration files or a `lib/db/migrations/` folder while in active development.
 
 ---
 
@@ -75,7 +75,7 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
   - Custom keyframes are FORBIDDEN in ALL forms — no `@keyframes`, no `@theme --animate-*` tokens. `globals.css` MUST stay exactly 2 lines (`@import` + `@custom-variant dark`). Any animation needing keyframes is OUT of scope; use instant render instead.
   - Allowed animation tools: `transition-*`, `duration-*` (max ~300ms), `ease-*`, state variants (`hover:`, `active:`, `focus-visible:`, `group-hover:`) with transform utilities (`scale-*`, `rotate-*`, `translate-*`), and built-in `animate-*` utilities (`animate-spin`, `animate-ping`, `animate-pulse`, `animate-bounce` — loading indicators only).
   - ALWAYS scope animations behind the `motion-safe:` variant so users with `prefers-reduced-motion` get a static UI.
-- **Naming & Language:** All user-facing text MUST be in Vietnamese WITH full diacritics (tiếng Việt có dấu, e.g., "Đặt lịch sửa xe", NOT "Dat lich sua xe"). All code identifiers (variables, functions, types, components, hooks) and URL paths MUST be in English (e.g., `ThemeToggle`, `/dang-nhap` is FORBIDDEN — use `/login`).
+- **Naming & Language:** Vietnamese WITH full diacritics (tiếng Việt có dấu, e.g., "Đặt lịch sửa xe", NOT "Dat lich sua xe") is allowed ONLY in two places: user-facing web UI strings (labels, placeholders, aria-labels, metadata, user-facing validation/error messages) and files under `docs/`. Everything else MUST be in English: all code identifiers (variables, functions, types, components, hooks), URL paths (`/dang-nhap` is FORBIDDEN — use `/login`), and ALL comments (TypeScript, JSX, CQL, shell).
 
 ---
 
@@ -99,6 +99,7 @@ When generating code for this project, you MUST:
 5. **ScyllaDB Awareness:** When writing database queries, ensure they are valid CQL and respect NoSQL modeling principles (no `JOIN`, careful use of `ALLOW FILTERING`).
 6. **Component Composition:** Prefer composing smaller components over writing massive monolithic components. Extract logic into custom hooks to keep `.tsx` files clean and under the 250-line limit.
 7. **Git Safety:** After finishing a coding task, follow the Git Workflow Rules defined in **Section 9** to check for garbage files. **NEVER** execute any git write operations (commit, branch, tag, push) on your own.
+8. **English-Only Code:** All comments, identifiers, logs, and CQL/SQL comments MUST be in English. Vietnamese WITH full diacritics is allowed ONLY in files under `docs/` and in user-facing web UI strings (including user-facing validation/error messages).
 
 ---
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
 import "./globals.css";
 
@@ -28,8 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeInitScript />
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
+        <QueryProvider>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">{children}</div>
+        </QueryProvider>
       </body>
     </html>
   );
