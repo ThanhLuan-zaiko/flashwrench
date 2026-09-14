@@ -9,6 +9,7 @@ README.md
 AGENTS.md
 CLAUDE.md
 *.md
+*.sh
 .vscode
 .idea
 coverage

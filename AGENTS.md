@@ -32,6 +32,13 @@ If a file approaches or exceeds the line limit, you **MUST** refactor and split 
 ## 4. Architecture & Folder Structure
 Follow the standard Next.js App Router structure, organized by feature/domain where possible.
 
+### 4.1. Backend Layering (TypeScript + Repository/Service Pattern)
+All backend code MUST be TypeScript and follow this strict layering:
+- `repositories/` — ONLY raw CQL queries via the ScyllaDB client. No business logic here. One repository per aggregate (e.g., `booking.repository.ts`, `part.repository.ts`).
+- `services/` — Business logic, validation, and orchestration. Services call repositories, NEVER the ScyllaDB client directly.
+- Route handlers (`app/api/.../route.ts`) — Thin layer: parse/validate input, call a service, format the response. NEVER write CQL or business logic here.
+- Shared row/response shapes live in `.types.ts` files next to the repository.
+
 ---
 
 ## 5. Database Guidelines (ScyllaDB)
@@ -49,6 +56,8 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 - **NO Custom CSS:** Do not create `.css` files for component styling. The only CSS file allowed is `globals.css` for Tailwind's base directives and custom CSS variables (if needed for theming).
 - **No Inline Styles:** Avoid `style={{}}` attributes. Use Tailwind classes.
 - **Responsive Design:** Mobile-first approach. Always use Tailwind breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`) to ensure the app looks perfect on mobile phones, tablets, and desktops.
+- **Vietnamese UI Language:** All user-facing text MUST be in Vietnamese WITH full diacritics (tiếng Việt có dấu, e.g., "Đặt lịch sửa xe", NOT "Dat lich sua xe"). Never output unaccented/Telex-style Vietnamese in the UI.
+- **Minimal Box-Shadow:** Do NOT use `box-shadow` (`shadow-*` utilities) to create emphasis or hierarchy. Use borders (`border`, `divide-*`), spacing, typography scale/weight, and color contrast instead. A subtle shadow is allowed ONLY for floating overlays (modal, dropdown, tooltip).
 - **Dark Mode and light mode** Support dark mode and light mode using Tailwind's.
 
 ---
@@ -80,7 +89,7 @@ When generating code for this project, you MUST:
 Git operations are **HIGHLY RESTRICTED**. The AI agent must follow these rules with zero exceptions.
 
 ### 9.1. ALLOWED Git Operations (Read-Only)
-The AI agent is ONLY allowed to run the following **read-only** git commands:
+Git is used ONLY to inspect the working tree — i.e., to see which files changed and which garbage/unintended files must be left out of a commit. The AI agent is ONLY allowed to run the following **read-only** git commands:
 - `git status` — To check the current state of the working directory.
 - `git diff` — To review changes before reporting them to the user.
 - `git log` — To understand commit history (read-only).
