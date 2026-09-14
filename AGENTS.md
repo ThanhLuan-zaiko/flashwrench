@@ -11,6 +11,7 @@ This is a fullstack web application for booking mobile vehicle repair services. 
 - **Styling:** Tailwind CSS (Strictly pure Tailwind, NO custom CSS files).
 - **Data Fetching & State:** TanStack Query (React Query).
 - **UI Components:** Headless UI / Radix UI (styled exclusively with Tailwind).
+- **Icons:** `react-icons` ONLY. Never hand-write inline `<svg>` for UI icons; always import from `react-icons` (e.g., `react-icons/fi`).
 
 ---
 
@@ -53,12 +54,28 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 
 ## 6. UI/UX & Styling Rules (Tailwind CSS)
 - **Pure Tailwind:** Use ONLY Tailwind utility classes. 
-- **NO Custom CSS:** Do not create `.css` files for component styling. The only CSS file allowed is `globals.css` for Tailwind's base directives and custom CSS variables (if needed for theming).
+- **NO Custom CSS:** Do not create `.css` files for component styling. The only CSS file allowed is `globals.css`, which MUST contain EXACTLY these 2 lines and nothing else:
+  ```css
+  @import "tailwindcss";
+  @custom-variant dark (&:where(.dark, .dark *));
+  ```
+  No `@theme` tokens, no `@keyframes`, no custom classes, no CSS variables.
 - **No Inline Styles:** Avoid `style={{}}` attributes. Use Tailwind classes.
 - **Responsive Design:** Mobile-first approach. Always use Tailwind breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`) to ensure the app looks perfect on mobile phones, tablets, and desktops.
 - **Vietnamese UI Language:** All user-facing text MUST be in Vietnamese WITH full diacritics (tiếng Việt có dấu, e.g., "Đặt lịch sửa xe", NOT "Dat lich sua xe"). Never output unaccented/Telex-style Vietnamese in the UI.
 - **Minimal Box-Shadow:** Do NOT use `box-shadow` (`shadow-*` utilities) to create emphasis or hierarchy. Use borders (`border`, `divide-*`), spacing, typography scale/weight, and color contrast instead. A subtle shadow is allowed ONLY for floating overlays (modal, dropdown, tooltip).
-- **Dark Mode and light mode** Support dark mode and light mode using Tailwind's.
+- **Dark/Light Theme (class strategy):** The app supports ONLY two themes: light and dark.
+  - Tailwind v4 MUST use class-based dark mode via `@custom-variant dark (&:where(.dark, .dark *));` in `globals.css` (do NOT rely on the default `prefers-color-scheme` variant alone).
+  - On first visit with no saved preference, detect the OS theme via `window.matchMedia("(prefers-color-scheme: dark)")` and apply it. NEVER hardcode a default theme.
+  - Persist the user's explicit choice in `localStorage` and apply the `dark` class on `<html>` before paint (inline init script) to avoid a flash of the wrong theme. Listen to OS theme changes while no explicit choice is saved.
+  - A visible theme toggle button MUST sit next to the login button in the header, with Vietnamese accessible labels (e.g., `aria-label="Chuyển sang giao diện tối"` / `"Chuyển sang giao diện sáng"`).
+- **Monochrome Palette:** UI uses ONLY neutral colors (white, zinc scale, black) for light/dark themes. Do NOT introduce other hues (no orange/blue/green/red accents) except semantic states explicitly requested. Hierarchy comes from borders, spacing, typography, and `dark:` contrast — not from color.
+- **Subtle Animations (Tailwind only):** Keep the UI lively with SMALL, fast micro-animations built ONLY from Tailwind utilities.
+  - Prefer built-in `transition-*`, `duration-*`, `ease-*` (hover/active states) and `animate-*` for enter effects.
+  - Custom keyframes are FORBIDDEN in ALL forms — no `@keyframes`, no `@theme --animate-*` tokens. `globals.css` MUST stay exactly 2 lines (`@import` + `@custom-variant dark`). Any animation needing keyframes is OUT of scope; use instant render instead.
+  - Allowed animation tools: `transition-*`, `duration-*` (max ~300ms), `ease-*`, state variants (`hover:`, `active:`, `focus-visible:`, `group-hover:`) with transform utilities (`scale-*`, `rotate-*`, `translate-*`), and built-in `animate-*` utilities (`animate-spin`, `animate-ping`, `animate-pulse`, `animate-bounce` — loading indicators only).
+  - ALWAYS scope animations behind the `motion-safe:` variant so users with `prefers-reduced-motion` get a static UI.
+- **Naming & Language:** All user-facing text MUST be in Vietnamese WITH full diacritics (tiếng Việt có dấu, e.g., "Đặt lịch sửa xe", NOT "Dat lich sua xe"). All code identifiers (variables, functions, types, components, hooks) and URL paths MUST be in English (e.g., `ThemeToggle`, `/dang-nhap` is FORBIDDEN — use `/login`).
 
 ---
 

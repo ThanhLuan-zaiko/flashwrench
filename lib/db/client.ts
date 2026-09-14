@@ -6,7 +6,9 @@ declare global {
 }
 
 function createClient(): Client {
-  const contactPoints = (process.env.SCYLLA_CONTACT_POINTS ?? "127.0.0.1").split(",");
+  const contactPoints = (
+    process.env.SCYLLA_CONTACT_POINTS ?? "127.0.0.1"
+  ).split(",");
   const port = Number(process.env.SCYLLA_PORT) || 9042;
 
   return new Client({

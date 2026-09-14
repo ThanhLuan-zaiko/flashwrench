@@ -82,11 +82,13 @@ function main(): void {
   console.error("\n Files exceeding line limits (AGENTS.md Section 3):\n");
   for (const v of violations) {
     console.error(
-      `::error file=${v.file}::File exceeds ${v.limit} lines (current: ${v.lines} lines)`
+      `::error file=${v.file}::File exceeds ${v.limit} lines (current: ${v.lines} lines)`,
     );
     console.error(`  📄 ${v.file}: ${v.lines} lines (limit: ${v.limit})`);
   }
-  console.error(`\n✖ ${violations.length} file(s) violate the limit. Please split the files according to the modularization rules.`);
+  console.error(
+    `\n✖ ${violations.length} file(s) violate the limit. Please split the files according to the modularization rules.`,
+  );
   process.exit(1);
 }
 

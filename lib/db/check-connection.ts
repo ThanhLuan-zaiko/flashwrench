@@ -3,7 +3,9 @@ import { scylla } from "./client";
 export async function checkScyllaConnection(): Promise<void> {
   // Skip checks during Docker build / CI
   if (process.env.SCYLLA_SKIP_CONNECTION_CHECK === "true") {
-    console.log("⏭  [ScyllaDB] Skipping connection check (SCYLLA_SKIP_CONNECTION_CHECK=true)");
+    console.log(
+      "⏭  [ScyllaDB] Skipping connection check (SCYLLA_SKIP_CONNECTION_CHECK=true)",
+    );
     return;
   }
 
@@ -13,7 +15,9 @@ export async function checkScyllaConnection(): Promise<void> {
     console.log(`⏳ [ScyllaDB] Connecting to ${target} ...`);
     await scylla.connect();
 
-    const result = await scylla.execute("SELECT release_version FROM system.local");
+    const result = await scylla.execute(
+      "SELECT release_version FROM system.local",
+    );
     const version = result.rows[0]?.release_version;
 
     console.log(`   |ScyllaDB] Connection successful!`);

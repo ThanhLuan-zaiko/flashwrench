@@ -1,10 +1,14 @@
 name: Deploy
 
+# TEMPORARILY PAUSED during dev phase: no auto-deploy on push/PR yet
+# (Vercel/Docker secrets and production env are not set up).
+# To re-enable, restore:
+#   push:
+#     branches: ["main", "master"]
+#   pull_request:
+#     branches: ["main", "master"]
 on:
-  push:
-    branches: ["main", "master"]
-  pull_request:
-    branches: ["main", "master"]
+  workflow_dispatch: # manual trigger only, from the Actions tab
 
 concurrency:
   group: deploy-${{ github.ref }}
