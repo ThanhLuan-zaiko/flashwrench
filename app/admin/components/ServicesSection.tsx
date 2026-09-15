@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
@@ -24,9 +25,10 @@ import { useCatalogRowActions } from "./services/useCatalogRowActions";
 
 // Bento root for service config: live stats, tabbed CRUD, trash restore.
 // Data via useCatalogOverview, mutations via useCatalogRowActions.
-export function ServicesSection() {
+// Active tab comes from the route (one URL per tab) so links stay
+// shareable and the browser back button works.
+export function ServicesSection({ tab }: { tab: CatalogTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
-  const [tab, setTab] = useState<CatalogTab>("categories");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categoryDialog, setCategoryDialog] =
     useState<CategoryDialogState | null>(null);
@@ -65,12 +67,12 @@ export function ServicesSection() {
               className="flex flex-wrap gap-1.5"
             >
               {CATALOG_TABS.map((t) => (
-                <button
+                <Link
                   key={t.id}
-                  type="button"
+                  href={t.href}
                   role="tab"
                   aria-selected={tab === t.id}
-                  onClick={() => setTab(t.id)}
+                  aria-current={tab === t.id ? "page" : undefined}
                   className={`flex min-h-[44px] items-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
                     tab === t.id
                       ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
@@ -78,7 +80,7 @@ export function ServicesSection() {
                   }`}
                 >
                   {t.label}
-                </button>
+                </Link>
               ))}
             </div>
             {tab !== "trash" ? (

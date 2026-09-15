@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  FiEdit2,
-  FiInbox,
-  FiLoader,
-  FiPower,
-  FiRotateCcw,
-  FiTrash2,
-} from "react-icons/fi";
+import { FiInbox, FiLayers, FiLoader } from "react-icons/fi";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { CatalogPager } from "./CatalogPager";
 import { formatDuration, formatVnd, PRICE_UNIT_LABELS } from "./catalog-format";
+import { SelectDropdown } from "./SelectDropdown";
+import { ServicePriceActions } from "./ServicePriceActions";
 import { usePagination } from "./usePagination";
 
 type ServicePriceListProps = {
@@ -70,21 +65,24 @@ export function ServicePriceList({
   };
   return (
     <div className="flex flex-col gap-3">
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-        Lọc theo loại hình
-        <select
+      {!trashMode && (
+        <SelectDropdown
+          label="Lọc theo loại hình"
           value={categoryFilter}
-          onChange={(e) => handleFilterChange(e.target.value)}
-          className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:max-w-xs dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
-        >
-          <option value="">Tất cả loại hình</option>
-          {categoryOptions.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </label>
+          options={categoryOptions.map((c) => ({
+            value: c.id,
+            label: c.name,
+          }))}
+          onChange={handleFilterChange}
+          allLabel="Tất cả loại hình"
+          listLabel="Chọn loại hình"
+          searchPlaceholder="Tìm loại hình…"
+          unitName="loại hình"
+          emptyTitle="Không tìm thấy loại hình phù hợp"
+          icon={FiLayers}
+          className="relative w-full sm:max-w-xs"
+        />
+      )}
 
       {isPending ? (
         <ul className="flex flex-col gap-2" aria-label="Đang tải bảng giá">
@@ -158,78 +156,16 @@ export function ServicePriceList({
                       </span>
                     </span>
                   </span>
-                  <span className="flex flex-wrap items-center gap-1.5">
-                    {trashMode ? (
-                      <>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => onRestore(item)}
-                          aria-label={`Khôi phục ${item.name}`}
-                          className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                        >
-                          <FiRotateCcw
-                            aria-hidden="true"
-                            className="h-3.5 w-3.5"
-                          />
-                          Khôi phục
-                        </button>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => onHardDelete(item)}
-                          aria-label={`Xóa vĩnh viễn ${item.name}`}
-                          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-                        >
-                          <FiTrash2
-                            aria-hidden="true"
-                            className="h-3.5 w-3.5"
-                          />
-                          Xóa cứng
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => onToggle(item)}
-                          aria-label={
-                            item.isActive
-                              ? `Tạm tắt ${item.name}`
-                              : `Bật lại ${item.name}`
-                          }
-                          className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                        >
-                          <FiPower aria-hidden="true" className="h-3.5 w-3.5" />
-                          {item.isActive ? "Tạm tắt" : "Bật lại"}
-                        </button>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => onEdit(item)}
-                          aria-label={`Sửa ${item.name}`}
-                          className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                        >
-                          <FiEdit2 aria-hidden="true" className="h-3.5 w-3.5" />
-                          Sửa
-                        </button>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => onSoftDelete(item)}
-                          aria-label={`Xóa mềm ${item.name}`}
-                          className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                        >
-                          <FiTrash2
-                            aria-hidden="true"
-                            className="h-3.5 w-3.5"
-                          />
-                          Xóa mềm
-                        </button>
-                      </>
-                    )}
-                  </span>
+                  <ServicePriceActions
+                    item={item}
+                    busy={busy}
+                    trashMode={trashMode}
+                    onEdit={onEdit}
+                    onToggle={onToggle}
+                    onSoftDelete={onSoftDelete}
+                    onHardDelete={onHardDelete}
+                    onRestore={onRestore}
+                  />
                 </li>
               );
             })}

@@ -10,6 +10,7 @@ import type {
   ServiceItem,
 } from "@/lib/catalog/service-catalog.types";
 import { AuthApiError } from "@/services/service-catalog.api";
+import { SelectDropdown } from "./SelectDropdown";
 import { ServiceItemPricingFields } from "./ServiceItemPricingFields";
 
 export type ServiceDialogState =
@@ -120,25 +121,24 @@ export function ServiceItemDialog({
         </div>
 
         <div className="mt-4 flex flex-col gap-3">
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Loại hình
-            <select
+          <div className="flex flex-col gap-1.5">
+            <SelectDropdown
+              label="Loại hình"
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-            >
-              {live.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              options={live.map((c) => ({ value: c.id, label: c.name }))}
+              onChange={setCategoryId}
+              placeholder="Chọn loại hình"
+              listLabel="Chọn loại hình"
+              searchPlaceholder="Tìm loại hình…"
+              unitName="loại hình"
+              emptyTitle="Không tìm thấy loại hình phù hợp"
+            />
             {fieldError(error, "categoryId") && (
-              <span className="font-medium text-red-600 dark:text-red-400">
+              <span className="text-xs font-medium text-red-600 dark:text-red-400">
                 {fieldError(error, "categoryId")}
               </span>
             )}
-          </label>
+          </div>
           <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
             Tên dịch vụ
             <input

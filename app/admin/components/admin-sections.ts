@@ -30,7 +30,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     id: "services",
     label: "Cấu hình dịch vụ",
     description: "Quản lý bảng giá và loại hình sửa chữa.",
-    href: "/admin/services",
+    href: "/admin/services/categories",
     icon: FiSettings,
   },
 ];

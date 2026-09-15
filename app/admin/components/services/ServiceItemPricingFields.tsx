@@ -2,6 +2,7 @@
 
 import type { PriceUnit } from "@/lib/catalog/service-catalog.types";
 import { PRICE_UNIT_LABELS } from "./catalog-format";
+import { SelectDropdown } from "./SelectDropdown";
 
 type ServiceItemPricingFieldsProps = {
   basePrice: string;
@@ -47,20 +48,18 @@ export function ServiceItemPricingFields({
             </span>
           )}
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-          Đơn vị tính
-          <select
+        <div className="flex flex-col gap-1.5">
+          <SelectDropdown
+            label="Đơn vị tính"
             value={priceUnit}
-            onChange={(e) => onPriceUnit(e.target.value as PriceUnit)}
-            className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          >
-            {(Object.keys(PRICE_UNIT_LABELS) as PriceUnit[]).map((u) => (
-              <option key={u} value={u}>
-                {PRICE_UNIT_LABELS[u]}
-              </option>
-            ))}
-          </select>
-        </label>
+            options={(Object.keys(PRICE_UNIT_LABELS) as PriceUnit[]).map(
+              (u) => ({ value: u, label: PRICE_UNIT_LABELS[u] }),
+            )}
+            onChange={(next) => onPriceUnit(next as PriceUnit)}
+            listLabel="Chọn đơn vị tính"
+            unitName="đơn vị tính"
+          />
+        </div>
         <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
           Thời lượng (phút)
           <input
