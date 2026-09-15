@@ -9,6 +9,7 @@ import {
   readJsonBody,
 } from "../helpers/auth.fixtures";
 import {
+  accountStatusRouteMocks,
   authServiceMocks,
   guardMocks,
   nextHeadersMocks,
@@ -22,6 +23,7 @@ import {
 // later means copying one describe block, not inventing new harness code.
 mock.module("@/lib/auth/guards", () => guardMocks);
 mock.module("@/lib/auth/auth.service", () => authServiceMocks);
+mock.module("@/lib/auth/account-status.service", () => accountStatusRouteMocks);
 mock.module("next/headers", () => nextHeadersMocks);
 
 import { POST as loginPost } from "@/app/api/auth/login/route";
@@ -128,24 +130,42 @@ describe("POST /api/auth/login", () => {
 });
 
 describe("GET /api/auth/me", () => {
-  test("returns null user without an access cookie", async () => {
+  test("reports an ended session without an access cookie", async () => {
     const res = await meGet();
-    expect(await readJsonBody(res)).toEqual({ user: null });
+    expect(await readJsonBody(res)).toEqual({ user: null, status: "active" });
+    expect(accountStatusRouteMocks.readAccountSession.mock.calls.length).toBe(
+      0,
+    );
   });
 
-  test("returns the authenticated user", async () => {
-    routeStubs.meUser = makePublicUser();
+  test("returns the authenticated user with its status", async () => {
+    routeStubs.meSession = { user: makePublicUser(), status: "active" };
     setMockCookies({ [ACCESS_COOKIE]: "access-1" });
     const res = await meGet();
     expect(await readJsonBody(res)).toMatchObject({
       user: { phone: "0912345678" },
+      status: "active",
     });
+    expect(accountStatusRouteMocks.readAccountSession.mock.calls[0]?.[0]).toBe(
+      "access-1",
+    );
   });
 
-  test("returns null user when the token is invalid", async () => {
-    routeStubs.meUser = null;
-    setMockCookies({ [ACCESS_COOKIE]: "stale" });
+  test("tells the browser an admin locked the account", async () => {
+    routeStubs.meSession = { user: null, status: "locked" };
+    setMockCookies({ [ACCESS_COOKIE]: "access-1" });
     const res = await meGet();
-    expect(await readJsonBody(res)).toEqual({ user: null });
+    expect(await readJsonBody(res)).toEqual({ user: null, status: "locked" });
+  });
+
+  test("falls back to an active status when the lookup fails", async () => {
+    accountStatusRouteMocks.readAccountSession.mockImplementationOnce(
+      async () => {
+        throw new Error("scylla down");
+      },
+    );
+    setMockCookies({ [ACCESS_COOKIE]: "access-1" });
+    const res = await meGet();
+    expect(await readJsonBody(res)).toEqual({ user: null, status: "active" });
   });
 });

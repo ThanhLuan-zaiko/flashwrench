@@ -44,6 +44,30 @@ Server trả về `event` (`topic`, `payload`, `from`), `subscribed`,
 Auth lúc upgrade dùng cookie `fw_at` qua `authenticate()` nên quyền role
 luôn lấy từ DB, không tin client.
 
+## Cưỡng chế đăng xuất khi admin khóa tài khoản
+
+Luồng này là ví dụ chuẩn cho "một tài khoản bị đá ra ngay lập tức", dùng
+đúng 4 bước và không cần thêm topic mới:
+
+1. **Máy chủ (ScyllaDB):** `applyAdminUserAction(..., "lock")` tăng
+   `token_version` và xóa mọi family trong `refresh_sessions` của tài khoản
+   (`revokeUserSessions`) → access token cũ vô hiệu ngay, không thể refresh
+   lại ở bất kỳ thiết bị nào.
+2. **Máy chủ (realtime):** route `PATCH /api/admin/users/[userId]` phát
+   `publishRealtimeEvent(userTopic(id), { kind: "locked" })`.
+3. **Máy chủ (`/api/auth/me`):** trả `{ user, status }` với
+   `status = "locked" | "deleted" | "active"` — nhờ vậy trình duyệt phân
+   biệt được "hết phiên bình thường" và "bị admin khóa".
+4. **Trình duyệt (`AccountLockGuard`):** nghe `user:{id}` để thoát ngay,
+   **đồng thời** đối chiếu `/api/auth/me` mỗi 60 giây, khi cửa sổ được
+   focus, và mỗi lần socket nối lại. Nhờ hai nguồn độc lập này, thông báo
+   khóa vẫn tới nạn nhân kể cả khi gateway đang tắt hoặc socket vừa đứt.
+   Người dùng nhận toast, một overlay chặn toàn bộ trang, và trang
+   `/login?locked=1` hiển thị thông báo còn lưu lại sau khi đã chuyển trang.
+
+Vì `authenticate()` từ chối tài khoản `locked`/`deleted`, mọi API khác cũng
+tự trả `401` ngay sau khi khóa, không cần thêm logic ở từng route.
+
 ## Thêm topic mới (4 bước)
 
 1. Thêm helper tạo tên topic vào `lib/realtime/protocol.ts`.

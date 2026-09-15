@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
+import { AccountLockGuard } from "@/components/auth/AccountLockGuard";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ThemeInitScript />
         <QueryProvider>
           <ToastProvider>
+            <AccountLockGuard />
             <SiteHeader />
             <div className="flex flex-1 flex-col">{children}</div>
           </ToastProvider>

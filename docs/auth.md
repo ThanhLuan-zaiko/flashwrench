@@ -26,7 +26,9 @@ Tài liệu này mô tả cơ chế đăng nhập đang chạy trong dự án: v
   refresh vào `refresh_sessions` + `refresh_sessions_by_user` (có TTL) →
   đặt 2 cookie.
 - **Gọi API** (`GET /api/auth/me`): verify JWT (chữ ký, `iss`, `aud`,
-  hết hạn) → đọc `users_by_id` → so khớp `token_version` → trả user.
+  hết hạn) → đọc `users_by_id` → so khớp `token_version` → trả user kèm
+  `status` (`active` / `locked` / `deleted`) để trình duyệt biết mình vừa
+  bị khóa hay chỉ hết phiên.
 - **Refresh** (`POST /api/auth/refresh`): tách `(user_id, family_id)` từ
   token → đọc đúng 1 partition → so hash → xoay vòng bằng LWT
   (`UPDATE ... IF token_hash = ?`) để chỉ 1 request thắng khi gọi đồng thời.
@@ -41,6 +43,12 @@ Tài liệu này mô tả cơ chế đăng nhập đang chạy trong dự án: v
   `/account/password`): kiểm tra mật khẩu cũ → băm Argon2id mới → xóa mọi
   family + tăng `token_version` (đá mọi thiết bị khác, access token cũ rớt
   ngay) → cấp cặp token mới cho thiết bị đang đổi.
+- **Bị admin khóa** (`PATCH /api/admin/users/[userId]` với `action: "lock"`,
+  tab Quản lý người dùng): tăng `token_version` + xóa mọi family của tài
+  khoản (`revokeUserSessions`) → mọi thiết bị mất phiên ngay; route phát
+  sự kiện realtime `user:{userId}` và `/api/auth/me` trả
+  `{ user: null, status: "locked" }` để trình duyệt tự thoát và hiển thị
+  thông báo bị khóa (chi tiết ở `docs/realtime.md`).
 
 ## 3. Chống giả mạo token
 

@@ -1,7 +1,13 @@
+import type { AccountSession } from "@/lib/auth/account-status";
 import type { FieldErrors, PublicUser } from "@/lib/auth/user.types";
 import type { SessionListItem } from "@/lib/auth/user-sessions";
 
 export type { FieldErrors, PublicUser, SessionListItem };
+export type {
+  AccountBlockReason,
+  AccountSession,
+  AccountStatus,
+} from "@/lib/auth/account-status";
 
 export type RegisterPayload = {
   fullName: string;
@@ -99,12 +105,13 @@ export function loginRequest(payload: LoginPayload) {
   });
 }
 
-export async function fetchMe(): Promise<PublicUser | null> {
+// Single source for "who am I and is my account still usable". Never throws:
+// the header renders a logged-out state when the call fails.
+export async function fetchAccountSession(): Promise<AccountSession> {
   try {
-    const data = await request<{ user: PublicUser | null }>("/api/auth/me");
-    return data.user;
+    return await request<AccountSession>("/api/auth/me");
   } catch {
-    return null;
+    return { user: null, status: "active" };
   }
 }
 

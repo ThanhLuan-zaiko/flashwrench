@@ -1,4 +1,5 @@
 import { mock } from "bun:test";
+import type { AccountSession, AccountStatus } from "@/lib/auth/account-status";
 import type { RefreshOutcome } from "@/lib/auth/auth.service";
 import type { StaffCreateResult } from "@/lib/auth/staff.types";
 import type { PendingStaffPassword } from "@/lib/auth/staff-pending.service";
@@ -29,6 +30,8 @@ export const routeStubs = {
   pendingPasswordItems: [] as PendingStaffPassword[],
   pendingCryptoConfigured: true,
   resetStaffResult: null as StaffCreateResult | null,
+  adminActionResult: null as AdminActionStub | null,
+  meSession: null as AccountSession | null,
 };
 
 export function okAuthResult(): AuthResult {
@@ -131,6 +134,43 @@ export const realtimePublishMocks = {
   ),
 };
 
+export type AdminActionStub =
+  | { ok: true; user: PublicUser }
+  | { ok: false; status: number; errors: { form: string } };
+
+export const adminUsersRouteMocks = {
+  applyAdminUserAction: mock(
+    async (
+      _adminId: string,
+      _userId: string,
+      _action: string,
+    ): Promise<AdminActionStub> =>
+      routeStubs.adminActionResult ?? {
+        ok: true,
+        user: makePublicUser(),
+      },
+  ),
+};
+
+export function okAccountSession(
+  overrides?: Partial<AccountSession>,
+): AccountSession {
+  return {
+    user: makePublicUser(),
+    status: "active" as AccountStatus,
+    ...overrides,
+  };
+}
+
+// The `/api/auth/me` route resolves the account status through this service,
+// so route suites control "active / locked / deleted" with `routeStubs.meSession`.
+export const accountStatusRouteMocks = {
+  readAccountSession: mock(
+    async (_token: string): Promise<AccountSession> =>
+      routeStubs.meSession ?? okAccountSession(),
+  ),
+};
+
 export const nextHeadersMocks = {
   cookies: mock(async () => ({
     get: (name: string): { value: string } | undefined => {
@@ -156,8 +196,11 @@ export function resetRouteMocks(): void {
   routeStubs.pendingPasswordItems = [];
   routeStubs.pendingCryptoConfigured = true;
   routeStubs.resetStaffResult = null;
+  routeStubs.adminActionResult = null;
+  routeStubs.meSession = null;
   for (const fn of Object.values(guardMocks)) fn.mockClear();
   for (const fn of Object.values(authServiceMocks)) fn.mockClear();
+  for (const fn of Object.values(accountStatusRouteMocks)) fn.mockClear();
   for (const fn of Object.values(passwordChangeMocks)) fn.mockClear();
   for (const fn of Object.values(userSessionMocks)) fn.mockClear();
   for (const fn of Object.values(nextHeadersMocks)) fn.mockClear();
@@ -165,4 +208,5 @@ export function resetRouteMocks(): void {
   for (const fn of Object.values(staffResetRouteMocks)) fn.mockClear();
   for (const fn of Object.values(staffCryptoRouteMocks)) fn.mockClear();
   for (const fn of Object.values(realtimePublishMocks)) fn.mockClear();
+  for (const fn of Object.values(adminUsersRouteMocks)) fn.mockClear();
 }

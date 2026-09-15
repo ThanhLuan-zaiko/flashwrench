@@ -4,6 +4,7 @@ import {
   setIdStatus,
   setRoleStatus,
 } from "./admin-users.repository";
+import { revokeUserSessions } from "./session-revoke.service";
 import { findUserById } from "./user.repository";
 import { monthBucket, type UserRole, type UserStatus } from "./user.types";
 
@@ -197,6 +198,12 @@ export async function applyAdminUserAction(
     target.user_id,
     next,
   );
+
+  // Forced logout: the token_version bump above already invalidates every
+  // live access token, dropping the refresh families removes the ability to
+  // come back on any device. The route then publishes the realtime notice
+  // that makes the browser leave immediately.
+  if (bumpToken) await revokeUserSessions(target.user_id);
 
   const updated = await findUserById(target.user_id);
   if (!updated) return fail(404, "Không tìm thấy người dùng.");

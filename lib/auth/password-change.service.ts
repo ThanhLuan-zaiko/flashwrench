@@ -1,11 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { hashPassword, verifyPassword } from "./password";
-import {
-  createSession,
-  deleteSession,
-  listSessionsByUser,
-} from "./refresh.repository";
+import { createSession } from "./refresh.repository";
 import { createRefreshToken, signAccessToken } from "./session";
+import { revokeUserSessions } from "./session-revoke.service";
 import { clearTempPassword } from "./staff-pending.service";
 import {
   bumpTokenVersion,
@@ -61,17 +58,8 @@ export async function changePassword(
   // pending row so the admin list stops showing it (realtime follows).
   await clearTempPassword(userId);
 
-  const sessions = await listSessionsByUser(userId).catch(() => []);
-  await Promise.all(
-    sessions.map((s) =>
-      deleteSession(
-        userId,
-        s.family_id,
-        s.created_at ? new Date(s.created_at) : null,
-      ).catch(() => undefined),
-    ),
-  );
-  // Also bump the version so other devices' access tokens die immediately.
+  // Kick every other device: refresh families go, access tokens die on bump.
+  await revokeUserSessions(userId);
   await bumpTokenVersion(userId);
 
   const updated = await findUserById(userId);

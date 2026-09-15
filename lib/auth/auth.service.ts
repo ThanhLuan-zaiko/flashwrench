@@ -4,7 +4,6 @@ import {
   createSession,
   deleteSession,
   findSession,
-  listSessionsByUser,
   rotateSessionCas,
   touchSessionIndex,
 } from "./refresh.repository";
@@ -17,6 +16,7 @@ import {
   signAccessToken,
   verifyAccessToken,
 } from "./session";
+import { revokeUserSessions } from "./session-revoke.service";
 import {
   bumpTokenVersion,
   createUser,
@@ -324,16 +324,7 @@ export async function revokeSession(
 
 // Log out everywhere: drop all families and invalidate old access tokens via token_version.
 export async function revokeAllSessions(userId: string): Promise<void> {
-  const sessions = await listSessionsByUser(userId).catch(() => []);
-  await Promise.all(
-    sessions.map((s) =>
-      deleteSession(
-        userId,
-        s.family_id,
-        s.created_at ? new Date(s.created_at) : null,
-      ).catch(() => undefined),
-    ),
-  );
+  await revokeUserSessions(userId);
   await bumpTokenVersion(userId);
 }
 

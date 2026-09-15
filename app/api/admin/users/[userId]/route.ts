@@ -12,7 +12,7 @@ import {
 } from "@/lib/auth/staff.service";
 import { resetStaffTempPassword } from "@/lib/auth/staff-password-reset.service";
 import type { UserRole } from "@/lib/auth/user.types";
-import { STAFF_PASSWORDS_TOPIC } from "@/lib/realtime/protocol";
+import { STAFF_PASSWORDS_TOPIC, userTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 type StaffAction = "update" | "soft" | "restore";
@@ -99,6 +99,12 @@ export async function PATCH(
         { errors: result.errors },
         { status: result.status },
       );
+    }
+    // Locking already bumped token_version and dropped every refresh family
+    // (live sessions die server-side); the realtime event makes the logout
+    // immediate in the browser plus shows the locked notice.
+    if (action === "lock") {
+      void publishRealtimeEvent(userTopic(userId), { kind: "locked" });
     }
     return NextResponse.json({ user: result.user });
   } catch {

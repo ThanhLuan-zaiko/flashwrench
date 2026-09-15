@@ -3,6 +3,7 @@ import { makeAdminRoleRow, makeUserRow } from "../helpers/auth.fixtures";
 import {
   adminStubs,
   adminUsersRepoMocks,
+  refreshRepoMocks,
   resetServiceMocks,
   serviceStubs,
   userRepoMocks,
@@ -13,6 +14,9 @@ import {
 // defined above, so every suite below reconfigures via stubs.
 mock.module("@/lib/auth/admin-users.repository", () => adminUsersRepoMocks);
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
+// Locking revokes the account's refresh families (forced logout), so the
+// session repository is stubbed too.
+mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
 
 import {
   applyAdminUserAction,
@@ -101,6 +105,70 @@ describe("applyAdminUserAction", () => {
     expect(adminUsersRepoMocks.setIdStatus.mock.calls[0]?.[1]).toBe("locked");
     expect(adminUsersRepoMocks.setIdStatus.mock.calls[0]?.[2]).toBe(5);
     expect(adminUsersRepoMocks.setRoleStatus.mock.calls[0]?.[4]).toBe("locked");
+  });
+
+  test("forces a logout on every device when locking", async () => {
+    serviceStubs.userById = makeUserRow({
+      user_id: "target-1",
+      role: "customer",
+      status: "active",
+      token_version: 2,
+    });
+    const createdAt = new Date("2026-09-02T00:00:00.000Z");
+    serviceStubs.userSessions = [
+      {
+        family_id: "laptop",
+        device_label: "Chrome",
+        created_at: createdAt,
+        expires_at: null,
+      },
+      {
+        family_id: "phone",
+        device_label: "Safari",
+        created_at: null,
+        expires_at: null,
+      },
+    ];
+
+    await applyAdminUserAction(ADMIN_ID, "target-1", "lock");
+
+    expect(refreshRepoMocks.listSessionsByUser.mock.calls[0]?.[0]).toBe(
+      "target-1",
+    );
+    expect(refreshRepoMocks.deleteSession.mock.calls).toEqual([
+      ["target-1", "laptop", createdAt],
+      ["target-1", "phone", null],
+    ]);
+  });
+
+  test("keeps the sessions of an approved or unlocked account", async () => {
+    serviceStubs.userById = makeUserRow({
+      user_id: "target-1",
+      role: "mechanic",
+      status: "pending_verification",
+    });
+    await applyAdminUserAction(ADMIN_ID, "target-1", "approve");
+    expect(refreshRepoMocks.listSessionsByUser.mock.calls.length).toBe(0);
+
+    serviceStubs.userById = makeUserRow({
+      user_id: "target-1",
+      role: "mechanic",
+      status: "locked",
+    });
+    await applyAdminUserAction(ADMIN_ID, "target-1", "unlock");
+    expect(refreshRepoMocks.listSessionsByUser.mock.calls.length).toBe(0);
+    expect(refreshRepoMocks.deleteSession.mock.calls.length).toBe(0);
+  });
+
+  test("does not touch sessions when the lock is rejected", async () => {
+    serviceStubs.userById = makeUserRow({
+      user_id: "target-1",
+      role: "customer",
+      status: "locked",
+    });
+    const result = await applyAdminUserAction(ADMIN_ID, "target-1", "lock");
+    expect(result).toMatchObject({ ok: false, status: 400 });
+    expect(refreshRepoMocks.deleteSession.mock.calls.length).toBe(0);
   });
 
   test("unlocks a locked account", async () => {
