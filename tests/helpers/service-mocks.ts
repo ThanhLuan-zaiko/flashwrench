@@ -14,6 +14,7 @@ import type {
   ServiceCategoryRow,
   ServiceRow,
 } from "@/lib/catalog/service-catalog.types";
+import type { ComplaintRow } from "@/lib/complaints/complaint.types";
 import { makeUserRow } from "./auth.fixtures";
 
 // Mutable stub state for service-level suites. Factories in the test files
@@ -166,12 +167,15 @@ export function resetServiceMocks(): void {
   catalogStubs.serviceSlugOwner = null;
   catalogStubs.serviceSlugClaimed = true;
   catalogStubs.serviceByCategoryRows = [];
+  complaintStubs.complaintRows = [];
+  complaintStubs.complaintById = null;
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
   for (const fn of Object.values(adminUsersRepoMocks)) fn.mockClear();
   for (const fn of Object.values(categoryRepoMocks)) fn.mockClear();
   for (const fn of Object.values(catalogServiceRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
 }
 
 // Mutable stub state for the catalog suites (service-categories + services).
@@ -280,5 +284,27 @@ export const catalogServiceRepoMocks = {
   bulkRefreshServiceCategoryName: mock(
     async (_serviceIds: string[], _categoryName: string): Promise<void> =>
       undefined,
+  ),
+};
+
+// Mutable stub state for the complaint suites. Same pattern as the
+// catalog stubs above: tests mutate `complaintStubs` and assert on
+// `mock.calls`. Nothing touches a real database.
+export const complaintStubs = {
+  complaintRows: [] as ComplaintRow[],
+  complaintById: null as ComplaintRow | null,
+};
+
+export const complaintRepoMocks = {
+  listComplaintRows: mock(
+    async (): Promise<ComplaintRow[]> => complaintStubs.complaintRows,
+  ),
+  findComplaintRowById: mock(
+    async (_complaintId: string): Promise<ComplaintRow | null> =>
+      complaintStubs.complaintById,
+  ),
+  insertComplaint: mock(async (_params: unknown): Promise<void> => undefined),
+  updateComplaintStatus: mock(
+    async (_params: unknown): Promise<void> => undefined,
   ),
 };

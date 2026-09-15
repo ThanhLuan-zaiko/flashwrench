@@ -805,3 +805,39 @@ CREATE TABLE IF NOT EXISTS notifications_by_user (
   is_read         BOOLEAN,
   PRIMARY KEY ((user_id), created_at, notification_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, notification_id ASC);
+
+-- ============================================================================
+-- 13. CUSTOMER COMPLAINTS (admin-handled)
+-- status = open | in_review | resolved | rejected
+-- ref_type = booking | emergency | order | account | other
+-- ============================================================================
+
+-- Query: single complaint details (reporter/target names denormalized)
+CREATE TABLE IF NOT EXISTS complaints_by_id (
+  complaint_id    UUID PRIMARY KEY,
+  reporter_name   TEXT,
+  reporter_phone  TEXT,
+  target_user_id  UUID,
+  target_name     TEXT,
+  ref_type        TEXT,
+  ref_id          TEXT,
+  subject         TEXT,
+  body            TEXT,
+  status          TEXT,
+  resolution_note TEXT,
+  month_bucket    TEXT, -- 'YYYY-MM', for monthly queries
+  created_at      TIMESTAMP,
+  updated_at      TIMESTAMP,
+  resolved_at     TIMESTAMP
+);
+
+-- Query: admin filter complaints by status (monthly bucket avoids hot partitions)
+CREATE TABLE IF NOT EXISTS complaints_by_status (
+  status         TEXT,
+  month_bucket   TEXT,
+  created_at     TIMESTAMP,
+  complaint_id   UUID,
+  subject        TEXT,
+  reporter_phone TEXT,
+  PRIMARY KEY ((status, month_bucket), created_at, complaint_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, complaint_id ASC);
