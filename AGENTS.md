@@ -70,6 +70,7 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
   - Persist the user's explicit choice in `localStorage` and apply the `dark` class on `<html>` before paint (inline init script) to avoid a flash of the wrong theme. Listen to OS theme changes while no explicit choice is saved.
   - A visible theme toggle button MUST sit next to the login button in the header, with Vietnamese accessible labels (e.g., `aria-label="Chuyển sang giao diện tối"` / `"Chuyển sang giao diện sáng"`).
 - **Monochrome Palette:** UI uses ONLY neutral colors (white, zinc scale, black) for light/dark themes. Do NOT introduce other hues (no orange/blue/green/red accents) except semantic states explicitly requested. Hierarchy comes from borders, spacing, typography, and `dark:` contrast — not from color.
+  - **Approved semantic palette (explicitly requested):** validation errors use red (`text-red-600 dark:text-red-400`, input borders `border-red-500 dark:border-red-400`, alert boxes `border-red-300 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300` — see `components/auth/FormAlert.tsx`); toasts use a colored left edge plus matching icon — success green (`border-l-green-500`, `text-green-600 dark:text-green-400`), error red, info stays monochrome. No other hues without a new explicit request.
 - **Subtle Animations (Tailwind only):** Keep the UI lively with SMALL, fast micro-animations built ONLY from Tailwind utilities.
   - Prefer built-in `transition-*`, `duration-*`, `ease-*` (hover/active states) and `animate-*` for enter effects.
   - Custom keyframes are FORBIDDEN in ALL forms — no `@keyframes`, no `@theme --animate-*` tokens. `globals.css` MUST stay exactly 2 lines (`@import` + `@custom-variant dark`). Any animation needing keyframes is OUT of scope; use instant render instead.
@@ -101,6 +102,7 @@ When generating code for this project, you MUST:
 7. **Git Safety:** After finishing a coding task, follow the Git Workflow Rules defined in **Section 9** to check for garbage files. **NEVER** execute any git write operations (commit, branch, tag, push) on your own.
 8. **English-Only Code:** All comments, identifiers, logs, and CQL/SQL comments MUST be in English. Vietnamese WITH full diacritics is allowed ONLY in files under `docs/` and in user-facing web UI strings (including user-facing validation/error messages).
 9. **Frontend Bento GSAP Rules:** For any frontend task involving bento grid, card layouts, dashboards, landing sections, or GSAP motion, you MUST read `frontend-bento-gsap.md` at the repo root first and follow it. That file is the single source of truth for bento/GSAP work and takes precedence over generic styling defaults.
+10. **Tests With Features:** Every new feature or behavior change MUST ship with tests. See **Section 10** (Testing Rules) for suites, conventions, and the mandatory green gate.
 
 ---
 
@@ -153,3 +155,26 @@ The following files/folders are considered **GARBAGE** and must NEVER be committ
 
 ### 9.5. Reporting Format
 When reporting git status after a task, use this format:
+
+---
+
+## 10. Testing Rules (MANDATORY)
+Every new feature or behavior change MUST ship with tests. No task is complete with a red suite.
+
+### 10.1. Suites
+- **Unit** (`tests/unit/`): pure logic only — validation, formatting, helpers. No mocks needed.
+- **Integration** (`tests/integration/`): services with repository mocks. NEVER hit a real database.
+- **Regression** (`tests/regression/`): end-to-end bug scenarios for fixed bugs.
+- Run with Bun: `bun run test` (all suites), `bun run test:unit`, `bun run test:integration`, `bun run test:regression`.
+
+### 10.2. Conventions
+- Framework is `bun:test` (`describe` / `test` / `expect`).
+- Each test file runs in its own process via `tests/run-suite.sh` because `mock.module` registries leak across files. Never rely on cross-file ordering or shared module state.
+- Mock repositories with `mock.module(...)` at the top of the test file (helpers first, mocks second, system under test last).
+- Extend the shared stubs in `tests/helpers/service-mocks.ts` and builders in `tests/helpers/*.fixtures.ts` instead of inventing file-local mocks for the same modules.
+- Cover both happy paths and guards: invalid input, conflicts (409), not-found (404), forbidden transitions (400/403), and — for destructive actions — proof that storage is untouched on rejection.
+
+### 10.3. Green Gate
+Before considering a task complete, ALL of these MUST pass:
+1. `bun run test` (every suite green).
+2. `bun run check:all` (lint + type-check + file line limits).

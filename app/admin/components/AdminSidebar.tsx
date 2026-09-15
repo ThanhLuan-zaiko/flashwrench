@@ -34,7 +34,7 @@ export function AdminSidebar({
 
       <aside
         aria-label="Menu quản trị"
-        className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-zinc-200 bg-white transition-transform duration-200 motion-safe:ease-out md:static md:z-auto md:shrink-0 dark:border-zinc-800 dark:bg-zinc-950 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-zinc-200 bg-white transition-transform duration-200 motion-safe:ease-out md:sticky md:top-16 md:bottom-auto md:z-30 md:h-[calc(100vh-4rem)] md:shrink-0 md:self-start dark:border-zinc-800 dark:bg-zinc-950 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 ${collapsed ? "md:w-20" : "md:w-64"}`}
       >

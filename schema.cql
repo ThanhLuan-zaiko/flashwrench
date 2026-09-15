@@ -246,7 +246,11 @@ CREATE TABLE IF NOT EXISTS service_categories (
   icon        TEXT,
   description TEXT,
   sort_order  INT,
-  is_active   BOOLEAN
+  is_active   BOOLEAN,
+  is_deleted  BOOLEAN,   -- Soft delete: true = hidden in trash, restorable
+  created_at  TIMESTAMP,
+  updated_at  TIMESTAMP,
+  deleted_at  TIMESTAMP  -- Set on soft delete, null on restore
 );
 
 CREATE TABLE IF NOT EXISTS service_categories_by_slug (
@@ -268,7 +272,10 @@ CREATE TABLE IF NOT EXISTS services_by_id (
   is_home_supported      BOOLEAN,
   is_emergency_supported BOOLEAN,
   is_active              BOOLEAN,
-  created_at             TIMESTAMP
+  is_deleted             BOOLEAN,   -- Soft delete: true = hidden in trash
+  created_at             TIMESTAMP,
+  updated_at             TIMESTAMP,
+  deleted_at             TIMESTAMP
 );
 
 -- Query: list services by category (booking menu)
@@ -280,6 +287,7 @@ CREATE TABLE IF NOT EXISTS services_by_category (
   base_price  BIGINT,
   duration_min INT,
   is_active   BOOLEAN,
+  is_deleted  BOOLEAN, -- denormalized soft-delete flag for cheap filtering
   PRIMARY KEY ((category_id), service_id)
 );
 

@@ -1,68 +1,204 @@
 "use client";
 
-import {
-  FiCheckCircle,
-  FiDollarSign,
-  FiLayers,
-  FiPauseCircle,
-} from "react-icons/fi";
+import { useState } from "react";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { ServicePricesCard } from "./bento/ServicePricesCard";
-import { ServicesHeroCard } from "./bento/ServicesHeroCard";
-import { type ServiceStat, ServicesStatCard } from "./bento/ServicesStatCard";
-import { ServiceTypesCard } from "./bento/ServiceTypesCard";
+import { BentoCard } from "./bento/BentoCard";
+import { ServicesStatCard } from "./bento/ServicesStatCard";
+import { CatalogDeleteDialog } from "./services/CatalogDeleteDialog";
+import { CatalogTrashPanel } from "./services/CatalogTrashPanel";
+import { CATALOG_TABS, type CatalogTab } from "./services/catalog-tabs";
+import {
+  type CategoryDialogState,
+  ServiceCategoryDialog,
+} from "./services/ServiceCategoryDialog";
+import { ServiceCategoryList } from "./services/ServiceCategoryList";
+import {
+  type ServiceDialogState,
+  ServiceItemDialog,
+} from "./services/ServiceItemDialog";
+import { ServicePriceList } from "./services/ServicePriceList";
+import { useCatalogOverview } from "./services/useCatalogOverview";
+import { useCatalogRowActions } from "./services/useCatalogRowActions";
 
-const SERVICE_STATS: ServiceStat[] = [
-  {
-    id: "groups",
-    label: "Nhóm dịch vụ",
-    value: "3",
-    hint: "Bảo dưỡng · Sửa chữa · Cứu hộ",
-    icon: FiLayers,
-  },
-  {
-    id: "active",
-    label: "Đang áp dụng",
-    value: "3/3",
-    hint: "Hiển thị cho khách hàng",
-    icon: FiCheckCircle,
-  },
-  {
-    id: "paused",
-    label: "Tạm tắt",
-    value: "0",
-    hint: "Không có nhóm nào bị ẩn",
-    icon: FiPauseCircle,
-  },
-  {
-    id: "prices",
-    label: "Mục giá",
-    value: "—",
-    hint: "Chờ API danh mục",
-    icon: FiDollarSign,
-  },
-];
-
-// Bento overview: big type statement, hero plus stats, catalogue cards.
+// Bento root for service config: live stats, tabbed CRUD, trash restore.
+// Data via useCatalogOverview, mutations via useCatalogRowActions.
 export function ServicesSection() {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  const [tab, setTab] = useState<CatalogTab>("categories");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [categoryDialog, setCategoryDialog] =
+    useState<CategoryDialogState | null>(null);
+  const [serviceDialog, setServiceDialog] = useState<ServiceDialogState | null>(
+    null,
+  );
+  const actions = useCatalogRowActions();
+  const overview = useCatalogOverview(categoryFilter);
+
+  const categoryKey =
+    categoryDialog?.mode === "edit" ? categoryDialog.item.id : "create";
+  const serviceKey =
+    serviceDialog?.mode === "edit"
+      ? serviceDialog.item.id
+      : (serviceDialog?.presetCategoryId ?? "create");
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
         eyebrow="Cấu hình dịch vụ"
         title="Giá rõ, bật tắt gọn."
-        subtitle="Ba nhóm dịch vụ, một bảng giá minh bạch cho mọi khách hàng."
+        subtitle="Quản lý loại hình sửa chữa và bảng giá áp dụng cho khách hàng trên toàn hệ thống."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        <ServicesHeroCard />
-        {SERVICE_STATS.map((stat) => (
+        {overview.stats.map((stat) => (
           <ServicesStatCard key={stat.id} stat={stat} />
         ))}
-        <ServiceTypesCard />
-        <ServicePricesCard />
+        <BentoCard
+          label="Quản lý danh mục"
+          className="sm:col-span-2 lg:col-span-4"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div
+              role="tablist"
+              aria-label="Chọn nhóm quản lý"
+              className="flex flex-wrap gap-1.5"
+            >
+              {CATALOG_TABS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`flex min-h-[44px] items-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
+                    tab === t.id
+                      ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                      : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            {tab !== "trash" ? (
+              <button
+                type="button"
+                onClick={() =>
+                  tab === "categories"
+                    ? setCategoryDialog({ mode: "create" })
+                    : setServiceDialog({
+                        mode: "create",
+                        presetCategoryId: categoryFilter,
+                      })
+                }
+                className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              >
+                <FiPlus aria-hidden="true" className="h-4 w-4" />
+                {tab === "categories" ? "Thêm loại hình" : "Thêm mục giá"}
+              </button>
+            ) : (
+              <p className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <FiTrash2 aria-hidden="true" className="h-4 w-4" />
+                Khôi phục hoặc xóa vĩnh viễn
+              </p>
+            )}
+          </div>
+
+          <div role="tabpanel" className="mt-4">
+            {tab === "categories" && (
+              <ServiceCategoryList
+                items={overview.liveCategories}
+                isPending={overview.categoriesQuery.isPending}
+                isError={overview.categoriesQuery.isError}
+                pendingId={actions.pendingId}
+                trashMode={false}
+                onEdit={(item) => setCategoryDialog({ mode: "edit", item })}
+                onToggle={actions.toggleCategory}
+                onSoftDelete={(item) => actions.openSoft("category", item)}
+                onHardDelete={(item) => actions.openHard("category", item)}
+                onRestore={actions.restoreCategory}
+                onRetry={() => void overview.categoriesQuery.refetch()}
+              />
+            )}
+            {tab === "prices" && (
+              <ServicePriceList
+                items={overview.visibleServices}
+                isPending={overview.servicesQuery.isPending}
+                isError={overview.servicesQuery.isError}
+                pendingId={actions.pendingId}
+                trashMode={false}
+                categoryFilter={categoryFilter}
+                categoryOptions={overview.liveCategories.map((c) => ({
+                  id: c.id,
+                  name: c.name,
+                }))}
+                onFilterChange={setCategoryFilter}
+                onEdit={(item) => setServiceDialog({ mode: "edit", item })}
+                onToggle={actions.toggleService}
+                onSoftDelete={(item) => actions.openSoft("service", item)}
+                onHardDelete={(item) => actions.openHard("service", item)}
+                onRestore={actions.restoreService}
+                onRetry={() => void overview.servicesQuery.refetch()}
+              />
+            )}
+            {tab === "trash" && (
+              <CatalogTrashPanel
+                trashCategories={overview.trashCategories}
+                trashServices={overview.trashServices}
+                categoriesPending={overview.categoriesQuery.isPending}
+                categoriesError={overview.categoriesQuery.isError}
+                servicesPending={overview.servicesQuery.isPending}
+                servicesError={overview.servicesQuery.isError}
+                pendingId={actions.pendingId}
+                onEditCategory={(item) =>
+                  setCategoryDialog({ mode: "edit", item })
+                }
+                onToggleCategory={actions.toggleCategory}
+                onSoftCategory={(item) => actions.openSoft("category", item)}
+                onHardCategory={(item) => actions.openHard("category", item)}
+                onRestoreCategory={actions.restoreCategory}
+                onRetryCategories={() =>
+                  void overview.categoriesQuery.refetch()
+                }
+                onEditService={(item) =>
+                  setServiceDialog({ mode: "edit", item })
+                }
+                onToggleService={actions.toggleService}
+                onSoftService={(item) => actions.openSoft("service", item)}
+                onHardService={(item) => actions.openHard("service", item)}
+                onRestoreService={actions.restoreService}
+                onRetryServices={() => void overview.servicesQuery.refetch()}
+              />
+            )}
+          </div>
+        </BentoCard>
       </div>
+
+      {categoryDialog && (
+        <ServiceCategoryDialog
+          key={`category-${categoryKey}`}
+          dialog={categoryDialog}
+          onClose={() => setCategoryDialog(null)}
+        />
+      )}
+      {serviceDialog && (
+        <ServiceItemDialog
+          key={`service-${serviceKey}`}
+          dialog={serviceDialog}
+          categories={overview.liveCategories}
+          onClose={() => setServiceDialog(null)}
+        />
+      )}
+      <CatalogDeleteDialog
+        target={actions.deleteTarget}
+        confirmText={actions.confirmText}
+        pending={actions.deletePending}
+        error={actions.deleteError}
+        onConfirmText={actions.setConfirmText}
+        onClose={actions.closeDelete}
+        onConfirm={actions.confirmDelete}
+      />
     </div>
   );
 }

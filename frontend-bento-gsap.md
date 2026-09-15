@@ -30,6 +30,10 @@ Always respect these from `AGENTS.md`:
 - No `style={{}}` for static styling. All static styling is Tailwind.
 - Monochrome palette only: white, zinc scale, black + `dark:` variants.
   No accent hues except explicitly requested semantic states.
+  Approved: validation errors in red (`text-red-600 dark:text-red-400`,
+  alert boxes like `components/auth/FormAlert.tsx`); toasts carry a
+  colored left edge plus matching icon (success green, error red,
+  info monochrome).
 - No `shadow-*` except floating overlays (modal, dropdown, tooltip).
   Use `border`, `divide-*`, spacing, typography for hierarchy.
 - Icons from `react-icons` only. Never hand-write inline `<svg>`.
@@ -65,6 +69,31 @@ Rules:
    secondary: `text-zinc-500 dark:text-zinc-400`.
 8. Minimum touch target 44px for all interactive cards and buttons.
 9. No horizontal overflow on 360px wide viewport. Test this.
+10. Guidance copy only: user-facing strings tell the user what to do
+    or what is happening, in plain Vietnamese. Never expose
+    implementation jargon (CRUD, slug, API, table or column names,
+    debug internals, issue-tracker wording). Data values (names,
+    codes, prices) may be displayed; the surrounding instructions
+    must stay non-technical.
+    Bad: "CRUD loại hình, xóa mềm cần nhập slug."
+    Good: "Thêm, sửa, ẩn hoặc xóa loại hình. Mục đã ẩn nằm trong
+    Thùng rác và khôi phục được."
+11. Paginate every list that can grow (admin tables, histories,
+    search results). Never render an unbounded list. Default to
+    8 rows per page for dense admin rows.
+    - Pager sits below the list: previous/next buttons plus a
+      "Trang X trên Y" label and an "Hiển thị A–B trên N mục"
+      line (`aria-live="polite"`). Buttons keep the 44px minimum,
+      with Vietnamese labels (`aria-label="Trang trước"` /
+      `"Trang sau"`), and hide the whole pager on a single page.
+    - Reset to the first page when filters, search text, or tabs
+      change. Clamp the current page after deletes so the view
+      never lands on an empty page.
+    - Data: include page and filters in the TanStack Query key and
+      keep previous-page data visible while the next page loads
+      (`placeholderData: keepPreviousData`). Large tables paginate
+      server-side (limit/offset or cursor); client-side slicing is
+      allowed only for small config tables.
 
 Preferred Tailwind skeleton (compose, do not copy blindly):
 
@@ -207,6 +236,9 @@ Before finishing, verify:
    for static layout, no inline `<svg>`.
 6. `git status` inspected, garbage files reported, no commit
    without explicit user confirmation.
+7. User-facing copy is guidance-oriented with no technical jargon
+   (no CRUD, slug, API, or debug wording in instructions).
+8. Growing lists paginate with reset-on-filter and clamped pages.
 
 ## 8. Anti-Patterns (Forbidden)
 
@@ -217,4 +249,8 @@ Before finishing, verify:
 - Colored gradients or accent borders to fake hierarchy.
 - `shadow-lg` on static cards. Borders only.
 - English placeholder copy shipped as user-facing text.
+- Technical jargon (CRUD, slug, API, debug text) in user-facing
+  instructions. Show data, guide with plain words.
+- Unbounded lists with no pagination, or pagers that forget to
+  reset on filter change.
 - Client Components for static cards that need no motion.

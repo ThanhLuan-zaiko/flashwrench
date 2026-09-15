@@ -6,7 +6,44 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Load dev env if present (contact points / port / container name).
-set -a; [ -f "$SCRIPT_DIR/.env.local" ] && . "$SCRIPT_DIR/.env.local"; set +a
+# Safe loader: parse KEY=VALUE line by line instead of sourcing, so values
+# with spaces or Vietnamese text (e.g. SEED_ADMIN_FULL_NAME) cannot be
+# executed as commands. Only valid identifiers are exported, no eval.
+load_env_file() {
+  local env_file="$1"
+  [ -f "$env_file" ] || return 0
+  local line key value quote
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%$'\r'}"
+    line="${line#"${line%%[![:space:]]*}"}"
+    [ -z "$line" ] && continue
+    case "$line" in \#*) continue ;; esac
+    case "$line" in export\ *) line="${line#export }" ;; esac
+    line="${line#"${line%%[![:space:]]*}"}"
+    case "$line" in *=*) ;; *) continue ;; esac
+    key="${line%%=*}"
+    value="${line#*=}"
+    key="${key%"${key##*[![:space:]]}"}"
+    key="${key#"${key%%[![:space:]]*}"}"
+    case "$key" in '' | *[!A-Za-z0-9_]* | [0-9]*) continue ;; esac
+    quote="${value%"${value#?}"}"
+    if [ "$quote" = '"' ] || [ "$quote" = "'" ]; then
+      case "$value" in
+        "\"*\"") value="${value#\"}"; value="${value%\"}" ;;
+        "'*'") value="${value#\'}"; value="${value%\'}" ;;
+        *)
+          value="${value#"${value%%[![:space:]]*}"}"
+          value="${value%"${value##*[![:space:]]}"}"
+          ;;
+      esac
+    else
+      value="${value#"${value%%[![:space:]]*}"}"
+      value="${value%"${value##*[![:space:]]}"}"
+    fi
+    export "$key=$value"
+  done <"$env_file"
+}
+load_env_file "$SCRIPT_DIR/.env.local"
 
 KEYSPACE="${SCYLLA_KEYSPACE:-flashwrench}"
 HOST="${SCYLLA_CONTACT_POINTS:-127.0.0.1}"

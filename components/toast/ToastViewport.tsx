@@ -6,8 +6,25 @@ import type { ToastItem, ToastVariant } from "./toast.types";
 
 const EXIT_MS = 300;
 
+// Approved semantic accents (see AGENTS.md): success takes green, error
+// takes red, info stays monochrome. The card surface itself never changes.
+const VARIANT_STYLES: Record<ToastVariant, { icon: string; edge: string }> = {
+  success: {
+    icon: "h-5 w-5 shrink-0 text-green-600 dark:text-green-400",
+    edge: "border-l-green-500",
+  },
+  error: {
+    icon: "h-5 w-5 shrink-0 text-red-600 dark:text-red-400",
+    edge: "border-l-red-500",
+  },
+  info: {
+    icon: "h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200",
+    edge: "border-l-zinc-300 dark:border-l-zinc-600",
+  },
+};
+
 function ToastIcon({ variant }: { variant: ToastVariant }) {
-  const className = "h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200";
+  const className = VARIANT_STYLES[variant].icon;
   if (variant === "success")
     return <FiCheckCircle aria-hidden="true" className={className} />;
   if (variant === "error")
@@ -38,7 +55,7 @@ function ToastCard({
 
   return (
     <output
-      className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out dark:border-zinc-800 dark:bg-zinc-900 ${
+      className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border border-zinc-200 border-l-4 bg-white px-4 py-3 shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out dark:border-zinc-800 dark:bg-zinc-900 ${VARIANT_STYLES[toast.variant].edge} ${
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >

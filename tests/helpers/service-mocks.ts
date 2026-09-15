@@ -9,6 +9,11 @@ import type {
   CreateUserParams,
 } from "@/lib/auth/user.repository";
 import type { UserRow } from "@/lib/auth/user.types";
+import type {
+  ServiceByCategoryRow,
+  ServiceCategoryRow,
+  ServiceRow,
+} from "@/lib/catalog/service-catalog.types";
 import { makeUserRow } from "./auth.fixtures";
 
 // Mutable stub state for service-level suites. Factories in the test files
@@ -152,8 +157,114 @@ export function resetServiceMocks(): void {
   serviceStubs.rotateApplied = true;
   serviceStubs.userSessions = [];
   adminStubs.rolePages = [];
+  catalogStubs.categoryRows = [];
+  catalogStubs.categoryById = null;
+  catalogStubs.categorySlugOwner = null;
+  catalogStubs.serviceRows = [];
+  catalogStubs.serviceById = null;
+  catalogStubs.serviceSlugOwner = null;
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
   for (const fn of Object.values(adminUsersRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(categoryRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(catalogServiceRepoMocks)) fn.mockClear();
 }
+
+// Mutable stub state for the catalog suites (service-categories + services).
+// Same pattern as the auth stubs above: tests mutate `catalogStubs` and
+// assert on `mock.calls`. Nothing touches a real database.
+export const catalogStubs = {
+  categoryRows: [] as ServiceCategoryRow[],
+  categoryById: null as ServiceCategoryRow | null,
+  categorySlugOwner: null as string | null,
+  serviceRows: [] as ServiceRow[],
+  serviceById: null as ServiceRow | null,
+  serviceSlugOwner: null as string | null,
+};
+
+export const categoryRepoMocks = {
+  listCategoryRows: mock(
+    async (): Promise<ServiceCategoryRow[]> => catalogStubs.categoryRows,
+  ),
+  findCategoryRowById: mock(
+    async (_categoryId: string): Promise<ServiceCategoryRow | null> =>
+      catalogStubs.categoryById,
+  ),
+  findCategoryIdBySlug: mock(
+    async (_slug: string): Promise<string | null> =>
+      catalogStubs.categorySlugOwner,
+  ),
+  insertCategory: mock(async (_params: unknown): Promise<void> => undefined),
+  updateCategoryRow: mock(async (_params: unknown): Promise<void> => undefined),
+  moveCategorySlug: mock(
+    async (
+      _oldSlug: string,
+      _newSlug: string,
+      _categoryId: string,
+    ): Promise<void> => undefined,
+  ),
+  setCategoryActive: mock(
+    async (
+      _categoryId: string,
+      _isActive: boolean,
+      _updatedAt: Date,
+    ): Promise<void> => undefined,
+  ),
+  setCategoryDeleted: mock(
+    async (
+      _categoryId: string,
+      _isDeleted: boolean,
+      _deletedAt: Date | null,
+      _updatedAt: Date,
+    ): Promise<void> => undefined,
+  ),
+  hardDeleteCategory: mock(
+    async (_categoryId: string, _slug: string): Promise<void> => undefined,
+  ),
+};
+
+export const catalogServiceRepoMocks = {
+  listServiceRows: mock(
+    async (): Promise<ServiceRow[]> => catalogStubs.serviceRows,
+  ),
+  findServiceRowById: mock(
+    async (_serviceId: string): Promise<ServiceRow | null> =>
+      catalogStubs.serviceById,
+  ),
+  findServiceIdBySlug: mock(
+    async (_slug: string): Promise<string | null> =>
+      catalogStubs.serviceSlugOwner,
+  ),
+  listServiceRowsByCategory: mock(
+    async (_categoryId: string): Promise<ServiceByCategoryRow[]> => [],
+  ),
+  insertService: mock(async (_params: unknown): Promise<void> => undefined),
+  updateServiceRows: mock(async (_params: unknown): Promise<void> => undefined),
+  setServiceActive: mock(
+    async (
+      _serviceId: string,
+      _categoryId: string,
+      _isActive: boolean,
+    ): Promise<void> => undefined,
+  ),
+  setServiceDeleted: mock(
+    async (
+      _serviceId: string,
+      _categoryId: string,
+      _isDeleted: boolean,
+      _deletedAt: Date | null,
+    ): Promise<void> => undefined,
+  ),
+  hardDeleteService: mock(
+    async (
+      _serviceId: string,
+      _categoryId: string,
+      _slug: string,
+    ): Promise<void> => undefined,
+  ),
+  refreshServiceCategoryName: mock(
+    async (_serviceId: string, _categoryName: string): Promise<void> =>
+      undefined,
+  ),
+};
