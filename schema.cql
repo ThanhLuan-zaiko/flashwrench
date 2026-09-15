@@ -74,6 +74,17 @@ CREATE TABLE IF NOT EXISTS users_by_email (
   user_id UUID
 );
 
+-- Query: pending temp passwords created by admins. One row per staff account,
+-- removed as soon as the staff member changes their password or the account
+-- is hard-deleted. The password is stored encrypted (AES-GCM); only admins
+-- may decrypt it through the pending-passwords endpoint.
+CREATE TABLE IF NOT EXISTS staff_temp_passwords (
+  user_id           UUID PRIMARY KEY,
+  temp_password_enc TEXT,
+  created_at        TIMESTAMP,
+  created_by        UUID
+);
+
 -- Query: list by role (admin management) — month_bucket prevents hot partitions
 -- month_bucket format 'YYYY-MM'
 CREATE TABLE IF NOT EXISTS users_by_role (

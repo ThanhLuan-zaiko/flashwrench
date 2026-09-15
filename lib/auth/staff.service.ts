@@ -30,6 +30,10 @@ import {
   validateStaffUpdate,
 } from "./staff.validation";
 import {
+  clearTempPassword,
+  persistTempPassword,
+} from "./staff-pending.service";
+import {
   claimEmail,
   claimPhone,
   createUserWithRole,
@@ -75,14 +79,13 @@ function cleanName(value: string): string {
   return value.trim().replace(/\s+/g, " ");
 }
 
-// Create one staff account with a one-time temp password. The password is
-// returned once so the admin can hand it over; it is never stored in plain
-// text and never returned again.
+// Create one staff account with a temp password. The password is returned
+// in the response and kept (encrypted) until the staff member changes it,
+// so admins can still copy it after closing the dialog.
 export async function createStaff(
   adminId: string,
   raw: StaffCreateInput,
 ): Promise<StaffCreateResult> {
-  void adminId;
   const invalid = validateStaffCreate(raw);
   if (invalid) return failFields(400, invalid);
   const fullName = cleanName(raw.fullName);
@@ -123,6 +126,7 @@ export async function createStaff(
 
   const row = await findUserById(userId);
   if (!row) return fail(404, "Không tìm thấy người dùng vừa tạo.");
+  await persistTempPassword(userId, tempPassword, adminId);
   return { ok: true, user: toStaffItem(row), tempPassword };
 }
 
@@ -333,6 +337,7 @@ export async function hardDeleteStaff(
   if (target.phone) await deletePhoneRow(target.phone).catch(() => undefined);
   if (target.email) await deleteEmailRow(target.email).catch(() => undefined);
   await deleteIdRow(target.user_id);
+  await clearTempPassword(target.user_id);
   return {
     ok: true,
     user: { ...toStaffItem(target), status: "deleted" as UserStatus },

@@ -6,6 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "realtime": "bun run realtime/server.ts",
+    "dev:all": "bun run scripts/dev-all.ts",
     "lint": "biome check .",
     "type-check": "tsc --noEmit",
     "check:lines": "bun .github/scripts/check-file-limits.ts",

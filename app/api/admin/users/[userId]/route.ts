@@ -10,7 +10,10 @@ import {
   softDeleteStaff,
   updateStaff,
 } from "@/lib/auth/staff.service";
+import { resetStaffTempPassword } from "@/lib/auth/staff-password-reset.service";
 import type { UserRole } from "@/lib/auth/user.types";
+import { STAFF_PASSWORDS_TOPIC } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 type StaffAction = "update" | "soft" | "restore";
 
@@ -137,12 +140,55 @@ export async function DELETE(
         { status: result.status },
       );
     }
+    void publishRealtimeEvent(STAFF_PASSWORDS_TOPIC, {
+      kind: "deleted",
+      userId,
+    });
     return NextResponse.json({ user: result.user });
   } catch {
     return NextResponse.json(
       {
         errors: {
           form: "Không xóa được tài khoản. Vui lòng thử lại sau.",
+        },
+      },
+      { status: 500 },
+    );
+  }
+}
+
+// Issue a fresh temp password for one staff account (recovery for
+// accounts created before persistent passwords existed). The new
+// password stays visible until the staff member changes it.
+export async function POST(
+  _request: Request,
+  { params }: { params: Promise<{ userId: string }> },
+) {
+  const { user, response } = await requireRole("admin");
+  if (response) return response;
+
+  const { userId } = await params;
+  try {
+    const result = await resetStaffTempPassword(user.id, userId);
+    if (!result.ok) {
+      return NextResponse.json(
+        { errors: result.errors },
+        { status: result.status },
+      );
+    }
+    void publishRealtimeEvent(STAFF_PASSWORDS_TOPIC, {
+      kind: "created",
+      userId,
+    });
+    return NextResponse.json(
+      { user: result.user, tempPassword: result.tempPassword },
+      { status: 201 },
+    );
+  } catch {
+    return NextResponse.json(
+      {
+        errors: {
+          form: "Không cấp lại được mật khẩu. Vui lòng thử lại sau.",
         },
       },
       { status: 500 },

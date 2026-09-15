@@ -13,10 +13,15 @@ type StaffSectionProps = {
   pendingId: string | null;
   currentUserId: string | null;
   restoreError: string | null;
+  pendingMap?: Record<string, string>;
+  cryptoConfigured?: boolean;
+  resetPendingId?: string | null;
+  resetError?: string | null;
   onEdit: (item: AdminUserItem) => void;
   onSoft: (item: AdminUserItem) => void;
   onRestore: (item: AdminUserItem) => void;
   onHard: (item: AdminUserItem) => void;
+  onResetPassword?: (item: AdminUserItem) => void;
   onRetry: () => void;
 };
 
@@ -39,10 +44,15 @@ export function StaffSection({
   pendingId,
   currentUserId,
   restoreError,
+  pendingMap,
+  cryptoConfigured,
+  resetPendingId,
+  resetError,
   onEdit,
   onSoft,
   onRestore,
   onHard,
+  onResetPassword,
   onRetry,
 }: StaffSectionProps) {
   if (mode === "trash") {
@@ -91,8 +101,13 @@ export function StaffSection({
       isError={isError}
       pendingId={pendingId}
       currentUserId={currentUserId}
+      pendingMap={pendingMap}
+      cryptoConfigured={cryptoConfigured}
+      resetPendingId={resetPendingId}
+      resetError={resetError}
       onEdit={onEdit}
       onSoft={onSoft}
+      onResetPassword={onResetPassword}
       onRetry={onRetry}
     />
   );

@@ -7,7 +7,9 @@ import {
   adminUserActionRequest,
   createStaffRequest,
   fetchAdminUsers,
+  fetchPendingStaffPasswords,
   hardDeleteStaffRequest,
+  resetStaffPasswordRequest,
   restoreStaffRequest,
   type StaffCreateInput,
   type StaffUpdateInput,
@@ -21,6 +23,9 @@ export const adminKeys = {
   all: ["admin"] as const,
   users: (query: { role?: AdminRoleFilter; status?: UserStatus }) =>
     ["admin", "users", query] as const,
+  pendingPasswordsRoot: ["admin", "staff-pending-passwords"] as const,
+  pendingPasswords: (userIds: string[]) =>
+    ["admin", "staff-pending-passwords", [...userIds].sort()] as const,
 };
 
 export function useAdminUsers(query: {
@@ -99,4 +104,30 @@ export function useHardDeleteStaff() {
     ({ userId, confirm }: { userId: string; confirm: string }) =>
       hardDeleteStaffRequest(userId, confirm),
   );
+}
+
+export function usePendingStaffPasswords(userIds: string[], enabled = true) {
+  return useQuery({
+    queryKey: adminKeys.pendingPasswords(userIds),
+    queryFn: () => fetchPendingStaffPasswords(userIds),
+    enabled: enabled && userIds.length > 0,
+    staleTime: 15 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useResetStaffPassword() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId }: { userId: string }) =>
+      resetStaffPasswordRequest(userId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: adminKeys.pendingPasswordsRoot,
+      });
+      void queryClient.invalidateQueries({ queryKey: adminKeys.all });
+    },
+  });
 }

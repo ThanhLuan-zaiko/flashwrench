@@ -5,11 +5,13 @@ import {
   refreshRepoMocks,
   resetServiceMocks,
   serviceStubs,
+  staffPendingMocks,
   userRepoMocks,
 } from "../helpers/service-mocks";
 
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
+mock.module("@/lib/auth/staff-pending.service", () => staffPendingMocks);
 mock.module("@/lib/auth/password", () => passwordMocks);
 
 import { changePassword } from "@/lib/auth/password-change.service";
@@ -43,6 +45,9 @@ describe("changePassword", () => {
     expect(userRepoMocks.updatePassword.mock.calls.length).toBe(1);
     expect(refreshRepoMocks.deleteSession.mock.calls.length).toBe(1);
     expect(refreshRepoMocks.createSession.mock.calls.length).toBe(1);
+    expect(staffPendingMocks.clearTempPassword.mock.calls[0]?.[0]).toBe(
+      "user-1",
+    );
   });
 
   test("rejects invalid input without touching the database", async () => {
@@ -74,5 +79,6 @@ describe("changePassword", () => {
     if (result.ok) return;
     expect(result.errors.currentPassword).toBeDefined();
     expect(userRepoMocks.updatePassword.mock.calls.length).toBe(0);
+    expect(staffPendingMocks.clearTempPassword.mock.calls.length).toBe(0);
   });
 });

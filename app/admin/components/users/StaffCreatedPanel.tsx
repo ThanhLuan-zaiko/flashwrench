@@ -9,8 +9,8 @@ type StaffCreatedPanelProps = {
   onDone: () => void;
 };
 
-// One-time temp password view after creating staff. Shown exactly once:
-// the plain password is never stored and never returned again.
+// Temp password view after creating staff. The password stays visible in
+// the staff list until the staff member changes it, with realtime removal.
 export function StaffCreatedPanel({
   fullName,
   tempPassword,
@@ -30,8 +30,8 @@ export function StaffCreatedPanel({
   return (
     <div>
       <p className="mt-3 rounded-xl bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
-        Đã tạo tài khoản cho {fullName}. Mật khẩu tạm chỉ hiện một lần duy nhất
-        — hãy gửi cho nhân viên ngay.
+        Đã tạo tài khoản cho {fullName}. Mật khẩu tạm vẫn hiển thị trong danh
+        sách cho đến khi nhân viên đổi mật khẩu — hãy gửi cho nhân viên ngay.
       </p>
       <div className="mt-3 flex items-center gap-2 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
         <span className="flex-1 font-mono text-lg font-bold tracking-wider text-zinc-900 dark:text-zinc-50">

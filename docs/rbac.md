@@ -130,8 +130,15 @@ Luật nghiệp vụ của `applyAdminUserAction`:
 Luật nghiệp vụ của staff (`lib/auth/staff.service.ts`, tab "Nhân viên"):
 
 - `create`: chỉ gán `mechanic`/`dispatcher` (khách hàng tự đăng ký,
-  không bao giờ `admin`), server sinh mật khẩu tạm 12 ký tự và trả về
-  đúng một lần. Trùng phone/email trả `409`.
+  không bao giờ `admin`), server sinh mật khẩu tạm 12 ký tự. Mật khẩu
+  được mã hóa (AES-GCM bằng `STAFF_TEMP_SECRET`) vào bảng
+  `staff_temp_passwords` và hiển thị trong thẻ nhân viên cho đến khi
+  nhân viên đổi mật khẩu (realtime qua gateway WebSocket,
+  xem `docs/realtime.md`). Trùng phone/email trả `409`.
+- `reset-password` (`POST /api/admin/users/[userId]`): cấp mật khẩu tạm
+  mới cho tài khoản tạo trước khi có tính năng lưu mật khẩu, hoặc khôi
+  phục sau sự cố thiếu `STAFF_TEMP_SECRET`. Đổi hash + tăng
+  `token_version` (đá phiên cũ), lưu mã hóa, trả về kèm broadcast.
 - `update`: sửa tên, phone, email, vai trò (`customer`/`mechanic`/
   `dispatcher`, để khách hàng cũ vẫn sửa được). Đổi phone/email phải
   claim lookup mới trước, nhả lookup cũ sau khi thành công.

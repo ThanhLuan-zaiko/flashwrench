@@ -1,5 +1,7 @@
 import { mock } from "bun:test";
 import type { RefreshOutcome } from "@/lib/auth/auth.service";
+import type { StaffCreateResult } from "@/lib/auth/staff.types";
+import type { PendingStaffPassword } from "@/lib/auth/staff-pending.service";
 import type {
   AuthResult,
   ChangePasswordInput,
@@ -24,6 +26,9 @@ export const routeStubs = {
   changePasswordResult: null as AuthResult | null,
   sessionItems: [] as SessionListItem[],
   cookies: {} as Record<string, string>,
+  pendingPasswordItems: [] as PendingStaffPassword[],
+  pendingCryptoConfigured: true,
+  resetStaffResult: null as StaffCreateResult | null,
 };
 
 export function okAuthResult(): AuthResult {
@@ -88,6 +93,44 @@ export const userSessionMocks = {
   }),
 };
 
+export const staffPendingRouteMocks = {
+  listPendingTempPasswords: mock(
+    async (_userIds: string[]): Promise<PendingStaffPassword[]> =>
+      routeStubs.pendingPasswordItems,
+  ),
+};
+
+export const staffResetRouteMocks = {
+  resetStaffTempPassword: mock(
+    async (_adminId: string, _userId: string): Promise<StaffCreateResult> =>
+      routeStubs.resetStaffResult ?? {
+        ok: true,
+        user: {
+          id: "u1",
+          fullName: "Tran Van Tho",
+          phone: "0901111222",
+          email: "tho@example.com",
+          role: "mechanic",
+          status: "active",
+          createdAt: null,
+        },
+        tempPassword: "Abc123XyZ9",
+      },
+  ),
+};
+
+export const staffCryptoRouteMocks = {
+  isTempCryptoConfigured: mock(
+    (): boolean => routeStubs.pendingCryptoConfigured,
+  ),
+};
+
+export const realtimePublishMocks = {
+  publishRealtimeEvent: mock(
+    async (_topic: string, _payload: unknown): Promise<void> => undefined,
+  ),
+};
+
 export const nextHeadersMocks = {
   cookies: mock(async () => ({
     get: (name: string): { value: string } | undefined => {
@@ -110,9 +153,16 @@ export function resetRouteMocks(): void {
   routeStubs.changePasswordResult = null;
   routeStubs.sessionItems = [];
   routeStubs.cookies = {};
+  routeStubs.pendingPasswordItems = [];
+  routeStubs.pendingCryptoConfigured = true;
+  routeStubs.resetStaffResult = null;
   for (const fn of Object.values(guardMocks)) fn.mockClear();
   for (const fn of Object.values(authServiceMocks)) fn.mockClear();
   for (const fn of Object.values(passwordChangeMocks)) fn.mockClear();
   for (const fn of Object.values(userSessionMocks)) fn.mockClear();
   for (const fn of Object.values(nextHeadersMocks)) fn.mockClear();
+  for (const fn of Object.values(staffPendingRouteMocks)) fn.mockClear();
+  for (const fn of Object.values(staffResetRouteMocks)) fn.mockClear();
+  for (const fn of Object.values(staffCryptoRouteMocks)) fn.mockClear();
+  for (const fn of Object.values(realtimePublishMocks)) fn.mockClear();
 }

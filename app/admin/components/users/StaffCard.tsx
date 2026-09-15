@@ -1,7 +1,9 @@
 "use client";
 
-import { FiEdit, FiLoader, FiRotateCcw, FiTrash2 } from "react-icons/fi";
+import { useState } from "react";
+import { FiEdit, FiKey, FiLoader, FiRotateCcw, FiTrash2 } from "react-icons/fi";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
+import { StaffPendingPassword } from "./StaffPendingPassword";
 
 export type StaffCardVariant = "live" | "trash";
 
@@ -9,10 +11,14 @@ type StaffCardProps = {
   user: AdminUserItem;
   pendingId: string | null;
   variant: StaffCardVariant;
+  tempPassword?: string | null;
+  resetPending?: boolean;
+  resetError?: string | null;
   onEdit?: (item: AdminUserItem) => void;
   onSoft?: (item: AdminUserItem) => void;
   onRestore?: (item: AdminUserItem) => void;
   onHard?: (item: AdminUserItem) => void;
+  onResetPassword?: (item: AdminUserItem) => void;
 };
 
 const ROLE_LABELS: Record<AdminUserItem["role"], string> = {
@@ -41,19 +47,35 @@ const BUTTON_CLASS =
 
 // One staff row: identity plus role/status pills plus CRUD actions.
 // Live rows offer edit + soft delete; trash rows offer restore + hard
-// delete. Touch targets stay at least 44px high per bento checklist.
+// delete. Live rows without a pending password offer a two-tap reissue.
+// Touch targets stay at least 44px high per bento checklist.
 export function StaffCard({
   user,
   pendingId,
   variant,
+  tempPassword,
+  resetPending,
+  resetError,
   onEdit,
   onSoft,
   onRestore,
   onHard,
+  onResetPassword,
 }: StaffCardProps) {
   const busy = pendingId === user.id;
   const contact = user.phone || user.email;
   const Icon = busy ? FiLoader : FiEdit;
+  const [confirmingReset, setConfirmingReset] = useState(false);
+
+  const handleReset = () => {
+    if (resetPending) return;
+    if (!confirmingReset) {
+      setConfirmingReset(true);
+      return;
+    }
+    setConfirmingReset(false);
+    onResetPassword?.(user);
+  };
 
   return (
     <li className="flex flex-col gap-3 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900">
@@ -81,8 +103,19 @@ export function StaffCard({
             {STATUS_LABELS[user.status]}
           </span>
         </span>
+        {variant === "live" && tempPassword && (
+          <StaffPendingPassword tempPassword={tempPassword} />
+        )}
+        {variant === "live" && !tempPassword && resetError && (
+          <span
+            role="alert"
+            className="mt-2 block rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-[11px] font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+          >
+            {resetError}
+          </span>
+        )}
       </span>
-      <span className="flex shrink-0 items-center gap-1.5">
+      <span className="flex shrink-0 flex-wrap items-center gap-1.5">
         {variant === "live" ? (
           <>
             <button
@@ -97,6 +130,28 @@ export function StaffCard({
               />
               {busy ? "Đang xử lý…" : "Sửa"}
             </button>
+            {!tempPassword && onResetPassword && (
+              <button
+                type="button"
+                disabled={resetPending}
+                onClick={handleReset}
+                className={BUTTON_CLASS}
+              >
+                {resetPending ? (
+                  <FiLoader
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 motion-safe:animate-spin"
+                  />
+                ) : (
+                  <FiKey aria-hidden="true" className="h-3.5 w-3.5" />
+                )}
+                {resetPending
+                  ? "Đang cấp lại…"
+                  : confirmingReset
+                    ? "Nhấn lại để xác nhận"
+                    : "Cấp lại mật khẩu"}
+              </button>
+            )}
             <button
               type="button"
               disabled={busy}

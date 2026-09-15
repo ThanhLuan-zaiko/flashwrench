@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   useHardDeleteStaff,
+  useResetStaffPassword,
   useRestoreStaff,
   useSoftDeleteStaff,
 } from "@/hooks/admin";
@@ -16,10 +17,12 @@ function formError(error: unknown): string | null {
   return null;
 }
 
-// Staff row actions: create/edit dialog plus soft/restore/hard delete.
-// Mirrors useCatalogRowActions so both admin sections behave alike.
+// Staff row actions: create/edit dialog plus soft/restore/hard delete and
+// temp-password reissue. Mirrors useCatalogRowActions so both admin
+// sections behave alike.
 export function useStaffActions() {
   const [pendingStaffId, setPendingStaffId] = useState<string | null>(null);
+  const [resetPendingId, setResetPendingId] = useState<string | null>(null);
   const [staffDialog, setStaffDialog] = useState<StaffDialogState | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<StaffDeleteTarget | null>(
     null,
@@ -29,6 +32,7 @@ export function useStaffActions() {
   const softMutation = useSoftDeleteStaff();
   const restoreMutation = useRestoreStaff();
   const hardMutation = useHardDeleteStaff();
+  const resetMutation = useResetStaffPassword();
 
   const resetDeleteErrors = () => {
     softMutation.reset();
@@ -119,8 +123,21 @@ export function useStaffActions() {
     );
   };
 
+  const resetPassword = (item: AdminUserItem) => {
+    if (resetMutation.isPending) return;
+    resetMutation.reset();
+    setResetPendingId(item.id);
+    resetMutation.mutate(
+      { userId: item.id },
+      { onSettled: () => setResetPendingId(null) },
+    );
+  };
+
   return {
     pendingStaffId,
+    resetPendingId,
+    resetError: formError(resetMutation.error),
+    resetPassword,
     staffDialog,
     openCreate,
     openEdit,

@@ -22,6 +22,12 @@ export type AdminUsersQuery = {
   limit?: number;
 };
 
+export type PendingStaffPassword = {
+  userId: string;
+  tempPassword: string;
+  createdAt: string | null;
+};
+
 function toQueryString(query: AdminUsersQuery): string {
   const params = new URLSearchParams();
   if (query.role) params.set("role", query.role);
@@ -94,5 +100,27 @@ export function hardDeleteStaffRequest(
   return apiRequest<{ user: AdminUserItem }>(
     `/api/admin/users/${encodeURIComponent(userId)}`,
     { method: "DELETE", body: JSON.stringify({ confirm }) },
+  );
+}
+
+export function fetchPendingStaffPasswords(userIds: string[]): Promise<{
+  items: PendingStaffPassword[];
+  cryptoConfigured: boolean;
+}> {
+  return apiRequest<{
+    items: PendingStaffPassword[];
+    cryptoConfigured: boolean;
+  }>("/api/admin/users/pending-passwords", {
+    method: "POST",
+    body: JSON.stringify({ userIds }),
+  });
+}
+
+export function resetStaffPasswordRequest(
+  userId: string,
+): Promise<{ user: AdminUserItem; tempPassword: string }> {
+  return apiRequest<{ user: AdminUserItem; tempPassword: string }>(
+    `/api/admin/users/${encodeURIComponent(userId)}`,
+    { method: "POST" },
   );
 }

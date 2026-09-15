@@ -39,9 +39,9 @@ function formErrorText(error: unknown): string | null {
   return "Đã có lỗi xảy ra. Vui lòng thử lại.";
 }
 
-// Create/edit modal for one staff account. Create shows the one-time temp
-// password on success; edit closes on success. Parent passes a keyed
-// instance so form state resets on every open.
+// Create/edit modal for one staff account. Create shows the temp password
+// on success; it stays in the staff list until changed. Parent passes a
+// keyed instance so form state resets on every open.
 export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
   const editing = dialog?.mode === "edit" ? dialog.item : null;
   const [fullName, setFullName] = useState(editing?.fullName ?? "");
@@ -147,7 +147,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
             {isCreate && (
               <p className="mt-3 rounded-xl bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
                 Chỉ quản trị viên được tạo tài khoản thợ/điều phối. Mật khẩu tạm
-                chỉ hiện một lần duy nhất sau khi tạo.
+                hiển thị trong danh sách cho đến khi nhân viên đổi mật khẩu.
               </p>
             )}
 

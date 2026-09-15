@@ -17,9 +17,21 @@ import type {
 } from "@/lib/catalog/service-catalog.types";
 import type { ComplaintRow } from "@/lib/complaints/complaint.types";
 import { makeUserRow } from "./auth.fixtures";
-import { staffRepoMocks } from "./staff.mocks";
+import {
+  staffPendingMocks,
+  staffRepoMocks,
+  staffTempCryptoMocks,
+  staffTempRepoMocks,
+  staffTempStubs,
+} from "./staff.mocks";
 
 export { staffRepoMocks };
+export {
+  staffPendingMocks,
+  staffTempCryptoMocks,
+  staffTempRepoMocks,
+  staffTempStubs,
+} from "./staff.mocks";
 
 // Mutable stub state for service-level suites. Factories in the test files
 // return these handles, so each test reconfigures behavior by mutating
@@ -185,8 +197,12 @@ export function resetServiceMocks(): void {
   catalogStubs.serviceByCategoryRows = [];
   complaintStubs.complaintRows = [];
   complaintStubs.complaintById = null;
+  staffTempStubs.rowByUser = {};
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(staffRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(staffTempRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(staffPendingMocks)) fn.mockClear();
+  for (const fn of Object.values(staffTempCryptoMocks)) fn.mockClear();
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
   for (const fn of Object.values(adminUsersRepoMocks)) fn.mockClear();

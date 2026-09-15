@@ -6,6 +6,7 @@ import {
   refreshRepoMocks,
   resetServiceMocks,
   serviceStubs,
+  staffPendingMocks,
   staffRepoMocks,
   userRepoMocks,
 } from "../helpers/service-mocks";
@@ -16,6 +17,7 @@ import {
 mock.module("@/lib/auth/admin-users.repository", () => adminUsersRepoMocks);
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/auth/staff.repository", () => staffRepoMocks);
+mock.module("@/lib/auth/staff-pending.service", () => staffPendingMocks);
 mock.module("@/lib/auth/password", () => passwordMocks);
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
 
@@ -59,6 +61,10 @@ describe("createStaff", () => {
       email: "tho@example.com",
       role: "mechanic",
     });
+    expect(staffPendingMocks.persistTempPassword.mock.calls.length).toBe(1);
+    expect(staffPendingMocks.persistTempPassword.mock.calls[0]?.[2]).toBe(
+      ADMIN_ID,
+    );
   });
 
   test("rejects the admin role", async () => {
@@ -84,6 +90,7 @@ describe("createStaff", () => {
     const result = await createStaff(ADMIN_ID, CREATE_INPUT);
     expect(result).toMatchObject({ ok: false, status: 409 });
     expect(userRepoMocks.createUserWithRole.mock.calls.length).toBe(0);
+    expect(staffPendingMocks.persistTempPassword.mock.calls.length).toBe(0);
   });
 });
 
@@ -248,6 +255,9 @@ describe("hardDeleteStaff", () => {
     expect(staffRepoMocks.deletePhoneRow.mock.calls[0]?.[0]).toBe("0901111222");
     expect(staffRepoMocks.deleteEmailRow.mock.calls.length).toBe(1);
     expect(staffRepoMocks.deleteIdRow.mock.calls[0]?.[0]).toBe(TARGET_ID);
+    expect(staffPendingMocks.clearTempPassword.mock.calls[0]?.[0]).toBe(
+      TARGET_ID,
+    );
   });
 
   test("rejects a wrong confirm and deletes nothing", async () => {
@@ -261,6 +271,7 @@ describe("hardDeleteStaff", () => {
     expect(result).toMatchObject({ ok: false, status: 400 });
     expect(staffRepoMocks.deleteIdRow.mock.calls.length).toBe(0);
     expect(staffRepoMocks.deleteRoleRow.mock.calls.length).toBe(0);
+    expect(staffPendingMocks.clearTempPassword.mock.calls.length).toBe(0);
   });
 
   test("refuses to hard delete outside the trash", async () => {

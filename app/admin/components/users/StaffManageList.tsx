@@ -7,6 +7,7 @@ import { CatalogPager } from "../services/CatalogPager";
 import { SelectDropdown } from "../services/SelectDropdown";
 import { usePagination } from "../services/usePagination";
 import { excludeSelfAccount } from "./admin-user-guards";
+import { RealtimeStatusBadge } from "./RealtimeStatusBadge";
 import { StaffCard } from "./StaffCard";
 
 type StaffManageListProps = {
@@ -15,8 +16,13 @@ type StaffManageListProps = {
   isError: boolean;
   pendingId: string | null;
   currentUserId?: string | null;
+  pendingMap?: Record<string, string>;
+  cryptoConfigured?: boolean;
+  resetPendingId?: string | null;
+  resetError?: string | null;
   onEdit: (item: AdminUserItem) => void;
   onSoft: (item: AdminUserItem) => void;
+  onResetPassword?: (item: AdminUserItem) => void;
   onRetry: () => void;
 };
 
@@ -34,8 +40,13 @@ export function StaffManageList({
   isError,
   pendingId,
   currentUserId,
+  pendingMap,
+  cryptoConfigured,
+  resetPendingId,
+  resetError,
   onEdit,
   onSoft,
+  onResetPassword,
   onRetry,
 }: StaffManageListProps) {
   const [text, setText] = useState("");
@@ -63,6 +74,18 @@ export function StaffManageList({
 
   return (
     <div className="flex flex-col gap-3">
+      {cryptoConfigured === false && (
+        <p
+          role="alert"
+          className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+        >
+          Chưa cấu hình STAFF_TEMP_SECRET nên mật khẩu tạm không được lưu. Hãy
+          cấu hình rồi dùng nút Cấp lại mật khẩu ở từng nhân viên.
+        </p>
+      )}
+      <div className="flex items-center justify-end">
+        <RealtimeStatusBadge />
+      </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label
@@ -145,8 +168,14 @@ export function StaffManageList({
                 user={item}
                 pendingId={pendingId}
                 variant="live"
+                tempPassword={pendingMap?.[item.id] ?? null}
+                resetPending={resetPendingId === item.id}
+                resetError={
+                  resetPendingId === item.id ? (resetError ?? null) : null
+                }
                 onEdit={onEdit}
                 onSoft={onSoft}
+                onResetPassword={onResetPassword}
               />
             ))}
           </ul>

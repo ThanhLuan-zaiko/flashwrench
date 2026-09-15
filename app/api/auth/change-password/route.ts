@@ -6,6 +6,8 @@ import { enforceRequestGuards } from "@/lib/auth/guards";
 import { changePassword } from "@/lib/auth/password-change.service";
 import { ACCESS_COOKIE } from "@/lib/auth/session";
 import { deviceLabel } from "@/lib/auth/user-sessions";
+import { STAFF_PASSWORDS_TOPIC } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 export async function POST(request: Request) {
   const blocked = await enforceRequestGuards(request, "password");
@@ -51,6 +53,13 @@ export async function POST(request: Request) {
         { status: result.status },
       );
     }
+
+    // The service already cleared a pending staff temp password; tell
+    // admin screens to drop it in realtime.
+    void publishRealtimeEvent(STAFF_PASSWORDS_TOPIC, {
+      kind: "changed",
+      userId: user.id,
+    });
 
     const response = NextResponse.json({ user: result.user });
     setSessionCookies(response, result.tokens);

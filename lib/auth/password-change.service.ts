@@ -6,6 +6,7 @@ import {
   listSessionsByUser,
 } from "./refresh.repository";
 import { createRefreshToken, signAccessToken } from "./session";
+import { clearTempPassword } from "./staff-pending.service";
 import {
   bumpTokenVersion,
   findUserById,
@@ -55,6 +56,10 @@ export async function changePassword(
   }
 
   await updatePassword(userId, await hashPassword(input.newPassword));
+
+  // Staff temp passwords live until the owner changes them: drop the
+  // pending row so the admin list stops showing it (realtime follows).
+  await clearTempPassword(userId);
 
   const sessions = await listSessionsByUser(userId).catch(() => []);
   await Promise.all(

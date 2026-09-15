@@ -23,6 +23,7 @@ import { UserActionDialog } from "./users/UserActionDialog";
 import { UsersHeaderAction } from "./users/UsersHeaderAction";
 import { USER_TABS, type UserTab } from "./users/user-tabs";
 import { useStaffActions } from "./users/useStaffActions";
+import { useStaffPendingMap } from "./users/useStaffPendingMap";
 import { useUserRowActions } from "./users/useUserRowActions";
 import { useUsersOverview } from "./users/useUsersOverview";
 
@@ -43,6 +44,11 @@ export function UsersSection({ tab }: { tab: UserTab }) {
   const actions = useUserRowActions(currentUserId);
   const staff = useStaffActions();
   const overview = useUsersOverview();
+  const staffIds = useMemo(
+    () => overview.staffLive.map((u) => u.id),
+    [overview.staffLive],
+  );
+  const pending = useStaffPendingMap(staffIds, tab === "staff");
   const transition = useTransitionComplaint();
 
   const pendingUsers = useMemo(
@@ -143,10 +149,15 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                 pendingId={staff.pendingStaffId}
                 currentUserId={currentUserId}
                 restoreError={staff.restoreError}
+                pendingMap={pending.pendingMap}
+                cryptoConfigured={pending.cryptoConfigured}
+                resetPendingId={staff.resetPendingId}
+                resetError={staff.resetError}
                 onEdit={staff.openEdit}
                 onSoft={staff.openSoft}
                 onRestore={staff.restore}
                 onHard={staff.openHard}
+                onResetPassword={staff.resetPassword}
                 onRetry={() => void overview.allQuery.refetch()}
               />
             )}
