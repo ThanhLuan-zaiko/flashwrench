@@ -20,7 +20,11 @@ function toUpdateInput(body: Record<string, unknown>): UpdateCategoryInput {
       body.description === undefined ? undefined : String(body.description),
     sortOrder:
       body.sortOrder === undefined ? undefined : Number(body.sortOrder),
-    isActive: body.isActive === undefined ? undefined : Boolean(body.isActive),
+    // Strict passthrough (no Boolean() coercion): non-boolean values
+    // reach validateCategoryInput and fail with 400 instead of flipping
+    // truthy strings like "false" into true.
+    isActive:
+      body.isActive === undefined ? undefined : (body.isActive as boolean),
   };
 }
 
@@ -55,10 +59,13 @@ export async function PATCH(
       return NextResponse.json({ category: result.data });
     }
     if (action === "toggle-active") {
-      const result = await toggleCategoryActive(
-        categoryId,
-        Boolean(body.isActive),
-      );
+      if (typeof body.isActive !== "boolean") {
+        return NextResponse.json(
+          { errors: { isActive: "Trạng thái không hợp lệ." } },
+          { status: 400 },
+        );
+      }
+      const result = await toggleCategoryActive(categoryId, body.isActive);
       if (!result.ok)
         return NextResponse.json(
           { errors: result.errors },

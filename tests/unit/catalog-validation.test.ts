@@ -22,6 +22,12 @@ describe("slugifyName", () => {
     expect(slugifyName("Sua__chua_luu-dong")).toBe("sua-chua-luu-dong");
     expect(slugifyName("a".repeat(200)).length).toBeLessThanOrEqual(80);
   });
+
+  test("strips Vietnamese diacritics used by auto-slug", () => {
+    expect(slugifyName("Bảo dưỡng tại nhà")).toBe("bao-duong-tai-nha");
+    expect(slugifyName("Thay dầu động cơ")).toBe("thay-dau-dong-co");
+    expect(slugifyName("Sửa chữa lưu động")).toBe("sua-chua-luu-dong");
+  });
 });
 
 describe("validateCategoryInput", () => {
@@ -55,6 +61,21 @@ describe("validateCategoryInput", () => {
     expect(validateCategoryInput({ ...valid, sortOrder: 1.5 })).toMatchObject({
       sortOrder: expect.any(String),
     });
+  });
+
+  test("rejects overlong icons so the dialog stays honest", () => {
+    expect(
+      validateCategoryInput({ ...valid, icon: "x".repeat(61) }),
+    ).toMatchObject({ icon: expect.any(String) });
+    expect(validateCategoryInput({ ...valid, icon: "wrench" })).toBeNull();
+  });
+
+  test("rejects non-boolean flags instead of coercing them", () => {
+    expect(
+      validateCategoryInput({ ...valid, isActive: "false" }),
+    ).toMatchObject({ isActive: expect.any(String) });
+    expect(validateCategoryInput({ ...valid, isActive: true })).toBeNull();
+    expect(validateCategoryInput({ ...valid, isActive: undefined })).toBeNull();
   });
 });
 
@@ -104,5 +125,25 @@ describe("validateServiceInput", () => {
         durationMin: expect.any(String),
       },
     );
+  });
+
+  test("rejects non-boolean flags instead of coercing them", () => {
+    expect(
+      validateServiceInput({ ...valid, isHomeSupported: "false" }),
+    ).toMatchObject({ isHomeSupported: expect.any(String) });
+    expect(
+      validateServiceInput({ ...valid, isEmergencySupported: 1 }),
+    ).toMatchObject({ isEmergencySupported: expect.any(String) });
+    expect(validateServiceInput({ ...valid, isActive: 0 })).toMatchObject({
+      isActive: expect.any(String),
+    });
+    expect(
+      validateServiceInput({
+        ...valid,
+        isHomeSupported: true,
+        isEmergencySupported: false,
+        isActive: true,
+      }),
+    ).toBeNull();
   });
 });

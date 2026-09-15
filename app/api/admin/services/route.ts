@@ -16,15 +16,19 @@ function toCreateInput(body: Record<string, unknown>): CreateServiceInput {
     basePrice: Number(body.basePrice),
     priceUnit: String(body.priceUnit ?? "per_job") as PriceUnit,
     durationMin: Number(body.durationMin),
+    // Strict passthrough (no Boolean() coercion): non-boolean values
+    // reach validateServiceInput and fail with 400 instead of flipping
+    // truthy strings like "false" into true.
     isHomeSupported:
       body.isHomeSupported === undefined
         ? undefined
-        : Boolean(body.isHomeSupported),
+        : (body.isHomeSupported as boolean),
     isEmergencySupported:
       body.isEmergencySupported === undefined
         ? undefined
-        : Boolean(body.isEmergencySupported),
-    isActive: body.isActive === undefined ? undefined : Boolean(body.isActive),
+        : (body.isEmergencySupported as boolean),
+    isActive:
+      body.isActive === undefined ? undefined : (body.isActive as boolean),
   };
 }
 

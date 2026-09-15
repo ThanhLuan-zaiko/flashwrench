@@ -13,11 +13,13 @@ import {
 } from "./service-catalog.types";
 import { findCategoryRowById } from "./service-categories.repository";
 import {
+  claimServiceSlug,
   findServiceIdBySlug,
   findServiceRowById,
   hardDeleteService,
   insertService,
   listServiceRows,
+  releaseServiceSlug,
   setServiceActive,
   setServiceDeleted,
   updateServiceRows,
@@ -99,6 +101,9 @@ export async function createService(
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
     durationMin: raw.durationMin,
+    isHomeSupported: raw.isHomeSupported,
+    isEmergencySupported: raw.isEmergencySupported,
+    isActive: raw.isActive,
   });
   if (fieldErrors) return failFields(400, fieldErrors);
 
@@ -117,21 +122,34 @@ export async function createService(
 
   const now = new Date();
   const serviceId = randomUUID();
-  await insertService({
-    serviceId,
-    categoryId: category.category_id,
-    categoryName: category.name ?? "",
-    name: raw.name.trim(),
-    slug,
-    description: (raw.description ?? "").trim(),
-    basePrice: raw.basePrice,
-    priceUnit: raw.priceUnit,
-    durationMin: raw.durationMin,
-    isHomeSupported: raw.isHomeSupported ?? true,
-    isEmergencySupported: raw.isEmergencySupported ?? false,
-    isActive: raw.isActive ?? true,
-    now,
-  });
+  // Conditional claim wins concurrent races: only one creator owns
+  // the slug. A lost race maps to 409 like the fast-path check above.
+  if (!(await claimServiceSlug(slug, serviceId))) {
+    return failFields(409, {
+      slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
+    });
+  }
+  try {
+    await insertService({
+      serviceId,
+      categoryId: category.category_id,
+      categoryName: category.name ?? "",
+      name: raw.name.trim(),
+      slug,
+      description: (raw.description ?? "").trim(),
+      basePrice: raw.basePrice,
+      priceUnit: raw.priceUnit,
+      durationMin: raw.durationMin,
+      isHomeSupported: raw.isHomeSupported ?? true,
+      isEmergencySupported: raw.isEmergencySupported ?? false,
+      isActive: raw.isActive ?? true,
+      now,
+    });
+  } catch (error) {
+    // Never leave an orphan pointer behind when the main rows fail.
+    await releaseServiceSlug(slug, serviceId);
+    throw error;
+  }
   const row = await findServiceRowById(serviceId);
   if (!row) return fail(500, "Không tạo được mục giá. Vui lòng thử lại.");
   return { ok: true, data: toItem(row) };
@@ -158,6 +176,9 @@ export async function updateService(
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
     durationMin: raw.durationMin,
+    isHomeSupported: raw.isHomeSupported,
+    isEmergencySupported: raw.isEmergencySupported,
+    isActive: raw.isActive,
   });
   if (fieldErrors) return failFields(400, fieldErrors);
 
@@ -172,6 +193,21 @@ export async function updateService(
     return failFields(409, {
       slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
     });
+  }
+
+  const oldSlug = existing.slug ?? slug;
+  if (oldSlug !== slug) {
+    // Claim the new slug before touching the main rows. A lost race
+    // maps to 409 unless the pointer already belongs to this row.
+    const claimed = await claimServiceSlug(slug, serviceId);
+    if (!claimed) {
+      const owner = await findServiceIdBySlug(slug);
+      if (owner !== serviceId) {
+        return failFields(409, {
+          slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
+        });
+      }
+    }
   }
 
   await updateServiceRows({
@@ -190,8 +226,12 @@ export async function updateService(
     now: new Date(),
     updatedAt: new Date(),
     oldCategoryId: existing.category_id ?? category.category_id,
-    oldSlug: existing.slug ?? slug,
   });
+  if (oldSlug !== slug) {
+    // Best effort: the old pointer is released only while it still
+    // belongs to this row, so a concurrent winner is never removed.
+    await releaseServiceSlug(oldSlug, serviceId);
+  }
   const row = await findServiceRowById(serviceId);
   if (!row) return fail(500, "Không cập nhật được mục giá.");
   return { ok: true, data: toItem(row) };
@@ -242,7 +282,13 @@ export async function restoreService(
   const category = existing.category_id
     ? await findCategoryRowById(existing.category_id)
     : null;
-  if (!category || isDeletedFlag(category.is_deleted)) {
+  if (!category) {
+    return fail(
+      400,
+      "Loại hình cha không còn tồn tại (đã bị xóa vĩnh viễn). Hãy xóa vĩnh viễn mục giá này hoặc tạo lại loại hình.",
+    );
+  }
+  if (isDeletedFlag(category.is_deleted)) {
     return fail(
       400,
       "Loại hình cha đang nằm trong thùng rác. Hãy khôi phục loại hình trước.",

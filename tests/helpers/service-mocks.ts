@@ -160,9 +160,12 @@ export function resetServiceMocks(): void {
   catalogStubs.categoryRows = [];
   catalogStubs.categoryById = null;
   catalogStubs.categorySlugOwner = null;
+  catalogStubs.categorySlugClaimed = true;
   catalogStubs.serviceRows = [];
   catalogStubs.serviceById = null;
   catalogStubs.serviceSlugOwner = null;
+  catalogStubs.serviceSlugClaimed = true;
+  catalogStubs.serviceByCategoryRows = [];
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
@@ -178,9 +181,12 @@ export const catalogStubs = {
   categoryRows: [] as ServiceCategoryRow[],
   categoryById: null as ServiceCategoryRow | null,
   categorySlugOwner: null as string | null,
+  categorySlugClaimed: true,
   serviceRows: [] as ServiceRow[],
   serviceById: null as ServiceRow | null,
   serviceSlugOwner: null as string | null,
+  serviceSlugClaimed: true,
+  serviceByCategoryRows: [] as ServiceByCategoryRow[],
 };
 
 export const categoryRepoMocks = {
@@ -197,12 +203,12 @@ export const categoryRepoMocks = {
   ),
   insertCategory: mock(async (_params: unknown): Promise<void> => undefined),
   updateCategoryRow: mock(async (_params: unknown): Promise<void> => undefined),
-  moveCategorySlug: mock(
-    async (
-      _oldSlug: string,
-      _newSlug: string,
-      _categoryId: string,
-    ): Promise<void> => undefined,
+  claimCategorySlug: mock(
+    async (_slug: string, _categoryId: string): Promise<boolean> =>
+      catalogStubs.categorySlugClaimed,
+  ),
+  releaseCategorySlug: mock(
+    async (_slug: string, _categoryId: string): Promise<boolean> => true,
   ),
   setCategoryActive: mock(
     async (
@@ -237,7 +243,8 @@ export const catalogServiceRepoMocks = {
       catalogStubs.serviceSlugOwner,
   ),
   listServiceRowsByCategory: mock(
-    async (_categoryId: string): Promise<ServiceByCategoryRow[]> => [],
+    async (_categoryId: string): Promise<ServiceByCategoryRow[]> =>
+      catalogStubs.serviceByCategoryRows,
   ),
   insertService: mock(async (_params: unknown): Promise<void> => undefined),
   updateServiceRows: mock(async (_params: unknown): Promise<void> => undefined),
@@ -263,8 +270,15 @@ export const catalogServiceRepoMocks = {
       _slug: string,
     ): Promise<void> => undefined,
   ),
-  refreshServiceCategoryName: mock(
-    async (_serviceId: string, _categoryName: string): Promise<void> =>
+  claimServiceSlug: mock(
+    async (_slug: string, _serviceId: string): Promise<boolean> =>
+      catalogStubs.serviceSlugClaimed,
+  ),
+  releaseServiceSlug: mock(
+    async (_slug: string, _serviceId: string): Promise<boolean> => true,
+  ),
+  bulkRefreshServiceCategoryName: mock(
+    async (_serviceIds: string[], _categoryName: string): Promise<void> =>
       undefined,
   ),
 };

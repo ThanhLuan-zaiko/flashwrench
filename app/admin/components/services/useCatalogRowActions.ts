@@ -15,7 +15,10 @@ import { AuthApiError } from "@/services/service-catalog.api";
 import type { DeleteTarget } from "./CatalogDeleteDialog";
 
 function formError(error: unknown): string | null {
-  if (error instanceof AuthApiError) return error.errors.form ?? error.message;
+  if (error instanceof AuthApiError) {
+    const errors = error.errors as Record<string, string | undefined>;
+    return errors.form ?? errors.confirm ?? error.message;
+  }
   return null;
 }
 
@@ -30,6 +33,13 @@ export function useCatalogRowActions() {
   const hardDeleteCategory = useHardDeleteCategory();
   const patchService = usePatchService();
   const hardDeleteService = useHardDeleteService();
+
+  const resetDeleteErrors = () => {
+    patchCategory.reset();
+    hardDeleteCategory.reset();
+    patchService.reset();
+    hardDeleteService.reset();
+  };
 
   const runWithPending = (id: string, task: (done: () => void) => void) => {
     setPendingId(id);
@@ -72,6 +82,7 @@ export function useCatalogRowActions() {
     kind: DeleteTarget["kind"],
     item: ServiceCategoryItem | ServiceItem,
   ) => {
+    resetDeleteErrors();
     setConfirmText("");
     setDeleteTarget({
       kind,
@@ -86,6 +97,7 @@ export function useCatalogRowActions() {
     kind: DeleteTarget["kind"],
     item: ServiceCategoryItem | ServiceItem,
   ) => {
+    resetDeleteErrors();
     setConfirmText("");
     setDeleteTarget({
       kind,
@@ -97,6 +109,7 @@ export function useCatalogRowActions() {
   };
 
   const closeDelete = () => {
+    resetDeleteErrors();
     setDeleteTarget(null);
     setConfirmText("");
   };
@@ -121,12 +134,13 @@ export function useCatalogRowActions() {
       setConfirmText("");
     };
     const onHardError = () => setPendingId(null);
+    const onSoftError = () => setPendingId(null);
     setPendingId(deleteTarget.id);
     if (deleteTarget.kind === "category") {
       if (deleteTarget.mode === "soft") {
         patchCategory.mutate(
           { id: deleteTarget.id, action: "soft" },
-          { onSettled: done },
+          { onSuccess: done, onError: onSoftError },
         );
       } else {
         hardDeleteCategory.mutate(
@@ -139,7 +153,7 @@ export function useCatalogRowActions() {
     if (deleteTarget.mode === "soft") {
       patchService.mutate(
         { id: deleteTarget.id, action: "soft" },
-        { onSettled: done },
+        { onSuccess: done, onError: onSoftError },
       );
     } else {
       hardDeleteService.mutate(

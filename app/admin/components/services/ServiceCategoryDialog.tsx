@@ -5,7 +5,7 @@ import { FiLoader, FiSave, FiX } from "react-icons/fi";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
-import { AuthApiError } from "@/services/service-catalog.api";
+import { fieldError, formError } from "./catalog-errors";
 
 export type CategoryDialogState =
   | { mode: "create" }
@@ -16,19 +16,6 @@ type ServiceCategoryDialogProps = {
   onClose: () => void;
 };
 
-function fieldError(error: unknown, field: string): string | undefined {
-  if (error instanceof AuthApiError) {
-    return (error.errors as Record<string, string | undefined>)[field];
-  }
-  return undefined;
-}
-
-function formError(error: unknown, fallback: string): string | null {
-  if (!error) return null;
-  if (error instanceof AuthApiError) return error.errors.form ?? error.message;
-  return fallback;
-}
-
 // Create/edit modal for one service category. The parent passes a keyed
 // instance so form state resets on every open without sync effects.
 export function ServiceCategoryDialog({
@@ -38,6 +25,7 @@ export function ServiceCategoryDialog({
   const editing = dialog?.mode === "edit" ? dialog.item : null;
   const [name, setName] = useState(editing?.name ?? "");
   const [slug, setSlug] = useState(editing?.slug ?? "");
+  const [icon, setIcon] = useState(editing?.icon ?? "");
   const [description, setDescription] = useState(editing?.description ?? "");
   const [sortOrder, setSortOrder] = useState(String(editing?.sortOrder ?? 0));
   const [slugTouched, setSlugTouched] = useState(Boolean(editing));
@@ -53,7 +41,7 @@ export function ServiceCategoryDialog({
     const payload = {
       name: name.trim(),
       slug: slug.trim(),
-      icon: "",
+      icon: icon.trim(),
       description: description.trim(),
       sortOrder: Number.parseInt(sortOrder, 10) || 0,
       isActive: editing?.isActive ?? true,
@@ -142,6 +130,20 @@ export function ServiceCategoryDialog({
             {fieldError(error, "slug") && (
               <span className="font-medium text-red-600 dark:text-red-400">
                 {fieldError(error, "slug")}
+              </span>
+            )}
+          </label>
+          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            Icon (tùy chọn)
+            <input
+              value={icon}
+              onChange={(e) => setIcon(e.target.value)}
+              placeholder="wrench"
+              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            />
+            {fieldError(error, "icon") && (
+              <span className="font-medium text-red-600 dark:text-red-400">
+                {fieldError(error, "icon")}
               </span>
             )}
           </label>

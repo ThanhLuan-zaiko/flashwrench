@@ -24,15 +24,19 @@ function toUpdateInput(body: Record<string, unknown>): UpdateServiceInput {
     basePrice: Number(body.basePrice),
     priceUnit: String(body.priceUnit ?? "per_job") as PriceUnit,
     durationMin: Number(body.durationMin),
+    // Strict passthrough (no Boolean() coercion): non-boolean values
+    // reach validateServiceInput and fail with 400 instead of flipping
+    // truthy strings like "false" into true.
     isHomeSupported:
       body.isHomeSupported === undefined
         ? undefined
-        : Boolean(body.isHomeSupported),
+        : (body.isHomeSupported as boolean),
     isEmergencySupported:
       body.isEmergencySupported === undefined
         ? undefined
-        : Boolean(body.isEmergencySupported),
-    isActive: body.isActive === undefined ? undefined : Boolean(body.isActive),
+        : (body.isEmergencySupported as boolean),
+    isActive:
+      body.isActive === undefined ? undefined : (body.isActive as boolean),
   };
 }
 
@@ -64,10 +68,13 @@ export async function PATCH(
       return NextResponse.json({ service: result.data });
     }
     if (action === "toggle-active") {
-      const result = await toggleServiceActive(
-        serviceId,
-        Boolean(body.isActive),
-      );
+      if (typeof body.isActive !== "boolean") {
+        return NextResponse.json(
+          { errors: { isActive: "Trạng thái không hợp lệ." } },
+          { status: 400 },
+        );
+      }
+      const result = await toggleServiceActive(serviceId, body.isActive);
       if (!result.ok)
         return NextResponse.json(
           { errors: result.errors },

@@ -109,6 +109,9 @@ export type InsertServiceParams = {
 export async function insertService(
   params: InsertServiceParams,
 ): Promise<void> {
+  // Main rows only. The slug pointer is claimed separately with
+  // claimServiceSlug (IF NOT EXISTS) so concurrent creates with the
+  // same slug cannot silently overwrite each other.
   await scylla.batch(
     [
       {
@@ -144,19 +147,42 @@ export async function insertService(
           params.isActive,
         ],
       },
-      {
-        query: "INSERT INTO services_by_slug (slug, service_id) VALUES (?, ?)",
-        params: [params.slug, params.serviceId],
-      },
     ],
     { prepare: true },
   );
 }
 
+// Conditional slug claim: true when this caller won the slug, false
+// when another row already owns it (lost a concurrent race).
+export async function claimServiceSlug(
+  slug: string,
+  serviceId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "INSERT INTO services_by_slug (slug, service_id) VALUES (?, ?) IF NOT EXISTS",
+    [slug, serviceId],
+    { prepare: true },
+  );
+  return result.wasApplied();
+}
+
+// Conditional release: deletes the pointer only while it still points
+// at this row, so a concurrent winner's claim is never removed.
+export async function releaseServiceSlug(
+  slug: string,
+  serviceId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "DELETE FROM services_by_slug WHERE slug = ? IF service_id = ?",
+    [slug, serviceId],
+    { prepare: true },
+  );
+  return result.wasApplied();
+}
+
 export type UpdateServiceParams = InsertServiceParams & {
   updatedAt: Date;
   oldCategoryId: string;
-  oldSlug: string;
 };
 
 export async function updateServiceRows(
@@ -190,12 +216,9 @@ export async function updateServiceRows(
       params: [params.oldCategoryId, params.serviceId],
     });
   }
-  if (params.oldSlug !== params.slug) {
-    queries.push({
-      query: "DELETE FROM services_by_slug WHERE slug = ?",
-      params: [params.oldSlug],
-    });
-  }
+  // Slug pointers are claimed/released by the caller with conditional
+  // lightweight transactions (claimServiceSlug/releaseServiceSlug),
+  // so they stay out of this batch.
   queries.push({
     query:
       "INSERT INTO services_by_category (category_id, service_id, name, slug, base_price, duration_min, is_active, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, false)",
@@ -208,10 +231,6 @@ export async function updateServiceRows(
       params.durationMin,
       params.isActive,
     ],
-  });
-  queries.push({
-    query: "INSERT INTO services_by_slug (slug, service_id) VALUES (?, ?)",
-    params: [params.slug, params.serviceId],
   });
   await scylla.batch(queries, { prepare: true });
 }
@@ -284,13 +303,21 @@ export async function hardDeleteService(
   );
 }
 
-export async function refreshServiceCategoryName(
-  serviceId: string,
+// Bulk rename propagation: one atomic batch refreshes the denormalized
+// category_name on every price row of a renamed category. Callers pass
+// the member ids from listServiceRowsByCategory (no full-table scan).
+export async function bulkRefreshServiceCategoryName(
+  serviceIds: string[],
   categoryName: string,
 ): Promise<void> {
-  await scylla.execute(
-    "UPDATE services_by_id SET category_name = ?, updated_at = ? WHERE service_id = ?",
-    [categoryName, new Date(), serviceId],
+  if (serviceIds.length === 0) return;
+  const now = new Date();
+  await scylla.batch(
+    serviceIds.map((serviceId) => ({
+      query:
+        "UPDATE services_by_id SET category_name = ?, updated_at = ? WHERE service_id = ?",
+      params: [categoryName, now, serviceId],
+    })),
     { prepare: true },
   );
 }

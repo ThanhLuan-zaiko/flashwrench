@@ -151,6 +151,16 @@ export function ServicePriceList({
                     </span>
                     <span className="mt-1.5 flex flex-wrap gap-1.5">
                       <StatusPill item={item} />
+                      {item.isHomeSupported && (
+                        <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                          Tại nhà
+                        </span>
+                      )}
+                      {item.isEmergencySupported && (
+                        <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                          Cứu hộ
+                        </span>
+                      )}
                       <span className="rounded-full border border-zinc-200 px-2 py-0.5 font-mono text-[11px] text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
                         {item.slug}
                       </span>

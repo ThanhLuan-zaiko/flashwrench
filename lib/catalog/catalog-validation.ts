@@ -52,12 +52,24 @@ function checkName(name: string, errors: CatalogFieldErrors): boolean {
   return true;
 }
 
+function checkOptionalBoolean(
+  value: unknown,
+  field: "isActive" | "isHomeSupported" | "isEmergencySupported",
+  message: string,
+  errors: CatalogFieldErrors,
+): void {
+  if (value !== undefined && typeof value !== "boolean") {
+    errors[field] = message;
+  }
+}
+
 export function validateCategoryInput(input: {
   name: string;
   slug: string;
   icon?: string;
   description?: string;
   sortOrder?: number;
+  isActive?: unknown;
 }): CatalogFieldErrors | null {
   const errors: CatalogFieldErrors = {};
   checkName(input.name, errors);
@@ -76,6 +88,12 @@ export function validateCategoryInput(input: {
   if (input.icon !== undefined && input.icon.length > 60) {
     errors.icon = "Tên icon tối đa 60 ký tự.";
   }
+  checkOptionalBoolean(
+    input.isActive,
+    "isActive",
+    "Trạng thái hoạt động không hợp lệ.",
+    errors,
+  );
   return Object.keys(errors).length > 0 ? errors : null;
 }
 
@@ -87,6 +105,9 @@ export function validateServiceInput(input: {
   basePrice: number;
   priceUnit: string;
   durationMin: number;
+  isHomeSupported?: unknown;
+  isEmergencySupported?: unknown;
+  isActive?: unknown;
 }): CatalogFieldErrors | null {
   const errors: CatalogFieldErrors = {};
   checkName(input.name, errors);
@@ -117,5 +138,23 @@ export function validateServiceInput(input: {
   if (input.description !== undefined && input.description.length > 1000) {
     errors.description = "Mô tả tối đa 1000 ký tự.";
   }
+  checkOptionalBoolean(
+    input.isHomeSupported,
+    "isHomeSupported",
+    "Cờ hỗ trợ tại nhà không hợp lệ.",
+    errors,
+  );
+  checkOptionalBoolean(
+    input.isEmergencySupported,
+    "isEmergencySupported",
+    "Cờ hỗ trợ cứu hộ không hợp lệ.",
+    errors,
+  );
+  checkOptionalBoolean(
+    input.isActive,
+    "isActive",
+    "Trạng thái hoạt động không hợp lệ.",
+    errors,
+  );
   return Object.keys(errors).length > 0 ? errors : null;
 }

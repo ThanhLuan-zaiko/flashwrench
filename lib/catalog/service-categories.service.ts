@@ -11,19 +11,21 @@ import {
   type UpdateCategoryInput,
 } from "./service-catalog.types";
 import {
+  claimCategorySlug,
   findCategoryIdBySlug,
   findCategoryRowById,
   hardDeleteCategory,
   insertCategory,
   listCategoryRows,
-  moveCategorySlug,
+  releaseCategorySlug,
   setCategoryActive,
   setCategoryDeleted,
   updateCategoryRow,
 } from "./service-categories.repository";
 import {
+  bulkRefreshServiceCategoryName,
   listServiceRows,
-  refreshServiceCategoryName,
+  listServiceRowsByCategory,
 } from "./services.repository";
 
 export type ListCategoriesParams = {
@@ -109,6 +111,7 @@ export async function createServiceCategory(
     icon: input.icon,
     description: input.description,
     sortOrder: input.sortOrder,
+    isActive: input.isActive,
   });
   if (fieldErrors) return failFields(400, fieldErrors);
 
@@ -121,16 +124,29 @@ export async function createServiceCategory(
 
   const now = new Date();
   const categoryId = randomUUID();
-  await insertCategory({
-    categoryId,
-    name: input.name,
-    slug,
-    icon: (input.icon ?? "").trim(),
-    description: (input.description ?? "").trim(),
-    sortOrder: input.sortOrder ?? 0,
-    isActive: input.isActive ?? true,
-    now,
-  });
+  // Conditional claim wins concurrent races: only one creator owns
+  // the slug. Re-check after a lost race in case the owner changed.
+  if (!(await claimCategorySlug(slug, categoryId))) {
+    return failFields(409, {
+      slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
+    });
+  }
+  try {
+    await insertCategory({
+      categoryId,
+      name: input.name,
+      slug,
+      icon: (input.icon ?? "").trim(),
+      description: (input.description ?? "").trim(),
+      sortOrder: input.sortOrder ?? 0,
+      isActive: input.isActive ?? true,
+      now,
+    });
+  } catch (error) {
+    // Never leave an orphan pointer behind when the main row fails.
+    await releaseCategorySlug(slug, categoryId);
+    throw error;
+  }
   const row = await findCategoryRowById(categoryId);
   if (!row) return fail(500, "Không tạo được loại hình. Vui lòng thử lại.");
   return { ok: true, data: toItem(row, 0) };
@@ -156,6 +172,7 @@ export async function updateServiceCategory(
     icon: input.icon,
     description: input.description,
     sortOrder: input.sortOrder,
+    isActive: input.isActive,
   });
   if (fieldErrors) return failFields(400, fieldErrors);
 
@@ -167,6 +184,21 @@ export async function updateServiceCategory(
   }
 
   const oldSlug = existing.slug ?? "";
+  const slugChanged = Boolean(oldSlug) && oldSlug !== slug;
+  if (slugChanged) {
+    // Claim the new slug before touching the main row. A lost race
+    // maps to 409 unless the pointer already belongs to this row.
+    const claimed = await claimCategorySlug(slug, categoryId);
+    if (!claimed) {
+      const owner = await findCategoryIdBySlug(slug);
+      if (owner !== categoryId) {
+        return failFields(409, {
+          slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
+        });
+      }
+    }
+  }
+
   const now = new Date();
   await updateCategoryRow({
     categoryId,
@@ -178,15 +210,19 @@ export async function updateServiceCategory(
     isActive: input.isActive ?? isActiveFlag(existing.is_active, true),
     updatedAt: now,
   });
-  if (oldSlug && oldSlug !== slug) {
-    await moveCategorySlug(oldSlug, slug, categoryId);
+  if (slugChanged) {
+    // Best effort: the old pointer is released only while it still
+    // belongs to this row, so a concurrent winner is never removed.
+    await releaseCategorySlug(oldSlug, categoryId);
   }
-  // Keep denormalized category_name on services in sync with the new name.
+  // Keep denormalized category_name on services in sync with the new
+  // name. Members come from the by-category index (no full scan) and
+  // refresh in one atomic batch instead of N parallel writes.
   if ((existing.name ?? "") !== input.name) {
-    const services = await listServiceRows();
-    const touched = services.filter((s) => s.category_id === categoryId);
-    await Promise.all(
-      touched.map((s) => refreshServiceCategoryName(s.service_id, input.name)),
+    const members = await listServiceRowsByCategory(categoryId);
+    await bulkRefreshServiceCategoryName(
+      members.map((m) => m.service_id),
+      input.name,
     );
   }
   const row = await findCategoryRowById(categoryId);

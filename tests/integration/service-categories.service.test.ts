@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, mock, test } from "bun:test";
 import {
   makeCategoryInput,
   makeCategoryRow,
+  makeServiceByCategoryRow,
   makeServiceRow,
 } from "../helpers/catalog.fixtures";
 import {
@@ -116,16 +117,51 @@ describe("createServiceCategory", () => {
     );
     expect(invalid).toMatchObject({ ok: false, status: 400 });
   });
+
+  test("returns 409 when the conditional slug claim loses a race", async () => {
+    catalogStubs.categorySlugOwner = null;
+    catalogStubs.categorySlugClaimed = false;
+    const result = await createServiceCategory(makeCategoryInput());
+    expect(result).toMatchObject({ ok: false, status: 409 });
+    expect(categoryRepoMocks.insertCategory.mock.calls.length).toBe(0);
+  });
+
+  test("releases the claimed slug when the main insert throws", async () => {
+    catalogStubs.categorySlugOwner = null;
+    catalogStubs.categorySlugClaimed = true;
+    catalogStubs.categoryById = makeCategoryRow();
+    categoryRepoMocks.insertCategory.mockRejectedValueOnce(
+      new Error("db down"),
+    );
+    await expect(createServiceCategory(makeCategoryInput())).rejects.toThrow(
+      "db down",
+    );
+    expect(
+      categoryRepoMocks.releaseCategorySlug.mock.calls[0]?.slice(0, 2),
+    ).toEqual(["sua-chua-luu-dong", expect.any(String)]);
+  });
+
+  test("rejects non-boolean flags without touching storage", async () => {
+    catalogStubs.categorySlugOwner = null;
+    const result = await createServiceCategory(
+      makeCategoryInput({ isActive: "yes" as never }),
+    );
+    expect(result).toMatchObject({ ok: false, status: 400 });
+    if (result.ok) return;
+    expect(result.errors.isActive).toEqual(expect.any(String));
+    expect(categoryRepoMocks.insertCategory.mock.calls.length).toBe(0);
+  });
 });
 
 describe("updateServiceCategory", () => {
-  test("moves the slug pointer when the slug changes", async () => {
+  test("claims the new slug and releases the old one on rename", async () => {
     catalogStubs.categoryById = makeCategoryRow({
       category_id: CATEGORY_ID,
       slug: "old-slug",
       name: "Old",
     });
     catalogStubs.categorySlugOwner = null;
+    catalogStubs.categorySlugClaimed = true;
     const result = await updateServiceCategory(CATEGORY_ID, {
       ...makeCategoryInput(),
       name: "New name",
@@ -133,8 +169,50 @@ describe("updateServiceCategory", () => {
     });
     expect(result.ok).toBe(true);
     expect(
-      categoryRepoMocks.moveCategorySlug.mock.calls[0]?.slice(0, 2),
-    ).toEqual(["old-slug", "new-slug"]);
+      categoryRepoMocks.claimCategorySlug.mock.calls[0]?.slice(0, 2),
+    ).toEqual(["new-slug", CATEGORY_ID]);
+    expect(
+      categoryRepoMocks.releaseCategorySlug.mock.calls[0]?.slice(0, 2),
+    ).toEqual(["old-slug", CATEGORY_ID]);
+  });
+
+  test("returns 409 when the rename claim loses a race", async () => {
+    catalogStubs.categoryById = makeCategoryRow({
+      category_id: CATEGORY_ID,
+      slug: "old-slug",
+      name: "Old",
+    });
+    catalogStubs.categorySlugOwner = null;
+    catalogStubs.categorySlugClaimed = false;
+    const result = await updateServiceCategory(CATEGORY_ID, {
+      ...makeCategoryInput(),
+      name: "Old",
+      slug: "taken-slug",
+    });
+    expect(result).toMatchObject({ ok: false, status: 409 });
+    expect(categoryRepoMocks.updateCategoryRow.mock.calls.length).toBe(0);
+  });
+
+  test("refreshes member names in one batch via the category index", async () => {
+    catalogStubs.categoryById = makeCategoryRow({
+      category_id: CATEGORY_ID,
+      slug: "sua-chua-luu-dong",
+      name: "Old",
+    });
+    catalogStubs.categorySlugOwner = CATEGORY_ID;
+    catalogStubs.serviceByCategoryRows = [
+      makeServiceByCategoryRow({ service_id: "s1", slug: "a" }),
+      makeServiceByCategoryRow({ service_id: "s2", slug: "b" }),
+    ];
+    const result = await updateServiceCategory(CATEGORY_ID, {
+      ...makeCategoryInput(),
+      name: "New name",
+      slug: "sua-chua-luu-dong",
+    });
+    expect(result.ok).toBe(true);
+    expect(
+      catalogServiceRepoMocks.bulkRefreshServiceCategoryName.mock.calls[0],
+    ).toEqual([["s1", "s2"], "New name"]);
   });
 
   test("returns 404 and refuses trashed rows", async () => {

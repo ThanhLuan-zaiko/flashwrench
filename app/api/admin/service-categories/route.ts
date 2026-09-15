@@ -15,7 +15,11 @@ function toCreateInput(body: Record<string, unknown>): CreateCategoryInput {
       body.description === undefined ? undefined : String(body.description),
     sortOrder:
       body.sortOrder === undefined ? undefined : Number(body.sortOrder),
-    isActive: body.isActive === undefined ? undefined : Boolean(body.isActive),
+    // Strict passthrough (no Boolean() coercion): non-boolean values
+    // reach validateCategoryInput and fail with 400 instead of flipping
+    // truthy strings like "false" into true.
+    isActive:
+      body.isActive === undefined ? undefined : (body.isActive as boolean),
   };
 }
 

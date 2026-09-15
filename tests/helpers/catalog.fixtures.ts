@@ -1,6 +1,7 @@
 import type {
   CreateCategoryInput,
   CreateServiceInput,
+  ServiceByCategoryRow,
   ServiceCategoryRow,
   ServiceRow,
 } from "@/lib/catalog/service-catalog.types";
@@ -77,6 +78,22 @@ export function makeServiceInput(
     isHomeSupported: true,
     isEmergencySupported: true,
     isActive: true,
+    ...overrides,
+  };
+}
+
+export function makeServiceByCategoryRow(
+  overrides?: Partial<ServiceByCategoryRow>,
+): ServiceByCategoryRow {
+  return {
+    category_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    service_id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    name: "Thay dau dong co",
+    slug: "thay-dau-dong-co",
+    base_price: 199000,
+    duration_min: 60,
+    is_active: true,
+    is_deleted: false,
     ...overrides,
   };
 }

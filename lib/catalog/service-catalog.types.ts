@@ -147,6 +147,8 @@ export type CatalogFieldErrors = Partial<
     | "basePrice"
     | "priceUnit"
     | "durationMin"
+    | "isHomeSupported"
+    | "isEmergencySupported"
     | "confirm"
     | "form",
     string

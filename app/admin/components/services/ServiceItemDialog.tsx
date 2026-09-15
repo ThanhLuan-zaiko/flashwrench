@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiLoader, FiSave, FiX } from "react-icons/fi";
 import { useCreateService, useUpdateService } from "@/hooks/service-catalog";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
@@ -10,8 +10,10 @@ import type {
   ServiceItem,
 } from "@/lib/catalog/service-catalog.types";
 import { AuthApiError } from "@/services/service-catalog.api";
+import { fieldError } from "./catalog-errors";
 import { SelectDropdown } from "./SelectDropdown";
 import { ServiceItemPricingFields } from "./ServiceItemPricingFields";
+import { ServiceItemSupportFields } from "./ServiceItemSupportFields";
 
 export type ServiceDialogState =
   | { mode: "create"; presetCategoryId?: string }
@@ -23,15 +25,9 @@ type ServiceItemDialogProps = {
   onClose: () => void;
 };
 
-function fieldError(error: unknown, field: string): string | undefined {
-  if (error instanceof AuthApiError) {
-    return (error.errors as Record<string, string | undefined>)[field];
-  }
-  return undefined;
-}
-
 // Create/edit modal for one price row. Parent passes a keyed instance so
-// form state resets on every open without sync effects.
+// form state resets on every open. The category default still syncs via
+// effect because the category list can arrive after the dialog mounts.
 export function ServiceItemDialog({
   dialog,
   categories,
@@ -40,9 +36,13 @@ export function ServiceItemDialog({
   const editing = dialog?.mode === "edit" ? dialog.item : null;
   const preset =
     dialog?.mode === "create" ? (dialog.presetCategoryId ?? "") : "";
-  const live = categories.filter((c) => !c.isDeleted);
+  const live = useMemo(
+    () => categories.filter((c) => !c.isDeleted),
+    [categories],
+  );
+  const liveFirstId = live[0]?.id ?? "";
   const [categoryId, setCategoryId] = useState(
-    editing?.categoryId ?? preset ?? live[0]?.id ?? "",
+    editing?.categoryId ?? preset ?? liveFirstId,
   );
   const [name, setName] = useState(editing?.name ?? "");
   const [slug, setSlug] = useState(editing?.slug ?? "");
@@ -56,11 +56,25 @@ export function ServiceItemDialog({
   const [durationMin, setDurationMin] = useState(
     String(editing?.durationMin ?? 60),
   );
+  const [isHomeSupported, setIsHomeSupported] = useState(
+    editing?.isHomeSupported ?? true,
+  );
+  const [isEmergencySupported, setIsEmergencySupported] = useState(
+    editing?.isEmergencySupported ?? false,
+  );
 
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
   const pending = createMutation.isPending || updateMutation.isPending;
   const error = createMutation.error ?? updateMutation.error ?? null;
+  const hasNoCategories = !editing && live.length === 0;
+
+  useEffect(() => {
+    if (editing || live.length === 0) return;
+    if (!categoryId || !live.some((c) => c.id === categoryId)) {
+      if (liveFirstId) setCategoryId(liveFirstId);
+    }
+  }, [editing, categoryId, live, liveFirstId]);
 
   if (!dialog) return null;
 
@@ -73,8 +87,8 @@ export function ServiceItemDialog({
       basePrice: Number.parseInt(basePrice, 10) || 0,
       priceUnit,
       durationMin: Number.parseInt(durationMin, 10) || 0,
-      isHomeSupported: editing?.isHomeSupported ?? true,
-      isEmergencySupported: editing?.isEmergencySupported ?? false,
+      isHomeSupported,
+      isEmergencySupported,
       isActive: editing?.isActive ?? true,
     };
     if (editing) {
@@ -138,6 +152,11 @@ export function ServiceItemDialog({
                 {fieldError(error, "categoryId")}
               </span>
             )}
+            {hasNoCategories && (
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Chưa có loại hình nào. Hãy tạo loại hình trước khi thêm mục giá.
+              </span>
+            )}
           </div>
           <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
             Tên dịch vụ
@@ -182,6 +201,12 @@ export function ServiceItemDialog({
             onDuration={setDurationMin}
             onDescription={setDescription}
           />
+          <ServiceItemSupportFields
+            isHomeSupported={isHomeSupported}
+            isEmergencySupported={isEmergencySupported}
+            onHomeSupported={setIsHomeSupported}
+            onEmergencySupported={setIsEmergencySupported}
+          />
         </div>
 
         {error instanceof AuthApiError && error.errors.form && (
@@ -203,7 +228,7 @@ export function ServiceItemDialog({
           </button>
           <button
             type="button"
-            disabled={pending}
+            disabled={pending || (!editing && !categoryId)}
             onClick={submit}
             className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >

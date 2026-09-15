@@ -71,31 +71,52 @@ export type InsertCategoryParams = {
 export async function insertCategory(
   params: InsertCategoryParams,
 ): Promise<void> {
-  await scylla.batch(
+  // Main row only. The slug pointer is claimed separately with
+  // claimCategorySlug (IF NOT EXISTS) so concurrent creates with the
+  // same slug cannot silently overwrite each other.
+  await scylla.execute(
+    "INSERT INTO service_categories (category_id, name, slug, icon, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, false, ?, ?, null)",
     [
-      {
-        query:
-          "INSERT INTO service_categories (category_id, name, slug, icon, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, false, ?, ?, null)",
-        params: [
-          params.categoryId,
-          params.name,
-          params.slug,
-          params.icon,
-          params.description,
-          params.sortOrder,
-          params.isActive,
-          params.now,
-          params.now,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO service_categories_by_slug (slug, category_id) VALUES (?, ?)",
-        params: [params.slug, params.categoryId],
-      },
+      params.categoryId,
+      params.name,
+      params.slug,
+      params.icon,
+      params.description,
+      params.sortOrder,
+      params.isActive,
+      params.now,
+      params.now,
     ],
     { prepare: true },
   );
+}
+
+// Conditional slug claim: true when this caller won the slug, false
+// when another row already owns it (lost a concurrent race).
+export async function claimCategorySlug(
+  slug: string,
+  categoryId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "INSERT INTO service_categories_by_slug (slug, category_id) VALUES (?, ?) IF NOT EXISTS",
+    [slug, categoryId],
+    { prepare: true },
+  );
+  return result.wasApplied();
+}
+
+// Conditional release: deletes the pointer only while it still points
+// at this row, so a concurrent winner's claim is never removed.
+export async function releaseCategorySlug(
+  slug: string,
+  categoryId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "DELETE FROM service_categories_by_slug WHERE slug = ? IF category_id = ?",
+    [slug, categoryId],
+    { prepare: true },
+  );
+  return result.wasApplied();
 }
 
 export type UpdateCategoryParams = {
@@ -123,27 +144,6 @@ export async function updateCategoryRow(
       params.isActive,
       params.updatedAt,
       params.categoryId,
-    ],
-    { prepare: true },
-  );
-}
-
-export async function moveCategorySlug(
-  oldSlug: string,
-  newSlug: string,
-  categoryId: string,
-): Promise<void> {
-  await scylla.batch(
-    [
-      {
-        query: "DELETE FROM service_categories_by_slug WHERE slug = ?",
-        params: [oldSlug],
-      },
-      {
-        query:
-          "INSERT INTO service_categories_by_slug (slug, category_id) VALUES (?, ?)",
-        params: [newSlug, categoryId],
-      },
     ],
     { prepare: true },
   );

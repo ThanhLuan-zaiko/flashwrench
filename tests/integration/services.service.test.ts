@@ -104,21 +104,74 @@ describe("createService", () => {
     });
     expect(catalogServiceRepoMocks.insertService.mock.calls.length).toBe(0);
   });
+
+  test("returns 409 when the conditional slug claim loses a race", async () => {
+    catalogStubs.serviceSlugOwner = null;
+    catalogStubs.serviceSlugClaimed = false;
+    const result = await createService(makeServiceInput());
+    expect(result).toMatchObject({ ok: false, status: 409 });
+    expect(catalogServiceRepoMocks.insertService.mock.calls.length).toBe(0);
+  });
+
+  test("releases the claimed slug when the main insert throws", async () => {
+    catalogStubs.serviceSlugOwner = null;
+    catalogStubs.serviceSlugClaimed = true;
+    catalogServiceRepoMocks.insertService.mockRejectedValueOnce(
+      new Error("db down"),
+    );
+    await expect(createService(makeServiceInput())).rejects.toThrow("db down");
+    expect(
+      catalogServiceRepoMocks.releaseServiceSlug.mock.calls[0]?.slice(0, 2),
+    ).toEqual(["thay-binh-ac-quy", expect.any(String)]);
+  });
+
+  test("rejects non-boolean flags without touching storage", async () => {
+    catalogStubs.serviceSlugOwner = null;
+    const result = await createService(
+      makeServiceInput({ isHomeSupported: "false" as never }),
+    );
+    expect(result).toMatchObject({ ok: false, status: 400 });
+    if (result.ok) return;
+    expect(result.errors.isHomeSupported).toEqual(expect.any(String));
+    expect(catalogServiceRepoMocks.insertService.mock.calls.length).toBe(0);
+  });
 });
 
 describe("updateService", () => {
-  test("rewrites slug and category pointers", async () => {
+  test("claims the new slug and releases the old one", async () => {
     catalogStubs.serviceById = makeServiceRow({
       service_id: SERVICE_ID,
       slug: "old-slug",
     });
     catalogStubs.serviceSlugOwner = null;
+    catalogStubs.serviceSlugClaimed = true;
     const result = await updateService(SERVICE_ID, {
       ...makeServiceInput(),
       slug: "new-slug",
     });
     expect(result.ok).toBe(true);
     expect(catalogServiceRepoMocks.updateServiceRows.mock.calls.length).toBe(1);
+    expect(
+      catalogServiceRepoMocks.claimServiceSlug.mock.calls[0]?.slice(0, 2),
+    ).toEqual(["new-slug", SERVICE_ID]);
+    expect(
+      catalogServiceRepoMocks.releaseServiceSlug.mock.calls[0]?.slice(0, 2),
+    ).toEqual(["old-slug", SERVICE_ID]);
+  });
+
+  test("returns 409 when the rename claim loses a race", async () => {
+    catalogStubs.serviceById = makeServiceRow({
+      service_id: SERVICE_ID,
+      slug: "old-slug",
+    });
+    catalogStubs.serviceSlugOwner = null;
+    catalogStubs.serviceSlugClaimed = false;
+    const result = await updateService(SERVICE_ID, {
+      ...makeServiceInput(),
+      slug: "taken-slug",
+    });
+    expect(result).toMatchObject({ ok: false, status: 409 });
+    expect(catalogServiceRepoMocks.updateServiceRows.mock.calls.length).toBe(0);
   });
 
   test("returns 404 and refuses trashed rows", async () => {
@@ -173,6 +226,19 @@ describe("softDeleteService / restoreService", () => {
     catalogStubs.categoryById = makeCategoryRow({ is_deleted: true });
     const result = await restoreService(SERVICE_ID);
     expect(result).toMatchObject({ ok: false, status: 400 });
+    expect(catalogServiceRepoMocks.setServiceDeleted.mock.calls.length).toBe(0);
+  });
+
+  test("reports a gone parent distinctly from a trashed one", async () => {
+    catalogStubs.serviceById = makeServiceRow({
+      service_id: SERVICE_ID,
+      is_deleted: true,
+    });
+    catalogStubs.categoryById = null;
+    const result = await restoreService(SERVICE_ID);
+    expect(result).toMatchObject({ ok: false, status: 400 });
+    if (result.ok) return;
+    expect(result.errors.form).toMatch("không còn tồn tại");
     expect(catalogServiceRepoMocks.setServiceDeleted.mock.calls.length).toBe(0);
   });
 
