@@ -100,6 +100,7 @@ When generating code for this project, you MUST:
 6. **Component Composition:** Prefer composing smaller components over writing massive monolithic components. Extract logic into custom hooks to keep `.tsx` files clean and under the 250-line limit.
 7. **Git Safety:** After finishing a coding task, follow the Git Workflow Rules defined in **Section 9** to check for garbage files. **NEVER** execute any git write operations (commit, branch, tag, push) on your own.
 8. **English-Only Code:** All comments, identifiers, logs, and CQL/SQL comments MUST be in English. Vietnamese WITH full diacritics is allowed ONLY in files under `docs/` and in user-facing web UI strings (including user-facing validation/error messages).
+9. **Frontend Bento GSAP Rules:** For any frontend task involving bento grid, card layouts, dashboards, landing sections, or GSAP motion, you MUST read `frontend-bento-gsap.md` at the repo root first and follow it. That file is the single source of truth for bento/GSAP work and takes precedence over generic styling defaults.
 
 ---
 
