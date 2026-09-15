@@ -5,41 +5,43 @@ import { FiInbox, FiLoader } from "react-icons/fi";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import { CatalogPager } from "../services/CatalogPager";
 import { usePagination } from "../services/usePagination";
-import { AdminUserCard } from "./AdminUserCard";
 import { excludeSelfAccount } from "./admin-user-guards";
-import type { UserActionTarget } from "./useUserRowActions";
+import { StaffCard } from "./StaffCard";
 
-type ApprovalQueueListProps = {
+type StaffTrashListProps = {
   items: AdminUserItem[];
   isPending: boolean;
   isError: boolean;
-  pendingUserId: string | null;
+  pendingId: string | null;
   currentUserId?: string | null;
-  onOpenAction: (target: UserActionTarget) => void;
+  onRestore: (item: AdminUserItem) => void;
+  onHard: (item: AdminUserItem) => void;
   onRetry: () => void;
 };
 
-// Pending mechanic applications with confirm-then-act buttons.
-// Mirrors ServiceCategoryList: skeleton, retry, empty, paged rows.
-// The current admin is hidden; other admin rows never expose actions.
-export function ApprovalQueueList({
+// Trash section: soft-deleted staff with restore and type-to-confirm hard
+// delete. Mirrors CatalogTrashPanel at row level; the panel layout lives
+// in UsersSection to keep this file small.
+export function StaffTrashList({
   items,
   isPending,
   isError,
-  pendingUserId,
+  pendingId,
   currentUserId,
-  onOpenAction,
+  onRestore,
+  onHard,
   onRetry,
-}: ApprovalQueueListProps) {
+}: StaffTrashListProps) {
   const manageable = useMemo(
     () => excludeSelfAccount(items, currentUserId),
     [items, currentUserId],
   );
   const pager = usePagination(manageable.length);
+
   if (isPending) {
     return (
-      <ul className="flex flex-col gap-2" aria-label="Đang tải hồ sơ chờ duyệt">
-        {[0, 1, 2].map((i) => (
+      <ul className="flex flex-col gap-2" aria-label="Đang tải thùng rác">
+        {[0, 1].map((i) => (
           <li
             key={i}
             className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-3 dark:bg-zinc-900"
@@ -49,7 +51,7 @@ export function ApprovalQueueList({
               className="h-4 w-4 motion-safe:animate-spin"
             />
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              Đang tải hồ sơ chờ duyệt…
+              Đang tải thùng rác…
             </span>
           </li>
         ))}
@@ -80,10 +82,10 @@ export function ApprovalQueueList({
         </span>
         <span>
           <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-            Không có hồ sơ thợ chờ duyệt
+            Thùng rác trống
           </span>
           <span className="block text-xs text-zinc-500 dark:text-zinc-400">
-            Hồ sơ đăng ký làm thợ mới sẽ hiện tại đây
+            Các mục xóa mềm sẽ hiện tại đây
           </span>
         </span>
       </div>
@@ -93,20 +95,13 @@ export function ApprovalQueueList({
     <div className="flex flex-col gap-2">
       <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
         {pager.slice(manageable).map((item) => (
-          <AdminUserCard
+          <StaffCard
             key={item.id}
             user={item}
-            pendingUserId={pendingUserId}
-            currentUserId={currentUserId}
-            actions={["approve", "lock"]}
-            onAction={(userId, action) =>
-              onOpenAction({
-                userId,
-                fullName: item.fullName,
-                action,
-                role: item.role,
-              })
-            }
+            pendingId={pendingId}
+            variant="trash"
+            onRestore={onRestore}
+            onHard={onHard}
           />
         ))}
       </ul>

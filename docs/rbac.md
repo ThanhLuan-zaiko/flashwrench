@@ -80,6 +80,8 @@ server-side: chưa đăng nhập thì redirect `/login`, sai role thì trả pan
 |---|---|
 | `/admin` | Dashboard tổng quan (số liệu vận hành) |
 | `/admin/users` | Quản lý người dùng: duyệt thợ, khóa/mở khóa tài khoản |
+| `/admin/users/staff` | Quản lý nhân viên: tạo/sửa, xóa mềm |
+| `/admin/users/trash` | Thùng rác nhân viên: khôi phục, xóa vĩnh viễn |
 | `/admin/services` | Cấu hình dịch vụ: bảng giá, loại hình sửa chữa |
 
 Sidebar dùng `Link` nên mỗi mục có URL riêng, deep-link và refresh giữ
@@ -102,7 +104,16 @@ Danh sách đọc từ bảng `users_by_role` theo từng partition
 | Endpoint | Phương thức | Tham số | Ý nghĩa |
 |---|---|---|---|
 | `/api/admin/users` | `GET` | `role=all\|customer\|mechanic\|dispatcher\|admin`, `status`, `months` (1–24, mặc định 6), `limit` (1–100, mặc định 50) | Liệt kê người dùng mới nhất trước |
+| `/api/admin/users` | `POST` | `{ "fullName", "phone", "email", "role": "mechanic" \| "dispatcher" }` | Tạo tài khoản nhân viên, trả về mật khẩu tạm một lần |
 | `/api/admin/users/[userId]` | `PATCH` | `{ "action": "approve" \| "lock" \| "unlock" }` | Đổi trạng thái một tài khoản |
+| `/api/admin/users/[userId]` | `PATCH` | `{ "action": "update", "fullName", "phone", "email", "role" }` | Sửa hồ sơ nhân viên |
+| `/api/admin/users/[userId]` | `PATCH` | `{ "action": "soft" \| "restore" }` | Xóa mềm / khôi phục nhân viên |
+| `/api/admin/users/[userId]` | `DELETE` | `{ "confirm": "<số điện thoại>" }` | Xóa vĩnh viễn (chỉ trong thùng rác) |
+
+Trạng thái tài khoản (`status`): `active` (hoạt động), `locked` (bị
+khóa), `pending_verification` (chờ duyệt), `deleted` (xóa mềm, nằm trong
+thùng rác). Tài khoản `deleted` bị chặn đăng nhập/refresh/đổi mật khẩu
+giống `locked`.
 
 Luật nghiệp vụ của `applyAdminUserAction`:
 
@@ -113,6 +124,24 @@ Luật nghiệp vụ của `applyAdminUserAction`:
 - `unlock`: chỉ mở tài khoản đang `locked` → `active`.
 - Không bao giờ tác động tài khoản của chính mình hoặc tài khoản
   `admin` khác (trả `403`).
+- Từ chối mọi thao tác trên tài khoản `deleted` (trả `400`, hãy khôi
+  phục trước).
+
+Luật nghiệp vụ của staff (`lib/auth/staff.service.ts`, tab "Nhân viên"):
+
+- `create`: chỉ gán `mechanic`/`dispatcher` (khách hàng tự đăng ký,
+  không bao giờ `admin`), server sinh mật khẩu tạm 12 ký tự và trả về
+  đúng một lần. Trùng phone/email trả `409`.
+- `update`: sửa tên, phone, email, vai trò (`customer`/`mechanic`/
+  `dispatcher`, để khách hàng cũ vẫn sửa được). Đổi phone/email phải
+  claim lookup mới trước, nhả lookup cũ sau khi thành công.
+- `soft`: mọi trạng thái trừ `deleted` → `deleted`, tăng
+  `token_version` để đá mọi phiên.
+- `restore`: chỉ `deleted` → `active`.
+- `hard`: chỉ `deleted`, phải nhập đúng số điện thoại để xác nhận.
+  Xóa hàng ở cả 4 bảng `users_by_id/phone/email/role` và thu hồi phiên.
+- Mọi thao tác staff đều chặn tài khoản của chính mình và tài khoản
+  `admin` khác (`403`), UI ẩn luôn tài khoản của chính mình.
 
 ## 6. Seed admin đầu tiên
 

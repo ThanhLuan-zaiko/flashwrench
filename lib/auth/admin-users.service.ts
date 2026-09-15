@@ -47,6 +47,7 @@ const KNOWN_STATUSES: UserStatus[] = [
   "active",
   "locked",
   "pending_verification",
+  "deleted",
 ];
 
 function toItem(row: AdminRoleRow): AdminUserItem {
@@ -133,9 +134,10 @@ function fail(status: number, form: string): AdminUserActionResult {
 }
 
 // Change one account status. Guards: admins can never touch their own
-// account or another admin, and every transition is validated so approve
-// cannot reactivate a locked account and lock cannot hit an already
-// locked one. Locking bumps token_version to kill live sessions.
+// account or another admin, trashed (deleted) accounts must be restored
+// first, and every transition is validated so approve cannot reactivate
+// a locked account and lock cannot hit an already locked one. Locking
+// bumps token_version to kill live sessions.
 export async function applyAdminUserAction(
   adminId: string,
   targetUserId: string,
@@ -157,6 +159,12 @@ export async function applyAdminUserAction(
   }
 
   const current = (target.status as UserStatus) ?? "active";
+  if (current === "deleted") {
+    return fail(
+      400,
+      "Tài khoản đang nằm trong thùng rác. Hãy khôi phục trước khi thao tác.",
+    );
+  }
   let next: UserStatus;
   let bumpToken = false;
   if (action === "approve") {

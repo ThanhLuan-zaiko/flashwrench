@@ -72,7 +72,10 @@ function wasApplied(result: unknown): boolean {
   return row?.["[applied]"] === true;
 }
 
-async function claimPhone(phone: string, userId: string): Promise<boolean> {
+export async function claimPhone(
+  phone: string,
+  userId: string,
+): Promise<boolean> {
   const result = await scylla.execute(
     "INSERT INTO users_by_phone (phone, user_id) VALUES (?, ?) IF NOT EXISTS",
     [phone, userId],
@@ -81,7 +84,10 @@ async function claimPhone(phone: string, userId: string): Promise<boolean> {
   return wasApplied(result);
 }
 
-async function claimEmail(email: string, userId: string): Promise<boolean> {
+export async function claimEmail(
+  email: string,
+  userId: string,
+): Promise<boolean> {
   const result = await scylla.execute(
     "INSERT INTO users_by_email (email, user_id) VALUES (?, ?) IF NOT EXISTS",
     [email, userId],
@@ -90,7 +96,7 @@ async function claimEmail(email: string, userId: string): Promise<boolean> {
   return wasApplied(result);
 }
 
-async function releasePhone(phone: string): Promise<void> {
+export async function releasePhone(phone: string): Promise<void> {
   await scylla
     .execute("DELETE FROM users_by_phone WHERE phone = ?", [phone], {
       prepare: true,
@@ -98,7 +104,7 @@ async function releasePhone(phone: string): Promise<void> {
     .catch(() => undefined);
 }
 
-async function releaseEmail(email: string): Promise<void> {
+export async function releaseEmail(email: string): Promise<void> {
   await scylla
     .execute("DELETE FROM users_by_email WHERE email = ?", [email], {
       prepare: true,

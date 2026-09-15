@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { FiPlus, FiShield } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { useMe } from "@/hooks/auth";
 import { useTransitionComplaint } from "@/hooks/complaints";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import type { ComplaintItem } from "@/lib/complaints/complaint.types";
@@ -16,8 +16,13 @@ import {
   type ComplaintDialogState,
 } from "./users/ComplaintDialog";
 import { ComplaintList } from "./users/ComplaintList";
+import { StaffDeleteDialog } from "./users/StaffDeleteDialog";
+import { StaffDialog } from "./users/StaffDialog";
+import { StaffSection } from "./users/StaffSection";
 import { UserActionDialog } from "./users/UserActionDialog";
+import { UsersHeaderAction } from "./users/UsersHeaderAction";
 import { USER_TABS, type UserTab } from "./users/user-tabs";
+import { useStaffActions } from "./users/useStaffActions";
 import { useUserRowActions } from "./users/useUserRowActions";
 import { useUsersOverview } from "./users/useUsersOverview";
 
@@ -25,14 +30,18 @@ import { useUsersOverview } from "./users/useUsersOverview";
 // handling. Data via useUsersOverview, account actions via
 // useUserRowActions, complaint transitions via TanStack mutations.
 // Active tab comes from the route (one URL per tab) so links stay
-// shareable and the browser back button works.
+// shareable and the browser back button works. The current admin id
+// hides self/admin actions so nobody can lock their own account.
 export function UsersSection({ tab }: { tab: UserTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const [statusFilter, setStatusFilter] = useState("");
   const [complaintDialog, setComplaintDialog] =
     useState<ComplaintDialogState | null>(null);
   const [complaintBusyId, setComplaintBusyId] = useState<string | null>(null);
-  const actions = useUserRowActions();
+  const me = useMe();
+  const currentUserId = me.data?.id ?? null;
+  const actions = useUserRowActions(currentUserId);
+  const staff = useStaffActions();
   const overview = useUsersOverview();
   const transition = useTransitionComplaint();
 
@@ -61,7 +70,7 @@ export function UsersSection({ tab }: { tab: UserTab }) {
       <BigTypeHeader
         eyebrow="Quản lý người dùng"
         title="Đúng người, đúng việc."
-        subtitle="Duyệt thợ, khóa tài khoản và xử lý khiếu nại tại một nơi duy nhất."
+        subtitle="Duyệt thợ, khóa tài khoản, quản lý nhân viên và xử lý khiếu nại tại một nơi duy nhất."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         {overview.stats.map((stat) => (
@@ -94,21 +103,11 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                 </Link>
               ))}
             </div>
-            {tab === "complaints" ? (
-              <button
-                type="button"
-                onClick={() => setComplaintDialog({ mode: "create" })}
-                className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-              >
-                <FiPlus aria-hidden="true" className="h-4 w-4" />
-                Ghi nhận khiếu nại
-              </button>
-            ) : (
-              <p className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                <FiShield aria-hidden="true" className="h-4 w-4" />
-                Mọi thao tác đều cần xác nhận
-              </p>
-            )}
+            <UsersHeaderAction
+              tab={tab}
+              onCreateComplaint={() => setComplaintDialog({ mode: "create" })}
+              onCreateStaff={staff.openCreate}
+            />
           </div>
 
           <div role="tabpanel" className="mt-4">
@@ -118,6 +117,7 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                 isPending={overview.pendingQuery.isPending}
                 isError={overview.pendingQuery.isError}
                 pendingUserId={actions.pendingUserId}
+                currentUserId={currentUserId}
                 onOpenAction={actions.openAction}
                 onRetry={() => void overview.pendingQuery.refetch()}
               />
@@ -128,7 +128,42 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                 isPending={overview.allQuery.isPending}
                 isError={overview.allQuery.isError}
                 pendingUserId={actions.pendingUserId}
+                currentUserId={currentUserId}
                 onOpenAction={actions.openAction}
+                onRetry={() => void overview.allQuery.refetch()}
+              />
+            )}
+            {tab === "staff" && (
+              <StaffSection
+                mode="staff"
+                live={overview.staffLive}
+                trash={overview.staffTrash}
+                isPending={overview.allQuery.isPending}
+                isError={overview.allQuery.isError}
+                pendingId={staff.pendingStaffId}
+                currentUserId={currentUserId}
+                restoreError={staff.restoreError}
+                onEdit={staff.openEdit}
+                onSoft={staff.openSoft}
+                onRestore={staff.restore}
+                onHard={staff.openHard}
+                onRetry={() => void overview.allQuery.refetch()}
+              />
+            )}
+            {tab === "trash" && (
+              <StaffSection
+                mode="trash"
+                live={overview.staffLive}
+                trash={overview.staffTrash}
+                isPending={overview.allQuery.isPending}
+                isError={overview.allQuery.isError}
+                pendingId={staff.pendingStaffId}
+                currentUserId={currentUserId}
+                restoreError={staff.restoreError}
+                onEdit={staff.openEdit}
+                onSoft={staff.openSoft}
+                onRestore={staff.restore}
+                onHard={staff.openHard}
                 onRetry={() => void overview.allQuery.refetch()}
               />
             )}
@@ -155,6 +190,26 @@ export function UsersSection({ tab }: { tab: UserTab }) {
         error={actions.actionError}
         onClose={actions.closeAction}
         onConfirm={actions.confirmAction}
+      />
+      {staff.staffDialog && (
+        <StaffDialog
+          key={
+            staff.staffDialog.mode === "edit"
+              ? `staff-${staff.staffDialog.item.id}`
+              : "staff-create"
+          }
+          dialog={staff.staffDialog}
+          onClose={staff.closeStaffDialog}
+        />
+      )}
+      <StaffDeleteDialog
+        target={staff.deleteTarget}
+        confirmText={staff.deleteConfirm}
+        pending={staff.deletePending}
+        error={staff.deleteError}
+        onConfirmText={staff.setDeleteConfirm}
+        onClose={staff.closeDelete}
+        onConfirm={staff.confirmDelete}
       />
       {complaintDialog && (
         <ComplaintDialog

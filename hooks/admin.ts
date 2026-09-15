@@ -5,7 +5,14 @@ import {
   type AdminUserAction,
   type AdminUserItem,
   adminUserActionRequest,
+  createStaffRequest,
   fetchAdminUsers,
+  hardDeleteStaffRequest,
+  restoreStaffRequest,
+  type StaffCreateInput,
+  type StaffUpdateInput,
+  softDeleteStaffRequest,
+  updateStaffRequest,
 } from "@/services/admin.api";
 
 export type { AdminUserItem, AdminUserAction };
@@ -44,4 +51,52 @@ export function useAdminUserAction() {
       void queryClient.invalidateQueries({ queryKey: adminKeys.all });
     },
   });
+}
+
+function useStaffMutation<TArgs extends Record<string, unknown>>(
+  task: (args: TArgs) => Promise<{ user: AdminUserItem }>,
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: task,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminKeys.all });
+    },
+  });
+}
+
+export function useCreateStaff() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: StaffCreateInput) => createStaffRequest(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminKeys.all });
+    },
+  });
+}
+
+export function useUpdateStaff() {
+  return useStaffMutation(
+    ({ userId, ...payload }: StaffUpdateInput & { userId: string }) =>
+      updateStaffRequest(userId, payload),
+  );
+}
+
+export function useSoftDeleteStaff() {
+  return useStaffMutation(({ userId }: { userId: string }) =>
+    softDeleteStaffRequest(userId),
+  );
+}
+
+export function useRestoreStaff() {
+  return useStaffMutation(({ userId }: { userId: string }) =>
+    restoreStaffRequest(userId),
+  );
+}
+
+export function useHardDeleteStaff() {
+  return useStaffMutation(
+    ({ userId, confirm }: { userId: string; confirm: string }) =>
+      hardDeleteStaffRequest(userId, confirm),
+  );
 }

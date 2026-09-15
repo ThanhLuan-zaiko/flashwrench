@@ -4,7 +4,8 @@ import {
   listAdminUsers,
 } from "@/lib/auth/admin-users.service";
 import { requireRole } from "@/lib/auth/authorization";
-import type { UserStatus } from "@/lib/auth/user.types";
+import { createStaff } from "@/lib/auth/staff.service";
+import type { UserRole, UserStatus } from "@/lib/auth/user.types";
 
 function parsePositiveInt(raw: string | null): number | undefined {
   if (raw === null || raw === "") return undefined;
@@ -37,6 +38,57 @@ export async function GET(request: Request) {
       {
         errors: {
           form: "Không tải được danh sách người dùng. Vui lòng thử lại sau.",
+        },
+      },
+      { status: 500 },
+    );
+  }
+}
+
+// Create one staff account (customer, mechanic or dispatcher). The server
+// generates a one-time temp password returned once in the response.
+export async function POST(request: Request) {
+  const { user, response } = await requireRole("admin");
+  if (response) return response;
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { errors: { form: "Dữ liệu gửi lên không hợp lệ." } },
+      { status: 400 },
+    );
+  }
+  const input = body as {
+    fullName?: unknown;
+    phone?: unknown;
+    email?: unknown;
+    role?: unknown;
+  };
+
+  try {
+    const result = await createStaff(user.id, {
+      fullName: String(input.fullName ?? ""),
+      phone: String(input.phone ?? ""),
+      email: String(input.email ?? ""),
+      role: input.role as UserRole,
+    });
+    if (!result.ok) {
+      return NextResponse.json(
+        { errors: result.errors },
+        { status: result.status },
+      );
+    }
+    return NextResponse.json(
+      { user: result.user, tempPassword: result.tempPassword },
+      { status: 201 },
+    );
+  } catch {
+    return NextResponse.json(
+      {
+        errors: {
+          form: "Không tạo được tài khoản. Vui lòng thử lại sau.",
         },
       },
       { status: 500 },

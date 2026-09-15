@@ -3,10 +3,16 @@ import type {
   AdminUserAction,
   AdminUserItem,
 } from "@/lib/auth/admin-users.service";
+import type {
+  StaffCreateInput,
+  StaffFieldErrors,
+  StaffUpdateInput,
+} from "@/lib/auth/staff.validation";
 import type { UserStatus } from "@/lib/auth/user.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
 export type { AdminUserItem, AdminUserAction, AdminRoleFilter };
+export type { StaffCreateInput, StaffUpdateInput, StaffFieldErrors };
 export { AuthApiError };
 
 export type AdminUsersQuery = {
@@ -41,5 +47,52 @@ export function adminUserActionRequest(
   return apiRequest<{ user: AdminUserItem }>(
     `/api/admin/users/${encodeURIComponent(userId)}`,
     { method: "PATCH", body: JSON.stringify({ action }) },
+  );
+}
+
+export function createStaffRequest(
+  payload: StaffCreateInput,
+): Promise<{ user: AdminUserItem; tempPassword: string }> {
+  return apiRequest<{ user: AdminUserItem; tempPassword: string }>(
+    "/api/admin/users",
+    { method: "POST", body: JSON.stringify(payload) },
+  );
+}
+
+export function updateStaffRequest(
+  userId: string,
+  payload: StaffUpdateInput,
+): Promise<{ user: AdminUserItem }> {
+  return apiRequest<{ user: AdminUserItem }>(
+    `/api/admin/users/${encodeURIComponent(userId)}`,
+    { method: "PATCH", body: JSON.stringify({ action: "update", ...payload }) },
+  );
+}
+
+export function softDeleteStaffRequest(
+  userId: string,
+): Promise<{ user: AdminUserItem }> {
+  return apiRequest<{ user: AdminUserItem }>(
+    `/api/admin/users/${encodeURIComponent(userId)}`,
+    { method: "PATCH", body: JSON.stringify({ action: "soft" }) },
+  );
+}
+
+export function restoreStaffRequest(
+  userId: string,
+): Promise<{ user: AdminUserItem }> {
+  return apiRequest<{ user: AdminUserItem }>(
+    `/api/admin/users/${encodeURIComponent(userId)}`,
+    { method: "PATCH", body: JSON.stringify({ action: "restore" }) },
+  );
+}
+
+export function hardDeleteStaffRequest(
+  userId: string,
+  confirm: string,
+): Promise<{ user: AdminUserItem }> {
+  return apiRequest<{ user: AdminUserItem }>(
+    `/api/admin/users/${encodeURIComponent(userId)}`,
+    { method: "DELETE", body: JSON.stringify({ confirm }) },
   );
 }

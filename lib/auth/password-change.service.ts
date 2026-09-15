@@ -36,7 +36,7 @@ export async function changePassword(
   if (invalid) return { ok: false, errors: invalid, status: 400 };
 
   const row = await findUserById(userId);
-  if (!row || row.status === "locked") {
+  if (!row || row.status === "locked" || row.status === "deleted") {
     return {
       ok: false,
       status: 401,

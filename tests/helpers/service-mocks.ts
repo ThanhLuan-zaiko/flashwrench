@@ -7,6 +7,7 @@ import type {
 import type {
   CreateUserOutcome,
   CreateUserParams,
+  CreateUserWithRoleParams,
 } from "@/lib/auth/user.repository";
 import type { UserRow } from "@/lib/auth/user.types";
 import type {
@@ -16,6 +17,9 @@ import type {
 } from "@/lib/catalog/service-catalog.types";
 import type { ComplaintRow } from "@/lib/complaints/complaint.types";
 import { makeUserRow } from "./auth.fixtures";
+import { staffRepoMocks } from "./staff.mocks";
+
+export { staffRepoMocks };
 
 // Mutable stub state for service-level suites. Factories in the test files
 // return these handles, so each test reconfigures behavior by mutating
@@ -52,6 +56,18 @@ export const userRepoMocks = {
     async (_params: CreateUserParams): Promise<CreateUserOutcome> =>
       serviceStubs.createUserOutcome,
   ),
+  createUserWithRole: mock(
+    async (_params: CreateUserWithRoleParams): Promise<CreateUserOutcome> =>
+      serviceStubs.createUserOutcome,
+  ),
+  claimPhone: mock(
+    async (_phone: string, _userId: string): Promise<boolean> => true,
+  ),
+  claimEmail: mock(
+    async (_email: string, _userId: string): Promise<boolean> => true,
+  ),
+  releasePhone: mock(async (_phone: string): Promise<void> => undefined),
+  releaseEmail: mock(async (_email: string): Promise<void> => undefined),
   bumpTokenVersion: mock(async (_userId: string): Promise<number> => 1),
   updatePassword: mock(
     async (_userId: string, _hash: string): Promise<void> => undefined,
@@ -170,6 +186,7 @@ export function resetServiceMocks(): void {
   complaintStubs.complaintRows = [];
   complaintStubs.complaintById = null;
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(staffRepoMocks)) fn.mockClear();
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
   for (const fn of Object.values(adminUsersRepoMocks)) fn.mockClear();

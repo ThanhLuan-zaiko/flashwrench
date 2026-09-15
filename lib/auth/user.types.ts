@@ -1,6 +1,10 @@
 export type UserRole = "customer" | "mechanic" | "dispatcher" | "admin";
 
-export type UserStatus = "active" | "locked" | "pending_verification";
+export type UserStatus =
+  | "active"
+  | "locked"
+  | "pending_verification"
+  | "deleted";
 
 export type UserRow = {
   user_id: string;

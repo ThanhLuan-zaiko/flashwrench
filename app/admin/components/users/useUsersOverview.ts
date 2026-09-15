@@ -31,6 +31,17 @@ export function useUsersOverview() {
       complaints.filter((c) => c.status === "open" || c.status === "in_review"),
     [complaints],
   );
+  // Staff tab: manageable accounts only (no admins), split into live rows
+  // and the soft-deleted trash. Self-hiding happens in the lists, which
+  // know the current admin id.
+  const staffLive = useMemo(
+    () => allUsers.filter((u) => u.role !== "admin" && u.status !== "deleted"),
+    [allUsers],
+  );
+  const staffTrash = useMemo(
+    () => allUsers.filter((u) => u.role !== "admin" && u.status === "deleted"),
+    [allUsers],
+  );
 
   const stats: UsersStat[] = [
     {
@@ -68,6 +79,8 @@ export function useUsersOverview() {
     allQuery,
     complaintsQuery,
     allUsers,
+    staffLive,
+    staffTrash,
     complaints,
     openComplaints,
     stats,

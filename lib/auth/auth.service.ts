@@ -186,12 +186,12 @@ export async function loginUser(
     };
   }
 
-  if (row.status === "locked") {
-    return {
-      ok: false,
-      status: 403,
-      errors: { form: "Tài khoản đã bị khóa. Vui lòng liên hệ hỗ trợ." },
-    };
+  if (row.status === "locked" || row.status === "deleted") {
+    const form =
+      row.status === "locked"
+        ? "Tài khoản đã bị khóa. Vui lòng liên hệ hỗ trợ."
+        : "Tài khoản đã bị xóa. Vui lòng liên hệ hỗ trợ.";
+    return { ok: false, status: 403, errors: { form } };
   }
 
   const user = toPublicUser(row);
@@ -205,7 +205,7 @@ export async function authenticate(
   const claims = await verifyAccessToken(accessToken);
   if (!claims) return null;
   const row = await findUserById(claims.userId);
-  if (!row || row.status === "locked") return null;
+  if (!row || row.status === "locked" || row.status === "deleted") return null;
   if ((row.token_version ?? 0) !== claims.tokenVersion) return null;
   return toPublicUser(row);
 }
@@ -218,7 +218,7 @@ async function buildRotatedPair(
   label: string,
 ): Promise<RefreshOutcome> {
   const userRow = await findUserById(userId);
-  if (!userRow || userRow.status === "locked")
+  if (!userRow || userRow.status === "locked" || userRow.status === "deleted")
     return { ok: false, revoked: false };
   if (rowCreatedAt) {
     await touchSessionIndex({
@@ -340,6 +340,6 @@ export async function revokeAllSessions(userId: string): Promise<void> {
 export async function getPublicUserById(userId: string) {
   const row = await findUserById(userId);
   if (!row) return null;
-  if (row.status === "locked") return null;
+  if (row.status === "locked" || row.status === "deleted") return null;
   return toPublicUser(row);
 }

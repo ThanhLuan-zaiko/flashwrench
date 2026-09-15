@@ -6,17 +6,17 @@ import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import { CatalogPager } from "../services/CatalogPager";
 import { SelectDropdown } from "../services/SelectDropdown";
 import { usePagination } from "../services/usePagination";
-import { AdminUserCard } from "./AdminUserCard";
 import { excludeSelfAccount } from "./admin-user-guards";
-import type { UserActionTarget } from "./useUserRowActions";
+import { StaffCard } from "./StaffCard";
 
-type AccountManageListProps = {
+type StaffManageListProps = {
   items: AdminUserItem[];
   isPending: boolean;
   isError: boolean;
-  pendingUserId: string | null;
+  pendingId: string | null;
   currentUserId?: string | null;
-  onOpenAction: (target: UserActionTarget) => void;
+  onEdit: (item: AdminUserItem) => void;
+  onSoft: (item: AdminUserItem) => void;
   onRetry: () => void;
 };
 
@@ -24,29 +24,25 @@ const ROLE_OPTIONS = [
   { value: "customer", label: "Khách hàng" },
   { value: "mechanic", label: "Thợ" },
   { value: "dispatcher", label: "Điều phối" },
-  { value: "admin", label: "Quản trị" },
 ];
 
-// Every non-trashed account except the current admin, with search plus
-// role filter. Search matches name, phone and email; the pager resets
-// whenever either filter changes. Other admin accounts stay visible but
-// non-actionable.
-export function AccountManageList({
+// Live staff with search plus role filter. The current admin is hidden so
+// they can never soft-delete themselves. Mirrors AccountManageList.
+export function StaffManageList({
   items,
   isPending,
   isError,
-  pendingUserId,
+  pendingId,
   currentUserId,
-  onOpenAction,
+  onEdit,
+  onSoft,
   onRetry,
-}: AccountManageListProps) {
+}: StaffManageListProps) {
   const [text, setText] = useState("");
   const [role, setRole] = useState("");
   const visible = useMemo(() => {
     const needle = text.trim().toLowerCase();
     return excludeSelfAccount(items, currentUserId).filter((u) => {
-      // Trashed accounts live in the trash tab; lock actions reject them.
-      if (u.status === "deleted") return false;
       if (role && u.role !== role) return false;
       if (!needle) return true;
       return [u.fullName, u.phone, u.email].some((f) =>
@@ -70,13 +66,13 @@ export function AccountManageList({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label
-            htmlFor="admin-user-search"
+            htmlFor="staff-search"
             className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
           >
             Tìm kiếm
           </label>
           <input
-            id="admin-user-search"
+            id="staff-search"
             type="search"
             value={text}
             onChange={(e) => handleText(e.target.value)}
@@ -97,7 +93,7 @@ export function AccountManageList({
       </div>
 
       {isPending ? (
-        <ul className="flex flex-col gap-2" aria-label="Đang tải tài khoản">
+        <ul className="flex flex-col gap-2" aria-label="Đang tải nhân viên">
           {[0, 1, 2].map((i) => (
             <li
               key={i}
@@ -108,7 +104,7 @@ export function AccountManageList({
                 className="h-4 w-4 motion-safe:animate-spin"
               />
               <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                Đang tải tài khoản…
+                Đang tải nhân viên…
               </span>
             </li>
           ))}
@@ -133,10 +129,10 @@ export function AccountManageList({
           </span>
           <span>
             <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-              Không tìm thấy tài khoản phù hợp
+              Chưa có nhân viên nào
             </span>
             <span className="block text-xs text-zinc-500 dark:text-zinc-400">
-              Thử từ khóa hoặc vai trò khác
+              Nhấn Thêm nhân viên để tạo tài khoản mới
             </span>
           </span>
         </div>
@@ -144,20 +140,13 @@ export function AccountManageList({
         <div className="flex flex-col gap-2">
           <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
             {pager.slice(visible).map((item) => (
-              <AdminUserCard
+              <StaffCard
                 key={item.id}
                 user={item}
-                pendingUserId={pendingUserId}
-                currentUserId={currentUserId}
-                actions={item.status === "locked" ? ["unlock"] : ["lock"]}
-                onAction={(userId, action) =>
-                  onOpenAction({
-                    userId,
-                    fullName: item.fullName,
-                    action,
-                    role: item.role,
-                  })
-                }
+                pendingId={pendingId}
+                variant="live"
+                onEdit={onEdit}
+                onSoft={onSoft}
               />
             ))}
           </ul>
