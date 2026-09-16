@@ -8,6 +8,7 @@ import {
   catalogServiceRepoMocks,
   catalogStubs,
   categoryRepoMocks,
+  mediaRepoMocks,
   resetServiceMocks,
 } from "../helpers/service-mocks";
 
@@ -18,6 +19,7 @@ mock.module(
   () => categoryRepoMocks,
 );
 mock.module("@/lib/catalog/services.repository", () => catalogServiceRepoMocks);
+mock.module("@/lib/media/media.repository", () => mediaRepoMocks);
 
 import {
   createService,
@@ -185,6 +187,72 @@ describe("updateService", () => {
       ok: false,
       status: 400,
     });
+  });
+});
+
+describe("service cover images", () => {
+  const COVER_URL = "/api/media/service/2026-09/cover.jpg";
+
+  test("creates with a cover and relinks the asset to the new row", async () => {
+    catalogStubs.serviceSlugOwner = null;
+    catalogStubs.serviceById = makeServiceRow({
+      slug: "thay-binh-ac-quy",
+      image_url: COVER_URL,
+    });
+    const result = await createService(
+      makeServiceInput({ imageUrl: COVER_URL, imageAssetId: "asset-1" }),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.imageUrl).toBe(COVER_URL);
+    expect(mediaRepoMocks.relinkAssetOwner.mock.calls[0]?.slice(0, 2)).toEqual([
+      "asset-1",
+      "service",
+    ]);
+    expect(catalogServiceRepoMocks.insertService.mock.calls.length).toBe(1);
+  });
+
+  test("returns 404 for an unknown asset without writing", async () => {
+    catalogStubs.serviceSlugOwner = null;
+    mediaRepoMocks.relinkAssetOwner.mockImplementationOnce(async () => false);
+    const result = await createService(
+      makeServiceInput({ imageUrl: COVER_URL, imageAssetId: "ghost" }),
+    );
+    expect(result).toMatchObject({ ok: false, status: 404 });
+    if (result.ok) return;
+    expect(result.errors.imageAssetId).toEqual(expect.any(String));
+    expect(catalogServiceRepoMocks.insertService.mock.calls.length).toBe(0);
+  });
+
+  test("rejects external image URLs with 400", async () => {
+    const result = await createService(
+      makeServiceInput({ imageUrl: "https://cdn.test/cover.jpg" }),
+    );
+    expect(result).toMatchObject({ ok: false, status: 400 });
+    if (result.ok) return;
+    expect(result.errors.imageUrl).toEqual(expect.any(String));
+    expect(mediaRepoMocks.relinkAssetOwner.mock.calls.length).toBe(0);
+  });
+
+  test("updates the cover and relinks the asset to the row", async () => {
+    catalogStubs.serviceById = makeServiceRow({
+      service_id: SERVICE_ID,
+      slug: "thay-dau-dong-co",
+    });
+    catalogStubs.serviceSlugOwner = null;
+    const result = await updateService(SERVICE_ID, {
+      ...makeServiceInput(),
+      slug: "thay-dau-dong-co",
+      imageUrl: COVER_URL,
+      imageAssetId: "asset-9",
+    });
+    expect(result.ok).toBe(true);
+    expect(mediaRepoMocks.relinkAssetOwner.mock.calls[0]).toEqual([
+      "asset-9",
+      "service",
+      SERVICE_ID,
+    ]);
+    expect(catalogServiceRepoMocks.updateServiceRows.mock.calls.length).toBe(1);
   });
 });
 

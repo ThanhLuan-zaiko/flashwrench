@@ -21,6 +21,7 @@ import type {
   MechanicIncomeState,
   MechanicPaymentState,
 } from "@/lib/mechanic/mechanic.types";
+import { MECHANIC_TIME_ZONE } from "@/lib/mechanic/mechanic-period";
 import {
   MECHANIC_BOOKING_ACTIONS,
   type MechanicBookingAction,
@@ -34,38 +35,47 @@ export function formatVnd(value: number): string {
   return `${new Intl.NumberFormat("vi-VN").format(value)}đ`;
 }
 
-// "Hôm nay, 09:30" when the date is today in Vietnam; the plain date and
-// time otherwise. Never throws on a missing value.
-export function formatScheduleDateTime(value: string | null): string {
+// "Hôm nay, 09:30" when the date is today in the booking zone; the
+// plain date and time otherwise. Never throws on a missing value.
+// The zone defaults to the product home zone so legacy callers keep
+// their output; pass the booking timezone for cross-country jobs.
+export function formatScheduleDateTime(
+  value: string | null,
+  timeZone: string | null = MECHANIC_TIME_ZONE,
+): string {
   if (!value) return "Chưa hẹn giờ";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Chưa hẹn giờ";
+  const zone = timeZone ?? MECHANIC_TIME_ZONE;
   const now = new Date();
   const sameDay =
-    date.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }) ===
-    now.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+    date.toLocaleDateString("vi-VN", { timeZone: zone }) ===
+    now.toLocaleDateString("vi-VN", { timeZone: zone });
   const time = new Intl.DateTimeFormat("vi-VN", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "Asia/Ho_Chi_Minh",
+    timeZone: zone,
   }).format(date);
   if (sameDay) return `Hôm nay, ${time}`;
   const day = new Intl.DateTimeFormat("vi-VN", {
     day: "2-digit",
     month: "2-digit",
-    timeZone: "Asia/Ho_Chi_Minh",
+    timeZone: zone,
   }).format(date);
   return `${day}, ${time}`;
 }
 
-export function formatShortDate(value: string | null): string {
+export function formatShortDate(
+  value: string | null,
+  timeZone: string | null = MECHANIC_TIME_ZONE,
+): string {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
   return new Intl.DateTimeFormat("vi-VN", {
     day: "2-digit",
     month: "2-digit",
-    timeZone: "Asia/Ho_Chi_Minh",
+    timeZone: timeZone ?? MECHANIC_TIME_ZONE,
   }).format(date);
 }
 

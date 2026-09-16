@@ -11,7 +11,10 @@ export function resolveStorageDir(): string {
 }
 
 export function monthBucket(date: Date = new Date()): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  // UTC on purpose: this only folders files on disk, so the bucket must
+  // not depend on the server's local timezone. Booking calendar months
+  // are a different concept (see monthKey in mechanic-period).
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
 // Relative key inside uploads/, e.g. avatar/2026-09/<uuid>.jpg.

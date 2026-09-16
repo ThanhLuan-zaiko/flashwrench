@@ -28,6 +28,13 @@ export const mediaRepoMocks = {
       _createdAt: Date,
     ): Promise<void> => undefined,
   ),
+  relinkAssetOwner: mock(
+    async (
+      _assetId: string,
+      _ownerType: string,
+      _ownerId: string,
+    ): Promise<boolean> => true,
+  ),
 };
 
 export const mediaStorageMocks = {

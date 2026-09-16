@@ -19,6 +19,14 @@ export function BookingServiceSummary({ service }: BookingServiceSummaryProps) {
       data-reveal
       className="rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
+      {service.imageUrl && (
+        // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
+        <img
+          src={service.imageUrl}
+          alt=""
+          className="mb-3 h-36 w-full rounded-xl border border-zinc-200 object-cover dark:border-zinc-800"
+        />
+      )}
       <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
         {service.categoryName}
       </p>

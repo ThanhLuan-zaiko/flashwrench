@@ -28,6 +28,9 @@ function toUpdateInput(body: Record<string, unknown>): UpdateServiceInput {
     categoryId: String(body.categoryId ?? ""),
     name: String(body.name ?? ""),
     slug: String(body.slug ?? ""),
+    imageUrl: body.imageUrl === undefined ? undefined : String(body.imageUrl),
+    imageAssetId:
+      body.imageAssetId === undefined ? undefined : String(body.imageAssetId),
     description:
       body.description === undefined ? undefined : String(body.description),
     basePrice: Number(body.basePrice),

@@ -107,6 +107,42 @@ export async function findAssetRowById(
   return row ? toRow(row) : null;
 }
 
+// Re-point an asset at its real owner after the owner row exists
+// (uploads happen before the catalog dialog saves). Returns false
+// when the asset does not exist; the index delete reuses the stored
+// clustering values so the old position never orphans.
+export async function relinkAssetOwner(
+  assetId: string,
+  ownerType: string,
+  ownerId: string,
+): Promise<boolean> {
+  const row = await findAssetRowById(assetId);
+  if (!row || !row.owner_type || !row.owner_id || !row.created_at) {
+    return false;
+  }
+  await scylla.batch(
+    [
+      {
+        query:
+          "UPDATE media_assets SET owner_type = ?, owner_id = ? WHERE asset_id = ?",
+        params: [ownerType, ownerId, assetId],
+      },
+      {
+        query:
+          "DELETE FROM media_assets_by_owner WHERE owner_type = ? AND owner_id = ? AND created_at = ? AND asset_id = ?",
+        params: [row.owner_type, row.owner_id, row.created_at, assetId],
+      },
+      {
+        query:
+          "INSERT INTO media_assets_by_owner (owner_type, owner_id, created_at, asset_id, url) VALUES (?, ?, ?, ?, ?)",
+        params: [ownerType, ownerId, row.created_at, assetId, row.url],
+      },
+    ],
+    { prepare: true },
+  );
+  return true;
+}
+
 // The owner index row needs the original created_at clustering value,
 // so deletes read the asset first (the service always does).
 export async function deleteAssetRows(

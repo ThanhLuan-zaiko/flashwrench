@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { monthKey } from "@/lib/mechanic/mechanic-period";
 import { makePublicUser } from "../helpers/auth.fixtures";
 import { makeBookingInput } from "../helpers/booking.fixtures";
 import { makeServiceRow } from "../helpers/catalog.fixtures";
@@ -55,6 +56,30 @@ describe("createCustomerBooking", () => {
       serviceName: "Thay dau dong co",
       unitPrice: 199000,
     });
+  });
+
+  test("stores the zone and buckets by the zone wall-month", async () => {
+    const input = makeBookingInput({ timeZone: "Asia/Bangkok" });
+    const result = await createCustomerBooking(makePublicUser(), input);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.timezone).toBe("Asia/Bangkok");
+    expect(bookingStubs.inserts[0]).toMatchObject({
+      timezone: "Asia/Bangkok",
+      monthBucket: monthKey(new Date(input.scheduledAt), "Asia/Bangkok"),
+    });
+  });
+
+  test("defaults a missing zone to the product home zone", async () => {
+    const result = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput({ timeZone: undefined }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.timezone).toBe("Asia/Ho_Chi_Minh");
   });
 
   test("rejects invalid input with 400 without touching storage", async () => {

@@ -4,6 +4,7 @@
 export type CreateBookingInput = {
   serviceId: string;
   scheduledAt: string;
+  timeZone?: string | null;
   address: string;
   province?: string;
   district?: string;
@@ -21,6 +22,7 @@ export type CreateBookingInput = {
 export type NormalizedBookingInput = {
   serviceId: string;
   scheduledAt: Date;
+  timeZone: string | null;
   address: string;
   province: string | null;
   district: string | null;
@@ -39,6 +41,7 @@ export type BookingFieldErrors = Partial<
   Record<
     | "serviceId"
     | "scheduledAt"
+    | "timeZone"
     | "address"
     | "province"
     | "district"
@@ -59,6 +62,7 @@ export type CreatedBooking = {
   bookingId: string;
   status: string;
   scheduledAt: string;
+  timezone: string | null;
   total: number;
   serviceId: string;
   serviceName: string;

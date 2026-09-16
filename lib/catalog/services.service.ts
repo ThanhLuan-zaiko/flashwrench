@@ -1,5 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { normalizeSlug, validateServiceInput } from "./catalog-validation";
+import { claimAssetForOwner } from "@/lib/media/media.service";
+import {
+  normalizeCoverInput,
+  normalizeSlug,
+  validateServiceInput,
+} from "./catalog-validation";
 import {
   type CatalogFieldErrors,
   type CreateServiceInput,
@@ -41,6 +46,7 @@ function toItem(row: ServiceRow): ServiceItem {
     categoryName: row.category_name ?? "",
     name: row.name ?? "",
     slug: row.slug ?? "",
+    imageUrl: row.image_url ?? "",
     description: row.description ?? "",
     basePrice: row.base_price ?? 0,
     priceUnit: (row.price_unit as PriceUnit) ?? "per_job",
@@ -93,10 +99,12 @@ export async function createService(
   raw: CreateServiceInput,
 ): Promise<CatalogResult<ServiceItem>> {
   const slug = normalizeSlug(raw.slug);
+  const { imageUrl, imageAssetId } = normalizeCoverInput(raw);
   const fieldErrors = validateServiceInput({
     categoryId: raw.categoryId,
     name: raw.name.trim(),
     slug,
+    imageUrl,
     description: raw.description,
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
@@ -129,6 +137,15 @@ export async function createService(
       slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
     });
   }
+  // The cover was uploaded before this row existed: point the asset at
+  // the real id now. Unknown ids fail before any catalog row is written.
+  // If the insert below throws afterwards, the asset index points at a
+  // missing row — harmless, the row (not the index) drives display.
+  const claimed = await claimAssetForOwner(imageAssetId, "service", serviceId);
+  if (!claimed.ok) {
+    await releaseServiceSlug(slug, serviceId);
+    return failFields(claimed.status, claimed.errors);
+  }
   try {
     await insertService({
       serviceId,
@@ -136,6 +153,7 @@ export async function createService(
       categoryName: category.name ?? "",
       name: raw.name.trim(),
       slug,
+      imageUrl,
       description: (raw.description ?? "").trim(),
       basePrice: raw.basePrice,
       priceUnit: raw.priceUnit,
@@ -168,10 +186,12 @@ export async function updateService(
     );
   }
   const slug = normalizeSlug(raw.slug);
+  const { imageUrl, imageAssetId } = normalizeCoverInput(raw);
   const fieldErrors = validateServiceInput({
     categoryId: raw.categoryId,
     name: raw.name.trim(),
     slug,
+    imageUrl,
     description: raw.description,
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
@@ -194,6 +214,14 @@ export async function updateService(
       slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
     });
   }
+  // Newly uploaded covers arrive with a temporary owner: re-point the
+  // asset at this row before writing, unknown ids fail with 404.
+  const assetClaim = await claimAssetForOwner(
+    imageAssetId,
+    "service",
+    serviceId,
+  );
+  if (!assetClaim.ok) return failFields(assetClaim.status, assetClaim.errors);
 
   const oldSlug = existing.slug ?? slug;
   if (oldSlug !== slug) {
@@ -216,6 +244,7 @@ export async function updateService(
     categoryName: category.name ?? "",
     name: raw.name.trim(),
     slug,
+    imageUrl,
     description: (raw.description ?? "").trim(),
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,

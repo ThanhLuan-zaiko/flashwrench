@@ -25,6 +25,9 @@ function toUpdateInput(body: Record<string, unknown>): UpdateCategoryInput {
     name: String(body.name ?? ""),
     slug: String(body.slug ?? ""),
     icon: body.icon === undefined ? undefined : String(body.icon),
+    imageUrl: body.imageUrl === undefined ? undefined : String(body.imageUrl),
+    imageAssetId:
+      body.imageAssetId === undefined ? undefined : String(body.imageAssetId),
     description:
       body.description === undefined ? undefined : String(body.description),
     sortOrder:

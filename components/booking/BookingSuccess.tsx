@@ -1,27 +1,17 @@
 import Link from "next/link";
 import { FiArrowRight, FiCheck } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
+import { formatDateTime } from "@/lib/datetime/format";
 import type { CreatedBooking } from "@/services/booking.api";
 
 type BookingSuccessProps = {
   booking: CreatedBooking;
 };
 
-function formatScheduled(iso: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleString("vi-VN", {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 // Confirmation after POST /api/bookings returns 201. Stays on /booking:
-// no redirect to auth or anywhere else, the job is done here.
+// no redirect to auth or anywhere else, the job is done here. The slot
+// renders in the booking zone with its offset, so travelers see exactly
+// when the mechanic arrives where the work happens.
 export function BookingSuccess({ booking }: BookingSuccessProps) {
   return (
     <section
@@ -49,7 +39,9 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
             Khung giờ
           </dt>
           <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
-            {formatScheduled(booking.scheduledAt)}
+            {formatDateTime(booking.scheduledAt, {
+              timeZone: booking.timezone,
+            })}
           </dd>
         </div>
         <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">

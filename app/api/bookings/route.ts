@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     const result = await createCustomerBooking(user, {
       serviceId: input.serviceId ?? "",
       scheduledAt: input.scheduledAt ?? "",
+      timeZone: input.timeZone,
       address: input.address ?? "",
       province: input.province,
       district: input.district,

@@ -52,6 +52,47 @@ function checkName(name: string, errors: CatalogFieldErrors): boolean {
   return true;
 }
 
+// Cover images must come from our own media storage: external hotlinks
+// break, leak referrers and bypass the upload guardrails. Empty means
+// "no image", which every surface renders as its current layout.
+export function normalizeImageUrl(raw: unknown): string {
+  if (typeof raw !== "string") return "";
+  return raw.trim();
+}
+
+export type NormalizedCoverInput = {
+  imageUrl: string;
+  imageAssetId: string | undefined;
+};
+
+// Shared preamble for catalog create/update: normalized cover URL for
+// validation plus the optional fresh asset id for the media relink.
+export function normalizeCoverInput(raw: {
+  imageUrl?: unknown;
+  imageAssetId?: unknown;
+}): NormalizedCoverInput {
+  return {
+    imageUrl: normalizeImageUrl(raw.imageUrl),
+    imageAssetId:
+      typeof raw.imageAssetId === "string" && raw.imageAssetId.trim()
+        ? raw.imageAssetId.trim()
+        : undefined,
+  };
+}
+
+function checkImageUrl(imageUrl: string, errors: CatalogFieldErrors): void {
+  if (!imageUrl) return;
+  if (
+    imageUrl.length > 500 ||
+    !imageUrl.startsWith("/api/media/") ||
+    imageUrl.includes(" ") ||
+    imageUrl.includes("\\") ||
+    imageUrl.includes("..")
+  ) {
+    errors.imageUrl = "Ảnh bìa phải là ảnh đã tải lên từ kho media.";
+  }
+}
+
 function checkOptionalBoolean(
   value: unknown,
   field: "isActive" | "isHomeSupported" | "isEmergencySupported",
@@ -67,6 +108,7 @@ export function validateCategoryInput(input: {
   name: string;
   slug: string;
   icon?: string;
+  imageUrl?: unknown;
   description?: string;
   sortOrder?: number;
   isActive?: unknown;
@@ -74,6 +116,7 @@ export function validateCategoryInput(input: {
   const errors: CatalogFieldErrors = {};
   checkName(input.name, errors);
   checkSlug(normalizeSlug(input.slug), errors);
+  checkImageUrl(normalizeImageUrl(input.imageUrl), errors);
   if (input.description !== undefined && input.description.length > 500) {
     errors.description = "Mô tả tối đa 500 ký tự.";
   }
@@ -101,6 +144,7 @@ export function validateServiceInput(input: {
   categoryId: string;
   name: string;
   slug: string;
+  imageUrl?: unknown;
   description?: string;
   basePrice: number;
   priceUnit: string;
@@ -112,6 +156,7 @@ export function validateServiceInput(input: {
   const errors: CatalogFieldErrors = {};
   checkName(input.name, errors);
   checkSlug(normalizeSlug(input.slug), errors);
+  checkImageUrl(normalizeImageUrl(input.imageUrl), errors);
   if (!input.categoryId) {
     errors.categoryId = "Vui lòng chọn loại hình dịch vụ.";
   }

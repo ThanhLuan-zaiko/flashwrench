@@ -13,7 +13,7 @@ const WORKLOAD_COLUMNS =
   "mechanic_id, scheduled_at, booking_id, status, total, vehicle_plate, customer_name";
 
 const BOOKING_COLUMNS =
-  "booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, zone_id, address, scheduled_at, status, payment_status, total, notes, cancel_reason, created_at, updated_at";
+  "booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, zone_id, address, scheduled_at, timezone, status, payment_status, total, notes, cancel_reason, created_at, updated_at";
 
 type RawRow = Record<string, unknown>;
 
@@ -70,6 +70,7 @@ function toBookingRow(raw: RawRow): MechanicBookingRow {
     zone_id: toStringOrNull(raw.zone_id),
     address: toAddress(raw.address),
     scheduled_at: toDateOrNull(raw.scheduled_at),
+    timezone: toStringOrNull(raw.timezone),
     status: toStringOrNull(raw.status),
     payment_status: toStringOrNull(raw.payment_status),
     total: toNumberOrNull(raw.total),

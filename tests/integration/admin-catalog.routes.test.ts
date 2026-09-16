@@ -83,6 +83,25 @@ describe("admin category routes", () => {
     expectCatalogBroadcast();
   });
 
+  test("POST forwards cover fields to the service", async () => {
+    adminContext();
+    const res = await postCategories(
+      jsonRequest("/api/admin/service-categories", "POST", {
+        name: "Bao duong",
+        slug: "bao-duong",
+        imageUrl: "/api/media/category/2026-09/cover.jpg",
+        imageAssetId: "asset-2",
+      }),
+    );
+    expect(res.status).toBe(201);
+    const categoryCalls = serviceCategoryRouteMocks.createServiceCategory.mock
+      .calls as unknown as unknown[][];
+    expect(categoryCalls[0]?.[0]).toMatchObject({
+      imageUrl: "/api/media/category/2026-09/cover.jpg",
+      imageAssetId: "asset-2",
+    });
+  });
+
   test("POST stays silent when the service rejects", async () => {
     adminContext();
     catalogRouteStubs.categoryResult = {
@@ -166,6 +185,29 @@ describe("admin service routes", () => {
     );
     expect(res.status).toBe(201);
     expectCatalogBroadcast();
+  });
+
+  test("POST forwards cover fields to the service", async () => {
+    adminContext();
+    const res = await postService(
+      jsonRequest("/api/admin/services", "POST", {
+        categoryId: CATEGORY_ID,
+        name: "Thay dau",
+        slug: "thay-dau",
+        basePrice: 199000,
+        priceUnit: "per_job",
+        durationMin: 60,
+        imageUrl: "/api/media/service/2026-09/cover.jpg",
+        imageAssetId: "asset-1",
+      }),
+    );
+    expect(res.status).toBe(201);
+    const serviceCalls = catalogServiceRouteMocks.createService.mock
+      .calls as unknown as unknown[][];
+    expect(serviceCalls[0]?.[0]).toMatchObject({
+      imageUrl: "/api/media/service/2026-09/cover.jpg",
+      imageAssetId: "asset-1",
+    });
   });
 
   test("PATCH toggle-active broadcasts", async () => {

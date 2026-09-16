@@ -58,6 +58,7 @@ describe("POST /api/bookings", () => {
     expect(passedInput).toMatchObject({
       serviceId: input.serviceId,
       vehiclePlate: input.vehiclePlate,
+      timeZone: "Asia/Ho_Chi_Minh",
     });
   });
 

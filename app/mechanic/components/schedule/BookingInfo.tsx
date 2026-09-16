@@ -49,7 +49,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
           </span>
           <span className="flex items-center gap-1.5">
             <FiClock aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
-            Hẹn {formatScheduleDateTime(booking.scheduledAt)}
+            Hẹn {formatScheduleDateTime(booking.scheduledAt, booking.timezone)}
           </span>
           {booking.notes && (
             <span className="rounded-xl bg-zinc-100 px-2.5 py-2 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">

@@ -153,6 +153,7 @@ export async function getNavigationBoard(
       lng,
       status,
       scheduledAt: toIso(row.scheduled_at ?? detail?.scheduled_at ?? null),
+      timezone: detail?.timezone ?? null,
       distanceKm,
       etaMin: origin ? estimateEtaMin(distanceKm) : 0,
       serviceNames: (itemsByBooking.get(row.booking_id) ?? [])

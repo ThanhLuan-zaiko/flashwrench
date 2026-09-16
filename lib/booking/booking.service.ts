@@ -9,7 +9,8 @@ import {
   isDeletedFlag,
 } from "@/lib/catalog/service-catalog.types";
 import { findServiceRowById } from "@/lib/catalog/services.repository";
-import { monthBucketOf } from "@/lib/mechanic/mechanic-status";
+import { DEFAULT_TIME_ZONE } from "@/lib/datetime/timezone";
+import { monthKey } from "@/lib/mechanic/mechanic-period";
 import { findMechanicProfileRow } from "@/lib/mechanic/mechanic-workspace.repository";
 import { insertCustomerBooking } from "./booking.repository";
 import type {
@@ -79,6 +80,9 @@ export async function createCustomerBooking(
 
   const now = new Date();
   const bookingId = randomUUID();
+  // The wall-month bucket follows the zone where the work happens, not
+  // UTC: a 00:30 job on Oct 1st in +07 belongs to October dispatchers.
+  const timezone = value.timeZone ?? DEFAULT_TIME_ZONE;
 
   await insertCustomerBooking({
     bookingId,
@@ -98,12 +102,13 @@ export async function createCustomerBooking(
       lng: value.lng,
     },
     scheduledAt: value.scheduledAt,
+    timezone,
     status: BOOKING_INITIAL_STATUS,
     paymentStatus: BOOKING_INITIAL_PAYMENT_STATUS,
     subtotal: unitPrice,
     total: unitPrice,
     notes: value.notes,
-    monthBucket: monthBucketOf(value.scheduledAt),
+    monthBucket: monthKey(value.scheduledAt, timezone),
     createdAt: now,
     updatedAt: now,
     serviceId: service.service_id,
@@ -119,6 +124,7 @@ export async function createCustomerBooking(
       bookingId,
       status: BOOKING_INITIAL_STATUS,
       scheduledAt: value.scheduledAt.toISOString(),
+      timezone,
       total: unitPrice,
       serviceId: service.service_id,
       serviceName,

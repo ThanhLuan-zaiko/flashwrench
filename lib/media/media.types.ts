@@ -56,7 +56,16 @@ export type CreateAssetInput = {
 };
 
 export type MediaFieldErrors = Partial<
-  Record<"file" | "scope" | "ownerType" | "ownerId" | "alt" | "form", string>
+  Record<
+    | "file"
+    | "scope"
+    | "ownerType"
+    | "ownerId"
+    | "alt"
+    | "imageAssetId"
+    | "form",
+    string
+  >
 >;
 
 export type MediaResult<T> =

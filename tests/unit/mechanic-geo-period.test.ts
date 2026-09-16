@@ -91,6 +91,15 @@ describe("Vietnam calendar keys", () => {
     expect(monthKey(late)).toBe("2026-09");
   });
 
+  test("month buckets follow the zone wall-month, never UTC", () => {
+    // 2026-09-30T17:30Z is Oct 1st 00:30 in +07 but still September in
+    // UTC: dispatchers must file it under October.
+    const edge = new Date("2026-09-30T17:30:00.000Z");
+    expect(monthKey(edge, "Asia/Ho_Chi_Minh")).toBe("2026-10");
+    expect(monthKey(edge, "UTC")).toBe("2026-09");
+    expect(monthKey(edge, "America/New_York")).toBe("2026-09");
+  });
+
   test("groups days, weeks and months around the reference", () => {
     // Wednesday 2026-09-16 in Vietnam.
     const reference = new Date("2026-09-16T03:00:00.000Z");

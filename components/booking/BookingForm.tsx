@@ -102,9 +102,18 @@ export function BookingForm({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // datetime-local carries wall time without a zone: pin it to the
+    // browser zone here so the wire format is an unambiguous instant.
+    // The validator and the service both reject zone-less strings.
+    const picked = new Date(scheduledAt);
+    if (Number.isNaN(picked.getTime())) {
+      setErrors({ scheduledAt: "Khung giờ không hợp lệ." });
+      return;
+    }
     const payload = {
       serviceId,
-      scheduledAt,
+      scheduledAt: picked.toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
       mechanicId,

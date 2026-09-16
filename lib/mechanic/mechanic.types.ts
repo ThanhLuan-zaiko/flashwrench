@@ -63,6 +63,7 @@ export type MechanicBookingRow = {
   zone_id: string | null;
   address: MechanicAddressUdt | null;
   scheduled_at: Date | null;
+  timezone: string | null;
   status: string | null;
   payment_status: string | null;
   total: number | null;
@@ -141,6 +142,7 @@ export type MechanicBookingSummary = {
   addressLat: number | null;
   addressLng: number | null;
   scheduledAt: string | null;
+  timezone: string | null;
   status: MechanicBookingStatus;
   paymentState: MechanicPaymentState;
   total: number;
@@ -224,6 +226,7 @@ export type MechanicNavigationTarget = {
   lng: number;
   status: MechanicBookingStatus;
   scheduledAt: string | null;
+  timezone: string | null;
   distanceKm: number;
   etaMin: number;
   serviceNames: string[];

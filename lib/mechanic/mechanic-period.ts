@@ -1,7 +1,7 @@
-// Vietnam-local calendar helpers for income and performance periods.
-// Everything a mechanic sees ("hôm nay", "tháng này") is bucketed in
-// Asia/Ho_Chi_Minh, never in the server's local timezone, so a booking
-// completed at 23:30 in Ho Chi Minh City counts for that same day.
+// Calendar helpers for income and performance periods. Every function
+// takes an explicit IANA zone (defaulting to the product home zone), so
+// a booking completed at 23:30 in Ho Chi Minh City counts for that same
+// day — and a future country renders its own days by passing its zone.
 // Pure functions only: no Date library, no Intl timezone database lookups
 // beyond formatToParts.
 
@@ -51,7 +51,7 @@ function keyToUtcDay(key: string): number {
   return new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1)).getUTCDay();
 }
 
-/** Calendar day key in Vietnam, e.g. "2026-09-16". */
+/** Calendar day key in the given zone, e.g. "2026-09-16". */
 export function dayKey(
   date: Date,
   timeZone: string = MECHANIC_TIME_ZONE,
@@ -59,7 +59,7 @@ export function dayKey(
   return toDateKey(zonedParts(date, timeZone));
 }
 
-/** Month key in Vietnam, e.g. "2026-09". */
+/** Month key in the given zone, e.g. "2026-09". */
 export function monthKey(
   date: Date,
   timeZone: string = MECHANIC_TIME_ZONE,

@@ -9,6 +9,7 @@ export function makeBookingInput(
   return {
     serviceId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
     scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    timeZone: "Asia/Ho_Chi_Minh",
     address: "123 Nguyen Trai, Phuong 5, Quan 3, TP Ho Chi Minh",
     province: "TP Ho Chi Minh",
     district: "Quan 3",

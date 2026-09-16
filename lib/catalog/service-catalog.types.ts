@@ -8,6 +8,7 @@ export type ServiceCategoryRow = {
   name: string | null;
   slug: string | null;
   icon: string | null;
+  image_url: string | null;
   description: string | null;
   sort_order: number | null;
   is_active: boolean | null;
@@ -23,6 +24,7 @@ export type ServiceRow = {
   category_name: string | null;
   name: string | null;
   slug: string | null;
+  image_url: string | null;
   description: string | null;
   base_price: number | null;
   price_unit: string | null;
@@ -62,6 +64,7 @@ export type ServiceCategoryItem = {
   name: string;
   slug: string;
   icon: string;
+  imageUrl: string;
   description: string;
   sortOrder: number;
   isActive: boolean;
@@ -78,6 +81,7 @@ export type ServiceItem = {
   categoryName: string;
   name: string;
   slug: string;
+  imageUrl: string;
   description: string;
   basePrice: number;
   priceUnit: PriceUnit;
@@ -95,6 +99,8 @@ export type CreateCategoryInput = {
   name: string;
   slug: string;
   icon?: string;
+  imageUrl?: string;
+  imageAssetId?: string;
   description?: string;
   sortOrder?: number;
   isActive?: boolean;
@@ -104,6 +110,8 @@ export type UpdateCategoryInput = {
   name: string;
   slug: string;
   icon?: string;
+  imageUrl?: string;
+  imageAssetId?: string;
   description?: string;
   sortOrder?: number;
   isActive?: boolean;
@@ -113,6 +121,8 @@ export type CreateServiceInput = {
   categoryId: string;
   name: string;
   slug: string;
+  imageUrl?: string;
+  imageAssetId?: string;
   description?: string;
   basePrice: number;
   priceUnit: PriceUnit;
@@ -126,6 +136,8 @@ export type UpdateServiceInput = {
   categoryId: string;
   name: string;
   slug: string;
+  imageUrl?: string;
+  imageAssetId?: string;
   description?: string;
   basePrice: number;
   priceUnit: PriceUnit;
@@ -140,6 +152,8 @@ export type CatalogFieldErrors = Partial<
     | "name"
     | "slug"
     | "icon"
+    | "imageUrl"
+    | "imageAssetId"
     | "description"
     | "sortOrder"
     | "isActive"

@@ -1,3 +1,4 @@
+import { normalizeTimeZone } from "@/lib/datetime/timezone";
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import type {
   BookingFieldErrors,
@@ -18,6 +19,13 @@ export const BOOKING_PLACE_MAX = 120;
 export const BOOKING_VEHICLE_TEXT_MAX = 60;
 
 const PLATE_PATTERN = /^[A-Z0-9][A-Z0-9.\-\s]*[A-Z0-9]$/i;
+
+// Wall-clock strings ("2026-09-17T09:00") parse in the SERVER zone, so a
+// UTC container would shift every booking by hours. Only instants with
+// an explicit designator (Z or ±hh:mm) are accepted; the form always
+// converts datetime-local through the browser zone before submitting.
+const ISO_WITH_OFFSET_PATTERN =
+  /T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:?\d{2})$/;
 
 function optionalText(
   value: unknown,
@@ -65,6 +73,9 @@ export function validateCreateBookingInput(
     typeof input.scheduledAt === "string" ? input.scheduledAt.trim() : "";
   if (!rawScheduled) {
     errors.scheduledAt = "Vui lòng chọn khung giờ.";
+  } else if (!ISO_WITH_OFFSET_PATTERN.test(rawScheduled)) {
+    errors.scheduledAt =
+      "Khung giờ thiếu múi giờ. Vui lòng đặt lại từ trang đặt lịch.";
   } else {
     const parsed = new Date(rawScheduled);
     if (Number.isNaN(parsed.getTime())) {
@@ -199,6 +210,24 @@ export function validateCreateBookingInput(
     typeof input.mechanicId === "string" ? input.mechanicId.trim() : "";
   const normalizedMechanicId = mechanicId.length > 0 ? mechanicId : null;
 
+  // The zone where the work happens. Optional on the wire; the service
+  // falls back to the product default. Garbage zones fail loudly so a
+  // typo can never silently reschedule a booking.
+  let timeZone: string | null = null;
+  if (
+    input.timeZone !== undefined &&
+    input.timeZone !== null &&
+    String(input.timeZone).trim() !== ""
+  ) {
+    const normalized = normalizeTimeZone(input.timeZone);
+    if (!normalized) {
+      errors.timeZone =
+        "Múi giờ không hợp lệ. Vui lòng đặt lại từ trang đặt lịch.";
+    } else {
+      timeZone = normalized;
+    }
+  }
+
   if (Object.keys(errors).length > 0 || !scheduledAt) {
     return { errors };
   }
@@ -206,6 +235,7 @@ export function validateCreateBookingInput(
     value: {
       serviceId,
       scheduledAt,
+      timeZone,
       address,
       province,
       district,

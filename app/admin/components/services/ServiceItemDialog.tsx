@@ -5,15 +5,15 @@ import { FiLoader, FiSave } from "react-icons/fi";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateService, useUpdateService } from "@/hooks/service-catalog";
-import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type {
   PriceUnit,
   ServiceCategoryItem,
   ServiceItem,
 } from "@/lib/catalog/service-catalog.types";
 import { AuthApiError } from "@/services/service-catalog.api";
+import { CatalogImageField } from "./CatalogImageField";
 import { fieldError } from "./catalog-errors";
-import { SelectDropdown } from "./SelectDropdown";
+import { ServiceItemBasicFields } from "./ServiceItemBasicFields";
 import { ServiceItemPricingFields } from "./ServiceItemPricingFields";
 import { ServiceItemSupportFields } from "./ServiceItemSupportFields";
 
@@ -48,6 +48,8 @@ export function ServiceItemDialog({
   );
   const [name, setName] = useState(editing?.name ?? "");
   const [slug, setSlug] = useState(editing?.slug ?? "");
+  const [imageUrl, setImageUrl] = useState(editing?.imageUrl ?? "");
+  const [imageAssetId, setImageAssetId] = useState<string | null>(null);
   const [description, setDescription] = useState(editing?.description ?? "");
   const [basePrice, setBasePrice] = useState(
     String(editing?.basePrice ?? 199000),
@@ -85,6 +87,8 @@ export function ServiceItemDialog({
       categoryId,
       name: name.trim(),
       slug: slug.trim(),
+      imageUrl: imageUrl.trim(),
+      imageAssetId: imageAssetId ?? undefined,
       description: description.trim(),
       basePrice: Number.parseInt(basePrice, 10) || 0,
       priceUnit,
@@ -124,60 +128,28 @@ export function ServiceItemDialog({
         />
 
         <div className="mt-4 flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
-            <SelectDropdown
-              label="Loại hình"
-              value={categoryId}
-              options={live.map((c) => ({ value: c.id, label: c.name }))}
-              onChange={setCategoryId}
-              placeholder="Chọn loại hình"
-              listLabel="Chọn loại hình"
-              searchPlaceholder="Tìm loại hình…"
-              unitName="loại hình"
-              emptyTitle="Không tìm thấy loại hình phù hợp"
-            />
-            {fieldError(error, "categoryId") && (
-              <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                {fieldError(error, "categoryId")}
-              </span>
-            )}
-            {hasNoCategories && (
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                Chưa có loại hình nào. Hãy tạo loại hình trước khi thêm mục giá.
-              </span>
-            )}
-          </div>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Tên dịch vụ
-            <input
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (!editing) setSlug(slugifyName(e.target.value));
-              }}
-              placeholder="Thay dầu động cơ"
-              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-            />
-            {fieldError(error, "name") && (
-              <span className="font-medium text-red-600 dark:text-red-400">
-                {fieldError(error, "name")}
-              </span>
-            )}
-          </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Mã định danh
-            <input
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="thay-dau-dong-co"
-              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-            />
-            {fieldError(error, "slug") && (
-              <span className="font-medium text-red-600 dark:text-red-400">
-                {fieldError(error, "slug")}
-              </span>
-            )}
-          </label>
+          <ServiceItemBasicFields
+            editing={Boolean(editing)}
+            categoryId={categoryId}
+            categories={live}
+            name={name}
+            slug={slug}
+            error={error}
+            hasNoCategories={hasNoCategories}
+            onCategoryId={setCategoryId}
+            onName={setName}
+            onSlug={setSlug}
+          />
+          <CatalogImageField
+            scope="service"
+            entityId={editing?.id ?? null}
+            imageUrl={imageUrl}
+            serverError={error}
+            onChange={(url, assetId) => {
+              setImageUrl(url);
+              setImageAssetId(assetId);
+            }}
+          />
           <ServiceItemPricingFields
             basePrice={basePrice}
             priceUnit={priceUnit}

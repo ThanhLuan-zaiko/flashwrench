@@ -54,7 +54,23 @@ gốc của vùng chọn** (không nén nhỏ lại) → `POST /api/media`. Lu�
 này dùng chung cho avatar (`AvatarSection` ở `/account`) và sau này
 cho ảnh bìa dịch vụ/sản phẩm ở trang admin.
 
-## 5. Vận hành (Docker / server)
+## 5. Ảnh bìa catalog (dịch vụ / loại hình)
+
+Cột `services_by_id.image_url` và `service_categories.image_url` do
+dialog admin (`CatalogImageField` dùng chung) điền qua cùng
+`ImageUploader` với scope `service`/`category`:
+
+1. Admin bấm tải ảnh — asset ghi nhận chủ tạm ( dialog tạo mới chưa có
+   id hàng) và trả về `imageUrl` + `imageAssetId`.
+2. Dialog lưu form gửi cả hai trường về route admin (`imageUrl`,
+   `imageAssetId`).
+3. Service catalog validate `imageUrl` (chỉ chấp nhận `/api/media/…`,
+   chặn hotlink ngoài) rồi gọi `claimAssetForOwner` để trỏ asset về id
+   thật; asset lạ → 404, không ghi hàng catalog.
+4. Khách thấy ảnh ở `PublicServiceCard` và `BookingServiceSummary`;
+   thiếu ảnh thì layout cũ giữ nguyên (không vỡ giao diện).
+
+## 6. Vận hành (Docker / server)
 
 ```bash
 # .env

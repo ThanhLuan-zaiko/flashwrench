@@ -39,7 +39,11 @@ describe("listPublicCatalog", () => {
       }),
     ];
     catalogStubs.serviceRows = [
-      makeServiceRow({ service_id: "s1", category_id: "cat-a" }),
+      makeServiceRow({
+        service_id: "s1",
+        category_id: "cat-a",
+        image_url: "/api/media/service/2026-09/cover.jpg",
+      }),
       makeServiceRow({
         service_id: "s2",
         category_id: "cat-a",
@@ -79,6 +83,9 @@ describe("listPublicCatalog", () => {
     if (!result.ok) return;
     expect(result.data.categories.map((c) => c.id)).toEqual(["cat-a"]);
     expect(result.data.services.map((s) => s.id)).toEqual(["s1"]);
+    expect(result.data.services[0]?.imageUrl).toBe(
+      "/api/media/service/2026-09/cover.jpg",
+    );
   });
 
   test("lets repository failures bubble to the route 500 handler", async () => {

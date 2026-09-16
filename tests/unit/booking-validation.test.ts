@@ -111,4 +111,51 @@ describe("validateCreateBookingInput", () => {
     if (!("errors" in wild)) return;
     expect(wild.errors.location).toContain("bản đồ");
   });
+
+  test("requires an explicit offset on the schedule instant", () => {
+    const wallClock = validateCreateBookingInput(
+      makeBookingInput({ scheduledAt: "2026-09-17T09:00" }),
+    );
+    expect("errors" in wallClock).toBe(true);
+    if (!("errors" in wallClock)) return;
+    expect(wallClock.errors.scheduledAt).toContain("múi giờ");
+
+    // Same wall time written two ways: bare (server-zone dependent,
+    // rejected) versus offset-pinned (unambiguous, window-checked).
+    const future = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const plusSeven = new Date(future.getTime() + 7 * 60 * 60 * 1000);
+    const offsetForm = `${plusSeven.getUTCFullYear()}-${pad(plusSeven.getUTCMonth() + 1)}-${pad(plusSeven.getUTCDate())}T${pad(plusSeven.getUTCHours())}:${pad(plusSeven.getUTCMinutes())}:00+07:00`;
+    const offset = validateCreateBookingInput(
+      makeBookingInput({ scheduledAt: offsetForm }),
+    );
+    expect("value" in offset).toBe(true);
+    if (!("value" in offset)) return;
+    expect(offset.value.scheduledAt.getTime()).toBe(
+      Math.floor(future.getTime() / 60000) * 60000,
+    );
+  });
+
+  test("accepts valid zones and rejects garbage ones", () => {
+    const valid = validateCreateBookingInput(
+      makeBookingInput({ timeZone: "America/New_York" }),
+    );
+    expect("value" in valid).toBe(true);
+    if (!("value" in valid)) return;
+    expect(valid.value.timeZone).toBe("America/New_York");
+
+    const blank = validateCreateBookingInput(
+      makeBookingInput({ timeZone: undefined }),
+    );
+    expect("value" in blank).toBe(true);
+    if (!("value" in blank)) return;
+    expect(blank.value.timeZone).toBeNull();
+
+    const garbage = validateCreateBookingInput(
+      makeBookingInput({ timeZone: "Mars/Olympus" }),
+    );
+    expect("errors" in garbage).toBe(true);
+    if (!("errors" in garbage)) return;
+    expect(garbage.errors.timeZone).toContain("Múi giờ");
+  });
 });

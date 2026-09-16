@@ -7,6 +7,7 @@ import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
+import { CatalogImageField } from "./CatalogImageField";
 import { fieldError, formError } from "./catalog-errors";
 
 export type CategoryDialogState =
@@ -28,6 +29,8 @@ export function ServiceCategoryDialog({
   const [name, setName] = useState(editing?.name ?? "");
   const [slug, setSlug] = useState(editing?.slug ?? "");
   const [icon, setIcon] = useState(editing?.icon ?? "");
+  const [imageUrl, setImageUrl] = useState(editing?.imageUrl ?? "");
+  const [imageAssetId, setImageAssetId] = useState<string | null>(null);
   const [description, setDescription] = useState(editing?.description ?? "");
   const [sortOrder, setSortOrder] = useState(String(editing?.sortOrder ?? 0));
   const [slugTouched, setSlugTouched] = useState(Boolean(editing));
@@ -44,6 +47,8 @@ export function ServiceCategoryDialog({
       name: name.trim(),
       slug: slug.trim(),
       icon: icon.trim(),
+      imageUrl: imageUrl.trim(),
+      imageAssetId: imageAssetId ?? undefined,
       description: description.trim(),
       sortOrder: Number.parseInt(sortOrder, 10) || 0,
       isActive: editing?.isActive ?? true,
@@ -136,6 +141,16 @@ export function ServiceCategoryDialog({
               </span>
             )}
           </label>
+          <CatalogImageField
+            scope="category"
+            entityId={editing?.id ?? null}
+            imageUrl={imageUrl}
+            serverError={error}
+            onChange={(url, assetId) => {
+              setImageUrl(url);
+              setImageAssetId(assetId);
+            }}
+          />
           <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
             Mô tả
             <textarea

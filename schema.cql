@@ -383,7 +383,8 @@ CREATE TABLE IF NOT EXISTS bookings_by_id (
   mechanic_name     TEXT,
   zone_id           UUID,
   address           FROZEN<address_udt>,
-  scheduled_at      TIMESTAMP,
+  scheduled_at      TIMESTAMP, -- UTC instant; wall time lives in timezone
+  timezone          TEXT,      -- IANA zone where the work happens (display + buckets)
   status            TEXT,
   payment_status    TEXT,
   subtotal          BIGINT,

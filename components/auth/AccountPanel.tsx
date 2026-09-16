@@ -19,15 +19,11 @@ import {
   useSessions,
 } from "@/hooks/auth";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { formatShortDateTime } from "@/lib/datetime/format";
 import { FormAlert } from "./FormAlert";
 
 function formatDate(value: string | null): string {
-  if (!value) return "—";
-  try {
-    return new Date(value).toLocaleString("vi-VN");
-  } catch {
-    return "—";
-  }
+  return formatShortDateTime(value);
 }
 
 export function AccountPanel() {

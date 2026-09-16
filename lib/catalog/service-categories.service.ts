@@ -1,5 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { normalizeSlug, validateCategoryInput } from "./catalog-validation";
+import { claimAssetForOwner } from "@/lib/media/media.service";
+import {
+  normalizeCoverInput,
+  normalizeSlug,
+  validateCategoryInput,
+} from "./catalog-validation";
 import {
   type CatalogFieldErrors,
   type CreateCategoryInput,
@@ -45,6 +50,7 @@ function toItem(
     name: row.name ?? "",
     slug: row.slug ?? "",
     icon: row.icon ?? "",
+    imageUrl: row.image_url ?? "",
     description: row.description ?? "",
     sortOrder: row.sort_order ?? 0,
     isActive: isActiveFlag(row.is_active, true),
@@ -105,10 +111,12 @@ export async function createServiceCategory(
 ): Promise<CatalogResult<ServiceCategoryItem>> {
   const slug = normalizeSlug(raw.slug);
   const input = { ...raw, name: raw.name.trim(), slug };
+  const { imageUrl, imageAssetId } = normalizeCoverInput(raw);
   const fieldErrors = validateCategoryInput({
     name: input.name,
     slug,
     icon: input.icon,
+    imageUrl,
     description: input.description,
     sortOrder: input.sortOrder,
     isActive: input.isActive,
@@ -131,12 +139,24 @@ export async function createServiceCategory(
       slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
     });
   }
+  // The cover was uploaded before this row existed: point the asset at
+  // the real id now, mirroring the slug-pointer cleanup below.
+  const assetClaim = await claimAssetForOwner(
+    imageAssetId,
+    "category",
+    categoryId,
+  );
+  if (!assetClaim.ok) {
+    await releaseCategorySlug(slug, categoryId);
+    return failFields(assetClaim.status, assetClaim.errors);
+  }
   try {
     await insertCategory({
       categoryId,
       name: input.name,
       slug,
       icon: (input.icon ?? "").trim(),
+      imageUrl,
       description: (input.description ?? "").trim(),
       sortOrder: input.sortOrder ?? 0,
       isActive: input.isActive ?? true,
@@ -166,10 +186,12 @@ export async function updateServiceCategory(
   }
   const slug = normalizeSlug(raw.slug);
   const input = { ...raw, name: raw.name.trim(), slug };
+  const { imageUrl, imageAssetId } = normalizeCoverInput(raw);
   const fieldErrors = validateCategoryInput({
     name: input.name,
     slug,
     icon: input.icon,
+    imageUrl,
     description: input.description,
     sortOrder: input.sortOrder,
     isActive: input.isActive,
@@ -200,11 +222,18 @@ export async function updateServiceCategory(
   }
 
   const now = new Date();
+  const assetClaim = await claimAssetForOwner(
+    imageAssetId,
+    "category",
+    categoryId,
+  );
+  if (!assetClaim.ok) return failFields(assetClaim.status, assetClaim.errors);
   await updateCategoryRow({
     categoryId,
     name: input.name,
     slug,
     icon: (input.icon ?? "").trim(),
+    imageUrl,
     description: (input.description ?? "").trim(),
     sortOrder: input.sortOrder ?? 0,
     isActive: input.isActive ?? isActiveFlag(existing.is_active, true),

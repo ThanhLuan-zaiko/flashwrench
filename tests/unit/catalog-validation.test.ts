@@ -42,6 +42,18 @@ describe("validateCategoryInput", () => {
     expect(validateCategoryInput(valid)).toBeNull();
   });
 
+  test("accepts internal media covers and rejects external URLs", () => {
+    expect(
+      validateCategoryInput({
+        ...valid,
+        imageUrl: "/api/media/category/2026-09/cover.jpg",
+      }),
+    ).toBeNull();
+    expect(
+      validateCategoryInput({ ...valid, imageUrl: "https://cdn.test/x.jpg" }),
+    ).toMatchObject({ imageUrl: expect.any(String) });
+  });
+
   test("rejects blank names and malformed slugs", () => {
     expect(validateCategoryInput({ ...valid, name: "  " })).toMatchObject({
       name: expect.any(String),
@@ -145,5 +157,33 @@ describe("validateServiceInput", () => {
         isActive: true,
       }),
     ).toBeNull();
+  });
+
+  test("accepts empty and internal media cover URLs", () => {
+    expect(validateServiceInput(valid)).toBeNull();
+    expect(
+      validateServiceInput({
+        ...valid,
+        imageUrl: "/api/media/service/2026-09/cover.jpg",
+      }),
+    ).toBeNull();
+  });
+
+  test("rejects external, traversal and oversized cover URLs", () => {
+    expect(
+      validateServiceInput({
+        ...valid,
+        imageUrl: "https://cdn.test/cover.jpg",
+      }),
+    ).toMatchObject({ imageUrl: expect.any(String) });
+    expect(
+      validateServiceInput({ ...valid, imageUrl: "/api/media/../secret" }),
+    ).toMatchObject({ imageUrl: expect.any(String) });
+    expect(
+      validateServiceInput({
+        ...valid,
+        imageUrl: `/api/media/${"a".repeat(500)}`,
+      }),
+    ).toMatchObject({ imageUrl: expect.any(String) });
   });
 });

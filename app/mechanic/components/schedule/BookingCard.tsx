@@ -51,7 +51,7 @@ export function BookingCard({
           </span>
           <span className="flex shrink-0 items-center gap-1">
             <FiClock aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
-            {formatScheduleDateTime(booking.scheduledAt)}
+            {formatScheduleDateTime(booking.scheduledAt, booking.timezone)}
           </span>
         </span>
       </span>

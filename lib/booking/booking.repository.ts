@@ -22,6 +22,7 @@ export type InsertCustomerBookingParams = {
   vehicleModel: string | null;
   address: CustomerBookingAddress;
   scheduledAt: Date;
+  timezone: string;
   status: string;
   paymentStatus: string;
   subtotal: number;
@@ -47,7 +48,7 @@ export async function insertCustomerBooking(
   const queries: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       params: [
         params.bookingId,
         params.customerId,
@@ -61,6 +62,7 @@ export async function insertCustomerBooking(
         null,
         params.address,
         params.scheduledAt,
+        params.timezone,
         params.status,
         params.paymentStatus,
         params.subtotal,

@@ -77,6 +77,7 @@ export function toBookingSummary(parts: SummaryParts): MechanicBookingSummary {
     addressLat: detail?.address?.lat ?? null,
     addressLng: detail?.address?.lng ?? null,
     scheduledAt: toIso(scheduledAt),
+    timezone: detail?.timezone ?? null,
     status,
     paymentState: toPaymentState(detail?.payment_status ?? null),
     total: toNumberOr(workload.total ?? detail?.total),

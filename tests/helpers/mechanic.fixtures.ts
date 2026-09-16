@@ -54,6 +54,7 @@ export function makeBookingRow(
       lng: 106.698007,
     },
     scheduled_at: new Date("2026-09-16T07:00:00.000Z"),
+    timezone: "Asia/Ho_Chi_Minh",
     status: "pending",
     payment_status: "unpaid",
     total: 450000,

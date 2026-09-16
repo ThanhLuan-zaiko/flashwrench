@@ -17,7 +17,11 @@ mock.module("@/lib/media/media-storage", () => mediaStorageMocks);
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 
 import { setMyAvatar } from "@/lib/media/avatar.service";
-import { createMediaAsset, deleteMediaAsset } from "@/lib/media/media.service";
+import {
+  claimAssetForOwner,
+  createMediaAsset,
+  deleteMediaAsset,
+} from "@/lib/media/media.service";
 
 const CUSTOMER_ID = "11111111-1111-4111-8111-111111111111";
 
@@ -129,6 +133,30 @@ describe("deleteMediaAsset", () => {
     );
     expect(foreign).toMatchObject({ ok: false, status: 403 });
     expect(mediaStorageMocks.deleteAssetFile.mock.calls.length).toBe(0);
+  });
+});
+
+describe("claimAssetForOwner", () => {
+  test("does nothing without an asset id", async () => {
+    const result = await claimAssetForOwner(undefined, "service", "s1");
+    expect(result).toEqual({ ok: true, data: null });
+    expect(mediaRepoMocks.relinkAssetOwner.mock.calls.length).toBe(0);
+  });
+
+  test("relinks known assets and 404s unknown ones", async () => {
+    const claimed = await claimAssetForOwner("asset-1", "service", "s1");
+    expect(claimed).toEqual({ ok: true, data: { assetId: "asset-1" } });
+    expect(mediaRepoMocks.relinkAssetOwner.mock.calls[0]).toEqual([
+      "asset-1",
+      "service",
+      "s1",
+    ]);
+
+    mediaRepoMocks.relinkAssetOwner.mockImplementationOnce(async () => false);
+    const missing = await claimAssetForOwner("ghost", "service", "s1");
+    expect(missing).toMatchObject({ ok: false, status: 404 });
+    if (missing.ok) return;
+    expect(missing.errors.imageAssetId).toEqual(expect.any(String));
   });
 });
 

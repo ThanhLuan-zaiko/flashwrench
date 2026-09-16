@@ -27,13 +27,13 @@ import {
   toBookingSummary,
   toTimelineEntry,
 } from "./mechanic-mapper";
+import { MECHANIC_TIME_ZONE, monthKey } from "./mechanic-period";
 import {
   ACTION_TARGET_STATUS,
   availabilityAfterAction,
   canApplyAction,
   isMechanicBookingAction,
   type MechanicBookingAction,
-  monthBucketOf,
   transitionError,
 } from "./mechanic-status";
 import {
@@ -233,7 +233,10 @@ export async function applyMechanicBookingAction(
     bookingId,
     mechanicId,
     scheduledAt: detail.scheduled_at,
-    monthBucket: monthBucketOf(detail.scheduled_at ?? now),
+    monthBucket: monthKey(
+      detail.scheduled_at ?? now,
+      detail.timezone ?? MECHANIC_TIME_ZONE,
+    ),
     fromStatus: current,
     toStatus: target,
     customerId: detail.customer_id,

@@ -8,6 +8,7 @@ import {
   findAssetRowById,
   type InsertAssetParams,
   insertAsset,
+  relinkAssetOwner,
 } from "./media.repository";
 import type { CreateAssetInput, MediaAsset, MediaResult } from "./media.types";
 import {
@@ -177,4 +178,28 @@ export async function deleteMediaAsset(
     target.createdAt,
   );
   return { ok: true, data: { assetId } };
+}
+
+// Attach a freshly uploaded asset to its real catalog owner. The admin
+// dialog uploads before the service/category row exists, so the asset
+// carries a temporary owner until save. No asset id means nothing to
+// do; unknown ids are 404 (admin-only callers, no hijack check needed).
+export async function claimAssetForOwner(
+  assetId: string | undefined,
+  ownerType: string,
+  ownerId: string,
+): Promise<MediaResult<{ assetId: string } | null>> {
+  const id = typeof assetId === "string" ? assetId.trim() : "";
+  if (!id) return { ok: true, data: null };
+  const relinked = await relinkAssetOwner(id, ownerType, ownerId);
+  if (!relinked) {
+    return {
+      ok: false,
+      status: 404,
+      errors: {
+        imageAssetId: "Không tìm thấy ảnh vừa tải lên. Vui lòng tải lại.",
+      },
+    };
+  }
+  return { ok: true, data: { assetId: id } };
 }

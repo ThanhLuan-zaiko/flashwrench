@@ -1,6 +1,6 @@
 "use client";
 
-import { FiInbox, FiLayers, FiLoader } from "react-icons/fi";
+import { FiImage, FiInbox, FiLayers, FiLoader } from "react-icons/fi";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { CatalogPager } from "./CatalogPager";
 import { formatDuration, formatVnd, PRICE_UNIT_LABELS } from "./catalog-format";
@@ -140,6 +140,22 @@ export function ServicePriceList({
                   key={item.id}
                   className="flex flex-col gap-2 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900"
                 >
+                  {item.imageUrl ? (
+                    // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
+                    <img
+                      src={item.imageUrl}
+                      alt=""
+                      loading="lazy"
+                      className="h-11 w-11 shrink-0 rounded-xl border border-zinc-200 object-cover dark:border-zinc-800"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-100 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500"
+                    >
+                      <FiImage aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                  )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {item.name}

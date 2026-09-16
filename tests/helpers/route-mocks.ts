@@ -200,6 +200,7 @@ export function okCreatedBooking(): CreatedBooking {
     bookingId: "99999999-9999-4999-8999-999999999999",
     status: "pending",
     scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    timezone: "Asia/Ho_Chi_Minh",
     total: 199000,
     serviceId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
     serviceName: "Thay dau dong co",

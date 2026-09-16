@@ -113,7 +113,9 @@ export function NavigationList({
                 <span aria-hidden="true">·</span>
                 <span>{formatEtaMin(target.etaMin)}</span>
                 <span aria-hidden="true">·</span>
-                <span>{formatScheduleDateTime(target.scheduledAt)}</span>
+                <span>
+                  {formatScheduleDateTime(target.scheduledAt, target.timezone)}
+                </span>
               </span>
             </button>
           </li>
