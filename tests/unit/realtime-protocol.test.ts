@@ -5,6 +5,7 @@ import {
   canSubscribe,
   emergencyZoneTopic,
   parseClientMessage,
+  SERVICE_CATALOG_TOPIC,
   STAFF_PASSWORDS_TOPIC,
   userTopic,
 } from "@/lib/realtime/protocol";
@@ -68,5 +69,15 @@ describe("realtime protocol", () => {
     expect(canPublish(CUSTOMER, emergencyZoneTopic("z1"))).toBe(false);
     expect(canPublish(MECHANIC, emergencyZoneTopic("z1"))).toBe(true);
     expect(canPublish(null, bookingChatTopic("b1"))).toBe(false);
+  });
+
+  test("opens the service catalog to guests but never to publishers", () => {
+    expect(canSubscribe(null, SERVICE_CATALOG_TOPIC)).toBe(true);
+    expect(canSubscribe(CUSTOMER, SERVICE_CATALOG_TOPIC)).toBe(true);
+    expect(canSubscribe(MECHANIC, SERVICE_CATALOG_TOPIC)).toBe(true);
+    expect(canSubscribe(ADMIN, SERVICE_CATALOG_TOPIC)).toBe(true);
+    expect(canPublish(ADMIN, SERVICE_CATALOG_TOPIC)).toBe(false);
+    expect(canPublish(CUSTOMER, SERVICE_CATALOG_TOPIC)).toBe(false);
+    expect(canPublish(null, SERVICE_CATALOG_TOPIC)).toBe(false);
   });
 });

@@ -5,6 +5,8 @@ import type {
   PriceUnit,
 } from "@/lib/catalog/service-catalog.types";
 import { createService, listServices } from "@/lib/catalog/services.service";
+import { SERVICE_CATALOG_TOPIC } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 function toCreateInput(body: Record<string, unknown>): CreateServiceInput {
   return {
@@ -76,6 +78,10 @@ export async function POST(request: Request) {
         { errors: result.errors },
         { status: result.status },
       );
+    void publishRealtimeEvent(SERVICE_CATALOG_TOPIC, {
+      kind: "catalog-updated",
+      updatedAt: new Date().toISOString(),
+    });
     return NextResponse.json({ service: result.data }, { status: 201 });
   } catch {
     return NextResponse.json(

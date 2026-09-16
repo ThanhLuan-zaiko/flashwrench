@@ -38,4 +38,22 @@ describe("catalog tabs", () => {
       expect(catalogTabHref(tab.id)).toBe(tab.href);
     }
   });
+
+  test("attaches one icon component per tab", () => {
+    expect(CATALOG_TABS.length).toBe(3);
+    for (const tab of CATALOG_TABS) {
+      expect(typeof tab.icon).toBe("function");
+    }
+    const icons = CATALOG_TABS.map((t) => t.icon);
+    expect(new Set(icons).size).toBe(icons.length);
+  });
+
+  test("carries one metadata title and description per tab", () => {
+    for (const tab of CATALOG_TABS) {
+      expect(tab.title.length).toBeGreaterThan(0);
+      expect(tab.description.length).toBeGreaterThan(0);
+    }
+    const titles = CATALOG_TABS.map((t) => t.title);
+    expect(new Set(titles).size).toBe(titles.length);
+  });
 });

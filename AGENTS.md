@@ -89,6 +89,14 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 - **Optimistic Updates:** Use TanStack Query's `onMutate` and `onError` for optimistic UI updates when creating/updating bookings.
 - **Caching:** Configure appropriate `staleTime` and `gcTime` for different data types (e.g., vehicle models can be cached longer than booking statuses).
 
+### 7.1. Fast Tab Switches (URL Tabs Without Remount)
+When each tab owns its own URL (one URL per tab so links stay shareable and the browser back button works, e.g. `/services` plus `/services/[slug]`), switching tabs MUST feel instant and MUST NOT replay enter animations:
+- Mount the interactive screen ONCE in the segment `layout.tsx` (server component rendering one client shell). Keep `page.tsx` files metadata-only.
+- The shell reads the active tab from the URL (`useParams()`), never from local tab state alone.
+- Tab controls are real `Link`s with `scroll={false}` (plus prefetch) so a switch reuses cached query data, preserves unrelated state (e.g. search text), resets only the pager, and never re-runs the GSAP reveal hook (mount-once effects stay untouched).
+- Unknown or retired tab slugs show a friendly guidance panel linking back to the default tab. Never guess or silently fall back to another tab's data.
+- Reference implementation: `app/services/layout.tsx` + `components/services/ServicesRouteShell.tsx` (see `frontend-bento-gsap.md` Section 4.5 for the motion side).
+
 ---
 
 ## 8. AI Agent Instructions

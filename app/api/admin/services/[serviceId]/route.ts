@@ -11,8 +11,17 @@ import {
   toggleServiceActive,
   updateService,
 } from "@/lib/catalog/services.service";
+import { SERVICE_CATALOG_TOPIC } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 type ServiceAction = "update" | "toggle-active" | "soft-delete" | "restore";
+
+function notifyCatalogUpdated(): void {
+  void publishRealtimeEvent(SERVICE_CATALOG_TOPIC, {
+    kind: "catalog-updated",
+    updatedAt: new Date().toISOString(),
+  });
+}
 
 function toUpdateInput(body: Record<string, unknown>): UpdateServiceInput {
   return {
@@ -65,6 +74,7 @@ export async function PATCH(
           { errors: result.errors },
           { status: result.status },
         );
+      notifyCatalogUpdated();
       return NextResponse.json({ service: result.data });
     }
     if (action === "toggle-active") {
@@ -80,6 +90,7 @@ export async function PATCH(
           { errors: result.errors },
           { status: result.status },
         );
+      notifyCatalogUpdated();
       return NextResponse.json({ service: result.data });
     }
     if (action === "soft-delete") {
@@ -89,6 +100,7 @@ export async function PATCH(
           { errors: result.errors },
           { status: result.status },
         );
+      notifyCatalogUpdated();
       return NextResponse.json({ service: result.data });
     }
     if (action === "restore") {
@@ -98,6 +110,7 @@ export async function PATCH(
           { errors: result.errors },
           { status: result.status },
         );
+      notifyCatalogUpdated();
       return NextResponse.json({ service: result.data });
     }
     return NextResponse.json(
@@ -139,6 +152,7 @@ export async function DELETE(
         { errors: result.errors },
         { status: result.status },
       );
+    notifyCatalogUpdated();
     return NextResponse.json({ deleted: result.data });
   } catch {
     return NextResponse.json(

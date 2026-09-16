@@ -13,6 +13,7 @@ import type {
 } from "@/lib/auth/user.types";
 import type { SessionListItem } from "@/lib/auth/user-sessions";
 import { makePublicUser, makeSessionTokens } from "./auth.fixtures";
+import { resetCatalogRouteMocks } from "./catalog-route.mocks";
 
 // Mutable stub state for route-level suites. Route handlers only parse input,
 // call a service and shape the response, so every dependency with side
@@ -198,6 +199,7 @@ export function resetRouteMocks(): void {
   routeStubs.resetStaffResult = null;
   routeStubs.adminActionResult = null;
   routeStubs.meSession = null;
+  resetCatalogRouteMocks();
   for (const fn of Object.values(guardMocks)) fn.mockClear();
   for (const fn of Object.values(authServiceMocks)) fn.mockClear();
   for (const fn of Object.values(accountStatusRouteMocks)) fn.mockClear();

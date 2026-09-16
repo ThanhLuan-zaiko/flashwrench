@@ -10,6 +10,7 @@ describe("income tabs", () => {
     expect(INCOME_TABS.map((t) => t.id)).toEqual([
       "all",
       "paid",
+      "pending",
       "refunded",
     ]);
     for (const tab of INCOME_TABS) {
@@ -28,6 +29,8 @@ describe("income tabs", () => {
   test("guards tab ids from unknown values", () => {
     expect(isIncomeTab("all")).toBe(true);
     expect(isIncomeTab("paid")).toBe(true);
+    expect(isIncomeTab("pending")).toBe(true);
+    expect(isIncomeTab("refunded")).toBe(true);
     expect(isIncomeTab("unpaid")).toBe(false);
     expect(isIncomeTab("unknown")).toBe(false);
     expect(isIncomeTab(undefined)).toBe(false);

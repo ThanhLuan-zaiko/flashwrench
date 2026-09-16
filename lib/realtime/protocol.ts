@@ -8,6 +8,11 @@ import type { UserRole } from "@/lib/auth/user.types";
 export type RealtimeUser = { id: string; role: UserRole };
 
 export const STAFF_PASSWORDS_TOPIC = "staff-passwords";
+export const SERVICE_CATALOG_TOPIC = "service-catalog";
+
+export function serviceCatalogTopic(): string {
+  return SERVICE_CATALOG_TOPIC;
+}
 
 export function userTopic(userId: string): string {
   return `user:${userId}`;
@@ -87,6 +92,7 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
 
 type TopicKind =
   | "staff-passwords"
+  | "service-catalog"
   | "user"
   | "booking"
   | "booking-chat"
@@ -95,6 +101,7 @@ type TopicKind =
 
 function topicKind(topic: string): TopicKind {
   if (topic === STAFF_PASSWORDS_TOPIC) return "staff-passwords";
+  if (topic === SERVICE_CATALOG_TOPIC) return "service-catalog";
   if (topic.startsWith("user:")) return "user";
   if (topic.startsWith("booking:") && topic.endsWith(":chat")) {
     return "booking-chat";
@@ -106,11 +113,15 @@ function topicKind(topic: string): TopicKind {
 
 // Who may listen. Booking topics are coarse in v1 (any logged-in user);
 // tighten with a participant lookup when booking tracking lands.
+// The service catalog is public so guests on /services see price updates
+// without logging in; events carry only a refresh signal, never secrets.
 export function canSubscribe(
   user: RealtimeUser | null,
   topic: string,
 ): boolean {
-  if (!user || !isValidTopic(topic)) return false;
+  if (!isValidTopic(topic)) return false;
+  if (topicKind(topic) === "service-catalog") return true;
+  if (!user) return false;
   switch (topicKind(topic)) {
     case "staff-passwords":
       return user.role === "admin";
@@ -126,9 +137,9 @@ export function canSubscribe(
   }
 }
 
-// Who may send. Server-only topics (staff-passwords, user inbox, booking
-// state) reject client publishes; the Next.js routes publish there through
-// the gateway /publish endpoint instead.
+// Who may send. Server-only topics (staff-passwords, service-catalog, user
+// inbox, booking state) reject client publishes; the Next.js routes publish
+// there through the gateway /publish endpoint instead.
 export function canPublish(user: RealtimeUser | null, topic: string): boolean {
   if (!user || !isValidTopic(topic)) return false;
   switch (topicKind(topic)) {

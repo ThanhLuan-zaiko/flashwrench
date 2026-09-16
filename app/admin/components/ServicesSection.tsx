@@ -66,22 +66,28 @@ export function ServicesSection({ tab }: { tab: CatalogTab }) {
               aria-label="Chọn nhóm quản lý"
               className="flex flex-wrap gap-1.5"
             >
-              {CATALOG_TABS.map((t) => (
-                <Link
-                  key={t.id}
-                  href={t.href}
-                  role="tab"
-                  aria-selected={tab === t.id}
-                  aria-current={tab === t.id ? "page" : undefined}
-                  className={`flex min-h-[44px] items-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
-                    tab === t.id
-                      ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
-                      : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                  }`}
-                >
-                  {t.label}
-                </Link>
-              ))}
+              {CATALOG_TABS.map((t) => {
+                const TabIcon = t.icon;
+                return (
+                  <Link
+                    key={t.id}
+                    href={t.href}
+                    scroll={false}
+                    prefetch
+                    role="tab"
+                    aria-selected={tab === t.id}
+                    aria-current={tab === t.id ? "page" : undefined}
+                    className={`flex min-h-[44px] items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
+                      tab === t.id
+                        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                        : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    }`}
+                  >
+                    <TabIcon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    {t.label}
+                  </Link>
+                );
+              })}
             </div>
             {tab !== "trash" ? (
               <button

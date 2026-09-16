@@ -38,6 +38,7 @@ Server trả về `event` (`topic`, `payload`, `from`), `subscribed`,
 
 | Topic                    | Nghe                       | Gửi từ browser              |
 | ------------------------ | -------------------------- | --------------------------- |
+| `service-catalog`        | công khai (kể cả khách chưa đăng nhập) | server-only (route publish) |
 | `staff-passwords`        | admin                      | server-only (route publish) |
 | `user:{userId}`          | chính chủ hoặc admin       | server-only                 |
 | `booking:{id}`           | đã đăng nhập (v1, sẽ siết theo participant) | server-only |
@@ -82,6 +83,11 @@ tự trả `401` ngay sau khi khóa, không cần thêm logic ở từng route.
    `registerPublishHandler(prefix, handler)` trong gateway.
 
 Ví dụ consumer đầu tiên: `hooks/useStaffPasswordRealtime.ts`.
+Consumer công khai: `hooks/public-catalog.ts` (`useServiceCatalogRealtime`)
+lắng nghe `service-catalog` để trang `/services` tự làm mới bảng giá ngay
+khi admin lưu cấu hình ở `/admin/services` (route admin phát
+`publishRealtimeEvent(SERVICE_CATALOG_TOPIC, { kind: "catalog-updated" })`
+sau mỗi thay đổi thành công).
 
 ## Giới hạn
 

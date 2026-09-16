@@ -188,6 +188,33 @@ Cards mark themselves with `data-reveal`, no per-card JS.
 - Do not animate more than ~12 targets per section.
 - Kill triggers on unmount via `ctx.revert()`.
 
+### 4.5 Tab Switches: Instant Render, No Re-Animation
+
+When tabs have one URL per tab (see `AGENTS.md` Section 7.1),
+switching tabs inside the same screen is a fast re-render, never
+a second enter animation:
+
+- Mount the interactive screen once in the segment `layout.tsx`
+  (server component rendering one client shell). Keep `page.tsx`
+  files metadata-only.
+- The shell reads the active tab from the URL (`useParams()`),
+  never from local tab state alone.
+- Tab controls are real `Link`s with `scroll={false}` (plus
+  prefetch). A switch reuses cached query data, preserves
+  unrelated state (e.g. search text), resets only the pager, and
+  never re-runs the reveal hook.
+- The GSAP reveal runs exactly once, on first mount. New cards
+  rendered by a later tab switch appear instantly at final state.
+  Never re-trigger reveals, add per-tab timelines, or animate a
+  tab switch with GSAP.
+- Reset the pager during render (reset-on-prop-change pattern),
+  not in an effect, so no extra effect run can restart motion.
+- Unknown or retired tab slugs render a friendly guidance panel
+  linking back to the default tab.
+
+Reference: `app/services/layout.tsx` plus
+`components/services/ServicesRouteShell.tsx`.
+
 ## 5. File Organization
 
 Keep files small and single-purpose:
@@ -254,3 +281,5 @@ Before finishing, verify:
 - Unbounded lists with no pagination, or pagers that forget to
   reset on filter change.
 - Client Components for static cards that need no motion.
+- Replaying enter animations on tab switches, or keeping tab
+  state only in `useState` while tabs own URLs (see 4.5).
