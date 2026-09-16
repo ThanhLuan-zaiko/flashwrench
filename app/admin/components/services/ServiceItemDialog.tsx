@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FiLoader, FiSave, FiX } from "react-icons/fi";
+import { FiLoader, FiSave } from "react-icons/fi";
+import { DialogHeader } from "@/components/ui/DialogHeader";
+import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateService, useUpdateService } from "@/hooks/service-catalog";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type {
@@ -114,25 +116,12 @@ export function ServiceItemDialog({
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? "Sửa mục giá" : "Thêm mục giá"}
-            </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-              Giá tính bằng VND, mã riêng dùng để xác nhận khi xóa vĩnh viễn.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
-          >
-            <FiX aria-hidden="true" className="h-5 w-5" />
-          </button>
-        </div>
+      <DialogPanel>
+        <DialogHeader
+          title={editing ? "Sửa mục giá" : "Thêm mục giá"}
+          hint="Giá tính bằng VND, mã riêng dùng để xác nhận khi xóa vĩnh viễn."
+          onClose={onClose}
+        />
 
         <div className="mt-4 flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
@@ -243,7 +232,7 @@ export function ServiceItemDialog({
             {pending ? "Đang lưu…" : editing ? "Lưu thay đổi" : "Tạo mục giá"}
           </button>
         </div>
-      </div>
+      </DialogPanel>
     </div>
   );
 }

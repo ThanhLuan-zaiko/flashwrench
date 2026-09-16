@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiChevronsLeft, FiChevronsRight, FiHome, FiX } from "react-icons/fi";
+import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { ADMIN_SECTIONS, type AdminSectionId } from "./admin-sections";
 
 type AdminSidebarProps = {
@@ -72,7 +73,7 @@ export function AdminSidebar({
 
         <nav
           aria-label="Chức năng quản trị"
-          className="flex-1 overflow-y-auto p-3"
+          className={`flex-1 overflow-y-auto p-3 ${SCROLLBAR_CLASSES}`}
         >
           <ul className="flex flex-col gap-1.5">
             {ADMIN_SECTIONS.map((section) => {

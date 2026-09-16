@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { IconType } from "react-icons";
 import { FiCheck, FiChevronDown, FiInbox, FiSearch } from "react-icons/fi";
+import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { filterSelectOptions, type SelectOption } from "./category-filter";
 
 type SelectDropdownProps = {
@@ -160,7 +161,7 @@ export function SelectDropdown({
           <div
             role="listbox"
             aria-label={listLabel ?? label}
-            className="flex max-h-64 flex-col gap-0.5 overflow-y-auto p-1.5"
+            className={`flex max-h-64 flex-col gap-0.5 overflow-y-auto p-1.5 ${SCROLLBAR_CLASSES}`}
           >
             {allLabel !== undefined && (
               <button

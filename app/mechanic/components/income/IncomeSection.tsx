@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { FiDollarSign, FiLoader, FiTrendingUp } from "react-icons/fi";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useMechanicIncome } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
+import { FilterTabs } from "../FilterTabs";
 import {
   clampMechanicPage,
   formatVnd,
@@ -16,19 +16,14 @@ import {
   paginateMechanicItems,
 } from "../mechanic-format";
 import { IncomeHistory } from "./IncomeHistory";
-
-const PERIOD_FILTERS: { value: string; label: string }[] = [
-  { value: "all", label: "Tất cả" },
-  { value: "paid", label: "Đã thu" },
-  { value: "pending", label: "Chờ thu" },
-  { value: "refunded", label: "Đã hoàn" },
-];
+import { INCOME_TABS, type IncomeTab } from "./income-tabs";
 
 // Bento root for income: revenue counters by day/week/month plus the
 // transaction history with a state filter and paging.
-export function IncomeSection() {
+// Active tab comes from the route (one URL per tab) so links stay
+// shareable and the browser back button works.
+export function IncomeSection({ state }: { state: IncomeTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
-  const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(0);
   const query = useMechanicIncome();
 
@@ -39,21 +34,29 @@ export function IncomeSection() {
   );
   const filtered = useMemo(
     () =>
-      filter === "all"
+      state === "all"
         ? entries
-        : entries.filter((entry) => entry.state === filter),
-    [entries, filter],
+        : entries.filter((entry) => entry.state === state),
+    [entries, state],
   );
   const safePage = clampMechanicPage(page, filtered.length);
   const visible = useMemo(
     () => paginateMechanicItems(filtered, safePage),
     [filtered, safePage],
   );
-
-  const pickFilter = (value: string) => {
-    setFilter(value);
-    setPage(0);
-  };
+  const counts = useMemo<Record<string, number> | undefined>(() => {
+    if (query.isPending || !query.data) return undefined;
+    const tally: Record<string, number> = {
+      all: entries.length,
+      paid: 0,
+      pending: 0,
+      refunded: 0,
+    };
+    for (const entry of entries) {
+      tally[entry.state] = (tally[entry.state] ?? 0) + 1;
+    }
+    return tally;
+  }, [entries, query.data, query.isPending]);
 
   const counters = [
     {
@@ -87,12 +90,7 @@ export function IncomeSection() {
   ];
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        eyebrow="Thu nhập thợ xe"
-        title="Tiền về rõ từng đồng."
-        subtitle="Doanh thu theo ngày, tuần, tháng và lịch sử từng giao dịch đã thu."
-      />
+    <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         {counters.map((stat) => {
           const Icon = stat.icon;
@@ -130,28 +128,12 @@ export function IncomeSection() {
                   : "Đang tải lịch sử…"}
               </p>
             </div>
-            <div
-              role="tablist"
-              aria-label="Lọc giao dịch theo trạng thái"
-              className="flex flex-wrap gap-1.5"
-            >
-              {PERIOD_FILTERS.map((item) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  role="tab"
-                  aria-selected={filter === item.value}
-                  onClick={() => pickFilter(item.value)}
-                  className={`min-h-[44px] rounded-lg px-3 py-1 text-xs font-semibold transition-colors duration-200 ${
-                    filter === item.value
-                      ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
-                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+            <FilterTabs
+              tabs={INCOME_TABS}
+              activeId={state}
+              ariaLabel="Lọc giao dịch theo trạng thái"
+              counts={counts}
+            />
           </div>
           <IncomeHistory
             isPending={query.isPending}

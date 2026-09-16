@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FiNavigation } from "react-icons/fi";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useToast } from "@/components/toast/useToast";
 import {
   useNavigationBoard,
@@ -89,12 +88,7 @@ export function NavigationSection() {
   };
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        eyebrow="Điều hướng thợ xe"
-        title="Tới đúng điểm, đúng giờ."
-        subtitle="Bản đồ điểm sửa, khoảng cách và nút chỉ đường cho từng đơn đang mở."
-      />
+    <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-4">
         <BentoCard label="Bản đồ điểm sửa" className="lg:col-span-3">
           <NavigationHeader

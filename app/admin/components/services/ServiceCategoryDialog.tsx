@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FiLoader, FiSave, FiX } from "react-icons/fi";
+import { FiLoader, FiSave } from "react-icons/fi";
+import { DialogHeader } from "@/components/ui/DialogHeader";
+import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
@@ -69,25 +71,12 @@ export function ServiceCategoryDialog({
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? "Sửa loại hình" : "Thêm loại hình"}
-            </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-              Mỗi loại hình có một mã riêng, dùng để xác nhận khi xóa vĩnh viễn.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
-          >
-            <FiX aria-hidden="true" className="h-5 w-5" />
-          </button>
-        </div>
+      <DialogPanel>
+        <DialogHeader
+          title={editing ? "Sửa loại hình" : "Thêm loại hình"}
+          hint="Mỗi loại hình có một mã riêng, dùng để xác nhận khi xóa vĩnh viễn."
+          onClose={onClose}
+        />
 
         <div className="mt-4 flex flex-col gap-3">
           <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
@@ -207,7 +196,7 @@ export function ServiceCategoryDialog({
             {pending ? "Đang lưu…" : editing ? "Lưu thay đổi" : "Tạo loại hình"}
           </button>
         </div>
-      </div>
+      </DialogPanel>
     </div>
   );
 }

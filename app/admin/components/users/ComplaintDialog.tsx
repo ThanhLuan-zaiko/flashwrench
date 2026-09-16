@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FiLoader, FiSave, FiX } from "react-icons/fi";
+import { FiLoader, FiSave } from "react-icons/fi";
+import { DialogHeader } from "@/components/ui/DialogHeader";
+import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateComplaint, useTransitionComplaint } from "@/hooks/complaints";
 import type {
   ComplaintAction,
@@ -81,27 +83,16 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
-              {handling ? "Xử lý khiếu nại" : "Ghi nhận khiếu nại"}
-            </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-              {handling
-                ? `${COMPLAINT_STATUS_LABELS[handling.status]} · ${handling.reporterName}`
-                : "Ghi lại phản ánh từ khách hàng để theo dõi xử lý."}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
-          >
-            <FiX aria-hidden="true" className="h-5 w-5" />
-          </button>
-        </div>
+      <DialogPanel>
+        <DialogHeader
+          title={handling ? "Xử lý khiếu nại" : "Ghi nhận khiếu nại"}
+          hint={
+            handling
+              ? `${COMPLAINT_STATUS_LABELS[handling.status]} · ${handling.reporterName}`
+              : "Ghi lại phản ánh từ khách hàng để theo dõi xử lý."
+          }
+          onClose={onClose}
+        />
 
         {handling ? (
           <div className="mt-4 flex flex-col gap-3">
@@ -234,7 +225,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
             </button>
           </div>
         )}
-      </div>
+      </DialogPanel>
     </div>
   );
 }

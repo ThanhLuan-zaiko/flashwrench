@@ -15,7 +15,7 @@ type MapPanelProps = {
 export function MapPanel({ origin, target }: MapPanelProps) {
   if (!target) {
     return (
-      <div className="mt-3 flex min-h-64 items-center justify-center rounded-2xl border border-zinc-200 px-4 py-10 text-center dark:border-zinc-800">
+      <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-zinc-200 px-4 py-8 text-center dark:border-zinc-800">
         <p className="max-w-xs text-xs text-zinc-500 dark:text-zinc-400">
           <FiMapPin
             aria-hidden="true"

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiChevronsLeft, FiChevronsRight, FiHome, FiX } from "react-icons/fi";
+import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { MECHANIC_SECTIONS, type MechanicSectionId } from "./mechanic-sections";
 
 type MechanicSidebarProps = {
@@ -78,7 +79,7 @@ export function MechanicSidebar({
 
         <nav
           aria-label="Chức năng thợ xe"
-          className="flex-1 overflow-y-auto p-3"
+          className={`flex-1 overflow-y-auto p-3 ${SCROLLBAR_CLASSES}`}
         >
           <ul className="flex flex-col gap-1.5">
             {MECHANIC_SECTIONS.map((section) => {

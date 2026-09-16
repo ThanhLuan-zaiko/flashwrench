@@ -36,7 +36,7 @@ export function IncomeHistory({
   if (isPending) {
     return (
       <div
-        className="mt-4 flex items-center justify-center py-12"
+        className="mt-4 flex items-center justify-center py-8"
         aria-live="polite"
         aria-busy="true"
       >
@@ -50,7 +50,7 @@ export function IncomeHistory({
   }
   if (isError) {
     return (
-      <div className="mt-4 flex flex-col items-center py-12 text-center">
+      <div className="mt-4 flex flex-col items-center py-8 text-center">
         <FiAlertCircle aria-hidden="true" className="h-10 w-10 text-zinc-400" />
         <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Không tải được thu nhập
@@ -67,7 +67,7 @@ export function IncomeHistory({
   }
   if (visible.length === 0) {
     return (
-      <div className="mt-4 flex flex-col items-center py-12 text-center">
+      <div className="mt-4 flex flex-col items-center py-8 text-center">
         <FiAlertCircle aria-hidden="true" className="h-10 w-10 text-zinc-400" />
         <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Chưa có giao dịch nào

@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
 import { ToastProvider } from "@/components/toast/ToastProvider";
+import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 import "./globals.css";
 
@@ -37,7 +38,7 @@ export default async function RootLayout({
     <html
       lang="vi"
       suppressHydrationWarning
-      className={`${geistSans.variable} h-full antialiased`}
+      className={`${geistSans.variable} h-full antialiased ${SCROLLBAR_CLASSES}`}
     >
       <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeInitScript />

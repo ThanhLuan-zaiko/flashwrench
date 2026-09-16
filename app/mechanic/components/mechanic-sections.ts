@@ -16,7 +16,7 @@ export const MECHANIC_SECTIONS: MechanicSection[] = [
     id: "schedule",
     label: "Quản lý lịch làm việc",
     description: "Nhận và xử lý yêu cầu từ khách hàng",
-    href: "/mechanic/schedule",
+    href: "/mechanic/schedule/all",
     icon: FiCalendar,
   },
   {
@@ -30,7 +30,7 @@ export const MECHANIC_SECTIONS: MechanicSection[] = [
     id: "income",
     label: "Quản lý thu nhập",
     description: "Theo dõi doanh thu và lịch sử giao dịch",
-    href: "/mechanic/income",
+    href: "/mechanic/income/all",
     icon: FiDollarSign,
   },
   {

@@ -1,7 +1,6 @@
 "use client";
 
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useMechanicStats } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
@@ -23,15 +22,10 @@ export function StatsSection() {
   const reviews = payload?.reviews ?? [];
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        eyebrow="Hiệu suất thợ xe"
-        title="Làm tốt, thấy rõ."
-        subtitle="Số đơn đã xong, điểm đánh giá trung bình và doanh thu từng tháng."
-      />
+    <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       {query.isPending ? (
         <div
-          className="flex items-center justify-center py-16"
+          className="flex items-center justify-center py-10"
           aria-live="polite"
           aria-busy="true"
         >

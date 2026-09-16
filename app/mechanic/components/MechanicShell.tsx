@@ -59,7 +59,7 @@ export function MechanicShell({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="sticky top-16 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95">
-          <div className="mx-auto flex min-h-16 w-full max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+          <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
@@ -94,7 +94,7 @@ export function MechanicShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 sm:px-6 md:py-6">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-4 sm:px-6 md:py-6">
           {children}
         </main>
       </div>

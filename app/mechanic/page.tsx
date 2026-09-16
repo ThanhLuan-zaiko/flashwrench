@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function MechanicIndexPage() {
-  redirect("/mechanic/schedule");
+  redirect("/mechanic/schedule/all");
 }

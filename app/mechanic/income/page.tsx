@@ -1,11 +1,5 @@
-import type { Metadata } from "next";
-import { IncomeSection } from "../components/income/IncomeSection";
-
-export const metadata: Metadata = {
-  title: "Thu nhập | Thợ xe FlashWrench",
-  description: "Doanh thu và lịch sử giao dịch của thợ sửa xe.",
-};
+import { redirect } from "next/navigation";
 
 export default function MechanicIncomePage() {
-  return <IncomeSection />;
+  redirect("/mechanic/income/all");
 }

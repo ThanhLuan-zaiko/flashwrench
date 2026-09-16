@@ -1,6 +1,7 @@
 "use client";
 
 import { FiAlertCircle, FiLoader, FiX } from "react-icons/fi";
+import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useBookingRealtime, useMechanicBooking } from "@/hooks/mechanic";
 import { BookingActions } from "./BookingActions";
 import { BookingInfo } from "./BookingInfo";
@@ -39,7 +40,9 @@ export function BookingDetailDialog({
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950">
+      <div
+        className={`relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
+      >
         <div className="flex items-start justify-between gap-2">
           <div>
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
