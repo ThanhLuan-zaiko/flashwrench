@@ -215,3 +215,14 @@ export async function updatePassword(
     { prepare: true },
   );
 }
+
+export async function setAvatarUrl(
+  userId: string,
+  avatarUrl: string,
+): Promise<void> {
+  await scylla.execute(
+    "UPDATE users_by_id SET avatar_url = ?, updated_at = ? WHERE user_id = ?",
+    [avatarUrl, new Date(), userId],
+    { prepare: true },
+  );
+}

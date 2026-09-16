@@ -29,6 +29,12 @@ ENV NEXT_TELEMETRY_DISABLED="1"
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
+# Runtime upload directory (physical image files, see docs/media.md).
+# Mount a persistent volume here in production
+# (docker -v flashwrench-storage:/app/storage); without a mount the
+# directory is ephemeral to the container filesystem.
+RUN mkdir -p /app/storage/uploads && chown nextjs:nodejs /app/storage
+
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public

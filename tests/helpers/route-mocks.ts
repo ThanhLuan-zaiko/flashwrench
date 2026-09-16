@@ -25,6 +25,10 @@ import type {
 } from "@/lib/mechanic/mechanic-directory.service";
 import { makePublicUser, makeSessionTokens } from "./auth.fixtures";
 import { resetCatalogRouteMocks } from "./catalog-route.mocks";
+import { mediaStorageMocks } from "./media.mocks";
+import { resetMediaRouteMocks } from "./media-route.mocks";
+
+export { mediaStorageMocks };
 
 // Mutable stub state for route-level suites. Route handlers only parse input,
 // call a service and shape the response, so every dependency with side
@@ -48,6 +52,13 @@ export const routeStubs = {
   bookingCreateResult: null as BookingResult<CreatedBooking> | null,
   mechanicsList: null as MechanicResult<MechanicDirectoryItem[]> | null,
 };
+export {
+  avatarServiceMocks,
+  mediaRouteStubs,
+  mediaServiceMocks,
+  okMediaAsset,
+  resetMediaRouteMocks,
+} from "./media-route.mocks";
 
 export function okAuthResult(): AuthResult {
   return {
@@ -291,6 +302,7 @@ export function resetRouteMocks(): void {
   routeStubs.bookingCreateResult = null;
   routeStubs.mechanicsList = null;
   resetCatalogRouteMocks();
+  resetMediaRouteMocks();
   for (const fn of Object.values(guardMocks)) fn.mockClear();
   for (const fn of Object.values(authServiceMocks)) fn.mockClear();
   for (const fn of Object.values(accountStatusRouteMocks)) fn.mockClear();
@@ -305,4 +317,5 @@ export function resetRouteMocks(): void {
   for (const fn of Object.values(authorizationMocks)) fn.mockClear();
   for (const fn of Object.values(bookingServiceMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicDirectoryServiceMocks)) fn.mockClear();
+  for (const fn of Object.values(mediaStorageMocks)) fn.mockClear();
 }

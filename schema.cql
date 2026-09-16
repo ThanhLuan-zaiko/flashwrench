@@ -42,6 +42,40 @@ CREATE TYPE IF NOT EXISTS image_udt (
 );
 
 -- ============================================================================
+-- 0b. MEDIA ASSETS (uploaded images)
+-- Files live on disk under storage/uploads/<scope>/<YYYY-MM>/<uuid>.<ext>
+-- (see docs/media.md); ScyllaDB keeps only metadata + public URL. Scopes:
+-- avatar | service | category | part | booking | emergency | review | misc.
+-- Query: single asset (serve permission check, delete)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS media_assets (
+  asset_id   UUID PRIMARY KEY,
+  owner_type TEXT,     -- avatar | service | category | part | booking | emergency | review | misc
+  owner_id   UUID,     -- user_id | service_id | category_id | part_id | booking_id | ...
+  scope      TEXT,     -- storage scope folder (usually = owner_type)
+  file_path  TEXT,     -- relative path under storage/uploads
+  url        TEXT,     -- public URL (/api/media/<file_path>)
+  mime       TEXT,     -- image/jpeg | image/png | image/webp
+  size_bytes BIGINT,
+  width      INT,
+  height     INT,
+  alt        TEXT,
+  created_by UUID,     -- uploader user_id
+  created_at TIMESTAMP
+);
+
+-- Query: every image of one owner (service gallery, part gallery...)
+CREATE TABLE IF NOT EXISTS media_assets_by_owner (
+  owner_type TEXT,
+  owner_id   UUID,
+  created_at TIMESTAMP,
+  asset_id   UUID,
+  url        TEXT,
+  PRIMARY KEY ((owner_type, owner_id), created_at, asset_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, asset_id ASC);
+
+-- ============================================================================
 -- 1. USERS & AUTH
 -- role = customer | mechanic | dispatcher | admin
 -- status = active | locked | pending_verification
@@ -274,6 +308,7 @@ CREATE TABLE IF NOT EXISTS service_categories (
   name        TEXT,
   slug        TEXT,
   icon        TEXT,
+  image_url   TEXT,  -- cover image (served from media storage)
   description TEXT,
   sort_order  INT,
   is_active   BOOLEAN,
@@ -296,6 +331,7 @@ CREATE TABLE IF NOT EXISTS services_by_id (
   name                   TEXT,
   slug                   TEXT,
   description            TEXT,
+  image_url              TEXT,  -- cover image (served from media storage)
   base_price             BIGINT,  -- VND
   price_unit             TEXT,    -- per_job | per_hour | per_item
   duration_min           INT,

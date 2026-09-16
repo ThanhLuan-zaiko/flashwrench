@@ -109,9 +109,18 @@ export function UserMenu() {
         aria-expanded={open}
         aria-label={open ? "Đóng menu tài khoản" : "Mở menu tài khoản"}
         title={user.fullName}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-sm font-bold text-zinc-800 transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-zinc-300 bg-zinc-100 text-sm font-bold text-zinc-800 transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
       >
-        {getInitials(user.fullName)}
+        {user.avatarUrl ? (
+          // biome-ignore lint/performance/noImgElement: dynamic cropped upload served immutable; next/image optimizer hop needs sharp for zero benefit.
+          <img
+            src={user.avatarUrl}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          getInitials(user.fullName)
+        )}
       </button>
 
       {open && (

@@ -20,6 +20,10 @@
 # production
 /build
 
+# uploaded media (physical image files must never be committed;
+# metadata lives in ScyllaDB media_assets, see docs/media.md)
+/storage/
+
 # misc
 .DS_Store
 *.pem
