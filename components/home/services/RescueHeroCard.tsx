@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { FiLifeBuoy } from "react-icons/fi";
+import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
+import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 
 // Hero 2x2 card: giant 24/7 display plus rescue booking entry.
 // Top-left on lg, first in DOM on mobile.
@@ -42,12 +43,15 @@ export function RescueHeroCard() {
             ),
           )}
         </dl>
-        <Link
-          href="/register"
+        <SmartCtaLink
+          guestHref={buildLoginHref(buildBookingHref())}
+          authedHref="/booking"
+          guestLabel="Đặt cứu hộ ngay"
+          authedLabel="Đặt cứu hộ ngay"
+          guestAriaLabel="Đăng nhập để đặt cứu hộ ngay"
+          authedAriaLabel="Đặt cứu hộ ngay"
           className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-        >
-          Đặt cứu hộ ngay
-        </Link>
+        />
       </div>
     </section>
   );

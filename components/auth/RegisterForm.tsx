@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { FiLoader, FiUserPlus } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
-import { useRegister } from "@/hooks/auth";
+import { useMe, useRegister } from "@/hooks/auth";
+import { resolvePostAuthHref } from "@/lib/auth/auth-redirect";
 import type { FieldErrors } from "@/lib/auth/user.types";
 import { validateRegisterInput } from "@/lib/auth/validation";
 import { AuthApiError } from "@/services/auth.api";
@@ -13,10 +14,15 @@ import { FormAlert } from "./FormAlert";
 
 const EMPTY_ERRORS: FieldErrors = {};
 
-export function RegisterForm() {
+type RegisterFormProps = {
+  next?: string | null;
+};
+
+export function RegisterForm({ next }: RegisterFormProps) {
   const router = useRouter();
   const toast = useToast();
   const register = useRegister();
+  const me = useMe();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -27,6 +33,15 @@ export function RegisterForm() {
 
   const pending = register.isPending;
   const errors: FieldErrors = { ...clientErrors, ...serverErrors };
+
+  // Client-side mirror of the server bounce on this page: a logged-in
+  // customer who reaches the form (back button, stale link) leaves
+  // immediately instead of seeing a second register form.
+  useEffect(() => {
+    if (!me.isPending && me.data) {
+      router.replace(resolvePostAuthHref(me.data.role, next));
+    }
+  }, [me.isPending, me.data, next, router]);
 
   function clearError(field: keyof FieldErrors) {
     setClientErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -62,12 +77,12 @@ export function RegisterForm() {
         confirmPassword,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success(
             "Tạo tài khoản thành công",
             "Chào mừng bạn đến với FlashWrench.",
           );
-          router.push("/");
+          router.push(resolvePostAuthHref(data.user.role, next));
           router.refresh();
         },
         onError: (error) => {
@@ -83,6 +98,21 @@ export function RegisterForm() {
           }
         },
       },
+    );
+  }
+
+  if (!me.isPending && me.data) {
+    return (
+      <output
+        aria-label="Bạn đã đăng nhập, đang chuyển hướng"
+        className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-500 dark:text-zinc-400"
+      >
+        <FiLoader
+          aria-hidden="true"
+          className="h-4 w-4 motion-safe:animate-spin"
+        />
+        Bạn đã đăng nhập, đang chuyển hướng…
+      </output>
     );
   }
 

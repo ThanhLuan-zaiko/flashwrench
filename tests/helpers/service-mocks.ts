@@ -16,6 +16,7 @@ import type {
   ServiceRow,
 } from "@/lib/catalog/service-catalog.types";
 import { makeUserRow } from "./auth.fixtures";
+import { bookingRepoMocks, resetBookingMocks } from "./booking.mocks";
 import { complaintRepoMocks, resetComplaintMocks } from "./complaint.mocks";
 import {
   mechanicBookingsRepoMocks,
@@ -31,6 +32,7 @@ import {
 } from "./staff.mocks";
 
 export { staffRepoMocks };
+export { bookingRepoMocks, bookingStubs } from "./booking.mocks";
 export { complaintRepoMocks, complaintStubs } from "./complaint.mocks";
 export {
   mechanicBookingsRepoMocks,
@@ -208,6 +210,7 @@ export function resetServiceMocks(): void {
   catalogStubs.serviceByCategoryRows = [];
   resetMechanicMocks();
   resetComplaintMocks();
+  resetBookingMocks();
   staffTempStubs.rowByUser = {};
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(staffRepoMocks)) fn.mockClear();
@@ -222,6 +225,7 @@ export function resetServiceMocks(): void {
   for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicWorkspaceRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(bookingRepoMocks)) fn.mockClear();
 }
 
 // Mutable stub state for the catalog suites (service-categories + services).

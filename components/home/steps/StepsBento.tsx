@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { IconType } from "react-icons";
 import { FiArrowRight, FiCalendar, FiMapPin, FiTool } from "react-icons/fi";
+import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 
 type Step = {
@@ -77,7 +77,7 @@ export function StepsBento() {
             );
           })}
           <section
-            aria-label="Đăng ký ngay"
+            aria-label="Bắt đầu miễn phí"
             data-reveal
             className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
           >
@@ -92,13 +92,25 @@ export function StepsBento() {
                 Tham gia miễn phí, đặt lịch khi cần.
               </p>
             </div>
-            <Link
-              href="/register"
+            <SmartCtaLink
+              guestHref="/register"
+              authedHref="/booking"
+              guestLabel={
+                <>
+                  Đăng ký ngay
+                  <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+                </>
+              }
+              authedLabel={
+                <>
+                  Đặt lịch ngay
+                  <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+                </>
+              }
+              guestAriaLabel="Đăng ký ngay"
+              authedAriaLabel="Đặt lịch ngay"
               className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-            >
-              Đăng ký ngay
-              <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
+            />
           </section>
         </div>
       </div>

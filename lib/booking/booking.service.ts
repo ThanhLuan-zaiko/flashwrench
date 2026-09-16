@@ -1,0 +1,101 @@
+// Business logic behind POST /api/bookings: validate the customer
+// input, snapshot the catalog price at booking time, then persist one
+// atomic batch. Services call repositories, never the ScyllaDB client.
+
+import { randomUUID } from "node:crypto";
+import type { PublicUser } from "@/lib/auth/user.types";
+import {
+  isActiveFlag,
+  isDeletedFlag,
+} from "@/lib/catalog/service-catalog.types";
+import { findServiceRowById } from "@/lib/catalog/services.repository";
+import { monthBucketOf } from "@/lib/mechanic/mechanic-status";
+import { insertCustomerBooking } from "./booking.repository";
+import type {
+  BookingResult,
+  CreateBookingInput,
+  CreatedBooking,
+} from "./booking.types";
+import { validateCreateBookingInput } from "./booking.validation";
+
+export const BOOKING_INITIAL_STATUS = "pending";
+export const BOOKING_INITIAL_PAYMENT_STATUS = "unpaid";
+
+function fail<T>(status: number, form: string): BookingResult<T> {
+  return { ok: false, status, errors: { form } };
+}
+
+export async function createCustomerBooking(
+  customer: PublicUser,
+  raw: CreateBookingInput,
+): Promise<BookingResult<CreatedBooking>> {
+  const checked = validateCreateBookingInput(raw);
+  if ("errors" in checked) {
+    return { ok: false, status: 400, errors: checked.errors };
+  }
+  const value = checked.value;
+
+  const service = await findServiceRowById(value.serviceId);
+  if (!service || !isActiveFlag(service.is_active, true)) {
+    return fail(
+      404,
+      "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
+    );
+  }
+  if (isDeletedFlag(service.is_deleted)) {
+    return fail(
+      404,
+      "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
+    );
+  }
+
+  const serviceName = service.name ?? "";
+  const unitPrice = service.base_price ?? 0;
+  const now = new Date();
+  const bookingId = randomUUID();
+
+  await insertCustomerBooking({
+    bookingId,
+    customerId: customer.id,
+    customerName: customer.fullName,
+    customerPhone: customer.phone,
+    vehiclePlate: value.vehiclePlate,
+    vehicleBrand: value.vehicleBrand,
+    vehicleModel: value.vehicleModel,
+    address: {
+      province: value.province,
+      district: value.district,
+      ward: value.ward,
+      street: value.street,
+      full_text: value.address,
+      lat: null,
+      lng: null,
+    },
+    scheduledAt: value.scheduledAt,
+    status: BOOKING_INITIAL_STATUS,
+    paymentStatus: BOOKING_INITIAL_PAYMENT_STATUS,
+    subtotal: unitPrice,
+    total: unitPrice,
+    notes: value.notes,
+    monthBucket: monthBucketOf(value.scheduledAt),
+    createdAt: now,
+    updatedAt: now,
+    serviceId: service.service_id,
+    serviceName,
+    unitPrice,
+  });
+
+  return {
+    ok: true,
+    data: {
+      bookingId,
+      status: BOOKING_INITIAL_STATUS,
+      scheduledAt: value.scheduledAt.toISOString(),
+      total: unitPrice,
+      serviceId: service.service_id,
+      serviceName,
+      vehiclePlate: value.vehiclePlate,
+      address: value.address,
+    },
+  };
+}

@@ -1,4 +1,5 @@
 import { mock } from "bun:test";
+import { NextResponse } from "next/server";
 import type { AccountSession, AccountStatus } from "@/lib/auth/account-status";
 import type { RefreshOutcome } from "@/lib/auth/auth.service";
 import type { StaffCreateResult } from "@/lib/auth/staff.types";
@@ -12,6 +13,11 @@ import type {
   SessionTokens,
 } from "@/lib/auth/user.types";
 import type { SessionListItem } from "@/lib/auth/user-sessions";
+import type {
+  BookingResult,
+  CreateBookingInput,
+  CreatedBooking,
+} from "@/lib/booking/booking.types";
 import { makePublicUser, makeSessionTokens } from "./auth.fixtures";
 import { resetCatalogRouteMocks } from "./catalog-route.mocks";
 
@@ -33,6 +39,8 @@ export const routeStubs = {
   resetStaffResult: null as StaffCreateResult | null,
   adminActionResult: null as AdminActionStub | null,
   meSession: null as AccountSession | null,
+  bookingUser: null as PublicUser | null,
+  bookingCreateResult: null as BookingResult<CreatedBooking> | null,
 };
 
 export function okAuthResult(): AuthResult {
@@ -153,6 +161,49 @@ export const adminUsersRouteMocks = {
   ),
 };
 
+// The POST /api/bookings route only depends on the auth guard and the
+// booking service, so suites drive both through these handles.
+export const authorizationMocks = {
+  requireAuth: mock(async () => {
+    if (!routeStubs.bookingUser) {
+      return {
+        user: null,
+        response: NextResponse.json(
+          { errors: { form: "Vui lòng đăng nhập để tiếp tục." } },
+          { status: 401 },
+        ),
+      } as const;
+    }
+    return { user: routeStubs.bookingUser, response: null } as const;
+  }),
+};
+
+export function okCreatedBooking(): CreatedBooking {
+  return {
+    bookingId: "99999999-9999-4999-8999-999999999999",
+    status: "pending",
+    scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    total: 199000,
+    serviceId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    serviceName: "Thay dau dong co",
+    vehiclePlate: "51F-12345",
+    address: "123 Nguyen Trai, Phuong 5, Quan 3, TP Ho Chi Minh",
+  };
+}
+
+export const bookingServiceMocks = {
+  createCustomerBooking: mock(
+    async (
+      _user: PublicUser,
+      _input: CreateBookingInput,
+    ): Promise<BookingResult<CreatedBooking>> =>
+      routeStubs.bookingCreateResult ?? {
+        ok: true,
+        data: okCreatedBooking(),
+      },
+  ),
+};
+
 export function okAccountSession(
   overrides?: Partial<AccountSession>,
 ): AccountSession {
@@ -199,6 +250,8 @@ export function resetRouteMocks(): void {
   routeStubs.resetStaffResult = null;
   routeStubs.adminActionResult = null;
   routeStubs.meSession = null;
+  routeStubs.bookingUser = null;
+  routeStubs.bookingCreateResult = null;
   resetCatalogRouteMocks();
   for (const fn of Object.values(guardMocks)) fn.mockClear();
   for (const fn of Object.values(authServiceMocks)) fn.mockClear();
@@ -211,4 +264,6 @@ export function resetRouteMocks(): void {
   for (const fn of Object.values(staffCryptoRouteMocks)) fn.mockClear();
   for (const fn of Object.values(realtimePublishMocks)) fn.mockClear();
   for (const fn of Object.values(adminUsersRouteMocks)) fn.mockClear();
+  for (const fn of Object.values(authorizationMocks)) fn.mockClear();
+  for (const fn of Object.values(bookingServiceMocks)) fn.mockClear();
 }

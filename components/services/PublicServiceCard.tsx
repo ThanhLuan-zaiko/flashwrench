@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { FiArrowRight, FiClock, FiHome, FiLifeBuoy } from "react-icons/fi";
+import { FiClock, FiHome, FiLifeBuoy } from "react-icons/fi";
 import {
   formatDuration,
   formatVnd,
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import { ServiceBookingButton } from "./ServiceBookingButton";
 
 type PublicServiceCardProps = {
   service: ServiceItem;
@@ -59,14 +59,7 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
           )}
         </p>
       </div>
-      <Link
-        href="/register"
-        aria-label={`Đặt dịch vụ ${service.name}`}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-      >
-        Đặt dịch vụ
-        <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-      </Link>
+      <ServiceBookingButton serviceId={service.id} serviceName={service.name} />
     </article>
   );
 }

@@ -1,24 +1,54 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { FiLoader, FiLock, FiLogIn } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
-import { useLogin } from "@/hooks/auth";
+import { useLogin, useMe } from "@/hooks/auth";
+import { resolvePostAuthHref } from "@/lib/auth/auth-redirect";
 import type { FieldErrors } from "@/lib/auth/user.types";
 import { validateLoginInput } from "@/lib/auth/validation";
 import { AuthApiError } from "@/services/auth.api";
 import { AuthTextField } from "./AuthTextField";
 import { FormAlert } from "./FormAlert";
 
-export function LoginForm() {
+type LoginFormProps = {
+  next?: string | null;
+};
+
+export function LoginForm({ next }: LoginFormProps) {
   const router = useRouter();
   const toast = useToast();
   const login = useLogin();
+  const me = useMe();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [clientErrors, setClientErrors] = useState<FieldErrors>({});
   const [serverErrors, setServerErrors] = useState<FieldErrors>({});
+
+  // Client-side mirror of the server bounce on this page: a logged-in
+  // customer who reaches the form (back button, stale link) leaves
+  // immediately instead of seeing a second login form.
+  useEffect(() => {
+    if (!me.isPending && me.data) {
+      router.replace(resolvePostAuthHref(me.data.role, next));
+    }
+  }, [me.isPending, me.data, next, router]);
+
+  if (!me.isPending && me.data) {
+    return (
+      <output
+        aria-label="Bạn đã đăng nhập, đang chuyển hướng"
+        className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-500 dark:text-zinc-400"
+      >
+        <FiLoader
+          aria-hidden="true"
+          className="h-4 w-4 motion-safe:animate-spin"
+        />
+        Bạn đã đăng nhập, đang chuyển hướng…
+      </output>
+    );
+  }
 
   const pending = login.isPending;
   const errors: FieldErrors = { ...clientErrors, ...serverErrors };
@@ -49,7 +79,7 @@ export function LoginForm() {
       {
         onSuccess: (data) => {
           toast.success("Đăng nhập thành công", "Chào mừng bạn quay lại.");
-          router.push(data.user.role === "admin" ? "/admin" : "/");
+          router.push(resolvePostAuthHref(data.user.role, next));
           router.refresh();
         },
         onError: (error) => {

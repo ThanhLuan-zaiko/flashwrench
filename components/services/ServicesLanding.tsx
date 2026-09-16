@@ -19,6 +19,7 @@ import {
   paginatePublicServices,
   resolveTabCategory,
 } from "./public-catalog-utils";
+import { ServicesAccountCta } from "./ServicesAccountCta";
 
 // Static skeleton ids keep React keys stable without array indexes.
 const SKELETON_IDS = [
@@ -230,13 +231,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
             trong vài phút.
           </p>
         </div>
-        <Link
-          href="/register"
-          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-        >
-          Tạo tài khoản miễn phí
-          <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-        </Link>
+        <ServicesAccountCta />
       </section>
     </div>
   );
