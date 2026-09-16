@@ -15,8 +15,13 @@ import type {
   ServiceCategoryRow,
   ServiceRow,
 } from "@/lib/catalog/service-catalog.types";
-import type { ComplaintRow } from "@/lib/complaints/complaint.types";
 import { makeUserRow } from "./auth.fixtures";
+import { complaintRepoMocks, resetComplaintMocks } from "./complaint.mocks";
+import {
+  mechanicBookingsRepoMocks,
+  mechanicWorkspaceRepoMocks,
+  resetMechanicMocks,
+} from "./mechanic.mocks";
 import {
   staffPendingMocks,
   staffRepoMocks,
@@ -26,6 +31,12 @@ import {
 } from "./staff.mocks";
 
 export { staffRepoMocks };
+export { complaintRepoMocks, complaintStubs } from "./complaint.mocks";
+export {
+  mechanicBookingsRepoMocks,
+  mechanicStubs,
+  mechanicWorkspaceRepoMocks,
+} from "./mechanic.mocks";
 export {
   staffPendingMocks,
   staffTempCryptoMocks,
@@ -195,8 +206,8 @@ export function resetServiceMocks(): void {
   catalogStubs.serviceSlugOwner = null;
   catalogStubs.serviceSlugClaimed = true;
   catalogStubs.serviceByCategoryRows = [];
-  complaintStubs.complaintRows = [];
-  complaintStubs.complaintById = null;
+  resetMechanicMocks();
+  resetComplaintMocks();
   staffTempStubs.rowByUser = {};
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(staffRepoMocks)) fn.mockClear();
@@ -209,6 +220,8 @@ export function resetServiceMocks(): void {
   for (const fn of Object.values(categoryRepoMocks)) fn.mockClear();
   for (const fn of Object.values(catalogServiceRepoMocks)) fn.mockClear();
   for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(mechanicBookingsRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(mechanicWorkspaceRepoMocks)) fn.mockClear();
 }
 
 // Mutable stub state for the catalog suites (service-categories + services).
@@ -317,27 +330,5 @@ export const catalogServiceRepoMocks = {
   bulkRefreshServiceCategoryName: mock(
     async (_serviceIds: string[], _categoryName: string): Promise<void> =>
       undefined,
-  ),
-};
-
-// Mutable stub state for the complaint suites. Same pattern as the
-// catalog stubs above: tests mutate `complaintStubs` and assert on
-// `mock.calls`. Nothing touches a real database.
-export const complaintStubs = {
-  complaintRows: [] as ComplaintRow[],
-  complaintById: null as ComplaintRow | null,
-};
-
-export const complaintRepoMocks = {
-  listComplaintRows: mock(
-    async (): Promise<ComplaintRow[]> => complaintStubs.complaintRows,
-  ),
-  findComplaintRowById: mock(
-    async (_complaintId: string): Promise<ComplaintRow | null> =>
-      complaintStubs.complaintById,
-  ),
-  insertComplaint: mock(async (_params: unknown): Promise<void> => undefined),
-  updateComplaintStatus: mock(
-    async (_params: unknown): Promise<void> => undefined,
   ),
 };
