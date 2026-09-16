@@ -22,7 +22,12 @@ function stripTypesAndComments(source: string): string {
   const lines = withoutBlocks.split("\n");
   const kept = lines.filter((line) => !line.trimStart().startsWith("//"));
   // Type-only imports vanish at build time, so they never join the bundle.
-  return kept.join("\n").replace(/import\s+type\s[\s\S]*?\sfrom\s*$/gm, "");
+  // (Inline `type` qualifiers inside a value import/export keep their edge:
+  // the module is still evaluated, so those specifiers must stay visible.)
+  return kept
+    .join("\n")
+    .replace(/import\s+type\s[\s\S]*?\sfrom\s*["'][^"']+["']/g, "")
+    .replace(/export\s+type\s[\s\S]*?\sfrom\s*["'][^"']+["']/g, "");
 }
 
 function staticSpecifiers(source: string): string[] {
@@ -93,5 +98,46 @@ describe("root layout initial bundle", () => {
     expect(graph.has("hooks/useRealtimeTopic.ts")).toBe(false);
     expect(graph.has("lib/realtime/realtime-client.ts")).toBe(false);
     expect(graph.has("lib/realtime/protocol.ts")).toBe(false);
+  });
+});
+
+describe("client/server module boundary", () => {
+  // The browser shell (header, guard, providers, auth hooks) must never
+  // statically reach server-only modules (jose, ScyllaDB repositories,
+  // next/headers). Such an import would either bloat the client bundle or
+  // break the production build, so it fails fast here instead.
+  test("client shell never reaches server-only auth/db modules", async () => {
+    const roots = [
+      "components/layout/SiteHeader.tsx",
+      "components/auth/AccountLockGuard.tsx",
+      "components/providers/QueryProvider.tsx",
+      "components/toast/ToastProvider.tsx",
+      "hooks/auth.ts",
+    ];
+    const graph = new Set<string>();
+    for (const root of roots) {
+      for (const node of await staticGraph(join(ROOT, root))) {
+        graph.add(node);
+      }
+    }
+
+    // Sanity: the traversal really walked client code (no false pass).
+    expect(graph.has("services/auth.api.ts")).toBe(true);
+
+    const serverOnly = [
+      "lib/auth/server-session.ts",
+      "lib/auth/account-status.service.ts",
+      "lib/auth/auth.service.ts",
+      "lib/auth/user.repository.ts",
+      "lib/auth/refresh.repository.ts",
+      "lib/auth/session.ts",
+      "lib/auth/password.ts",
+      "lib/auth/session-revoke.service.ts",
+      "lib/db/client.ts",
+      "lib/db/check-connection.ts",
+    ];
+    for (const module of serverOnly) {
+      expect(graph.has(module)).toBe(false);
+    }
   });
 });

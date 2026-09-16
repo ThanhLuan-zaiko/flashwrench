@@ -8,6 +8,7 @@
     "start": "next start",
     "realtime": "bun run realtime/server.ts",
     "dev:all": "bun run scripts/dev-all.ts",
+    "start:all": "bun run scripts/start-all.ts",
     "lint": "biome check .",
     "type-check": "tsc --noEmit",
     "check:lines": "bun .github/scripts/check-file-limits.ts",

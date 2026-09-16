@@ -1,35 +1,8 @@
 // Run the Next.js dev server and the realtime gateway together.
 // Usage: `bun run dev:all`. Forwards SIGINT/SIGTERM to both children.
-export {};
+// The gateway runs with `bun --hot` so editing realtime/server.ts (or the
+// modules it imports) reloads the gateway in place: web HMR plus gateway
+// hot reload means code changes show up without restarting anything.
+import { devChildren, runChildren } from "./proc-config";
 
-const children = [
-  Bun.spawn(["bun", "run", "dev"], {
-    stdout: "inherit",
-    stderr: "inherit",
-    stdin: "inherit",
-  }),
-  Bun.spawn(["bun", "run", "realtime/server.ts"], {
-    stdout: "inherit",
-    stderr: "inherit",
-    stdin: "inherit",
-  }),
-];
-
-let stopping = false;
-async function stop() {
-  if (stopping) return;
-  stopping = true;
-  for (const child of children) {
-    try {
-      child.kill();
-    } catch {
-      return;
-    }
-  }
-  await Promise.all(children.map((child) => child.exited));
-  process.exit(0);
-}
-
-process.on("SIGINT", () => void stop());
-process.on("SIGTERM", () => void stop());
-await Promise.all(children.map((child) => child.exited));
+await runChildren(devChildren());

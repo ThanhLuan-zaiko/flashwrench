@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
 import { ToastProvider } from "@/components/toast/ToastProvider";
+import { getServerAccountSession } from "@/lib/auth/server-session";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,7 +23,16 @@ export const metadata: Metadata = {
 // for almost every visit, so it stays out of the first paint through the
 // lazy client boundary above: Next.js serves it as a separate chunk that
 // loads right after hydration instead of blocking the static page shell.
-export default function RootLayout({ children }: { children: ReactNode }) {
+//
+// Async on purpose: reading the session here opts every page into dynamic
+// rendering (no more static prerender), so the header paints the true
+// login state immediately instead of a spinner plus a client fetch.
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const session = await getServerAccountSession();
   return (
     <html
       lang="vi"
@@ -31,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeInitScript />
-        <QueryProvider>
+        <QueryProvider initialSession={session}>
           <ToastProvider>
             <LazyAccountLockGuard />
             <SiteHeader />

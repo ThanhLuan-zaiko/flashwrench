@@ -8,12 +8,16 @@ một bộ protocol, thay vì mỗi nơi tự dựng một kênh riêng.
 ## Chạy
 
 ```bash
-bun run dev:all   # Next.js + gateway cùng lúc (khuyên dùng khi dev)
-bun run realtime  # chỉ gateway (mặc định port 3001)
+bun run dev:all    # Next.js (HMR) + gateway (--hot) cùng lúc (khuyên dùng khi dev)
+bun run realtime   # chỉ gateway (mặc định port 3001)
+bun run start:all  # Next.js production + gateway (sau `bun run build`, không watch file)
 ```
 
 Production: chạy `realtime/server.ts` cạnh Next.js (process thứ hai trong
 container hoặc service riêng). Không cần Redis khi còn một instance.
+`start:all` phục vụ build output đã build xong nên sửa code không có tác
+dụng cho tới lần `bun run build` kế tiếp; muốn thấy đổi code ngay thì dùng
+`dev:all`.
 
 ## Protocol
 
@@ -90,8 +94,10 @@ Ví dụ consumer đầu tiên: `hooks/useStaffPasswordRealtime.ts`.
 ## Khắc phục sự cố
 
 - Badge hiện "Mất kết nối realtime": gateway chưa chạy. Dev thì dùng
-  `bun run dev:all`; nếu chạy tay thì mở 2 terminal (`bun run dev` +
-  `bun run realtime`). Badge chuyển "Trực tiếp" là xong.
+  `bun run dev:all`; production local thì `bun run start:all` (sau build);
+  nếu chạy tay thì mở 2 terminal (`bun run dev` + `bun run realtime`,
+  hoặc `bun run start` + `bun run realtime`). Badge chuyển "Trực tiếp"
+  là xong.
 - Server log `[realtime] gateway unreachable`: Next không gọi được sang
   gateway — kiểm tra gateway có chạy và `REALTIME_PUBLISH_URL` có đúng
   host không (chạy Docker thì không dùng `127.0.0.1`).
