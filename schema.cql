@@ -236,6 +236,25 @@ CREATE TABLE IF NOT EXISTS mechanics_by_zone (
   PRIMARY KEY ((zone_id), rating_avg, mechanic_id)
 ) WITH CLUSTERING ORDER BY (rating_avg DESC, mechanic_id ASC);
 
+-- Query: bookable mechanic directory for the customer booking picker.
+-- One small partition (bucket = 'all') sorted by rating, maintained
+-- whenever a mechanic flips availability (see syncMechanicDirectory):
+-- the picker lists without scanning mechanics_by_id.
+CREATE TABLE IF NOT EXISTS mechanics_available (
+  bucket       TEXT, -- constant 'all': single partition, bounded by LIMIT
+  rating_avg   DECIMAL,
+  mechanic_id  UUID,
+  display_name TEXT,
+  skills       SET<TEXT>,
+  base_lat     DOUBLE,
+  base_lng     DOUBLE,
+  is_online    BOOLEAN,
+  is_verified  BOOLEAN,
+  rating_count INT,
+  completed_jobs INT,
+  PRIMARY KEY ((bucket), rating_avg, mechanic_id)
+) WITH CLUSTERING ORDER BY (rating_avg DESC, mechanic_id ASC);
+
 -- Query: mechanic realtime location (app writes often, read on tracking)
 CREATE TABLE IF NOT EXISTS mechanic_locations (
   mechanic_id      UUID PRIMARY KEY,

@@ -33,98 +33,116 @@ export type InsertCustomerBookingParams = {
   serviceId: string;
   serviceName: string;
   unitPrice: number;
+  mechanicId: string | null;
+  mechanicName: string | null;
 };
 
 // One batch keeps every denormalized copy in sync: the booking row, the
 // customer history, the dispatcher status bucket, the price snapshot and
-// the tracking timeline. No mechanic row yet: dispatch assigns one later.
+// the tracking timeline. A preselected mechanic also lands in the
+// mechanic workload table so their queue shows the job instantly.
 export async function insertCustomerBooking(
   params: InsertCustomerBookingParams,
 ): Promise<void> {
-  await scylla.batch(
-    [
-      {
-        query:
-          "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        params: [
-          params.bookingId,
-          params.customerId,
-          params.customerName,
-          params.customerPhone,
-          params.vehiclePlate,
-          params.vehicleBrand,
-          params.vehicleModel,
-          null,
-          null,
-          null,
-          params.address,
-          params.scheduledAt,
-          params.status,
-          params.paymentStatus,
-          params.subtotal,
-          0,
-          0,
-          params.total,
-          null,
-          params.notes,
-          null,
-          params.monthBucket,
-          params.createdAt,
-          params.updatedAt,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO bookings_by_customer (customer_id, scheduled_at, booking_id, status, total, vehicle_plate, mechanic_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        params: [
-          params.customerId,
-          params.scheduledAt,
-          params.bookingId,
-          params.status,
-          params.total,
-          params.vehiclePlate,
-          null,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO bookings_by_status (status, month_bucket, scheduled_at, booking_id, customer_id, mechanic_id, zone_id, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        params: [
-          params.status,
-          params.monthBucket,
-          params.scheduledAt,
-          params.bookingId,
-          params.customerId,
-          null,
-          null,
-          params.total,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO booking_items (booking_id, service_id, service_name, quantity, unit_price, line_total) VALUES (?, ?, ?, ?, ?, ?)",
-        params: [
-          params.bookingId,
-          params.serviceId,
-          params.serviceName,
-          1,
-          params.unitPrice,
-          params.unitPrice,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO booking_status_history (booking_id, changed_at, old_status, new_status, changed_by, note) VALUES (?, ?, ?, ?, ?, ?)",
-        params: [
-          params.bookingId,
-          params.createdAt,
-          null,
-          params.status,
-          params.customerId,
-          null,
-        ],
-      },
-    ],
-    { prepare: true },
-  );
+  const queries: { query: string; params: unknown[] }[] = [
+    {
+      query:
+        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        params.bookingId,
+        params.customerId,
+        params.customerName,
+        params.customerPhone,
+        params.vehiclePlate,
+        params.vehicleBrand,
+        params.vehicleModel,
+        params.mechanicId,
+        params.mechanicName,
+        null,
+        params.address,
+        params.scheduledAt,
+        params.status,
+        params.paymentStatus,
+        params.subtotal,
+        0,
+        0,
+        params.total,
+        null,
+        params.notes,
+        null,
+        params.monthBucket,
+        params.createdAt,
+        params.updatedAt,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO bookings_by_customer (customer_id, scheduled_at, booking_id, status, total, vehicle_plate, mechanic_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        params.customerId,
+        params.scheduledAt,
+        params.bookingId,
+        params.status,
+        params.total,
+        params.vehiclePlate,
+        params.mechanicName,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO bookings_by_status (status, month_bucket, scheduled_at, booking_id, customer_id, mechanic_id, zone_id, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        params.status,
+        params.monthBucket,
+        params.scheduledAt,
+        params.bookingId,
+        params.customerId,
+        params.mechanicId,
+        null,
+        params.total,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO booking_items (booking_id, service_id, service_name, quantity, unit_price, line_total) VALUES (?, ?, ?, ?, ?, ?)",
+      params: [
+        params.bookingId,
+        params.serviceId,
+        params.serviceName,
+        1,
+        params.unitPrice,
+        params.unitPrice,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO booking_status_history (booking_id, changed_at, old_status, new_status, changed_by, note) VALUES (?, ?, ?, ?, ?, ?)",
+      params: [
+        params.bookingId,
+        params.createdAt,
+        null,
+        params.status,
+        params.customerId,
+        null,
+      ],
+    },
+  ];
+
+  if (params.mechanicId) {
+    queries.push({
+      query:
+        "INSERT INTO bookings_by_mechanic (mechanic_id, scheduled_at, booking_id, status, total, vehicle_plate, customer_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        params.mechanicId,
+        params.scheduledAt,
+        params.bookingId,
+        params.status,
+        params.total,
+        params.vehiclePlate,
+        params.customerName,
+      ],
+    });
+  }
+
+  await scylla.batch(queries, { prepare: true });
 }

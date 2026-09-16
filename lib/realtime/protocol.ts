@@ -30,6 +30,40 @@ export function emergencyZoneTopic(zoneId: string): string {
   return `emergency:zone:${zoneId}`;
 }
 
+// Inbox event kinds delivered on `user:{mechanicId}` when a customer
+// books. The mechanic client filters on `kind` so lock notices and
+// booking notices share one socket subscription without colliding.
+export const BOOKING_CREATED_EVENT_KIND = "booking-created";
+export const BOOKING_ASSIGNED_EVENT_KIND = "booking-assigned";
+
+export type BookingInboxEvent = {
+  kind: typeof BOOKING_CREATED_EVENT_KIND | typeof BOOKING_ASSIGNED_EVENT_KIND;
+  bookingId: string;
+  status: string;
+};
+
+// Parse one inbox payload into a booking notice, or null for anything
+// else (lock notices, chat echoes, malformed bodies). Narrow on purpose:
+// the shell must never toast or refetch on an event it cannot name.
+export function parseBookingInboxEvent(
+  payload: unknown,
+): BookingInboxEvent | null {
+  if (typeof payload !== "object" || payload === null) return null;
+  const body = payload as Record<string, unknown>;
+  const kind = body.kind;
+  if (
+    kind !== BOOKING_CREATED_EVENT_KIND &&
+    kind !== BOOKING_ASSIGNED_EVENT_KIND
+  ) {
+    return null;
+  }
+  const bookingId = body.bookingId;
+  const status = body.status;
+  if (typeof bookingId !== "string" || bookingId.length === 0) return null;
+  if (typeof status !== "string" || status.length === 0) return null;
+  return { kind, bookingId, status };
+}
+
 const TOPIC_PATTERN = /^[a-z0-9:_-]{1,120}$/;
 
 export function isValidTopic(topic: unknown): topic is string {

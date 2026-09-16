@@ -20,6 +20,7 @@ import { bookingRepoMocks, resetBookingMocks } from "./booking.mocks";
 import { complaintRepoMocks, resetComplaintMocks } from "./complaint.mocks";
 import {
   mechanicBookingsRepoMocks,
+  mechanicDirectoryRepoMocks,
   mechanicWorkspaceRepoMocks,
   resetMechanicMocks,
 } from "./mechanic.mocks";
@@ -36,6 +37,8 @@ export { bookingRepoMocks, bookingStubs } from "./booking.mocks";
 export { complaintRepoMocks, complaintStubs } from "./complaint.mocks";
 export {
   mechanicBookingsRepoMocks,
+  mechanicDirectoryRepoMocks,
+  mechanicDirectoryStubs,
   mechanicStubs,
   mechanicWorkspaceRepoMocks,
 } from "./mechanic.mocks";
@@ -225,6 +228,7 @@ export function resetServiceMocks(): void {
   for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicWorkspaceRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(mechanicDirectoryRepoMocks)) fn.mockClear();
   for (const fn of Object.values(bookingRepoMocks)) fn.mockClear();
 }
 

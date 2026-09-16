@@ -1,9 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import {
+  BOOKING_ASSIGNED_EVENT_KIND,
+  BOOKING_CREATED_EVENT_KIND,
   bookingChatTopic,
   canPublish,
   canSubscribe,
   emergencyZoneTopic,
+  parseBookingInboxEvent,
   parseClientMessage,
   SERVICE_CATALOG_TOPIC,
   STAFF_PASSWORDS_TOPIC,
@@ -79,5 +82,34 @@ describe("realtime protocol", () => {
     expect(canPublish(ADMIN, SERVICE_CATALOG_TOPIC)).toBe(false);
     expect(canPublish(CUSTOMER, SERVICE_CATALOG_TOPIC)).toBe(false);
     expect(canPublish(null, SERVICE_CATALOG_TOPIC)).toBe(false);
+  });
+
+  test("parses mechanic inbox booking notices and ignores the rest", () => {
+    expect(
+      parseBookingInboxEvent({
+        kind: BOOKING_CREATED_EVENT_KIND,
+        bookingId: "b1",
+        status: "pending",
+      }),
+    ).toEqual({ kind: "booking-created", bookingId: "b1", status: "pending" });
+    expect(
+      parseBookingInboxEvent({
+        kind: BOOKING_ASSIGNED_EVENT_KIND,
+        bookingId: "b2",
+        status: "pending",
+      }),
+    ).toEqual({ kind: "booking-assigned", bookingId: "b2", status: "pending" });
+    expect(parseBookingInboxEvent({ kind: "locked" })).toBeNull();
+    expect(parseBookingInboxEvent(null)).toBeNull();
+    expect(
+      parseBookingInboxEvent({ kind: BOOKING_CREATED_EVENT_KIND }),
+    ).toBeNull();
+    expect(
+      parseBookingInboxEvent({
+        kind: BOOKING_CREATED_EVENT_KIND,
+        bookingId: "",
+        status: "pending",
+      }),
+    ).toBeNull();
   });
 });

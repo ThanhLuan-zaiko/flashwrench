@@ -73,6 +73,30 @@ Luồng này là ví dụ chuẩn cho "một tài khoản bị đá ra ngay lậ
 Vì `authenticate()` từ chối tài khoản `locked`/`deleted`, mọi API khác cũng
 tự trả `401` ngay sau khi khóa, không cần thêm logic ở từng route.
 
+## Điều đơn mới tới thợ ngay lập tức
+
+Khi khách đặt lịch ở `/booking`, route `POST /api/bookings` phát tín hiệu
+sau khi service ghi batch thành công (fire-and-forget, gateway chết cũng
+không làm hỏng API):
+
+1. `publishRealtimeEvent(bookingTopic(id), { kind: "booking-created", bookingId, status })`
+   — cho bảng điều phối tương lai và trang theo dõi của khách.
+2. Nếu khách có chọn thợ:
+   `publishRealtimeEvent(userTopic(mechanicId), { kind: "booking-assigned", bookingId, status })`
+   — inbox riêng của thợ đó.
+3. Trình duyệt (`useMechanicInbox` trong `MechanicShell`): nghe
+   `user:{mechanicId}` của chính mình, lọc bằng `parseBookingInboxEvent`
+   (bỏ qua `{ kind: "locked" }` và payload lạ), invalidate toàn bộ query
+   `mechanic` rồi toast "Có đơn mới". Hàng đợi, badge đếm đơn chờ và mọi
+   tab lịch đều làm mới qua HTTPS — không cần tải lại trang.
+
+Danh bạ thợ cho khách chọn (`GET /api/mechanics`) đọc từ bảng
+`mechanics_available` (một partition `bucket = 'all'`, sắp theo rating).
+Bảng này do `syncMechanicDirectory` duy trì mỗi khi thợ đổi trạng thái
+(nhận/hủy/hoàn thành đơn trong `applyMechanicBookingAction`): thợ đủ
+điều kiện (đã xác thực + trực tuyến + rảnh) được upsert, còn lại bị xóa
+— picker không bao giờ gợi ý thợ đang bận.
+
 ## Thêm topic mới (4 bước)
 
 1. Thêm helper tạo tên topic vào `lib/realtime/protocol.ts`.

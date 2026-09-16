@@ -2,7 +2,12 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRealtimeTopic } from "@/hooks/useRealtimeTopic";
-import { bookingTopic } from "@/lib/realtime/protocol";
+import {
+  type BookingInboxEvent,
+  bookingTopic,
+  parseBookingInboxEvent,
+  userTopic,
+} from "@/lib/realtime/protocol";
 import type {
   BookingListQuery,
   MechanicBookingAction,
@@ -61,6 +66,27 @@ export function useBookingRealtime(bookingId: string | null) {
     enabled: Boolean(bookingId),
     onEvent: () => {
       void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+    },
+  });
+}
+
+// Personal inbox for the logged-in mechanic. Customer bookings land on
+// `user:{mechanicId}` the instant POST /api/bookings succeeds, so the
+// queue, the pending badge and any open dialog refresh over the shared
+// socket with no reload. Lock notices share the topic and are ignored
+// by the parser, never invalidating or toasting here.
+export function useMechanicInbox(
+  mechanicId: string | null,
+  onNotice?: (event: BookingInboxEvent) => void,
+) {
+  const queryClient = useQueryClient();
+  useRealtimeTopic(mechanicId ? userTopic(mechanicId) : "", {
+    enabled: Boolean(mechanicId),
+    onEvent: (payload) => {
+      const event = parseBookingInboxEvent(payload);
+      if (!event) return;
+      void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+      onNotice?.(event);
     },
   });
 }

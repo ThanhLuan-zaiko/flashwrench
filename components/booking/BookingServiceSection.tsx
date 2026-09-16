@@ -1,15 +1,13 @@
 import Link from "next/link";
+import { useMemo } from "react";
+import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
-import {
-  BookingField,
-  BookingServiceSelect,
-  type ServiceOption,
-} from "./BookingFormFields";
+import { BookingField, BookingServiceSelect } from "./BookingFormFields";
 import { BookingServiceSummary } from "./BookingServiceSummary";
 
 type BookingServiceSectionProps = {
   preselected: ServiceItem | null;
-  options: ServiceOption[];
+  services: ServiceItem[];
   serviceId: string;
   error?: string;
   disabled?: boolean;
@@ -20,12 +18,20 @@ type BookingServiceSectionProps = {
 // snapshot, otherwise the customer picks from the live price list.
 export function BookingServiceSection({
   preselected,
-  options,
+  services,
   serviceId,
   error,
   disabled,
   onServiceId,
 }: BookingServiceSectionProps) {
+  const options = useMemo(
+    () =>
+      services.map((service) => ({
+        id: service.id,
+        label: `${service.categoryName} — ${service.name} (${formatVnd(service.basePrice)})`,
+      })),
+    [services],
+  );
   if (preselected) {
     return (
       <div className="flex flex-col gap-2">

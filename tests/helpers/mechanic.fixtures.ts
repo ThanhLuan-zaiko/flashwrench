@@ -8,6 +8,7 @@ import type {
   MechanicStatusHistoryRow,
   MechanicWorkloadRow,
 } from "@/lib/mechanic/mechanic.types";
+import type { AvailableMechanicRow } from "@/lib/mechanic/mechanic-directory.repository";
 
 // Builders for the mechanic suites. Each test derives its own rows instead
 // of mutating shared objects, mirroring tests/helpers/catalog.fixtures.ts.
@@ -97,6 +98,7 @@ export function makeProfileRow(
   return {
     mechanic_id: MECHANIC_ID,
     display_name: "Nguyen Van A",
+    skills: ["engine", "tire"],
     base_lat: 10.775,
     base_lng: 106.7,
     is_verified: true,
@@ -105,6 +107,24 @@ export function makeProfileRow(
     rating_avg: null,
     rating_count: null,
     completed_jobs: 3,
+    ...overrides,
+  };
+}
+
+export function makeAvailableMechanicRow(
+  overrides?: Partial<AvailableMechanicRow>,
+): AvailableMechanicRow {
+  return {
+    mechanic_id: MECHANIC_ID,
+    display_name: "Nguyen Van A",
+    skills: ["engine", "tire"],
+    base_lat: 10.775,
+    base_lng: 106.7,
+    is_online: true,
+    is_verified: true,
+    rating_avg: 4.8,
+    rating_count: 12,
+    completed_jobs: 30,
     ...overrides,
   };
 }

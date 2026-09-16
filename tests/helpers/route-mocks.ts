@@ -18,6 +18,11 @@ import type {
   CreateBookingInput,
   CreatedBooking,
 } from "@/lib/booking/booking.types";
+import type { MechanicResult } from "@/lib/mechanic/mechanic.types";
+import type {
+  ListMechanicsParams,
+  MechanicDirectoryItem,
+} from "@/lib/mechanic/mechanic-directory.service";
 import { makePublicUser, makeSessionTokens } from "./auth.fixtures";
 import { resetCatalogRouteMocks } from "./catalog-route.mocks";
 
@@ -41,6 +46,7 @@ export const routeStubs = {
   meSession: null as AccountSession | null,
   bookingUser: null as PublicUser | null,
   bookingCreateResult: null as BookingResult<CreatedBooking> | null,
+  mechanicsList: null as MechanicResult<MechanicDirectoryItem[]> | null,
 };
 
 export function okAuthResult(): AuthResult {
@@ -188,6 +194,10 @@ export function okCreatedBooking(): CreatedBooking {
     serviceName: "Thay dau dong co",
     vehiclePlate: "51F-12345",
     address: "123 Nguyen Trai, Phuong 5, Quan 3, TP Ho Chi Minh",
+    lat: 10.7769,
+    lng: 106.7009,
+    mechanicId: null,
+    mechanicName: null,
   };
 }
 
@@ -200,6 +210,33 @@ export const bookingServiceMocks = {
       routeStubs.bookingCreateResult ?? {
         ok: true,
         data: okCreatedBooking(),
+      },
+  ),
+};
+
+export function okMechanicDirectoryItem() {
+  return {
+    id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    displayName: "Nguyen Van A",
+    skills: ["engine", "tire"],
+    ratingAvg: 4.8,
+    ratingCount: 12,
+    completedJobs: 30,
+    isOnline: true,
+    distanceKm: 1.2,
+  };
+}
+
+// The GET /api/mechanics route only depends on the auth guard and the
+// directory service, driven through these handles in its suite.
+export const mechanicDirectoryServiceMocks = {
+  listAvailableMechanics: mock(
+    async (
+      _params?: ListMechanicsParams,
+    ): Promise<MechanicResult<MechanicDirectoryItem[]>> =>
+      routeStubs.mechanicsList ?? {
+        ok: true,
+        data: [okMechanicDirectoryItem()],
       },
   ),
 };
@@ -252,6 +289,7 @@ export function resetRouteMocks(): void {
   routeStubs.meSession = null;
   routeStubs.bookingUser = null;
   routeStubs.bookingCreateResult = null;
+  routeStubs.mechanicsList = null;
   resetCatalogRouteMocks();
   for (const fn of Object.values(guardMocks)) fn.mockClear();
   for (const fn of Object.values(authServiceMocks)) fn.mockClear();
@@ -266,4 +304,5 @@ export function resetRouteMocks(): void {
   for (const fn of Object.values(adminUsersRouteMocks)) fn.mockClear();
   for (const fn of Object.values(authorizationMocks)) fn.mockClear();
   for (const fn of Object.values(bookingServiceMocks)) fn.mockClear();
+  for (const fn of Object.values(mechanicDirectoryServiceMocks)) fn.mockClear();
 }

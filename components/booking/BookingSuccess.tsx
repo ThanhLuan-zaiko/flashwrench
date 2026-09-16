@@ -68,6 +68,16 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
             {formatVnd(booking.total)}
           </dd>
         </div>
+        {booking.mechanicName && (
+          <div className="rounded-xl bg-zinc-100 px-3 py-2.5 sm:col-span-2 dark:bg-zinc-900">
+            <dt className="font-medium text-zinc-500 dark:text-zinc-400">
+              Thợ phụ trách
+            </dt>
+            <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
+              {booking.mechanicName} — đơn đã tới máy thợ, không cần gọi thêm.
+            </dd>
+          </div>
+        )}
       </dl>
       <p className="text-xs text-zinc-500 dark:text-zinc-400">
         Mã đặt lịch: {booking.bookingId}. Thợ sẽ xác nhận qua thông tin liên hệ

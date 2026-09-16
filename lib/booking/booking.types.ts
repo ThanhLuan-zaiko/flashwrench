@@ -9,6 +9,9 @@ export type CreateBookingInput = {
   district?: string;
   ward?: string;
   street?: string;
+  lat?: number | null;
+  lng?: number | null;
+  mechanicId?: string | null;
   vehiclePlate: string;
   vehicleBrand?: string;
   vehicleModel?: string;
@@ -23,6 +26,9 @@ export type NormalizedBookingInput = {
   district: string | null;
   ward: string | null;
   street: string | null;
+  lat: number | null;
+  lng: number | null;
+  mechanicId: string | null;
   vehiclePlate: string;
   vehicleBrand: string | null;
   vehicleModel: string | null;
@@ -38,6 +44,8 @@ export type BookingFieldErrors = Partial<
     | "district"
     | "ward"
     | "street"
+    | "location"
+    | "mechanicId"
     | "vehiclePlate"
     | "vehicleBrand"
     | "vehicleModel"
@@ -56,6 +64,10 @@ export type CreatedBooking = {
   serviceName: string;
   vehiclePlate: string;
   address: string;
+  lat: number | null;
+  lng: number | null;
+  mechanicId: string | null;
+  mechanicName: string | null;
 };
 
 export type BookingResult<T> =

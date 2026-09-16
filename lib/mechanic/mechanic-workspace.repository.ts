@@ -34,9 +34,16 @@ function toBoolOrNull(value: unknown): boolean | null {
 }
 
 function toProfileRow(raw: RawRow): MechanicProfileRow {
+  const skills = raw.skills;
   return {
     mechanic_id: String(raw.mechanic_id),
     display_name: toStringOrNull(raw.display_name),
+    skills:
+      skills === null || skills === undefined
+        ? null
+        : Array.isArray(skills)
+          ? skills.map(String)
+          : [...(skills as Set<unknown>)].map(String),
     base_lat: toNumberOrNull(raw.base_lat),
     base_lng: toNumberOrNull(raw.base_lng),
     is_verified: toBoolOrNull(raw.is_verified),
@@ -108,7 +115,7 @@ export async function findMechanicProfileRow(
   mechanicId: string,
 ): Promise<MechanicProfileRow | null> {
   const row = await selectFirst(
-    "SELECT mechanic_id, display_name, base_lat, base_lng, is_verified, is_online, is_available, rating_avg, rating_count, completed_jobs FROM mechanics_by_id WHERE mechanic_id = ?",
+    "SELECT mechanic_id, display_name, skills, base_lat, base_lng, is_verified, is_online, is_available, rating_avg, rating_count, completed_jobs FROM mechanics_by_id WHERE mechanic_id = ?",
     [mechanicId],
   );
   return row ? toProfileRow(row) : null;

@@ -10,15 +10,17 @@ import {
   authorizationMocks,
   bookingServiceMocks,
   okCreatedBooking,
+  realtimePublishMocks,
   resetRouteMocks,
   routeStubs,
 } from "../helpers/route-mocks";
 
-// Route suites stub every side effect: the auth guard and the booking
-// service. The handler only parses input, calls the service and shapes
-// the response, so no database is touched here.
+// Route suites stub every side effect: the auth guard, the booking
+// service and the realtime gateway. The handler only parses input,
+// calls the service, shapes the response and fans the signal out.
 mock.module("@/lib/auth/authorization", () => authorizationMocks);
 mock.module("@/lib/booking/booking.service", () => bookingServiceMocks);
+mock.module("@/lib/realtime/publish", () => realtimePublishMocks);
 
 import { POST as bookingsPost } from "@/app/api/bookings/route";
 
@@ -84,5 +86,69 @@ describe("POST /api/bookings", () => {
 
     expect(res.status).toBe(400);
     expect(bookingServiceMocks.createCustomerBooking.mock.calls.length).toBe(0);
+  });
+
+  test("publishes the booking topic and the mechanic inbox on success", async () => {
+    routeStubs.bookingUser = makePublicUser();
+    routeStubs.bookingCreateResult = {
+      ok: true,
+      data: {
+        ...okCreatedBooking(),
+        mechanicId: "mech-1",
+        mechanicName: "Nguyen Van A",
+      },
+    };
+
+    const res = await bookingsPost(
+      postJsonRequest("/api/bookings", makeBookingInput()),
+    );
+
+    expect(res.status).toBe(201);
+    const calls = realtimePublishMocks.publishRealtimeEvent.mock.calls;
+    expect(calls).toContainEqual([
+      "booking:99999999-9999-4999-8999-999999999999",
+      {
+        kind: "booking-created",
+        bookingId: "99999999-9999-4999-8999-999999999999",
+        status: "pending",
+      },
+    ]);
+    expect(calls).toContainEqual([
+      "user:mech-1",
+      {
+        kind: "booking-assigned",
+        bookingId: "99999999-9999-4999-8999-999999999999",
+        status: "pending",
+      },
+    ]);
+  });
+
+  test("publishes no inbox event for auto-dispatched bookings", async () => {
+    routeStubs.bookingUser = makePublicUser();
+
+    const res = await bookingsPost(
+      postJsonRequest("/api/bookings", makeBookingInput()),
+    );
+
+    expect(res.status).toBe(201);
+    const calls = realtimePublishMocks.publishRealtimeEvent.mock.calls;
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.[0]).toBe("booking:99999999-9999-4999-8999-999999999999");
+  });
+
+  test("publishes nothing when creation fails", async () => {
+    routeStubs.bookingUser = makePublicUser();
+    routeStubs.bookingCreateResult = {
+      ok: false,
+      status: 404,
+      errors: { form: "Dịch vụ này không còn khả dụng." },
+    };
+
+    const res = await bookingsPost(
+      postJsonRequest("/api/bookings", makeBookingInput()),
+    );
+
+    expect(res.status).toBe(404);
+    expect(realtimePublishMocks.publishRealtimeEvent.mock.calls.length).toBe(0);
   });
 });

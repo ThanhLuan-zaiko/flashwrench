@@ -4,8 +4,9 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
+import { useToast } from "@/components/toast/useToast";
 import { useLogout, useMe } from "@/hooks/auth";
-import { useMechanicBookings } from "@/hooks/mechanic";
+import { useMechanicBookings, useMechanicInbox } from "@/hooks/mechanic";
 import { MechanicSidebar } from "./MechanicSidebar";
 import {
   getMechanicSection,
@@ -39,7 +40,19 @@ export function MechanicShell({ children }: { children: ReactNode }) {
   const SectionIcon = section.icon;
   const me = useMe();
   const logout = useLogout();
+  const toast = useToast();
   const queue = useMechanicBookings();
+  // New customer bookings arrive on the personal inbox the instant POST
+  // /api/bookings succeeds: the queue query above invalidates through the
+  // shared socket, so the badge and every list refresh with no reload.
+  useMechanicInbox(me.data?.id ?? null, (event) => {
+    if (event.kind === "booking-assigned") {
+      toast.success(
+        "Có đơn mới",
+        "Bạn vừa được giao một đơn. Mở hàng đợi để xem chi tiết.",
+      );
+    }
+  });
   const pendingCount =
     queue.data?.bookings.filter((booking) => booking.status === "pending")
       .length ?? 0;

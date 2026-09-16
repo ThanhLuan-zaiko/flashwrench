@@ -20,6 +20,7 @@ import {
   listWorkloadRows,
   writeBookingStatus,
 } from "./mechanic-bookings.repository";
+import { syncMechanicDirectory } from "./mechanic-directory.service";
 import {
   groupItemsByBooking,
   toBookingStatus,
@@ -245,6 +246,10 @@ export async function applyMechanicBookingAction(
   const availability = availabilityAfterAction(action);
   if (availability !== null) {
     await setMechanicAvailability(mechanicId, availability, now);
+    // Availability flips change bookability: refresh the customer-facing
+    // directory in the same flow so the picker never offers a busy
+    // mechanic (or hides one that just freed up).
+    await syncMechanicDirectory(mechanicId);
   }
   if (action === "complete") {
     const profile = await findMechanicProfileRow(mechanicId);

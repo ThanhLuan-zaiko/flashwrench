@@ -1,3 +1,4 @@
+import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import type {
   BookingFieldErrors,
   CreateBookingInput,
@@ -173,6 +174,31 @@ export function validateCreateBookingInput(
     }
   }
 
+  // Map coordinates travel together: the picker sets both, manual typing
+  // sets neither. One without the other is a client bug, reject loudly.
+  const latProvided = input.lat !== undefined && input.lat !== null;
+  const lngProvided = input.lng !== undefined && input.lng !== null;
+  let lat: number | null = null;
+  let lng: number | null = null;
+  if (!latProvided && !lngProvided) {
+    lat = null;
+    lng = null;
+  } else if (
+    latProvided &&
+    lngProvided &&
+    isValidLatitude(input.lat) &&
+    isValidLongitude(input.lng)
+  ) {
+    lat = input.lat;
+    lng = input.lng;
+  } else {
+    errors.location = "Vị trí trên bản đồ không hợp lệ. Vui lòng chọn lại.";
+  }
+
+  const mechanicId =
+    typeof input.mechanicId === "string" ? input.mechanicId.trim() : "";
+  const normalizedMechanicId = mechanicId.length > 0 ? mechanicId : null;
+
   if (Object.keys(errors).length > 0 || !scheduledAt) {
     return { errors };
   }
@@ -185,6 +211,9 @@ export function validateCreateBookingInput(
       district,
       ward,
       street,
+      lat,
+      lng,
+      mechanicId: normalizedMechanicId,
       vehiclePlate,
       vehicleBrand,
       vehicleModel,

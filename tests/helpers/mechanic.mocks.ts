@@ -14,6 +14,10 @@ import type {
   MechanicWorkloadRow,
 } from "@/lib/mechanic/mechanic.types";
 import type { BookingStatusWrite } from "@/lib/mechanic/mechanic-bookings.repository";
+import type {
+  AvailableMechanicRow,
+  UpsertAvailableMechanicParams,
+} from "@/lib/mechanic/mechanic-directory.repository";
 import type { MechanicLocationWrite } from "@/lib/mechanic/mechanic-workspace.repository";
 
 export const mechanicStubs = {
@@ -99,6 +103,24 @@ export const mechanicWorkspaceRepoMocks = {
   ),
 };
 
+export const mechanicDirectoryStubs = {
+  rows: [] as AvailableMechanicRow[],
+};
+
+export const mechanicDirectoryRepoMocks = {
+  listAvailableMechanicRows: mock(
+    async (_limit: number): Promise<AvailableMechanicRow[]> =>
+      mechanicDirectoryStubs.rows,
+  ),
+  upsertAvailableMechanic: mock(
+    async (_params: UpsertAvailableMechanicParams): Promise<void> => undefined,
+  ),
+  deleteAvailableMechanic: mock(
+    async (_ratingAvg: number | null, _mechanicId: string): Promise<void> =>
+      undefined,
+  ),
+};
+
 export function resetMechanicMocks(): void {
   mechanicStubs.workloadRows = [];
   mechanicStubs.bookingById = null;
@@ -109,6 +131,8 @@ export function resetMechanicMocks(): void {
   mechanicStubs.location = null;
   mechanicStubs.paymentRows = [];
   mechanicStubs.reviewRows = [];
+  mechanicDirectoryStubs.rows = [];
   for (const fn of Object.values(mechanicBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicWorkspaceRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(mechanicDirectoryRepoMocks)) fn.mockClear();
 }

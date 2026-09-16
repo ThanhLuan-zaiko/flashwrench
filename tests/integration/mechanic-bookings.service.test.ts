@@ -12,6 +12,7 @@ import {
 } from "../helpers/mechanic.fixtures";
 import {
   mechanicBookingsRepoMocks,
+  mechanicDirectoryRepoMocks,
   mechanicStubs,
   mechanicWorkspaceRepoMocks,
   resetMechanicMocks,
@@ -26,6 +27,10 @@ mock.module(
 mock.module(
   "@/lib/mechanic/mechanic-workspace.repository",
   () => mechanicWorkspaceRepoMocks,
+);
+mock.module(
+  "@/lib/mechanic/mechanic-directory.repository",
+  () => mechanicDirectoryRepoMocks,
 );
 
 import {

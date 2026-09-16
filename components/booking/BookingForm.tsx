@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FiCalendar, FiLoader } from "react-icons/fi";
-import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { useToast } from "@/components/toast/useToast";
 import { useCreateBooking } from "@/hooks/booking";
@@ -15,11 +14,12 @@ import type {
   CreatedBooking,
 } from "@/services/booking.api";
 import { BookingApiError } from "@/services/booking.api";
+import type { MapAddressValues } from "@/services/geocode.api";
 import {
   type AddressValues,
   BookingAddressSection,
 } from "./BookingAddressSection";
-import type { ServiceOption } from "./BookingFormFields";
+import { BookingMapSection } from "./BookingMapSection";
 import { BookingScheduleSection } from "./BookingScheduleSection";
 import { BookingServiceSection } from "./BookingServiceSection";
 import { BookingSuccess } from "./BookingSuccess";
@@ -27,6 +27,13 @@ import {
   BookingVehicleSection,
   type VehicleValues,
 } from "./BookingVehicleSection";
+import {
+  defaultScheduled,
+  maxScheduled,
+  minScheduled,
+} from "./booking-datetime";
+import type { MapPoint } from "./MapPicker";
+import { MechanicSection } from "./MechanicSection";
 
 type BookingFormProps = {
   preselected: ServiceItem | null;
@@ -36,24 +43,11 @@ type BookingFormProps = {
 
 const EMPTY_ERRORS: BookingFieldErrors = {};
 
-function pad(value: number): string {
-  return String(value).padStart(2, "0");
-}
-
-function toDatetimeLocal(date: Date): string {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function defaultScheduled(): string {
-  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  tomorrow.setHours(9, 0, 0, 0);
-  return toDatetimeLocal(tomorrow);
-}
-
-// Real booking form: service, schedule, address and vehicle. Client
-// validation mirrors the service rules for instant feedback; POST
-// /api/bookings is the source of truth and its field errors land on
-// the same inputs. Success swaps to the confirmation panel in place.
+// Real booking form: service, map-pinned location, schedule, address,
+// mechanic and vehicle. Client validation mirrors the service rules for
+// instant feedback; POST /api/bookings is the source of truth and its
+// field errors land on the same inputs. Success swaps to the
+// confirmation panel in place.
 export function BookingForm({
   preselected,
   services,
@@ -64,6 +58,8 @@ export function BookingForm({
   const createBooking = useCreateBooking();
   const [serviceId, setServiceId] = useState(initialServiceId ?? "");
   const [scheduledAt, setScheduledAt] = useState(defaultScheduled);
+  const [coords, setCoords] = useState<MapPoint | null>(null);
+  const [mechanicId, setMechanicId] = useState<string | null>(null);
   const [address, setAddress] = useState<AddressValues>({
     address: "",
     province: "",
@@ -80,22 +76,8 @@ export function BookingForm({
   const [errors, setErrors] = useState<BookingFieldErrors>(EMPTY_ERRORS);
   const [created, setCreated] = useState<CreatedBooking | null>(null);
 
-  const options: ServiceOption[] = useMemo(
-    () =>
-      services.map((service) => ({
-        id: service.id,
-        label: `${service.categoryName} — ${service.name} (${formatVnd(service.basePrice)})`,
-      })),
-    [services],
-  );
-  const minScheduled = useMemo(
-    () => toDatetimeLocal(new Date(Date.now() + 60 * 60 * 1000)),
-    [],
-  );
-  const maxScheduled = useMemo(
-    () => toDatetimeLocal(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
-    [],
-  );
+  const minSlot = useMemo(() => minScheduled(), []);
+  const maxSlot = useMemo(() => maxScheduled(), []);
 
   if (created) return <BookingSuccess booking={created} />;
   const pending = createBooking.isPending;
@@ -104,11 +86,28 @@ export function BookingForm({
     setErrors((prev) => ({ ...prev, [field]: undefined, form: undefined }));
   }
 
+  // Reverse-geocoded values fill every address field at once; the
+  // customer can still edit each one by hand afterwards.
+  function handleMapAddress(values: MapAddressValues) {
+    setAddress((prev) => ({ ...prev, ...values }));
+    setErrors((prev) => ({
+      ...prev,
+      address: undefined,
+      province: undefined,
+      district: undefined,
+      ward: undefined,
+      street: undefined,
+    }));
+  }
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const payload = {
       serviceId,
       scheduledAt,
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
+      mechanicId,
       ...address,
       ...vehicle,
     };
@@ -154,7 +153,7 @@ export function BookingForm({
 
       <BookingServiceSection
         preselected={preselected}
-        options={options}
+        services={services}
         serviceId={serviceId}
         error={errors.serviceId}
         disabled={pending}
@@ -164,10 +163,21 @@ export function BookingForm({
         }}
       />
 
+      <BookingMapSection
+        lat={coords?.lat ?? null}
+        lng={coords?.lng ?? null}
+        error={errors.location}
+        onCoords={(point) => {
+          setCoords(point);
+          clearError("location");
+        }}
+        onAddress={handleMapAddress}
+      />
+
       <BookingScheduleSection
         value={scheduledAt}
-        min={minScheduled}
-        max={maxScheduled}
+        min={minSlot}
+        max={maxSlot}
         error={errors.scheduledAt}
         disabled={pending}
         onChange={(v) => {
@@ -193,6 +203,18 @@ export function BookingForm({
         onChange={(field, v) => {
           setVehicle((prev) => ({ ...prev, [field]: v }));
           clearError(field);
+        }}
+      />
+
+      <MechanicSection
+        lat={coords?.lat ?? null}
+        lng={coords?.lng ?? null}
+        value={mechanicId}
+        error={errors.mechanicId}
+        disabled={pending}
+        onChange={(v) => {
+          setMechanicId(v);
+          clearError("mechanicId");
         }}
       />
 

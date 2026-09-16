@@ -2,19 +2,27 @@ import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { makePublicUser } from "../helpers/auth.fixtures";
 import { makeBookingInput } from "../helpers/booking.fixtures";
 import { makeServiceRow } from "../helpers/catalog.fixtures";
+import { makeProfileRow } from "../helpers/mechanic.fixtures";
 import {
   bookingRepoMocks,
   bookingStubs,
   catalogServiceRepoMocks,
   catalogStubs,
+  mechanicStubs,
+  mechanicWorkspaceRepoMocks,
   resetServiceMocks,
 } from "../helpers/service-mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
-// mock.module above imports. The booking service only reads the catalog
-// (price snapshot) and writes one batch, both stubbed here.
+// mock.module above imports. The booking service reads the catalog
+// (price snapshot) and the mechanic profile (assignment check), then
+// writes one batch, all stubbed here.
 mock.module("@/lib/booking/booking.repository", () => bookingRepoMocks);
 mock.module("@/lib/catalog/services.repository", () => catalogServiceRepoMocks);
+mock.module(
+  "@/lib/mechanic/mechanic-workspace.repository",
+  () => mechanicWorkspaceRepoMocks,
+);
 
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 
@@ -93,6 +101,64 @@ describe("createCustomerBooking", () => {
     if (deleted.ok) return;
     expect(deleted.status).toBe(404);
 
+    expect(bookingStubs.inserts).toHaveLength(0);
+  });
+
+  test("stores map coordinates and the preselected mechanic", async () => {
+    const profile = makeProfileRow();
+    mechanicStubs.profile = profile;
+    const result = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput({
+        lat: 10.7769,
+        lng: 106.7009,
+        mechanicId: profile.mechanic_id,
+      }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data).toMatchObject({
+      lat: 10.7769,
+      lng: 106.7009,
+      mechanicId: profile.mechanic_id,
+      mechanicName: "Nguyen Van A",
+    });
+    expect(bookingStubs.inserts).toHaveLength(1);
+    expect(bookingStubs.inserts[0]).toMatchObject({
+      mechanicId: profile.mechanic_id,
+      mechanicName: "Nguyen Van A",
+    });
+    expect(bookingStubs.inserts[0]?.address).toMatchObject({
+      lat: 10.7769,
+      lng: 106.7009,
+    });
+  });
+
+  test("returns 404 for an unknown mechanic without writing", async () => {
+    mechanicStubs.profile = null;
+    const result = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput({ mechanicId: "no-such-mechanic" }),
+    );
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(404);
+    expect(bookingStubs.inserts).toHaveLength(0);
+  });
+
+  test("returns 409 for a busy mechanic without writing", async () => {
+    const profile = makeProfileRow({ is_available: false });
+    mechanicStubs.profile = profile;
+    const result = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput({ mechanicId: profile.mechanic_id }),
+    );
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(409);
     expect(bookingStubs.inserts).toHaveLength(0);
   });
 });

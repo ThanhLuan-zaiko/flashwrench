@@ -10,6 +10,7 @@ import {
 } from "@/lib/catalog/service-catalog.types";
 import { findServiceRowById } from "@/lib/catalog/services.repository";
 import { monthBucketOf } from "@/lib/mechanic/mechanic-status";
+import { findMechanicProfileRow } from "@/lib/mechanic/mechanic-workspace.repository";
 import { insertCustomerBooking } from "./booking.repository";
 import type {
   BookingResult,
@@ -51,6 +52,31 @@ export async function createCustomerBooking(
 
   const serviceName = service.name ?? "";
   const unitPrice = service.base_price ?? 0;
+
+  // A preselected mechanic is verified against the live profile: the
+  // picker may be stale, so a missing or newly-busy mechanic fails here
+  // with a clear message instead of writing a dead assignment.
+  let mechanicId: string | null = null;
+  let mechanicName: string | null = null;
+  if (value.mechanicId) {
+    const profile = await findMechanicProfileRow(value.mechanicId);
+    if (!profile) {
+      return fail(
+        404,
+        "Thợ đã chọn không còn khả dụng. Vui lòng chọn thợ khác.",
+      );
+    }
+    if (
+      profile.is_verified !== true ||
+      profile.is_online !== true ||
+      profile.is_available !== true
+    ) {
+      return fail(409, "Thợ đã chọn hiện đang bận. Vui lòng chọn thợ khác.");
+    }
+    mechanicId = profile.mechanic_id;
+    mechanicName = profile.display_name?.trim() || "Thợ FlashWrench";
+  }
+
   const now = new Date();
   const bookingId = randomUUID();
 
@@ -68,8 +94,8 @@ export async function createCustomerBooking(
       ward: value.ward,
       street: value.street,
       full_text: value.address,
-      lat: null,
-      lng: null,
+      lat: value.lat,
+      lng: value.lng,
     },
     scheduledAt: value.scheduledAt,
     status: BOOKING_INITIAL_STATUS,
@@ -83,6 +109,8 @@ export async function createCustomerBooking(
     serviceId: service.service_id,
     serviceName,
     unitPrice,
+    mechanicId,
+    mechanicName,
   });
 
   return {
@@ -96,6 +124,10 @@ export async function createCustomerBooking(
       serviceName,
       vehiclePlate: value.vehiclePlate,
       address: value.address,
+      lat: value.lat,
+      lng: value.lng,
+      mechanicId,
+      mechanicName,
     },
   };
 }

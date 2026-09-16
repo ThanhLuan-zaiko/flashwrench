@@ -24,6 +24,7 @@ export type MechanicIncomeState = "paid" | "pending" | "refunded";
 export type MechanicProfileRow = {
   mechanic_id: string;
   display_name: string | null;
+  skills: string[] | null;
   base_lat: number | null;
   base_lng: number | null;
   is_verified: boolean | null;

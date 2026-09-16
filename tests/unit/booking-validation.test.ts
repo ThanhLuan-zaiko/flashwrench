@@ -84,4 +84,31 @@ describe("validateCreateBookingInput", () => {
     expect(trimmed.value.province).toBeNull();
     expect(trimmed.value.notes).toBeNull();
   });
+
+  test("accepts map coordinates and an empty mechanic choice", () => {
+    const result = validateCreateBookingInput(
+      makeBookingInput({ lat: 10.7769, lng: 106.7009, mechanicId: "  " }),
+    );
+    expect("value" in result).toBe(true);
+    if (!("value" in result)) return;
+    expect(result.value.lat).toBe(10.7769);
+    expect(result.value.lng).toBe(106.7009);
+    expect(result.value.mechanicId).toBeNull();
+  });
+
+  test("rejects half or out-of-range coordinates", () => {
+    const half = validateCreateBookingInput(
+      makeBookingInput({ lat: 10.7769, lng: null }),
+    );
+    expect("errors" in half).toBe(true);
+    if (!("errors" in half)) return;
+    expect(half.errors.location).toContain("bản đồ");
+
+    const wild = validateCreateBookingInput(
+      makeBookingInput({ lat: 120, lng: 200 }),
+    );
+    expect("errors" in wild).toBe(true);
+    if (!("errors" in wild)) return;
+    expect(wild.errors.location).toContain("bản đồ");
+  });
 });
