@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateService, useUpdateService } from "@/hooks/service-catalog";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import type {
   PriceUnit,
   ServiceCategoryItem,
@@ -12,11 +14,13 @@ import type {
 } from "@/lib/catalog/service-catalog.types";
 import { CatalogCoverField } from "./CatalogCoverField";
 import { fieldError, formError } from "./catalog-errors";
+import { initialGalleryFromItem } from "./cover-staging";
 import { ServiceItemBasicFields } from "./ServiceItemBasicFields";
 import { ServiceItemPricingFields } from "./ServiceItemPricingFields";
 import { ServiceItemSupportFields } from "./ServiceItemSupportFields";
+import { isServiceItemDirty } from "./service-item-dirty";
+import { useDeferredGallerySubmit } from "./useDeferredGallerySubmit";
 import { useStagedCovers } from "./useStagedCovers";
-import { useUploadStagedCovers } from "./useUploadStagedCovers";
 
 export type ServiceDialogState =
   | { mode: "create"; presetCategoryId?: string }
@@ -27,12 +31,6 @@ type ServiceItemDialogProps = {
   categories: ServiceCategoryItem[];
   onClose: () => void;
 };
-
-function initialGallery(item: ServiceItem | null): string[] {
-  if (!item) return [];
-  if (Array.isArray(item.images) && item.images.length > 0) return item.images;
-  return item.imageUrl ? [item.imageUrl] : [];
-}
 
 // Create/edit modal for one price row. Parent passes a keyed instance so
 // form state resets on every open. The category default still syncs via
@@ -73,49 +71,27 @@ export function ServiceItemDialog({
     editing?.isEmergencySupported ?? false,
   );
   const [pendingOwnerId] = useState(() => crypto.randomUUID());
-  const covers = useStagedCovers(initialGallery(editing));
-  const uploader = useUploadStagedCovers();
+  const covers = useStagedCovers(initialGalleryFromItem(editing));
 
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
-  const pending =
-    createMutation.isPending || updateMutation.isPending || uploader.uploading;
-  const error = createMutation.error ?? updateMutation.error ?? null;
-  const hasNoCategories = !editing && live.length === 0;
-
-  useEffect(() => {
-    if (editing || live.length === 0) return;
-    if (!categoryId || !live.some((c) => c.id === categoryId)) {
-      if (liveFirstId) setCategoryId(liveFirstId);
-    }
-  }, [editing, categoryId, live, liveFirstId]);
-
-  if (!dialog) return null;
-
-  const submit = () => {
-    if (pending || (!editing && !categoryId)) return;
-    void (async () => {
-      let uploaded: { id: string; url: string; assetId: string }[] = [];
-      if (covers.staged.length > 0) {
-        try {
-          uploaded = await uploader.uploadAll(covers.staged, {
-            scope: "service",
-            ownerType: "service",
-            ownerId: editing?.id ?? pendingOwnerId,
-          });
-        } catch {
-          return;
-        }
-      }
-      const gallery = covers.buildPayload(uploaded);
+  const saver = useDeferredGallerySubmit({
+    staged: covers.staged,
+    buildPayload: covers.buildPayload,
+    owner: {
+      scope: "service",
+      ownerType: "service",
+      editingId: editing?.id ?? null,
+      pendingOwnerId,
+    },
+    onSave: (gallery, uploaded) => {
       const coverUrl = gallery[0] ?? "";
-      const coverAssetId = uploaded.find((u) => u.url === coverUrl)?.assetId;
       const payload = {
         categoryId,
         name: name.trim(),
         slug: slug.trim(),
         imageUrl: coverUrl,
-        imageAssetId: coverAssetId,
+        imageAssetId: uploaded.find((u) => u.url === coverUrl)?.assetId,
         images: gallery,
         imageAssetIds: uploaded.map((u) => u.assetId),
         description: description.trim(),
@@ -134,11 +110,52 @@ export function ServiceItemDialog({
       } else {
         createMutation.mutate(payload, { onSuccess: onClose });
       }
-    })();
+    },
+  });
+  const pending =
+    createMutation.isPending || updateMutation.isPending || saver.uploading;
+  const error = createMutation.error ?? updateMutation.error ?? null;
+  const hasNoCategories = !editing && live.length === 0;
+
+  // Warn on refresh/tab close while anything is unsaved: typed fields,
+  // toggles, gallery picks, or an upload/save still in flight.
+  const dirty = isServiceItemDirty({
+    editing,
+    preset,
+    liveFirstId,
+    draft: {
+      categoryId,
+      name,
+      slug,
+      description,
+      basePrice,
+      priceUnit,
+      durationMin,
+      isHomeSupported,
+      isEmergencySupported,
+    },
+    existing: covers.existing,
+    stagedCount: covers.staged.length,
+    pending,
+  });
+  const guard = useUnsavedChangesGuard(dirty, onClose);
+
+  useEffect(() => {
+    if (editing || live.length === 0) return;
+    if (!categoryId || !live.some((c) => c.id === categoryId)) {
+      if (liveFirstId) setCategoryId(liveFirstId);
+    }
+  }, [editing, categoryId, live, liveFirstId]);
+
+  if (!dialog) return null;
+
+  const submit = () => {
+    if (pending || (!editing && !categoryId)) return;
+    saver.submit();
   };
 
   const alert = formError(error, "Không lưu được mục giá.");
-  const submitLabel = uploader.uploading
+  const submitLabel = saver.uploading
     ? "Đang tải ảnh…"
     : pending
       ? "Đang lưu…"
@@ -156,14 +173,14 @@ export function ServiceItemDialog({
       <button
         type="button"
         aria-label="Đóng hộp thoại"
-        onClick={onClose}
+        onClick={guard.requestClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
       <DialogPanel wide>
         <DialogHeader
           title={editing ? "Sửa mục giá" : "Thêm mục giá"}
           hint="Giá tính bằng VND, mã riêng dùng để xác nhận khi xóa vĩnh viễn."
-          onClose={onClose}
+          onClose={guard.requestClose}
         />
 
         <div className="mt-4 flex flex-col gap-5">
@@ -205,12 +222,12 @@ export function ServiceItemDialog({
           />
         </div>
 
-        {(alert || uploader.uploadError) && (
+        {(alert || saver.uploadError) && (
           <p
             role="alert"
             className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
           >
-            {uploader.uploadError ?? alert}
+            {saver.uploadError ?? alert}
           </p>
         )}
 
@@ -218,8 +235,13 @@ export function ServiceItemDialog({
           submitLabel={submitLabel}
           pending={pending}
           submitDisabled={!editing && !categoryId}
-          onClose={onClose}
+          onClose={guard.requestClose}
           onSubmit={submit}
+        />
+        <ConfirmDiscardDialog
+          open={guard.confirmOpen}
+          onStay={guard.stay}
+          onDiscard={guard.discard}
         />
       </DialogPanel>
     </div>

@@ -38,7 +38,6 @@ export function AccountPanel() {
 
   function goLogin() {
     router.push("/login");
-    router.refresh();
   }
 
   function handleLogout() {

@@ -36,7 +36,9 @@ export function RegisterForm({ next }: RegisterFormProps) {
 
   // Client-side mirror of the server bounce on this page: a logged-in
   // customer who reaches the form (back button, stale link) leaves
-  // immediately instead of seeing a second register form.
+  // immediately instead of seeing a second register form. This same
+  // replace also carries the post-submit navigation: onSuccess only seeds
+  // the session cache, and this effect performs the single redirect.
   useEffect(() => {
     if (!me.isPending && me.data) {
       router.replace(resolvePostAuthHref(me.data.role, next));
@@ -77,13 +79,11 @@ export function RegisterForm({ next }: RegisterFormProps) {
         confirmPassword,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           toast.success(
             "Tạo tài khoản thành công",
             "Chào mừng bạn đến với FlashWrench.",
           );
-          router.push(resolvePostAuthHref(data.user.role, next));
-          router.refresh();
         },
         onError: (error) => {
           if (error instanceof AuthApiError) {

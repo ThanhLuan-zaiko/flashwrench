@@ -4,6 +4,8 @@ import {
   canAddMore,
   decideStageFiles,
   displayNameFromUrl,
+  initialGalleryFromItem,
+  isGalleryDirty,
   MAX_COVER_IMAGES,
   moveToCover,
   removeAtIndex,
@@ -121,5 +123,23 @@ describe("gallery ordering", () => {
     );
     expect(displayNameFromUrl("")).toBe("Ảnh bìa");
     expect(displayNameFromUrl("/api/media/")).toBe("media");
+  });
+
+  test("isGalleryDirty spots staged, removed and reordered covers", () => {
+    expect(isGalleryDirty([], [], 0)).toBe(false);
+    expect(isGalleryDirty(["a"], ["a"], 0)).toBe(false);
+    expect(isGalleryDirty(["a"], ["a"], 2)).toBe(true);
+    expect(isGalleryDirty(["a", "b"], ["a"], 0)).toBe(true);
+    expect(isGalleryDirty(["a"], ["b", "a"], 0)).toBe(true);
+  });
+
+  test("initialGalleryFromItem prefers the saved order", () => {
+    expect(initialGalleryFromItem(null)).toEqual([]);
+    expect(
+      initialGalleryFromItem({ images: ["b", "a"], imageUrl: "b" }),
+    ).toEqual(["b", "a"]);
+    expect(initialGalleryFromItem({ images: [], imageUrl: "b" })).toEqual([
+      "b",
+    ]);
   });
 });

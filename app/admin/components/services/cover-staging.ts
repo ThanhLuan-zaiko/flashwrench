@@ -91,6 +91,29 @@ export function canAddMore(
   return existingCount + stagedCount < MAX_COVER_IMAGES;
 }
 
+// Saved gallery of a catalog row for dialog init: full order when the
+// row carries one, legacy single cover otherwise.
+export function initialGalleryFromItem(
+  item: { images: string[]; imageUrl: string } | null,
+): string[] {
+  if (!item) return [];
+  if (Array.isArray(item.images) && item.images.length > 0) return item.images;
+  return item.imageUrl ? [item.imageUrl] : [];
+}
+
+// True when the gallery differs from the saved row: staged additions or
+// removed/reordered kept covers. Drives the unsaved-changes warning so
+// F5 or tab close never silently drops picked photos.
+export function isGalleryDirty(
+  initial: string[],
+  current: string[],
+  stagedCount: number,
+): boolean {
+  if (stagedCount > 0) return true;
+  if (initial.length !== current.length) return true;
+  return initial.some((url, index) => url !== current[index]);
+}
+
 // Short display name for a stored cover URL (last path segment), so
 // horizontal gallery rows can label each photo without the full path.
 export function displayNameFromUrl(url: string): string {

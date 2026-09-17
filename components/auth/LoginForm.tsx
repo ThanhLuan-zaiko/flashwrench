@@ -28,7 +28,10 @@ export function LoginForm({ next }: LoginFormProps) {
 
   // Client-side mirror of the server bounce on this page: a logged-in
   // customer who reaches the form (back button, stale link) leaves
-  // immediately instead of seeing a second login form.
+  // immediately instead of seeing a second login form. This same replace
+  // also carries the post-submit navigation: onSuccess only seeds the
+  // session cache, and this effect performs the single redirect — pushing
+  // plus refreshing here used to render every login twice.
   useEffect(() => {
     if (!me.isPending && me.data) {
       router.replace(resolvePostAuthHref(me.data.role, next));
@@ -77,10 +80,8 @@ export function LoginForm({ next }: LoginFormProps) {
     login.mutate(
       { identifier: identifier.trim(), password },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           toast.success("Đăng nhập thành công", "Chào mừng bạn quay lại.");
-          router.push(resolvePostAuthHref(data.user.role, next));
-          router.refresh();
         },
         onError: (error) => {
           if (error instanceof AuthApiError) {

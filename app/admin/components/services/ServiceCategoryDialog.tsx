@@ -1,17 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
 import { CatalogCoverField } from "./CatalogCoverField";
 import { fieldError, formError } from "./catalog-errors";
+import { initialGalleryFromItem, isGalleryDirty } from "./cover-staging";
 import { ServiceCategoryBasicFields } from "./ServiceCategoryBasicFields";
+import { useDeferredGallerySubmit } from "./useDeferredGallerySubmit";
 import { useStagedCovers } from "./useStagedCovers";
-import { useUploadStagedCovers } from "./useUploadStagedCovers";
 
 export type CategoryDialogState =
   | { mode: "create" }
@@ -21,12 +24,6 @@ type ServiceCategoryDialogProps = {
   dialog: CategoryDialogState | null;
   onClose: () => void;
 };
-
-function initialGallery(item: ServiceCategoryItem | null): string[] {
-  if (!item) return [];
-  if (Array.isArray(item.images) && item.images.length > 0) return item.images;
-  return item.imageUrl ? [item.imageUrl] : [];
-}
 
 // Create/edit modal for one service category. Cover images are staged as
 // local thumbnails (drag-drop multi + per-image crop) and upload only on
@@ -43,41 +40,27 @@ export function ServiceCategoryDialog({
   const [sortOrder, setSortOrder] = useState(String(editing?.sortOrder ?? 0));
   const [slugTouched, setSlugTouched] = useState(Boolean(editing));
   const [pendingOwnerId] = useState(() => crypto.randomUUID());
-  const covers = useStagedCovers(initialGallery(editing));
-  const uploader = useUploadStagedCovers();
+  const covers = useStagedCovers(initialGalleryFromItem(editing));
 
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
-  const pending =
-    createMutation.isPending || updateMutation.isPending || uploader.uploading;
-  const error = createMutation.error ?? updateMutation.error ?? null;
-
-  if (!dialog) return null;
-
-  const submit = () => {
-    if (pending) return;
-    void (async () => {
-      let uploaded: { id: string; url: string; assetId: string }[] = [];
-      if (covers.staged.length > 0) {
-        try {
-          uploaded = await uploader.uploadAll(covers.staged, {
-            scope: "category",
-            ownerType: "category",
-            ownerId: editing?.id ?? pendingOwnerId,
-          });
-        } catch {
-          return;
-        }
-      }
-      const gallery = covers.buildPayload(uploaded);
+  const saver = useDeferredGallerySubmit({
+    staged: covers.staged,
+    buildPayload: covers.buildPayload,
+    owner: {
+      scope: "category",
+      ownerType: "category",
+      editingId: editing?.id ?? null,
+      pendingOwnerId,
+    },
+    onSave: (gallery, uploaded) => {
       const coverUrl = gallery[0] ?? "";
-      const coverAssetId = uploaded.find((u) => u.url === coverUrl)?.assetId;
       const payload = {
         name: name.trim(),
         slug: slug.trim(),
         icon: icon.trim(),
         imageUrl: coverUrl,
-        imageAssetId: coverAssetId,
+        imageAssetId: uploaded.find((u) => u.url === coverUrl)?.assetId,
         images: gallery,
         imageAssetIds: uploaded.map((u) => u.assetId),
         description: description.trim(),
@@ -92,11 +75,37 @@ export function ServiceCategoryDialog({
       } else {
         createMutation.mutate(payload, { onSuccess: onClose });
       }
-    })();
+    },
+  });
+  const pending =
+    createMutation.isPending || updateMutation.isPending || saver.uploading;
+  const error = createMutation.error ?? updateMutation.error ?? null;
+
+  // Warn on refresh/tab close while anything is unsaved: typed fields,
+  // gallery picks, or an upload/save still in flight.
+  const dirty =
+    pending ||
+    name !== (editing?.name ?? "") ||
+    slug !== (editing?.slug ?? "") ||
+    icon !== (editing?.icon ?? "") ||
+    description !== (editing?.description ?? "") ||
+    sortOrder !== String(editing?.sortOrder ?? 0) ||
+    isGalleryDirty(
+      initialGalleryFromItem(editing),
+      covers.existing,
+      covers.staged.length,
+    );
+  const guard = useUnsavedChangesGuard(dirty, onClose);
+
+  if (!dialog) return null;
+
+  const submit = () => {
+    if (pending) return;
+    saver.submit();
   };
 
   const alert = formError(error, "Không lưu được loại hình.");
-  const submitLabel = uploader.uploading
+  const submitLabel = saver.uploading
     ? "Đang tải ảnh…"
     : pending
       ? "Đang lưu…"
@@ -114,14 +123,14 @@ export function ServiceCategoryDialog({
       <button
         type="button"
         aria-label="Đóng hộp thoại"
-        onClick={onClose}
+        onClick={guard.requestClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
       <DialogPanel wide>
         <DialogHeader
           title={editing ? "Sửa loại hình" : "Thêm loại hình"}
           hint="Mỗi loại hình có một mã riêng, dùng để xác nhận khi xóa vĩnh viễn."
-          onClose={onClose}
+          onClose={guard.requestClose}
         />
         <div className="mt-4 flex flex-col gap-5">
           <ServiceCategoryBasicFields
@@ -167,19 +176,24 @@ export function ServiceCategoryDialog({
             )}
           </label>
         </div>
-        {(alert || uploader.uploadError) && (
+        {(alert || saver.uploadError) && (
           <p
             role="alert"
             className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
           >
-            {uploader.uploadError ?? alert}
+            {saver.uploadError ?? alert}
           </p>
         )}
         <DialogFooter
           submitLabel={submitLabel}
           pending={pending}
-          onClose={onClose}
+          onClose={guard.requestClose}
           onSubmit={submit}
+        />
+        <ConfirmDiscardDialog
+          open={guard.confirmOpen}
+          onStay={guard.stay}
+          onDiscard={guard.discard}
         />
       </DialogPanel>
     </div>
