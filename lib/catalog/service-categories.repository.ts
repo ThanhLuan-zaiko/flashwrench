@@ -5,12 +5,16 @@ import type {
 } from "./service-catalog.types";
 
 function toCategoryRow(row: Record<string, unknown>): ServiceCategoryRow {
+  const rawImages = row.images as unknown;
   return {
     category_id: String(row.category_id),
     name: (row.name as string | null) ?? null,
     slug: (row.slug as string | null) ?? null,
     icon: (row.icon as string | null) ?? null,
     image_url: (row.image_url as string | null) ?? null,
+    images: Array.isArray(rawImages)
+      ? rawImages.filter((u): u is string => typeof u === "string")
+      : null,
     description: (row.description as string | null) ?? null,
     sort_order: (row.sort_order as number | null) ?? null,
     is_active: (row.is_active as boolean | null) ?? null,
@@ -25,7 +29,7 @@ function toCategoryRow(row: Record<string, unknown>): ServiceCategoryRow {
 // intentional here. No ALLOW FILTERING is needed for primary-key reads.
 export async function listCategoryRows(): Promise<ServiceCategoryRow[]> {
   const result = await scylla.execute(
-    "SELECT category_id, name, slug, icon, image_url, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at FROM service_categories",
+    "SELECT category_id, name, slug, icon, image_url, images, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at FROM service_categories",
     [],
     { prepare: true },
   );
@@ -38,7 +42,7 @@ export async function findCategoryRowById(
   categoryId: string,
 ): Promise<ServiceCategoryRow | null> {
   const result = await scylla.execute(
-    "SELECT category_id, name, slug, icon, image_url, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at FROM service_categories WHERE category_id = ?",
+    "SELECT category_id, name, slug, icon, image_url, images, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at FROM service_categories WHERE category_id = ?",
     [categoryId],
     { prepare: true },
   );
@@ -64,6 +68,7 @@ export type InsertCategoryParams = {
   slug: string;
   icon: string;
   imageUrl: string;
+  images: string[];
   description: string;
   sortOrder: number;
   isActive: boolean;
@@ -77,13 +82,14 @@ export async function insertCategory(
   // claimCategorySlug (IF NOT EXISTS) so concurrent creates with the
   // same slug cannot silently overwrite each other.
   await scylla.execute(
-    "INSERT INTO service_categories (category_id, name, slug, icon, image_url, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, false, ?, ?, null)",
+    "INSERT INTO service_categories (category_id, name, slug, icon, image_url, images, description, sort_order, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, false, ?, ?, null)",
     [
       params.categoryId,
       params.name,
       params.slug,
       params.icon,
       params.imageUrl,
+      params.images,
       params.description,
       params.sortOrder,
       params.isActive,
@@ -128,6 +134,7 @@ export type UpdateCategoryParams = {
   slug: string;
   icon: string;
   imageUrl: string;
+  images: string[];
   description: string;
   sortOrder: number;
   isActive: boolean;
@@ -138,12 +145,13 @@ export async function updateCategoryRow(
   params: UpdateCategoryParams,
 ): Promise<void> {
   await scylla.execute(
-    "UPDATE service_categories SET name = ?, slug = ?, icon = ?, image_url = ?, description = ?, sort_order = ?, is_active = ?, updated_at = ? WHERE category_id = ?",
+    "UPDATE service_categories SET name = ?, slug = ?, icon = ?, image_url = ?, images = ?, description = ?, sort_order = ?, is_active = ?, updated_at = ? WHERE category_id = ?",
     [
       params.name,
       params.slug,
       params.icon,
       params.imageUrl,
+      params.images,
       params.description,
       params.sortOrder,
       params.isActive,

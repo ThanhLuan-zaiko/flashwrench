@@ -60,24 +60,59 @@ export function normalizeImageUrl(raw: unknown): string {
   return raw.trim();
 }
 
-export type NormalizedCoverInput = {
-  imageUrl: string;
-  imageAssetId: string | undefined;
+// Max staged covers per catalog row (categories and services share the
+// same deferred gallery UX and media guardrails).
+export const MAX_COVER_IMAGES = 5;
+
+export function normalizeImageUrls(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const entry of raw) {
+    if (typeof entry !== "string") continue;
+    const url = entry.trim();
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    out.push(url);
+    if (out.length >= MAX_COVER_IMAGES) break;
+  }
+  return out;
+}
+
+export type NormalizedGalleryInput = {
+  imageUrls: string[];
+  imageAssetIds: string[];
 };
 
-// Shared preamble for catalog create/update: normalized cover URL for
-// validation plus the optional fresh asset id for the media relink.
-export function normalizeCoverInput(raw: {
+// Gallery preamble for catalog rows: deduped display-order URLs plus the
+// matching fresh asset ids. Legacy single-cover fields fall back here
+// so old clients keep working without changes.
+export function normalizeGalleryInput(raw: {
+  images?: unknown;
+  imageAssetIds?: unknown;
   imageUrl?: unknown;
   imageAssetId?: unknown;
-}): NormalizedCoverInput {
-  return {
-    imageUrl: normalizeImageUrl(raw.imageUrl),
-    imageAssetId:
+}): NormalizedGalleryInput {
+  const imageUrls = normalizeImageUrls(raw.images);
+  const ids = Array.isArray(raw.imageAssetIds)
+    ? raw.imageAssetIds
+        .filter((id): id is string => typeof id === "string")
+        .map((id) => id.trim())
+        .filter(Boolean)
+        .slice(0, MAX_COVER_IMAGES)
+    : [];
+  if (imageUrls.length === 0) {
+    const legacyUrl = normalizeImageUrl(raw.imageUrl);
+    const legacyId =
       typeof raw.imageAssetId === "string" && raw.imageAssetId.trim()
         ? raw.imageAssetId.trim()
-        : undefined,
-  };
+        : undefined;
+    return {
+      imageUrls: legacyUrl ? [legacyUrl] : [],
+      imageAssetIds: legacyId ? [legacyId] : [],
+    };
+  }
+  return { imageUrls, imageAssetIds: ids };
 }
 
 function checkImageUrl(imageUrl: string, errors: CatalogFieldErrors): void {
@@ -90,6 +125,25 @@ function checkImageUrl(imageUrl: string, errors: CatalogFieldErrors): void {
     imageUrl.includes("..")
   ) {
     errors.imageUrl = "Ảnh bìa phải là ảnh đã tải lên từ kho media.";
+  }
+}
+
+function checkImageUrls(imageUrls: string[], errors: CatalogFieldErrors): void {
+  if (imageUrls.length > MAX_COVER_IMAGES) {
+    errors.imageUrl = `Tối đa ${MAX_COVER_IMAGES} ảnh cho mỗi mục.`;
+    return;
+  }
+  for (const url of imageUrls) {
+    if (
+      url.length > 500 ||
+      !url.startsWith("/api/media/") ||
+      url.includes(" ") ||
+      url.includes("\\") ||
+      url.includes("..")
+    ) {
+      errors.imageUrl = "Ảnh bìa phải là ảnh đã tải lên từ kho media.";
+      return;
+    }
   }
 }
 
@@ -109,6 +163,7 @@ export function validateCategoryInput(input: {
   slug: string;
   icon?: string;
   imageUrl?: unknown;
+  images?: unknown;
   description?: string;
   sortOrder?: number;
   isActive?: unknown;
@@ -116,7 +171,12 @@ export function validateCategoryInput(input: {
   const errors: CatalogFieldErrors = {};
   checkName(input.name, errors);
   checkSlug(normalizeSlug(input.slug), errors);
-  checkImageUrl(normalizeImageUrl(input.imageUrl), errors);
+  const gallery = normalizeImageUrls(input.images);
+  if (gallery.length > 0) {
+    checkImageUrls(gallery, errors);
+  } else {
+    checkImageUrl(normalizeImageUrl(input.imageUrl), errors);
+  }
   if (input.description !== undefined && input.description.length > 500) {
     errors.description = "Mô tả tối đa 500 ký tự.";
   }
@@ -145,6 +205,7 @@ export function validateServiceInput(input: {
   name: string;
   slug: string;
   imageUrl?: unknown;
+  images?: unknown;
   description?: string;
   basePrice: number;
   priceUnit: string;
@@ -156,7 +217,12 @@ export function validateServiceInput(input: {
   const errors: CatalogFieldErrors = {};
   checkName(input.name, errors);
   checkSlug(normalizeSlug(input.slug), errors);
-  checkImageUrl(normalizeImageUrl(input.imageUrl), errors);
+  const gallery = normalizeImageUrls(input.images);
+  if (gallery.length > 0) {
+    checkImageUrls(gallery, errors);
+  } else {
+    checkImageUrl(normalizeImageUrl(input.imageUrl), errors);
+  }
   if (!input.categoryId) {
     errors.categoryId = "Vui lòng chọn loại hình dịch vụ.";
   }

@@ -107,6 +107,37 @@ export async function findAssetRowById(
   return row ? toRow(row) : null;
 }
 
+export type OwnerAssetRef = {
+  assetId: string;
+  url: string;
+  createdAt: Date;
+};
+
+// Every asset of one owner, newest first. Drives lifecycle cleanup
+// (hard delete purges the gallery; gallery edits prune removed covers)
+// without scanning the registry table.
+export async function listAssetRowsByOwner(
+  ownerType: string,
+  ownerId: string,
+): Promise<OwnerAssetRef[]> {
+  const result = await scylla.execute(
+    "SELECT asset_id, url, created_at FROM media_assets_by_owner WHERE owner_type = ? AND owner_id = ?",
+    [ownerType, ownerId],
+    { prepare: true },
+  );
+  const refs: OwnerAssetRef[] = [];
+  for (const raw of result.rows as unknown as RawRow[]) {
+    const createdAt = toDateOrNull(raw.created_at);
+    if (typeof raw.asset_id === "undefined" || !createdAt) continue;
+    refs.push({
+      assetId: String(raw.asset_id),
+      url: typeof raw.url === "string" ? raw.url : "",
+      createdAt,
+    });
+  }
+  return refs;
+}
+
 // Re-point an asset at its real owner after the owner row exists
 // (uploads happen before the catalog dialog saves). Returns false
 // when the asset does not exist; the index delete reuses the stored

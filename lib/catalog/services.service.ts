@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { claimAssetForOwner } from "@/lib/media/media.service";
 import {
-  normalizeCoverInput,
+  claimAssetsForOwner,
+  pruneOwnerAssets,
+} from "@/lib/media/media.service";
+import {
+  normalizeGalleryInput,
   normalizeSlug,
   validateServiceInput,
 } from "./catalog-validation";
@@ -10,13 +13,11 @@ import {
   type CreateServiceInput,
   isActiveFlag,
   isDeletedFlag,
-  type PriceUnit,
   type ServiceItem,
-  type ServiceRow,
-  toIso,
   type UpdateServiceInput,
 } from "./service-catalog.types";
 import { findCategoryRowById } from "./service-categories.repository";
+import { toServiceItem as toItem } from "./services.mapper";
 import {
   claimServiceSlug,
   findServiceIdBySlug,
@@ -38,28 +39,6 @@ export type ListServicesParams = {
 export type CatalogResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number; errors: CatalogFieldErrors };
-
-function toItem(row: ServiceRow): ServiceItem {
-  return {
-    id: row.service_id,
-    categoryId: row.category_id ?? "",
-    categoryName: row.category_name ?? "",
-    name: row.name ?? "",
-    slug: row.slug ?? "",
-    imageUrl: row.image_url ?? "",
-    description: row.description ?? "",
-    basePrice: row.base_price ?? 0,
-    priceUnit: (row.price_unit as PriceUnit) ?? "per_job",
-    durationMin: row.duration_min ?? 0,
-    isHomeSupported: row.is_home_supported ?? true,
-    isEmergencySupported: row.is_emergency_supported ?? false,
-    isActive: isActiveFlag(row.is_active, true),
-    isDeleted: isDeletedFlag(row.is_deleted),
-    createdAt: toIso(row.created_at),
-    updatedAt: toIso(row.updated_at),
-    deletedAt: toIso(row.deleted_at),
-  };
-}
 
 function fail<T>(status: number, form: string): CatalogResult<T> {
   return { ok: false, status, errors: { form } };
@@ -99,12 +78,13 @@ export async function createService(
   raw: CreateServiceInput,
 ): Promise<CatalogResult<ServiceItem>> {
   const slug = normalizeSlug(raw.slug);
-  const { imageUrl, imageAssetId } = normalizeCoverInput(raw);
+  const { imageUrls, imageAssetIds } = normalizeGalleryInput(raw);
   const fieldErrors = validateServiceInput({
     categoryId: raw.categoryId,
     name: raw.name.trim(),
     slug,
-    imageUrl,
+    imageUrl: imageUrls[0] ?? "",
+    images: imageUrls,
     description: raw.description,
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
@@ -137,15 +117,20 @@ export async function createService(
       slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
     });
   }
-  // The cover was uploaded before this row existed: point the asset at
-  // the real id now. Unknown ids fail before any catalog row is written.
+  // Covers were uploaded during save (deferred): point every fresh asset
+  // at the real id now. Unknown ids fail before any catalog row exists.
   // If the insert below throws afterwards, the asset index points at a
   // missing row — harmless, the row (not the index) drives display.
-  const claimed = await claimAssetForOwner(imageAssetId, "service", serviceId);
+  const claimed = await claimAssetsForOwner(
+    imageAssetIds,
+    "service",
+    serviceId,
+  );
   if (!claimed.ok) {
     await releaseServiceSlug(slug, serviceId);
     return failFields(claimed.status, claimed.errors);
   }
+  const cover = imageUrls[0] ?? "";
   try {
     await insertService({
       serviceId,
@@ -153,7 +138,8 @@ export async function createService(
       categoryName: category.name ?? "",
       name: raw.name.trim(),
       slug,
-      imageUrl,
+      imageUrl: cover,
+      images: imageUrls,
       description: (raw.description ?? "").trim(),
       basePrice: raw.basePrice,
       priceUnit: raw.priceUnit,
@@ -186,12 +172,13 @@ export async function updateService(
     );
   }
   const slug = normalizeSlug(raw.slug);
-  const { imageUrl, imageAssetId } = normalizeCoverInput(raw);
+  const { imageUrls, imageAssetIds } = normalizeGalleryInput(raw);
   const fieldErrors = validateServiceInput({
     categoryId: raw.categoryId,
     name: raw.name.trim(),
     slug,
-    imageUrl,
+    imageUrl: imageUrls[0] ?? "",
+    images: imageUrls,
     description: raw.description,
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
@@ -214,10 +201,10 @@ export async function updateService(
       slug: "Slug đã tồn tại. Vui lòng chọn slug khác.",
     });
   }
-  // Newly uploaded covers arrive with a temporary owner: re-point the
-  // asset at this row before writing, unknown ids fail with 404.
-  const assetClaim = await claimAssetForOwner(
-    imageAssetId,
+  // Newly uploaded covers arrive with a temporary owner: re-point every
+  // fresh asset at this row before writing, unknown ids fail with 404.
+  const assetClaim = await claimAssetsForOwner(
+    imageAssetIds,
     "service",
     serviceId,
   );
@@ -238,13 +225,15 @@ export async function updateService(
     }
   }
 
+  const cover = imageUrls[0] ?? "";
   await updateServiceRows({
     serviceId,
     categoryId: category.category_id,
     categoryName: category.name ?? "",
     name: raw.name.trim(),
     slug,
-    imageUrl,
+    imageUrl: cover,
+    images: imageUrls,
     description: (raw.description ?? "").trim(),
     basePrice: raw.basePrice,
     priceUnit: raw.priceUnit,
@@ -256,6 +245,11 @@ export async function updateService(
     updatedAt: new Date(),
     oldCategoryId: existing.category_id ?? category.category_id,
   });
+  // Covers dropped from the gallery lose their slot: remove their files
+  // plus registry rows best-effort so disk never fills with orphans.
+  await pruneOwnerAssets("service", serviceId, imageUrls).catch(
+    () => undefined,
+  );
   if (oldSlug !== slug) {
     // Best effort: the old pointer is released only while it still
     // belongs to this row, so a concurrent winner is never removed.
@@ -331,6 +325,7 @@ export async function restoreService(
 
 // Hard delete is permanent: all three tables lose the row. The caller must
 // echo the slug back as confirm, matching the type-to-confirm dialog.
+// The cover gallery is purged too (files plus registry, best-effort).
 export async function hardDeleteServiceWithConfirm(
   serviceId: string,
   confirm: string,
@@ -344,5 +339,6 @@ export async function hardDeleteServiceWithConfirm(
     });
   }
   await hardDeleteService(serviceId, existing.category_id ?? "", slug);
+  await pruneOwnerAssets("service", serviceId, []).catch(() => undefined);
   return { ok: true, data: { id: serviceId } };
 }

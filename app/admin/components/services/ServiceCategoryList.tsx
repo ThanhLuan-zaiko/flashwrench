@@ -9,6 +9,7 @@ import {
   FiTrash2,
 } from "react-icons/fi";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
+import { CatalogCoverStack } from "./CatalogCoverStack";
 import { CatalogPager } from "./CatalogPager";
 import { usePagination } from "./usePagination";
 
@@ -121,15 +122,22 @@ export function ServiceCategoryList({
               key={item.id}
               className="flex flex-col gap-2 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900"
             >
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                  {item.name}
-                </span>
-                <span className="block truncate font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                  {item.slug} · {item.serviceCount} mục giá
-                </span>
-                <span className="mt-1.5 flex flex-wrap gap-1.5">
-                  <StatusPill item={item} />
+              <span className="flex min-w-0 flex-1 items-center gap-2.5">
+                <CatalogCoverStack
+                  id={item.id}
+                  images={item.images}
+                  imageUrl={item.imageUrl}
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                    {item.name}
+                  </span>
+                  <span className="block truncate font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                    {item.slug} · {item.serviceCount} mục giá
+                  </span>
+                  <span className="mt-1.5 flex flex-wrap gap-1.5">
+                    <StatusPill item={item} />
+                  </span>
                 </span>
               </span>
               <span className="flex flex-wrap items-center gap-1.5">

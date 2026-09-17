@@ -23,6 +23,12 @@ function notifyCatalogUpdated(): void {
   });
 }
 
+function toStringArray(value: unknown): string[] | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value)) return [];
+  return value.filter((v): v is string => typeof v === "string");
+}
+
 function toUpdateInput(body: Record<string, unknown>): UpdateServiceInput {
   return {
     categoryId: String(body.categoryId ?? ""),
@@ -31,6 +37,8 @@ function toUpdateInput(body: Record<string, unknown>): UpdateServiceInput {
     imageUrl: body.imageUrl === undefined ? undefined : String(body.imageUrl),
     imageAssetId:
       body.imageAssetId === undefined ? undefined : String(body.imageAssetId),
+    images: toStringArray(body.images),
+    imageAssetIds: toStringArray(body.imageAssetIds),
     description:
       body.description === undefined ? undefined : String(body.description),
     basePrice: Number(body.basePrice),

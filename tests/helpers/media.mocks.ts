@@ -2,11 +2,15 @@
 // live here so service tests assert writes without touching ScyllaDB
 // or the disk. Extend these instead of file-local mocks.
 import { mock } from "bun:test";
-import type { InsertAssetParams } from "@/lib/media/media.repository";
+import type {
+  InsertAssetParams,
+  OwnerAssetRef,
+} from "@/lib/media/media.repository";
 import type { MediaAssetRow } from "@/lib/media/media.types";
 
 export const mediaStubs = {
   assetById: null as MediaAssetRow | null,
+  ownerAssets: [] as OwnerAssetRef[],
   insertError: null as Error | null,
   files: new Map<string, Buffer>(),
 };
@@ -19,6 +23,10 @@ export const mediaRepoMocks = {
   findAssetRowById: mock(
     async (_assetId: string): Promise<MediaAssetRow | null> =>
       mediaStubs.assetById,
+  ),
+  listAssetRowsByOwner: mock(
+    async (_ownerType: string, _ownerId: string): Promise<OwnerAssetRef[]> =>
+      mediaStubs.ownerAssets,
   ),
   deleteAssetRows: mock(
     async (
@@ -55,6 +63,7 @@ export const mediaStorageMocks = {
 
 export function resetMediaMocks(): void {
   mediaStubs.assetById = null;
+  mediaStubs.ownerAssets = [];
   mediaStubs.insertError = null;
   mediaStubs.files.clear();
   for (const fn of Object.values(mediaRepoMocks)) fn.mockClear();

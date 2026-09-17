@@ -309,6 +309,7 @@ CREATE TABLE IF NOT EXISTS service_categories (
   slug        TEXT,
   icon        TEXT,
   image_url   TEXT,  -- cover image (served from media storage)
+  images      LIST<TEXT>, -- cover gallery in display order, first mirrors image_url
   description TEXT,
   sort_order  INT,
   is_active   BOOLEAN,
@@ -332,6 +333,7 @@ CREATE TABLE IF NOT EXISTS services_by_id (
   slug                   TEXT,
   description            TEXT,
   image_url              TEXT,  -- cover image (served from media storage)
+  images                 LIST<TEXT>, -- cover gallery in display order, first mirrors image_url
   base_price             BIGINT,  -- VND
   price_unit             TEXT,    -- per_job | per_hour | per_item
   duration_min           INT,

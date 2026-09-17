@@ -6,6 +6,7 @@ import type {
 } from "./service-catalog.types";
 
 function toServiceRow(row: Record<string, unknown>): ServiceRow {
+  const rawImages = row.images as unknown;
   return {
     service_id: String(row.service_id),
     category_id: row.category_id ? String(row.category_id) : null,
@@ -13,6 +14,9 @@ function toServiceRow(row: Record<string, unknown>): ServiceRow {
     name: (row.name as string | null) ?? null,
     slug: (row.slug as string | null) ?? null,
     image_url: (row.image_url as string | null) ?? null,
+    images: Array.isArray(rawImages)
+      ? rawImages.filter((u): u is string => typeof u === "string")
+      : null,
     description: (row.description as string | null) ?? null,
     base_price: (row.base_price as number | null) ?? null,
     price_unit: (row.price_unit as string | null) ?? null,
@@ -43,7 +47,7 @@ function toByCategoryRow(row: Record<string, unknown>): ServiceByCategoryRow {
 
 export async function listServiceRows(): Promise<ServiceRow[]> {
   const result = await scylla.execute(
-    "SELECT service_id, category_id, category_name, name, slug, image_url, description, base_price, price_unit, duration_min, is_home_supported, is_emergency_supported, is_active, is_deleted, created_at, updated_at, deleted_at FROM services_by_id",
+    "SELECT service_id, category_id, category_name, name, slug, image_url, images, description, base_price, price_unit, duration_min, is_home_supported, is_emergency_supported, is_active, is_deleted, created_at, updated_at, deleted_at FROM services_by_id",
     [],
     { prepare: true },
   );
@@ -56,7 +60,7 @@ export async function findServiceRowById(
   serviceId: string,
 ): Promise<ServiceRow | null> {
   const result = await scylla.execute(
-    "SELECT service_id, category_id, category_name, name, slug, image_url, description, base_price, price_unit, duration_min, is_home_supported, is_emergency_supported, is_active, is_deleted, created_at, updated_at, deleted_at FROM services_by_id WHERE service_id = ?",
+    "SELECT service_id, category_id, category_name, name, slug, image_url, images, description, base_price, price_unit, duration_min, is_home_supported, is_emergency_supported, is_active, is_deleted, created_at, updated_at, deleted_at FROM services_by_id WHERE service_id = ?",
     [serviceId],
     { prepare: true },
   );
@@ -98,6 +102,7 @@ export type InsertServiceParams = {
   name: string;
   slug: string;
   imageUrl: string;
+  images: string[];
   description: string;
   basePrice: number;
   priceUnit: string;
@@ -118,7 +123,7 @@ export async function insertService(
     [
       {
         query:
-          "INSERT INTO services_by_id (service_id, category_id, category_name, name, slug, image_url, description, base_price, price_unit, duration_min, is_home_supported, is_emergency_supported, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, ?, ?, null)",
+          "INSERT INTO services_by_id (service_id, category_id, category_name, name, slug, image_url, images, description, base_price, price_unit, duration_min, is_home_supported, is_emergency_supported, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, ?, ?, null)",
         params: [
           params.serviceId,
           params.categoryId,
@@ -126,6 +131,7 @@ export async function insertService(
           params.name,
           params.slug,
           params.imageUrl,
+          params.images,
           params.description,
           params.basePrice,
           params.priceUnit,
@@ -194,13 +200,14 @@ export async function updateServiceRows(
   const queries: { query: string; params: unknown[] }[] = [
     {
       query:
-        "UPDATE services_by_id SET category_id = ?, category_name = ?, name = ?, slug = ?, image_url = ?, description = ?, base_price = ?, price_unit = ?, duration_min = ?, is_home_supported = ?, is_emergency_supported = ?, is_active = ?, updated_at = ? WHERE service_id = ?",
+        "UPDATE services_by_id SET category_id = ?, category_name = ?, name = ?, slug = ?, image_url = ?, images = ?, description = ?, base_price = ?, price_unit = ?, duration_min = ?, is_home_supported = ?, is_emergency_supported = ?, is_active = ?, updated_at = ? WHERE service_id = ?",
       params: [
         params.categoryId,
         params.categoryName,
         params.name,
         params.slug,
         params.imageUrl,
+        params.images,
         params.description,
         params.basePrice,
         params.priceUnit,

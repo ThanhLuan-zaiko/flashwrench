@@ -9,6 +9,7 @@ export type ServiceCategoryRow = {
   slug: string | null;
   icon: string | null;
   image_url: string | null;
+  images: string[] | null;
   description: string | null;
   sort_order: number | null;
   is_active: boolean | null;
@@ -25,6 +26,7 @@ export type ServiceRow = {
   name: string | null;
   slug: string | null;
   image_url: string | null;
+  images: string[] | null;
   description: string | null;
   base_price: number | null;
   price_unit: string | null;
@@ -65,6 +67,7 @@ export type ServiceCategoryItem = {
   slug: string;
   icon: string;
   imageUrl: string;
+  images: string[];
   description: string;
   sortOrder: number;
   isActive: boolean;
@@ -82,6 +85,7 @@ export type ServiceItem = {
   name: string;
   slug: string;
   imageUrl: string;
+  images: string[];
   description: string;
   basePrice: number;
   priceUnit: PriceUnit;
@@ -101,6 +105,8 @@ export type CreateCategoryInput = {
   icon?: string;
   imageUrl?: string;
   imageAssetId?: string;
+  images?: string[];
+  imageAssetIds?: string[];
   description?: string;
   sortOrder?: number;
   isActive?: boolean;
@@ -112,6 +118,8 @@ export type UpdateCategoryInput = {
   icon?: string;
   imageUrl?: string;
   imageAssetId?: string;
+  images?: string[];
+  imageAssetIds?: string[];
   description?: string;
   sortOrder?: number;
   isActive?: boolean;
@@ -123,6 +131,8 @@ export type CreateServiceInput = {
   slug: string;
   imageUrl?: string;
   imageAssetId?: string;
+  images?: string[];
+  imageAssetIds?: string[];
   description?: string;
   basePrice: number;
   priceUnit: PriceUnit;
@@ -138,6 +148,8 @@ export type UpdateServiceInput = {
   slug: string;
   imageUrl?: string;
   imageAssetId?: string;
+  images?: string[];
+  imageAssetIds?: string[];
   description?: string;
   basePrice: number;
   priceUnit: PriceUnit;

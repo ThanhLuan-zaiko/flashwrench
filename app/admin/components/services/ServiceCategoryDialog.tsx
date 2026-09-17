@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { FiLoader, FiSave } from "react-icons/fi";
+import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
-import { CatalogImageField } from "./CatalogImageField";
+import { CatalogCoverField } from "./CatalogCoverField";
 import { fieldError, formError } from "./catalog-errors";
+import { ServiceCategoryBasicFields } from "./ServiceCategoryBasicFields";
+import { useStagedCovers } from "./useStagedCovers";
+import { useUploadStagedCovers } from "./useUploadStagedCovers";
 
 export type CategoryDialogState =
   | { mode: "create" }
@@ -19,8 +22,15 @@ type ServiceCategoryDialogProps = {
   onClose: () => void;
 };
 
-// Create/edit modal for one service category. The parent passes a keyed
-// instance so form state resets on every open without sync effects.
+function initialGallery(item: ServiceCategoryItem | null): string[] {
+  if (!item) return [];
+  if (Array.isArray(item.images) && item.images.length > 0) return item.images;
+  return item.imageUrl ? [item.imageUrl] : [];
+}
+
+// Create/edit modal for one service category. Cover images are staged as
+// local thumbnails (drag-drop multi + per-image crop) and upload only on
+// save; the list shows real thumbnails after a successful save.
 export function ServiceCategoryDialog({
   dialog,
   onClose,
@@ -29,39 +39,70 @@ export function ServiceCategoryDialog({
   const [name, setName] = useState(editing?.name ?? "");
   const [slug, setSlug] = useState(editing?.slug ?? "");
   const [icon, setIcon] = useState(editing?.icon ?? "");
-  const [imageUrl, setImageUrl] = useState(editing?.imageUrl ?? "");
-  const [imageAssetId, setImageAssetId] = useState<string | null>(null);
   const [description, setDescription] = useState(editing?.description ?? "");
   const [sortOrder, setSortOrder] = useState(String(editing?.sortOrder ?? 0));
   const [slugTouched, setSlugTouched] = useState(Boolean(editing));
+  const [pendingOwnerId] = useState(() => crypto.randomUUID());
+  const covers = useStagedCovers(initialGallery(editing));
+  const uploader = useUploadStagedCovers();
 
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
-  const pending = createMutation.isPending || updateMutation.isPending;
+  const pending =
+    createMutation.isPending || updateMutation.isPending || uploader.uploading;
   const error = createMutation.error ?? updateMutation.error ?? null;
 
   if (!dialog) return null;
 
   const submit = () => {
-    const payload = {
-      name: name.trim(),
-      slug: slug.trim(),
-      icon: icon.trim(),
-      imageUrl: imageUrl.trim(),
-      imageAssetId: imageAssetId ?? undefined,
-      description: description.trim(),
-      sortOrder: Number.parseInt(sortOrder, 10) || 0,
-      isActive: editing?.isActive ?? true,
-    };
-    if (editing) {
-      updateMutation.mutate(
-        { id: editing.id, payload },
-        { onSuccess: onClose },
-      );
-    } else {
-      createMutation.mutate(payload, { onSuccess: onClose });
-    }
+    if (pending) return;
+    void (async () => {
+      let uploaded: { id: string; url: string; assetId: string }[] = [];
+      if (covers.staged.length > 0) {
+        try {
+          uploaded = await uploader.uploadAll(covers.staged, {
+            scope: "category",
+            ownerType: "category",
+            ownerId: editing?.id ?? pendingOwnerId,
+          });
+        } catch {
+          return;
+        }
+      }
+      const gallery = covers.buildPayload(uploaded);
+      const coverUrl = gallery[0] ?? "";
+      const coverAssetId = uploaded.find((u) => u.url === coverUrl)?.assetId;
+      const payload = {
+        name: name.trim(),
+        slug: slug.trim(),
+        icon: icon.trim(),
+        imageUrl: coverUrl,
+        imageAssetId: coverAssetId,
+        images: gallery,
+        imageAssetIds: uploaded.map((u) => u.assetId),
+        description: description.trim(),
+        sortOrder: Number.parseInt(sortOrder, 10) || 0,
+        isActive: editing?.isActive ?? true,
+      };
+      if (editing) {
+        updateMutation.mutate(
+          { id: editing.id, payload },
+          { onSuccess: onClose },
+        );
+      } else {
+        createMutation.mutate(payload, { onSuccess: onClose });
+      }
+    })();
   };
+
+  const alert = formError(error, "Không lưu được loại hình.");
+  const submitLabel = uploader.uploading
+    ? "Đang tải ảnh…"
+    : pending
+      ? "Đang lưu…"
+      : editing
+        ? "Lưu thay đổi"
+        : "Tạo loại hình";
 
   return (
     <div
@@ -76,80 +117,30 @@ export function ServiceCategoryDialog({
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <DialogPanel>
+      <DialogPanel wide>
         <DialogHeader
           title={editing ? "Sửa loại hình" : "Thêm loại hình"}
           hint="Mỗi loại hình có một mã riêng, dùng để xác nhận khi xóa vĩnh viễn."
           onClose={onClose}
         />
-
-        <div className="mt-4 flex flex-col gap-3">
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Tên loại hình
-            <input
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (!slugTouched) setSlug(slugifyName(e.target.value));
-              }}
-              placeholder="Bảo dưỡng tại nhà"
-              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-            />
-            {fieldError(error, "name") && (
-              <span className="font-medium text-red-600 dark:text-red-400">
-                {fieldError(error, "name")}
-              </span>
-            )}
-          </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Mã định danh
-            <span className="flex gap-2">
-              <input
-                value={slug}
-                onChange={(e) => {
-                  setSlug(e.target.value);
-                  setSlugTouched(true);
-                }}
-                placeholder="bao-duong-tai-nha"
-                className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-              />
-              <button
-                type="button"
-                onClick={() => setSlug(slugifyName(name))}
-                className="flex h-11 shrink-0 items-center rounded-xl border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-              >
-                Tạo từ tên
-              </button>
-            </span>
-            {fieldError(error, "slug") && (
-              <span className="font-medium text-red-600 dark:text-red-400">
-                {fieldError(error, "slug")}
-              </span>
-            )}
-          </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-            Icon (tùy chọn)
-            <input
-              value={icon}
-              onChange={(e) => setIcon(e.target.value)}
-              placeholder="wrench"
-              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-            />
-            {fieldError(error, "icon") && (
-              <span className="font-medium text-red-600 dark:text-red-400">
-                {fieldError(error, "icon")}
-              </span>
-            )}
-          </label>
-          <CatalogImageField
-            scope="category"
-            entityId={editing?.id ?? null}
-            imageUrl={imageUrl}
+        <div className="mt-4 flex flex-col gap-5">
+          <ServiceCategoryBasicFields
+            name={name}
+            slug={slug}
+            icon={icon}
+            slugTouched={slugTouched}
+            error={error}
+            onName={setName}
+            onSlug={setSlug}
+            onSlugTouched={() => setSlugTouched(true)}
+            onRegenSlug={() => setSlug(slugifyName(name))}
+            onIcon={setIcon}
+          />
+          <CatalogCoverField
+            covers={covers}
+            disabled={pending}
             serverError={error}
-            onChange={(url, assetId) => {
-              setImageUrl(url);
-              setImageAssetId(assetId);
-            }}
+            onFiles={(files) => void covers.addFiles(files)}
           />
           <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
             Mô tả
@@ -176,41 +167,20 @@ export function ServiceCategoryDialog({
             )}
           </label>
         </div>
-
-        {formError(error, "Không lưu được loại hình.") && (
+        {(alert || uploader.uploadError) && (
           <p
             role="alert"
             className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
           >
-            {formError(error, "Không lưu được loại hình.")}
+            {uploader.uploadError ?? alert}
           </p>
         )}
-
-        <div className="mt-4 flex gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-          >
-            Hủy bỏ
-          </button>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={submit}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-          >
-            {pending ? (
-              <FiLoader
-                aria-hidden="true"
-                className="h-4 w-4 motion-safe:animate-spin"
-              />
-            ) : (
-              <FiSave aria-hidden="true" className="h-4 w-4" />
-            )}
-            {pending ? "Đang lưu…" : editing ? "Lưu thay đổi" : "Tạo loại hình"}
-          </button>
-        </div>
+        <DialogFooter
+          submitLabel={submitLabel}
+          pending={pending}
+          onClose={onClose}
+          onSubmit={submit}
+        />
       </DialogPanel>
     </div>
   );

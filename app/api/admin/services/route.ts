@@ -8,6 +8,12 @@ import { createService, listServices } from "@/lib/catalog/services.service";
 import { SERVICE_CATALOG_TOPIC } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
+function toStringArray(value: unknown): string[] | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value)) return [];
+  return value.filter((v): v is string => typeof v === "string");
+}
+
 function toCreateInput(body: Record<string, unknown>): CreateServiceInput {
   return {
     categoryId: String(body.categoryId ?? ""),
@@ -16,6 +22,8 @@ function toCreateInput(body: Record<string, unknown>): CreateServiceInput {
     imageUrl: body.imageUrl === undefined ? undefined : String(body.imageUrl),
     imageAssetId:
       body.imageAssetId === undefined ? undefined : String(body.imageAssetId),
+    images: toStringArray(body.images),
+    imageAssetIds: toStringArray(body.imageAssetIds),
     description:
       body.description === undefined ? undefined : String(body.description),
     basePrice: Number(body.basePrice),

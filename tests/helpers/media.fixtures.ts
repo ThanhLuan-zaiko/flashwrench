@@ -1,3 +1,4 @@
+import type { OwnerAssetRef } from "@/lib/media/media.repository";
 import type { MediaAssetRow } from "@/lib/media/media.types";
 
 // Builders for the media suites. Byte builders carry just enough magic
@@ -52,6 +53,19 @@ export function makeMediaRow(
     alt: "",
     created_by: "11111111-1111-4111-8111-111111111111",
     created_at: new Date("2026-09-16T00:00:00.000Z"),
+    ...overrides,
+  };
+}
+
+// Lightweight owner-index entry for prune tests (the by-owner table
+// stores no file metadata, only the pointer back to media_assets).
+export function makeOwnerAssetRef(
+  overrides?: Partial<OwnerAssetRef>,
+): OwnerAssetRef {
+  return {
+    assetId: AVATAR_ASSET_ID,
+    url: "/api/media/category/2026-09/cover.jpg",
+    createdAt: new Date("2026-09-16T00:00:00.000Z"),
     ...overrides,
   };
 }

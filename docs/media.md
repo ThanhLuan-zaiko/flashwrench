@@ -54,21 +54,39 @@ gốc của vùng chọn** (không nén nhỏ lại) → `POST /api/media`. Lu�
 này dùng chung cho avatar (`AvatarSection` ở `/account`) và sau này
 cho ảnh bìa dịch vụ/sản phẩm ở trang admin.
 
-## 5. Ảnh bìa catalog (dịch vụ / loại hình)
+## 5. Ảnh bìa catalog (loại hình / mục giá)
 
-Cột `services_by_id.image_url` và `service_categories.image_url` do
-dialog admin (`CatalogImageField` dùng chung) điền qua cùng
-`ImageUploader` với scope `service`/`category`:
+Cả hai dialog admin dùng chung gallery hoãn ghi (`images`, tối đa 5,
+ảnh đầu là bìa chính và vẫn mirror vào `image_url` cho độc giả cũ):
 
-1. Admin bấm tải ảnh — asset ghi nhận chủ tạm ( dialog tạo mới chưa có
-   id hàng) và trả về `imageUrl` + `imageAssetId`.
-2. Dialog lưu form gửi cả hai trường về route admin (`imageUrl`,
-   `imageAssetId`).
-3. Service catalog validate `imageUrl` (chỉ chấp nhận `/api/media/…`,
-   chặn hotlink ngoài) rồi gọi `claimAssetForOwner` để trỏ asset về id
-   thật; asset lạ → 404, không ghi hàng catalog.
-4. Khách thấy ảnh ở `PublicServiceCard` và `BookingServiceSummary`;
-   thiếu ảnh thì layout cũ giữ nguyên (không vỡ giao diện).
+1. Admin kéo-thả 1 hoặc nhiều ảnh vào `CatalogCoverField` — file chỉ
+   thành thumbnail preview cục bộ (object URL), chưa gọi `/api/media`,
+   chưa ghi ScyllaDB hay đĩa. Hủy dialog là không còn rác mồ côi.
+2. Mỗi ảnh chờ bấm được để cắt (`ImageCropDialog`) trước khi lưu; ngôi
+   sao đặt ảnh bìa (đưa URL lên đầu gallery để luân phiên bìa chính).
+3. Bấm lưu dialog tải tuần tự từng blob chờ (`uploadMediaRequest`,
+   scope `category`, chủ tạm khi tạo mới) rồi gửi một payload về route
+   admin (`images`, `imageAssetIds` kèm `imageUrl`/`imageAssetId` legacy
+   của ảnh đầu).
+4. Service catalog validate mọi URL (chỉ chấp nhận `/api/media/…`) rồi
+   gọi `claimAssetsForOwner` để trỏ từng asset về id thật; asset lạ →
+   404, không ghi hàng catalog.
+5. Lưu thành công admin thấy ngay thumbnails trong
+   `ServiceCategoryList` và `ServicePriceList` (chồng tối đa 3 ảnh +
+   huy hiệu `+N`); thiếu ảnh thì layout cũ giữ nguyên. Khách vẫn thấy
+   bìa đầu qua `imageUrl`.
+
+## 5b. Vòng đời ảnh (xóa mềm / xóa cứng / sửa gallery)
+
+- Xóa mềm giữ nguyên file vật lý lẫn registry để khôi phục còn đủ
+  thumbnails. Khôi phục không cần tải lại.
+- Sửa gallery tỉa ảnh bị gỡ: sau khi hàng catalog ghi xong,
+  `pruneOwnerAssets` xóa file + registry của URL không còn trong
+  gallery (chỉ asset thuộc đúng chủ, best-effort nên lỗi media không
+  chặn thao tác admin).
+- Xóa cứng dọn toàn bộ gallery của chủ đó (`keepUrls = []`) sau khi
+  hàng catalog và slug đã xóa — không còn file mồ côi trên đĩa.
+  Quy tắc tương tự áp dụng cho ảnh bìa mục giá (`service`).
 
 ## 6. Vận hành (Docker / server)
 

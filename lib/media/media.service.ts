@@ -8,6 +8,7 @@ import {
   findAssetRowById,
   type InsertAssetParams,
   insertAsset,
+  listAssetRowsByOwner,
   relinkAssetOwner,
 } from "./media.repository";
 import type { CreateAssetInput, MediaAsset, MediaResult } from "./media.types";
@@ -202,4 +203,63 @@ export async function claimAssetForOwner(
     };
   }
   return { ok: true, data: { assetId: id } };
+}
+
+// Bulk variant for cover galleries: claims every fresh asset in order.
+// Stops at the first unknown id so the caller can abort before writing
+// the catalog row. Empty input means nothing to do.
+export async function claimAssetsForOwner(
+  assetIds: string[],
+  ownerType: string,
+  ownerId: string,
+): Promise<MediaResult<{ assetIds: string[] } | null>> {
+  const ids = assetIds.map((id) => id.trim()).filter(Boolean);
+  if (ids.length === 0) return { ok: true, data: null };
+  for (const id of ids) {
+    const relinked = await relinkAssetOwner(id, ownerType, ownerId);
+    if (!relinked) {
+      return {
+        ok: false,
+        status: 404,
+        errors: {
+          imageAssetId: "Không tìm thấy ảnh vừa tải lên. Vui lòng tải lại.",
+        },
+      };
+    }
+  }
+  return { ok: true, data: { assetIds: ids } };
+}
+
+// Lifecycle cleanup: delete every asset of one owner whose URL is not in
+// keepUrls (file on disk plus both registry rows). Pass [] to purge the
+// whole gallery on hard delete. Ownership is re-checked per asset so a
+// stale index entry can never remove another owner's file. Missing files
+// are skipped silently; callers run this best-effort after the catalog
+// write so media trouble never blocks the admin action.
+export async function pruneOwnerAssets(
+  ownerType: string,
+  ownerId: string,
+  keepUrls: string[],
+): Promise<{ deleted: number }> {
+  const keep = new Set(keepUrls.map((u) => u.trim()).filter(Boolean));
+  const refs = await listAssetRowsByOwner(ownerType, ownerId);
+  let deleted = 0;
+  for (const ref of refs) {
+    if (keep.has(ref.url.trim())) continue;
+    const row = await findAssetRowById(ref.assetId);
+    if (!row || row.owner_type !== ownerType || row.owner_id !== ownerId) {
+      continue;
+    }
+    if (row.file_path && isSafeAssetKey(row.file_path)) {
+      await deleteAssetFile(row.file_path).catch(() => undefined);
+    }
+    await deleteAssetRows(
+      ref.assetId,
+      row.owner_type,
+      row.owner_id,
+      row.created_at ?? ref.createdAt,
+    );
+    deleted += 1;
+  }
+  return { deleted };
 }
