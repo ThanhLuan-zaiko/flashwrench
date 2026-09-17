@@ -142,6 +142,7 @@ export const staffResetRouteMocks = {
           role: "mechanic",
           status: "active",
           createdAt: null,
+          avatarUrl: null,
         },
         tempPassword: "Abc123XyZ9",
       },

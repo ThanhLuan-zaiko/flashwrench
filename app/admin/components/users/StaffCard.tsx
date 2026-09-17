@@ -48,6 +48,8 @@ const BUTTON_CLASS =
 // One staff row: identity plus role/status pills plus CRUD actions.
 // Live rows offer edit + soft delete; trash rows offer restore + hard
 // delete. Live rows without a pending password offer a two-tap reissue.
+// Saved photos show as square thumbnails like the catalog covers;
+// accounts without photos keep the initials fallback.
 // Touch targets stay at least 44px high per bento checklist.
 export function StaffCard({
   user,
@@ -79,12 +81,22 @@ export function StaffCard({
 
   return (
     <li className="flex flex-col gap-3 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900">
-      <span
-        aria-hidden="true"
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
-      >
-        {getInitials(user.fullName)}
-      </span>
+      {user.avatarUrl ? (
+        // biome-ignore lint/performance/noImgElement: admin thumbnail of stored media asset; optimizer adds no value.
+        <img
+          src={user.avatarUrl}
+          alt={`Ảnh của ${user.fullName || "nhân viên"}`}
+          loading="lazy"
+          className="h-11 w-11 shrink-0 rounded-xl border border-zinc-200 object-cover dark:border-zinc-800"
+        />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+        >
+          {getInitials(user.fullName)}
+        </span>
+      )}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {user.fullName || "Chưa có tên"}

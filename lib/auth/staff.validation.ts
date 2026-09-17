@@ -26,6 +26,7 @@ export type StaffCreateInput = {
   phone: string;
   email: string;
   role: UserRole;
+  avatarAssetId?: string | null;
 };
 
 export type StaffUpdateInput = {
@@ -33,11 +34,34 @@ export type StaffUpdateInput = {
   phone: string;
   email: string;
   role: UserRole;
+  avatarAssetId?: string | null;
 };
 
 export type StaffFieldErrors = Partial<
-  Record<"fullName" | "phone" | "email" | "role" | "confirm" | "form", string>
+  Record<
+    | "fullName"
+    | "phone"
+    | "email"
+    | "role"
+    | "avatarAssetId"
+    | "confirm"
+    | "form",
+    string
+  >
 >;
+
+export function validateStaffAvatarId(value: unknown): string | null {
+  if (value === undefined || value === null) return null;
+  if (
+    typeof value !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value.trim(),
+    )
+  ) {
+    return "Mã ảnh đại diện không hợp lệ.";
+  }
+  return null;
+}
 
 function validateRole(role: unknown, allowed: UserRole[]): string | null {
   if (!allowed.includes(role as UserRole)) {
@@ -61,6 +85,8 @@ function collectCommon(
   if (emailError) errors.email = emailError;
   const roleError = validateRole(input.role, allowed);
   if (roleError) errors.role = roleError;
+  const avatarError = validateStaffAvatarId(input.avatarAssetId);
+  if (avatarError) errors.avatarAssetId = avatarError;
   return errors;
 }
 

@@ -73,12 +73,14 @@ export async function PATCH(
         phone?: unknown;
         email?: unknown;
         role?: unknown;
+        avatarAssetId?: string | null;
       };
       const result = await updateStaff(user.id, userId, {
         fullName: String(input.fullName ?? ""),
         phone: String(input.phone ?? ""),
         email: String(input.email ?? ""),
         role: input.role as UserRole,
+        avatarAssetId: input.avatarAssetId,
       });
       if (!result.ok) {
         return NextResponse.json(

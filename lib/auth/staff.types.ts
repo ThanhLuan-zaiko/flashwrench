@@ -37,12 +37,14 @@ export function toStaffItem(row: {
   role: string | null;
   status: string | null;
   created_at: Date | null;
+  avatar_url: string | null;
 }): AdminUserItem {
   return {
     id: row.user_id,
     fullName: row.full_name ?? "",
     phone: row.phone ?? "",
     email: row.email ?? "",
+    avatarUrl: row.avatar_url ?? null,
     role: (row.role as UserRole) ?? "customer",
     status: (row.status as UserStatus) ?? "active",
     createdAt: row.created_at ? new Date(row.created_at).toISOString() : null,

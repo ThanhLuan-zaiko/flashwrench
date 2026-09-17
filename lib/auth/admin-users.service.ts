@@ -16,6 +16,7 @@ export type AdminUserItem = {
   role: UserRole;
   status: UserStatus;
   createdAt: string | null;
+  avatarUrl: string | null;
 };
 
 export type AdminRoleFilter = UserRole | "all";
@@ -57,6 +58,7 @@ function toItem(row: AdminRoleRow): AdminUserItem {
     fullName: row.full_name ?? "",
     phone: row.phone ?? "",
     email: row.email ?? "",
+    avatarUrl: null,
     role: (row.role as UserRole) ?? "customer",
     status: (row.status as UserStatus) ?? "active",
     createdAt: row.created_at ? new Date(row.created_at).toISOString() : null,
@@ -127,7 +129,13 @@ export async function listAdminUsers(
     }
   }
   merged.sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
-  return { ok: true, users: merged.slice(0, limit) };
+  const users = await Promise.all(
+    merged.slice(0, limit).map(async (item) => ({
+      ...item,
+      avatarUrl: (await findUserById(item.id))?.avatar_url ?? null,
+    })),
+  );
+  return { ok: true, users };
 }
 
 function fail(status: number, form: string): AdminUserActionResult {
@@ -214,6 +222,7 @@ export async function applyAdminUserAction(
       fullName: updated.full_name ?? "",
       phone: updated.phone ?? "",
       email: updated.email ?? "",
+      avatarUrl: updated.avatar_url ?? null,
       role: (updated.role as UserRole) ?? "customer",
       status: (updated.status as UserStatus) ?? "active",
       createdAt: updated.created_at

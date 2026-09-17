@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { makeUserRow } from "../helpers/auth.fixtures";
+import { mediaRepoMocks, mediaStubs } from "../helpers/media.mocks";
 import {
   adminUsersRepoMocks,
   passwordMocks,
@@ -11,6 +12,20 @@ import {
   userRepoMocks,
 } from "../helpers/service-mocks";
 
+const mediaServiceMocks = {
+  claimAssetForOwner: mock(
+    async (
+      _assetId: string,
+      _ownerType: string,
+      _ownerId: string,
+    ): Promise<
+      | { ok: true; data: { assetId: string } }
+      | { ok: false; status: number; errors: { imageAssetId: string } }
+    > =>
+      mediaStubs.claimAssetResult ?? { ok: true, data: { assetId: _assetId } },
+  ),
+};
+
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports, and each factory only hands out the handles
 // defined above, so every suite below reconfigures via stubs.
@@ -20,6 +35,8 @@ mock.module("@/lib/auth/staff.repository", () => staffRepoMocks);
 mock.module("@/lib/auth/staff-pending.service", () => staffPendingMocks);
 mock.module("@/lib/auth/password", () => passwordMocks);
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
+mock.module("@/lib/media/media.repository", () => mediaRepoMocks);
+mock.module("@/lib/media/media.service", () => mediaServiceMocks);
 
 import { applyAdminUserAction } from "@/lib/auth/admin-users.service";
 import {

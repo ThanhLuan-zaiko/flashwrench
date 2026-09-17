@@ -6,8 +6,12 @@ import { useCreateStaff, useUpdateStaff } from "@/hooks/admin";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import type { UserRole } from "@/lib/auth/user.types";
 import { AuthApiError } from "@/services/admin.api";
+import { StaffAvatarField } from "./StaffAvatarField";
 import { StaffCreatedPanel } from "./StaffCreatedPanel";
 import { StaffFormFields } from "./StaffFormFields";
+import { decideAvatarAction, initialAvatarFromItem } from "./staff-avatar";
+import { useDeferredAvatarSubmit } from "./useDeferredAvatarSubmit";
+import { useStagedAvatar } from "./useStagedAvatar";
 
 export type StaffDialogState =
   | { mode: "create" }
@@ -40,8 +44,10 @@ function formErrorText(error: unknown): string | null {
 }
 
 // Create/edit modal for one staff account. Create shows the temp password
-// on success; it stays in the staff list until changed. Parent passes a
-// keyed instance so form state resets on every open.
+// on success; it stays in the staff list until changed. Avatar photos are
+// staged as local previews (drag-drop plus crop) and upload only on save
+// like the catalog covers. Parent passes a keyed instance so form state
+// resets on every open.
 export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
   const editing = dialog?.mode === "edit" ? dialog.item : null;
   const [fullName, setFullName] = useState(editing?.fullName ?? "");
@@ -50,10 +56,56 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
   const [role, setRole] = useState<string>(
     editing && editing.role !== "admin" ? editing.role : "mechanic",
   );
+  const [pendingOwnerId] = useState(() => crypto.randomUUID());
+  const avatar = useStagedAvatar(initialAvatarFromItem(editing));
 
   const createMutation = useCreateStaff();
   const updateMutation = useUpdateStaff();
-  const pending = createMutation.isPending || updateMutation.isPending;
+  const saver = useDeferredAvatarSubmit({
+    staged: avatar.staged,
+    owner: {
+      scope: "avatar",
+      ownerType: "user",
+      ownerId: editing?.id ?? pendingOwnerId,
+    },
+    onSave: (uploaded) => {
+      const initial = initialAvatarFromItem(editing);
+      const action = decideAvatarAction(
+        initial,
+        avatar.existing,
+        Boolean(avatar.staged),
+      );
+      const avatarAssetId =
+        action === "replace"
+          ? (uploaded?.assetId ?? undefined)
+          : action === "clear"
+            ? null
+            : undefined;
+      if (isCreate) {
+        createMutation.mutate({
+          fullName,
+          phone,
+          email,
+          role: role as UserRole,
+          avatarAssetId,
+        });
+      } else if (editing) {
+        updateMutation.mutate(
+          {
+            userId: editing.id,
+            fullName,
+            phone,
+            email,
+            role: role as UserRole,
+            avatarAssetId,
+          },
+          { onSuccess: onClose },
+        );
+      }
+    },
+  });
+  const pending =
+    createMutation.isPending || updateMutation.isPending || saver.uploading;
   const error = createMutation.error ?? updateMutation.error ?? null;
   const formError = formErrorText(error);
   const created = createMutation.data ?? null;
@@ -63,25 +115,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
 
   const submit = () => {
     if (pending) return;
-    if (isCreate) {
-      createMutation.mutate({
-        fullName,
-        phone,
-        email,
-        role: role as UserRole,
-      });
-    } else if (editing) {
-      updateMutation.mutate(
-        {
-          userId: editing.id,
-          fullName,
-          phone,
-          email,
-          role: role as UserRole,
-        },
-        { onSuccess: onClose },
-      );
-    }
+    saver.submit();
   };
 
   return (
@@ -97,7 +131,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
             {isCreate ? "Thêm nhân viên" : "Sửa nhân viên"}
@@ -134,13 +168,21 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
               onEmail={setEmail}
               onRole={setRole}
             />
+            <div className="mt-4">
+              <StaffAvatarField
+                avatar={avatar}
+                disabled={pending}
+                serverErrorText={fieldError(error, "avatarAssetId")}
+                onFiles={(files) => void avatar.addFiles(files)}
+              />
+            </div>
 
-            {formError && (
+            {(formError || saver.uploadError) && (
               <p
                 role="alert"
                 className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
               >
-                {formError}
+                {saver.uploadError ?? formError}
               </p>
             )}
 
@@ -173,11 +215,13 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
                 ) : (
                   <FiSave aria-hidden="true" className="h-4 w-4" />
                 )}
-                {pending
-                  ? "Đang xử lý…"
-                  : isCreate
-                    ? "Tạo tài khoản"
-                    : "Lưu thay đổi"}
+                {saver.uploading
+                  ? "Đang tải ảnh…"
+                  : pending
+                    ? "Đang xử lý…"
+                    : isCreate
+                      ? "Tạo tài khoản"
+                      : "Lưu thay đổi"}
               </button>
             </div>
           </div>

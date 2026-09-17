@@ -218,7 +218,7 @@ export async function updatePassword(
 
 export async function setAvatarUrl(
   userId: string,
-  avatarUrl: string,
+  avatarUrl: string | null,
 ): Promise<void> {
   await scylla.execute(
     "UPDATE users_by_id SET avatar_url = ?, updated_at = ? WHERE user_id = ?",

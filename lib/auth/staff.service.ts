@@ -18,7 +18,6 @@ import {
   failFields,
   type StaffCreateResult,
   type StaffResult,
-  type TargetGate,
   toStaffItem,
 } from "./staff.types";
 import {
@@ -29,10 +28,12 @@ import {
   validateStaffCreate,
   validateStaffUpdate,
 } from "./staff.validation";
+import { resolveStaffAvatar, saveStaffAvatar } from "./staff-avatar.service";
 import {
   clearTempPassword,
   persistTempPassword,
 } from "./staff-pending.service";
+import { loadManageableTarget } from "./staff-target.service";
 import {
   claimEmail,
   claimPhone,
@@ -44,36 +45,6 @@ import {
   releasePhone,
 } from "./user.repository";
 import { monthBucket, type UserRole, type UserStatus } from "./user.types";
-
-// Guards shared by every staff mutation: admins can never touch their own
-// account or any other admin account.
-async function loadManageableTarget(
-  adminId: string,
-  targetUserId: string,
-): Promise<TargetGate> {
-  const target = await findUserById(targetUserId);
-  if (!target)
-    return {
-      error: fail<StaffResult>(404, "Không tìm thấy người dùng."),
-    } as const;
-  if (target.user_id === adminId) {
-    return {
-      error: fail<StaffResult>(
-        403,
-        "Không thể thay đổi tài khoản của chính mình.",
-      ),
-    } as const;
-  }
-  if (target.role === "admin") {
-    return {
-      error: fail<StaffResult>(
-        403,
-        "Không thể thay đổi tài khoản quản trị viên khác.",
-      ),
-    } as const;
-  }
-  return { target } as const;
-}
 
 function cleanName(value: string): string {
   return value.trim().replace(/\s+/g, " ");
@@ -103,6 +74,8 @@ export async function createStaff(
     });
   }
 
+  const avatar = await resolveStaffAvatar(adminId, raw.avatarAssetId);
+  if (!avatar.ok) return avatar;
   const tempPassword = generateTempPassword();
   const userId = randomUUID();
   const created = await createUserWithRole({
@@ -124,6 +97,7 @@ export async function createStaff(
     });
   }
 
+  await saveStaffAvatar(userId, avatar, true);
   const row = await findUserById(userId);
   if (!row) return fail(404, "Không tìm thấy người dùng vừa tạo.");
   await persistTempPassword(userId, tempPassword, adminId);
@@ -148,6 +122,12 @@ export async function updateStaff(
   }
   const invalid = validateStaffUpdate(raw);
   if (invalid) return failFields(400, invalid);
+  const avatar = await resolveStaffAvatar(
+    adminId,
+    raw.avatarAssetId,
+    target.user_id,
+  );
+  if (!avatar.ok) return avatar;
 
   const fullName = cleanName(raw.fullName);
   const { phone, email } = normalizeStaffContacts(raw);
@@ -226,6 +206,7 @@ export async function updateStaff(
     if (nextRole !== prevRole) {
       await setIdRole(target.user_id, nextRole, now);
     }
+    await saveStaffAvatar(target.user_id, avatar);
   } catch (error) {
     if (phoneChanged) await releasePhone(phone).catch(() => undefined);
     if (emailChanged) await releaseEmail(email).catch(() => undefined);

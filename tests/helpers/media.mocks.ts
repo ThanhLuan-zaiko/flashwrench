@@ -12,6 +12,10 @@ export const mediaStubs = {
   assetById: null as MediaAssetRow | null,
   ownerAssets: [] as OwnerAssetRef[],
   insertError: null as Error | null,
+  claimAssetResult: null as
+    | { ok: true; data: { assetId: string } }
+    | { ok: false; status: number; errors: { imageAssetId: string } }
+    | null,
   files: new Map<string, Buffer>(),
 };
 
@@ -65,6 +69,7 @@ export function resetMediaMocks(): void {
   mediaStubs.assetById = null;
   mediaStubs.ownerAssets = [];
   mediaStubs.insertError = null;
+  mediaStubs.claimAssetResult = null;
   mediaStubs.files.clear();
   for (const fn of Object.values(mediaRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mediaStorageMocks)) fn.mockClear();

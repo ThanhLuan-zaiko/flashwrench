@@ -58,6 +58,29 @@ describe("listAdminUsers", () => {
     expect(result.users[0]?.status).toBe("pending_verification");
   });
 
+  test("hydrates avatars only for the final deduplicated page", async () => {
+    adminStubs.rolePages = [
+      makeAdminRoleRow({ user_id: "a", created_at: new Date("2026-09-01") }),
+      makeAdminRoleRow({ user_id: "b", created_at: new Date("2026-09-02") }),
+      makeAdminRoleRow({ user_id: "b", created_at: new Date("2026-09-02") }),
+    ];
+    serviceStubs.userById = makeUserRow({
+      avatar_url: "/api/media/avatar/2026-09/photo.jpg",
+    });
+    const result = await listAdminUsers({ limit: 1 });
+    expect(result).toMatchObject({
+      ok: true,
+      users: [{ id: "b", avatarUrl: serviceStubs.userById.avatar_url }],
+    });
+    expect(userRepoMocks.findUserById.mock.calls).toEqual([["b"]]);
+  });
+
+  test("returns null for an absent avatar", async () => {
+    adminStubs.rolePages = [makeAdminRoleRow()];
+    const result = await listAdminUsers({ months: 1 });
+    expect(result.ok && result.users[0]?.avatarUrl).toBeNull();
+  });
+
   test("rejects an unknown role filter", async () => {
     const result = await listAdminUsers({ role: "owner" as never });
     expect(result).toMatchObject({ ok: false, status: 400 });
@@ -70,11 +93,13 @@ describe("applyAdminUserAction", () => {
       user_id: "target-1",
       role: "mechanic",
       status: "pending_verification",
+      avatar_url: "/api/media/avatar/2026-09/photo.jpg",
     });
     const result = await applyAdminUserAction(ADMIN_ID, "target-1", "approve");
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.user.id).toBe("target-1");
+    expect(result.user.avatarUrl).toBe(serviceStubs.userById?.avatar_url);
     expect(adminUsersRepoMocks.setIdStatus.mock.calls[0]?.[1]).toBe("active");
     expect(adminUsersRepoMocks.setIdStatus.mock.calls[0]?.[2]).toBeNull();
     expect(adminUsersRepoMocks.setRoleStatus.mock.calls[0]?.[4]).toBe("active");

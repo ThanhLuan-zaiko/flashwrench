@@ -108,7 +108,7 @@ export const userRepoMocks = {
     async (_userId: string, _hash: string): Promise<void> => undefined,
   ),
   setAvatarUrl: mock(
-    async (_userId: string, _url: string): Promise<void> => undefined,
+    async (_userId: string, _url: string | null): Promise<void> => undefined,
   ),
 };
 

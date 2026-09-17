@@ -62,11 +62,18 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json(
+      { errors: { form: "Dữ liệu gửi lên không hợp lệ." } },
+      { status: 400 },
+    );
+  }
   const input = body as {
     fullName?: unknown;
     phone?: unknown;
     email?: unknown;
     role?: unknown;
+    avatarAssetId?: string | null;
   };
 
   try {
@@ -75,6 +82,7 @@ export async function POST(request: Request) {
       phone: String(input.phone ?? ""),
       email: String(input.email ?? ""),
       role: input.role as UserRole,
+      avatarAssetId: input.avatarAssetId,
     });
     if (!result.ok) {
       return NextResponse.json(
