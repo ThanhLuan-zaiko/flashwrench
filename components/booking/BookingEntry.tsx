@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { FiArrowRight, FiRefreshCw, FiUser } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { useLastBooking } from "@/hooks/booking";
 import { usePublicCatalog } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { BookingForm } from "./BookingForm";
+import { toBookingPrefill } from "./booking-prefill";
 
 type BookingEntryProps = {
   serviceId: string | null;
@@ -25,6 +27,7 @@ export function BookingEntry({
 }: BookingEntryProps) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const catalog = usePublicCatalog();
+  const lastBooking = useLastBooking();
 
   const selected = useMemo(() => {
     if (!serviceId) return null;
@@ -33,9 +36,14 @@ export function BookingEntry({
     );
   }, [catalog.data, serviceId]);
 
+  const prefill = useMemo(
+    () => toBookingPrefill(lastBooking.data ?? null),
+    [lastBooking.data],
+  );
+
   const unknownService =
     catalog.isSuccess && serviceId !== null && selected === null;
-  const ready = catalog.isSuccess && !unknownService;
+  const ready = catalog.isSuccess && !unknownService && !lastBooking.isPending;
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
@@ -74,7 +82,7 @@ export function BookingEntry({
         </Link>
       </section>
 
-      {catalog.isPending && (
+      {(catalog.isPending || lastBooking.isPending) && (
         <div aria-busy="true" className="flex flex-col gap-3">
           <p className="sr-only">Đang tải dịch vụ đã chọn</p>
           <div className="h-40 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900" />
@@ -127,6 +135,7 @@ export function BookingEntry({
           preselected={selected}
           services={catalog.data?.services ?? []}
           initialServiceId={serviceId}
+          prefill={prefill}
         />
       )}
     </div>

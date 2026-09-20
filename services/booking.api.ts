@@ -3,6 +3,7 @@ import type {
   CreateBookingInput,
   CreatedBooking,
 } from "@/lib/booking/booking.types";
+import type { BookingSummary } from "@/lib/booking/workspace.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
 export type { BookingFieldErrors, CreatedBooking, CreateBookingInput };
@@ -40,4 +41,15 @@ export async function createBookingRequest(
     }
     throw error;
   }
+}
+
+// The customer's most recent booking, read off their own history list —
+// powers the quick-rebook prefill so a returning customer can confirm in
+// one tap when nothing changed.
+export async function fetchLastBooking(): Promise<BookingSummary | null> {
+  const page = await apiRequest<{
+    items: BookingSummary[];
+    nextCursor: string | null;
+  }>("/api/bookings?limit=1");
+  return page.items[0] ?? null;
 }

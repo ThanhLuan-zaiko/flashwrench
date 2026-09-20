@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FiChevronDown,
   FiRefreshCw,
@@ -44,7 +44,13 @@ export function MechanicSection({
   disabled,
   onChange,
 }: MechanicSectionProps) {
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(value !== null);
+
+  // A prefilled mechanic arrives with the section already mounted, so
+  // the picker opens on its own whenever a saved pick lands.
+  useEffect(() => {
+    if (value !== null) setPickerOpen(true);
+  }, [value]);
   const mechanics = useAvailableMechanics(
     lat !== null && lng !== null ? { lat, lng } : {},
   );
