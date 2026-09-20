@@ -25,6 +25,7 @@ import {
   mediaStorageMocks,
   resetMediaMocks,
 } from "./media.mocks";
+import { resetPartsMocks } from "./parts.mocks";
 import {
   staffPendingMocks,
   staffRepoMocks,
@@ -49,6 +50,18 @@ export {
   mechanicWorkspaceRepoMocks,
 } from "./mechanic.mocks";
 export { mediaRepoMocks, mediaStorageMocks, mediaStubs } from "./media.mocks";
+export {
+  cartRepoMocks,
+  cartStubs,
+  orderRepoMocks,
+  orderStubs,
+  orderWriteRepoMocks,
+  partCategoryRepoMocks,
+  partInventoryRepoMocks,
+  partRepoMocks,
+  partStubs,
+  partsMediaServiceMocks,
+} from "./parts.mocks";
 export {
   staffPendingMocks,
   staffTempCryptoMocks,
@@ -217,6 +230,7 @@ export function resetServiceMocks(): void {
   resetComplaintMocks();
   resetBookingMocks();
   resetMediaMocks();
+  resetPartsMocks();
   staffTempStubs.rowByUser = {};
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(staffRepoMocks)) fn.mockClear();

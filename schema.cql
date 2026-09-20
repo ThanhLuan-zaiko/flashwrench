@@ -581,8 +581,13 @@ CREATE TABLE IF NOT EXISTS part_categories (
   name        TEXT, -- Engine oil, Battery, Tire, Brake pad, Air filter...
   slug        TEXT,
   icon        TEXT,
+  description TEXT,
   sort_order  INT,
-  is_active   BOOLEAN
+  is_active   BOOLEAN,
+  is_deleted  BOOLEAN,
+  created_at  TIMESTAMP,
+  updated_at  TIMESTAMP,
+  deleted_at  TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS part_categories_by_slug (
@@ -595,6 +600,7 @@ CREATE TABLE IF NOT EXISTS parts_by_id (
   part_id       UUID PRIMARY KEY,
   sku           TEXT,
   name          TEXT,
+  slug          TEXT,
   brand         TEXT, -- Bosch, Castrol, Michelin, Denso...
   category_id   UUID,
   category_name TEXT,
@@ -610,8 +616,10 @@ CREATE TABLE IF NOT EXISTS parts_by_id (
   rating_avg    DECIMAL,
   rating_count  INT,
   is_active     BOOLEAN,
+  is_deleted    BOOLEAN,
   created_at    TIMESTAMP,
-  updated_at    TIMESTAMP
+  updated_at    TIMESTAMP,
+  deleted_at    TIMESTAMP
 );
 
 -- Query: browse shop by category (newest first)
@@ -620,11 +628,14 @@ CREATE TABLE IF NOT EXISTS parts_by_category (
   created_at  TIMESTAMP,
   part_id     UUID,
   name        TEXT,
+  slug        TEXT,
   brand       TEXT,
+  image       TEXT,
   price       BIGINT,
   stock_qty   INT,
   rating_avg  DECIMAL,
   is_active   BOOLEAN,
+  is_deleted  BOOLEAN,
   PRIMARY KEY ((category_id), created_at, part_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, part_id ASC);
 
@@ -634,8 +645,10 @@ CREATE TABLE IF NOT EXISTS parts_by_brand (
   created_at TIMESTAMP,
   part_id    UUID,
   name       TEXT,
+  slug       TEXT,
   price      BIGINT,
   stock_qty  INT,
+  is_deleted BOOLEAN,
   PRIMARY KEY ((brand), created_at, part_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, part_id ASC);
 

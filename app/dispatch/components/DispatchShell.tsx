@@ -14,7 +14,8 @@ import {
   getDispatchSection,
 } from "./dispatch-sections";
 
-function sectionIdForPath(_pathname: string): DispatchSectionId {
+function sectionIdForPath(pathname: string): DispatchSectionId {
+  if (pathname.startsWith("/dispatch/orders")) return "orders";
   return "board";
 }
 

@@ -1,0 +1,151 @@
+"use client";
+
+import { FiInbox, FiLoader } from "react-icons/fi";
+import type { PartCategoryItem } from "@/lib/parts/parts.types";
+import { CatalogPager } from "../services/CatalogPager";
+import { usePagination } from "../services/usePagination";
+import { PartRowActions } from "./PartRowActions";
+
+type PartCategoryListProps = {
+  items: PartCategoryItem[];
+  isPending: boolean;
+  isError: boolean;
+  pendingId: string | null;
+  trashMode: boolean;
+  onEdit: (item: PartCategoryItem) => void;
+  onToggle: (item: PartCategoryItem) => void;
+  onSoftDelete: (item: PartCategoryItem) => void;
+  onHardDelete: (item: PartCategoryItem) => void;
+  onRestore: (item: PartCategoryItem) => void;
+  onRetry: () => void;
+};
+
+function StatusPill({ item }: { item: PartCategoryItem }) {
+  return (
+    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+      {item.isDeleted
+        ? "Trong thùng rác"
+        : item.isActive
+          ? "Đang áp dụng"
+          : "Tạm tắt"}
+    </span>
+  );
+}
+
+// Live part-category rows with full CRUD actions.
+export function PartCategoryList({
+  items,
+  isPending,
+  isError,
+  pendingId,
+  trashMode,
+  onEdit,
+  onToggle,
+  onSoftDelete,
+  onHardDelete,
+  onRestore,
+  onRetry,
+}: PartCategoryListProps) {
+  const pager = usePagination(items.length);
+  if (isPending) {
+    return (
+      <ul className="flex flex-col gap-2" aria-label="Đang tải danh mục">
+        {[0, 1, 2].map((i) => (
+          <li
+            key={i}
+            className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-3 dark:bg-zinc-900"
+          >
+            <FiLoader
+              aria-hidden="true"
+              className="h-4 w-4 motion-safe:animate-spin"
+            />
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              Đang tải danh mục…
+            </span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="rounded-xl bg-zinc-100 px-4 py-10 text-center dark:bg-zinc-900">
+        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+          Không tải được danh mục.
+        </p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
+  if (items.length === 0) {
+    return (
+      <div className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-6 dark:bg-zinc-900">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
+          <FiInbox aria-hidden="true" className="h-5 w-5" />
+        </span>
+        <span>
+          <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+            {trashMode ? "Thùng rác trống" : "Chưa có danh mục nào"}
+          </span>
+          <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+            {trashMode
+              ? "Các mục xóa mềm sẽ hiện tại đây"
+              : "Nhấn Thêm danh mục để tạo mới"}
+          </span>
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+        {pager.slice(items).map((item) => {
+          const busy = pendingId === item.id;
+          return (
+            <li
+              key={item.id}
+              className="flex flex-col gap-2 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                  {item.icon ? `${item.icon} ` : ""}
+                  {item.name}
+                </span>
+                <span className="block truncate font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  {item.slug} · {item.partCount} sản phẩm
+                </span>
+                <span className="mt-1.5 flex flex-wrap gap-1.5">
+                  <StatusPill item={item} />
+                </span>
+              </span>
+              <PartRowActions
+                item={item}
+                busy={busy}
+                trashMode={trashMode}
+                onEdit={onEdit}
+                onToggle={onToggle}
+                onSoftDelete={onSoftDelete}
+                onHardDelete={onHardDelete}
+                onRestore={onRestore}
+              />
+            </li>
+          );
+        })}
+      </ul>
+      <CatalogPager
+        page={pager.page}
+        pageCount={pager.pageCount}
+        start={pager.range.start}
+        end={pager.range.end}
+        total={items.length}
+        onPage={pager.goTo}
+      />
+    </div>
+  );
+}

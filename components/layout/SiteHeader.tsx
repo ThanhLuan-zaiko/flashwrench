@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { CartLink } from "./CartLink";
 import { HeaderNav } from "./HeaderNav";
 import { MobileMenu } from "./MobileMenu";
 import { SiteLogo } from "./SiteLogo";
@@ -26,6 +27,8 @@ export function SiteHeader({ currentPath = "/" }: SiteHeaderProps) {
         </div>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <CartLink />
+
           <ThemeToggle />
 
           <UserMenu />

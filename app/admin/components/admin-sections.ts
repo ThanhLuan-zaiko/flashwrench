@@ -1,7 +1,7 @@
 import type { IconType } from "react-icons";
-import { FiBarChart2, FiSettings, FiUsers } from "react-icons/fi";
+import { FiBarChart2, FiPackage, FiSettings, FiUsers } from "react-icons/fi";
 
-export type AdminSectionId = "dashboard" | "users" | "services";
+export type AdminSectionId = "dashboard" | "users" | "services" | "products";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -32,6 +32,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Quản lý bảng giá và loại hình sửa chữa.",
     href: "/admin/services/categories",
     icon: FiSettings,
+  },
+  {
+    id: "products",
+    label: "Quản lý sản phẩm",
+    description: "Quản lý danh mục và linh kiện đang bán.",
+    href: "/admin/products/categories",
+    icon: FiPackage,
   },
 ];
 

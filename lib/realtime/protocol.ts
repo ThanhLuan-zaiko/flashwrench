@@ -9,6 +9,7 @@ export type RealtimeUser = { id: string; role: UserRole };
 
 export const STAFF_PASSWORDS_TOPIC = "staff-passwords";
 export const SERVICE_CATALOG_TOPIC = "service-catalog";
+export const PARTS_CATALOG_TOPIC = "parts-catalog";
 export const OPERATIONS_TOPIC = "operations";
 export const ADMIN_USERS_TOPIC = "admin-users";
 export const COMPLAINTS_TOPIC = "complaints";
@@ -82,8 +83,11 @@ export type DomainEvent = {
     | "vehicle-updated"
     | "mechanic-updated"
     | "user-updated"
-    | "complaint-updated";
+    | "complaint-updated"
+    | "orders-updated"
+    | "order-updated";
   bookingId?: string;
+  orderId?: string;
   userId?: string;
   status?: string;
 };
@@ -98,6 +102,8 @@ const DOMAIN_EVENT_KINDS = new Set<DomainEvent["kind"]>([
   "mechanic-updated",
   "user-updated",
   "complaint-updated",
+  "orders-updated",
+  "order-updated",
 ]);
 
 const LEGACY_BOOKING_STATUS_TYPE = "booking-status";
@@ -125,11 +131,19 @@ export function parseDomainEvent(payload: unknown): DomainEvent | null {
     return null;
   }
   const bookingId = optionalField(body.bookingId);
+  const orderId = optionalField(body.orderId);
   const userId = optionalField(body.userId);
   const status = optionalField(body.status);
-  if (bookingId === null || userId === null || status === null) return null;
+  if (
+    bookingId === null ||
+    orderId === null ||
+    userId === null ||
+    status === null
+  )
+    return null;
   const event: DomainEvent = { kind };
   if (bookingId !== undefined) event.bookingId = bookingId;
+  if (orderId !== undefined) event.orderId = orderId;
   if (userId !== undefined) event.userId = userId;
   if (status !== undefined) event.status = status;
   return event;
@@ -229,6 +243,7 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
 type TopicKind =
   | "staff-passwords"
   | "service-catalog"
+  | "parts-catalog"
   | "operations"
   | "admin-users"
   | "complaints"
@@ -247,6 +262,7 @@ const EMERGENCY_ZONE_TOPIC_PATTERN = /^emergency:zone:[a-z0-9_-]+$/;
 function topicKind(topic: string): TopicKind {
   if (topic === STAFF_PASSWORDS_TOPIC) return "staff-passwords";
   if (topic === SERVICE_CATALOG_TOPIC) return "service-catalog";
+  if (topic === PARTS_CATALOG_TOPIC) return "parts-catalog";
   if (topic === OPERATIONS_TOPIC) return "operations";
   if (topic === ADMIN_USERS_TOPIC) return "admin-users";
   if (topic === COMPLAINTS_TOPIC) return "complaints";
@@ -268,7 +284,12 @@ export function canSubscribe(
 ): boolean {
   if (!isValidTopic(topic)) return false;
   const kind = topicKind(topic);
-  if (kind === "service-catalog" || kind === "mechanic-directory") return true;
+  if (
+    kind === "service-catalog" ||
+    kind === "parts-catalog" ||
+    kind === "mechanic-directory"
+  )
+    return true;
   if (!user) return false;
   switch (kind) {
     case "staff-passwords":
