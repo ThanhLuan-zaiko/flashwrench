@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import { FiLoader, FiMapPin, FiSearch } from "react-icons/fi";
+import { useRef, useState } from "react";
+import { FiCrosshair, FiLoader, FiMapPin, FiSearch } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { useAddressSearch, useReverseGeocode } from "@/hooks/geocode";
 import {
@@ -11,6 +11,7 @@ import {
   type MapAddressValues,
 } from "@/services/geocode.api";
 import type { MapPoint } from "./MapPicker";
+import { useLocatePosition } from "./useLocatePosition";
 
 const MapPicker = dynamic(
   () => import("./MapPicker").then((module) => module.MapPicker),
@@ -53,8 +54,10 @@ export function BookingMapSection({
 
   const marker: MapPoint | null =
     lat !== null && lng !== null ? { lat, lng } : null;
+  const pinnedRef = useRef(marker !== null);
 
   function handlePick(point: MapPoint) {
+    pinnedRef.current = true;
     onCoords(point);
     reverse.mutate(point, {
       onSuccess: (values) => onAddress(values),
@@ -71,6 +74,15 @@ export function BookingMapSection({
     setOpen(false);
     handlePick({ lat: result.lat, lng: result.lng });
   }
+
+  const { locating, locate } = useLocatePosition({
+    pinnedRef,
+    onPoint: (point) => {
+      setView(point);
+      setFocusKey((key) => key + 1);
+      handlePick(point);
+    },
+  });
 
   const suggestions = results.data ?? [];
 
@@ -140,12 +152,30 @@ export function BookingMapSection({
         )}
       </div>
 
-      <MapPicker
-        center={marker ?? view}
-        marker={marker}
-        focusKey={focusKey}
-        onPick={handlePick}
-      />
+      <div className="relative">
+        <MapPicker
+          center={marker ?? view}
+          marker={marker}
+          focusKey={focusKey}
+          onPick={handlePick}
+        />
+        <button
+          type="button"
+          onClick={() => locate(false, false)}
+          disabled={locating}
+          aria-label="Dùng vị trí hiện tại"
+          className="absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
+        >
+          {locating ? (
+            <FiLoader
+              aria-hidden="true"
+              className="h-4 w-4 motion-safe:animate-spin"
+            />
+          ) : (
+            <FiCrosshair aria-hidden="true" className="h-4 w-4" />
+          )}
+        </button>
+      </div>
 
       <p
         aria-live="polite"

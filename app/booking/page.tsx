@@ -30,7 +30,7 @@ export default async function BookingPage({
 
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
-      <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14">
+      <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14 xl:max-w-7xl">
         <BookingEntry
           serviceId={normalized}
           userName={session.user.fullName}

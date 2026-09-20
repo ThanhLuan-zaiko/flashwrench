@@ -78,7 +78,7 @@ export function MapPicker({
         center={[center.lat, center.lng]}
         zoom={13}
         scrollWheelZoom
-        className="h-72 w-full"
+        className="h-72 w-full lg:h-96"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

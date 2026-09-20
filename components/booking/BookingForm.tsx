@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FiCalendar, FiLoader } from "react-icons/fi";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { useToast } from "@/components/toast/useToast";
 import { useCreateBooking } from "@/hooks/booking";
@@ -15,18 +14,14 @@ import type {
 } from "@/services/booking.api";
 import { BookingApiError } from "@/services/booking.api";
 import type { MapAddressValues } from "@/services/geocode.api";
-import {
-  type AddressValues,
-  BookingAddressSection,
-} from "./BookingAddressSection";
+import type { AddressValues } from "./BookingAddressSection";
+import { BookingDetailsSection } from "./BookingDetailsSection";
 import { BookingMapSection } from "./BookingMapSection";
-import { BookingScheduleSection } from "./BookingScheduleSection";
+import { BookingServiceGallery } from "./BookingServiceGallery";
 import { BookingServiceSection } from "./BookingServiceSection";
+import { BookingSubmitButton } from "./BookingSubmitButton";
 import { BookingSuccess } from "./BookingSuccess";
-import {
-  BookingVehicleSection,
-  type VehicleValues,
-} from "./BookingVehicleSection";
+import type { VehicleValues } from "./BookingVehicleSection";
 import {
   defaultScheduled,
   maxScheduled,
@@ -78,6 +73,10 @@ export function BookingForm({
 
   const minSlot = useMemo(() => minScheduled(), []);
   const maxSlot = useMemo(() => maxScheduled(), []);
+  const activeService = useMemo(
+    () => preselected ?? services.find((s) => s.id === serviceId) ?? null,
+    [preselected, services, serviceId],
+  );
 
   if (created) return <BookingSuccess booking={created} />;
   const pending = createBooking.isPending;
@@ -156,92 +155,89 @@ export function BookingForm({
       onSubmit={handleSubmit}
       noValidate
       aria-label="Đặt lịch sửa xe"
-      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 lg:grid lg:grid-flow-dense lg:grid-cols-2 lg:gap-x-5 xl:grid-cols-3 dark:border-zinc-800 dark:bg-zinc-950"
     >
-      {errors.form && <FormAlert message={errors.form} />}
+      {errors.form && (
+        <div className="lg:col-span-2 xl:col-span-3">
+          <FormAlert message={errors.form} />
+        </div>
+      )}
 
-      <BookingServiceSection
-        preselected={preselected}
-        services={services}
-        serviceId={serviceId}
-        error={errors.serviceId}
-        disabled={pending}
-        onServiceId={(v) => {
-          setServiceId(v);
-          clearError("serviceId");
-        }}
-      />
+      <div className="lg:col-start-2">
+        <BookingServiceSection
+          preselected={preselected}
+          services={services}
+          serviceId={serviceId}
+          error={errors.serviceId}
+          disabled={pending}
+          onServiceId={(v) => {
+            setServiceId(v);
+            clearError("serviceId");
+          }}
+        />
+      </div>
 
-      <BookingMapSection
-        lat={coords?.lat ?? null}
-        lng={coords?.lng ?? null}
-        error={errors.location}
-        onCoords={(point) => {
-          setCoords(point);
-          clearError("location");
-        }}
-        onAddress={handleMapAddress}
-      />
+      <div className="lg:col-start-2 xl:col-start-3">
+        <BookingServiceGallery
+          key={activeService?.id ?? "none"}
+          service={activeService}
+        />
+      </div>
 
-      <BookingScheduleSection
-        value={scheduledAt}
-        min={minSlot}
-        max={maxSlot}
-        error={errors.scheduledAt}
-        disabled={pending}
-        onChange={(v) => {
-          setScheduledAt(v);
-          clearError("scheduledAt");
-        }}
-      />
+      <div className="lg:col-start-1 lg:row-span-5 lg:self-start lg:sticky lg:top-20 xl:row-span-3">
+        <BookingMapSection
+          lat={coords?.lat ?? null}
+          lng={coords?.lng ?? null}
+          error={errors.location}
+          onCoords={(point) => {
+            setCoords(point);
+            clearError("location");
+          }}
+          onAddress={handleMapAddress}
+        />
+      </div>
 
-      <BookingAddressSection
-        values={address}
-        errors={errors}
-        disabled={pending}
-        onChange={(field, v) => {
-          setAddress((prev) => ({ ...prev, [field]: v }));
-          clearError(field);
-        }}
-      />
+      <div className="lg:col-start-2">
+        <BookingDetailsSection
+          scheduledAt={scheduledAt}
+          min={minSlot}
+          max={maxSlot}
+          address={address}
+          vehicle={vehicle}
+          errors={errors}
+          disabled={pending}
+          onScheduledAt={(v) => {
+            setScheduledAt(v);
+            clearError("scheduledAt");
+          }}
+          onAddress={(field, v) => {
+            setAddress((prev) => ({ ...prev, [field]: v }));
+            clearError(field);
+          }}
+          onVehicle={(field, v) => {
+            setVehicle((prev) => ({ ...prev, [field]: v }));
+            clearError(field);
+          }}
+        />
+      </div>
 
-      <BookingVehicleSection
-        values={vehicle}
-        errors={errors}
-        disabled={pending}
-        onChange={(field, v) => {
-          setVehicle((prev) => ({ ...prev, [field]: v }));
-          clearError(field);
-        }}
-      />
+      <div className="lg:col-start-2 xl:col-start-3">
+        <MechanicSection
+          lat={coords?.lat ?? null}
+          lng={coords?.lng ?? null}
+          value={mechanicId}
+          error={errors.mechanicId}
+          disabled={pending}
+          onChange={(v) => {
+            setMechanicId(v);
+            clearError("mechanicId");
+          }}
+        />
+      </div>
 
-      <MechanicSection
-        lat={coords?.lat ?? null}
-        lng={coords?.lng ?? null}
-        value={mechanicId}
-        error={errors.mechanicId}
-        disabled={pending}
-        onChange={(v) => {
-          setMechanicId(v);
-          clearError("mechanicId");
-        }}
-      />
-
-      <button
-        type="submit"
-        disabled={pending}
-        className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-      >
-        {pending ? (
-          <FiLoader
-            aria-hidden="true"
-            className="h-4 w-4 motion-safe:animate-spin"
-          />
-        ) : (
-          <FiCalendar aria-hidden="true" className="h-4 w-4" />
-        )}
-        {pending ? "Đang tạo lịch hẹn…" : "Xác nhận đặt lịch"}
-      </button>
+      <div className="lg:col-start-2 xl:col-span-2">
+        <BookingSubmitButton pending={pending} />
+      </div>
     </form>
   );
 }
