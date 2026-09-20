@@ -3,6 +3,7 @@
 // Nothing touches a real database. Extend these handles instead of
 // inventing file-local mocks for the same modules.
 import { mock } from "bun:test";
+import type { BookingWorkflowWrite } from "@/lib/booking/booking-workflow.types";
 import type {
   MechanicBookingItemRow,
   MechanicBookingRow,
@@ -110,6 +111,26 @@ export const bookingWorkflowRepoMocks = {
   ),
   projectBookingTransition: mock(async (_write: unknown): Promise<void> => {
     mechanicStubs.transitionProjected.push(_write);
+    // Mirror the real projection: after a successful write, later reads of
+    // the same booking row must observe the new status and assignee,
+    // otherwise a service re-read returns the pre-transition snapshot.
+    const write = _write as BookingWorkflowWrite;
+    const next: MechanicBookingRow = {
+      ...write.before,
+      status: write.status,
+      mechanic_id: write.mechanicId,
+      mechanic_name: write.mechanicName,
+      cancel_reason:
+        write.status === "cancelled" ? write.note : write.before.cancel_reason,
+      updated_at: write.at,
+      month_bucket: write.monthBucket ?? write.before.month_bucket,
+    };
+    if (mechanicStubs.bookingById?.booking_id === write.before.booking_id) {
+      mechanicStubs.bookingById = next;
+    }
+    mechanicStubs.bookingRowsByIds = mechanicStubs.bookingRowsByIds.map(
+      (row) => (row.booking_id === write.before.booking_id ? next : row),
+    );
   }),
 };
 

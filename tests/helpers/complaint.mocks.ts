@@ -24,9 +24,10 @@ export const complaintRepoMocks = {
 };
 
 export const complaintServiceMocks = {
-  listComplaints: mock(
-    async (..._args: unknown[]) => ({ ok: true as const, data: [] }),
-  ),
+  listComplaints: mock(async (..._args: unknown[]) => ({
+    ok: true as const,
+    data: [],
+  })),
   createComplaint: mock(async (..._args: unknown[]) => ({
     ok: true as const,
     data: { id: "c0mp1aint-1111-4111-8111-000000000000", subject: "subject" },

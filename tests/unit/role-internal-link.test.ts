@@ -3,6 +3,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   ADMIN_LINK,
+  DISPATCH_LINK,
   getRoleInternalLink,
   MECHANIC_LINK,
 } from "@/components/layout/site-header.constants";
@@ -18,9 +19,13 @@ describe("getRoleInternalLink", () => {
     expect(getRoleInternalLink("mechanic")?.href).toBe("/mechanic");
   });
 
-  test("customer and dispatcher have no internal page", () => {
+  test("dispatcher goes to the dispatch workspace", () => {
+    expect(getRoleInternalLink("dispatcher")).toEqual(DISPATCH_LINK);
+    expect(getRoleInternalLink("dispatcher")?.href).toBe("/dispatch");
+  });
+
+  test("customer has no internal page", () => {
     expect(getRoleInternalLink("customer")).toBeNull();
-    expect(getRoleInternalLink("dispatcher")).toBeNull();
   });
 
   test("missing role stays null", () => {
@@ -31,5 +36,6 @@ describe("getRoleInternalLink", () => {
   test("labels stay Vietnamese with diacritics", () => {
     expect(ADMIN_LINK.label).toBe("Trang quản trị");
     expect(MECHANIC_LINK.label).toBe("Khu vực thợ xe");
+    expect(DISPATCH_LINK.label).toBe("Khu vực điều phối");
   });
 });

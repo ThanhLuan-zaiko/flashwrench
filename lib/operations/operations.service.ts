@@ -11,10 +11,18 @@ export async function getOperationsSnapshot(
   now = new Date(),
 ): Promise<WorkspaceResult<OperationsSnapshot>> {
   if (actor.role !== "admin" && actor.role !== "dispatcher") {
-    return { ok: false, status: 403, errors: { form: "Bạn không có quyền xem số liệu vận hành." } };
+    return {
+      ok: false,
+      status: 403,
+      errors: { form: "Bạn không có quyền xem số liệu vận hành." },
+    };
   }
   if (!isMetricMonth(month)) {
-    return { ok: false, status: 400, errors: { month: "Tháng không hợp lệ (YYYY-MM)." } };
+    return {
+      ok: false,
+      status: 400,
+      errors: { month: "Tháng không hợp lệ (YYYY-MM)." },
+    };
   }
   const captured = await captureOperationsMetrics(month);
   return { ok: true, data: operationsSnapshot(captured, month, now) };

@@ -57,6 +57,8 @@ export function FilterTabs({
               else itemRefs.current.delete(tab.id);
             }}
             href={tab.href}
+            scroll={false}
+            prefetch
             role="tab"
             aria-selected={selected}
             aria-current={selected ? "page" : undefined}

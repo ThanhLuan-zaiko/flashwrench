@@ -4,6 +4,7 @@ import {
   captureMechanicMetrics,
   captureMechanicRatings,
 } from "@/lib/operations/metric-capture.service";
+import type { MechanicIncomeState } from "./mechanic.types";
 import { mechanicIncomeSnapshot } from "./mechanic-income-metrics";
 import {
   type MechanicIncomeSnapshot,
@@ -11,13 +12,15 @@ import {
   validMetricPaging,
 } from "./mechanic-metrics.types";
 import { mechanicStatsSnapshot } from "./mechanic-stats-metrics";
-import type { MechanicIncomeState } from "./mechanic.types";
 
 export async function getPublicMechanicMetrics(mechanicId: string): Promise<{
-  ratingAvg: number; ratingCount: number; completedJobs: number;
+  ratingAvg: number;
+  ratingCount: number;
+  completedJobs: number;
 }> {
   const [rows, ratings] = await Promise.all([
-    captureMechanicBookingRows(mechanicId), captureMechanicRatings(mechanicId),
+    captureMechanicBookingRows(mechanicId),
+    captureMechanicRatings(mechanicId),
   ]);
   return {
     ratingAvg: ratings.average,
@@ -40,14 +43,23 @@ export async function getMechanicIncomeMetrics(
   const page = params.page ?? 1;
   const pageSize = params.limit ?? 8;
   const state = params.state ?? "all";
-  if (!validMetricPaging(page, pageSize) || !["all", "paid", "pending", "refunded"].includes(state)) {
-    return { ok: false, status: 400, errors: { form: "Bộ lọc hoặc trang thu nhập không hợp lệ." } };
+  if (
+    !validMetricPaging(page, pageSize) ||
+    !["all", "paid", "pending", "refunded"].includes(state)
+  ) {
+    return {
+      ok: false,
+      status: 400,
+      errors: { form: "Bộ lọc hoặc trang thu nhập không hợp lệ." },
+    };
   }
   const captured = await captureMechanicMetrics(mechanicId);
   return {
     ok: true,
     data: mechanicIncomeSnapshot(captured, params.now ?? new Date(), {
-      page, pageSize, state: state as MechanicIncomeState | "all",
+      page,
+      pageSize,
+      state: state as MechanicIncomeState | "all",
     }),
   };
 }
@@ -58,13 +70,23 @@ export async function getMechanicStatsMetrics(
 ): Promise<WorkspaceResult<MechanicStatsSnapshot>> {
   const reviewPage = params.reviewPage ?? 1;
   if (!validMetricPaging(reviewPage, 5)) {
-    return { ok: false, status: 400, errors: { form: "Trang đánh giá không hợp lệ." } };
+    return {
+      ok: false,
+      status: 400,
+      errors: { form: "Trang đánh giá không hợp lệ." },
+    };
   }
   const [captured, ratings] = await Promise.all([
-    captureMechanicMetrics(mechanicId), captureMechanicRatings(mechanicId),
+    captureMechanicMetrics(mechanicId),
+    captureMechanicRatings(mechanicId),
   ]);
   return {
     ok: true,
-    data: mechanicStatsSnapshot(captured, ratings, params.now ?? new Date(), reviewPage),
+    data: mechanicStatsSnapshot(
+      captured,
+      ratings,
+      params.now ?? new Date(),
+      reviewPage,
+    ),
   };
 }

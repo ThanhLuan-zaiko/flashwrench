@@ -55,7 +55,7 @@ export async function releaseReservationIfUnclaimed(
   mechanicId: string,
   bookingId: string,
 ): Promise<void> {
-  let row;
+  let row: Awaited<ReturnType<typeof findBookingRowById>>;
   try {
     row = await findBookingRowById(bookingId);
   } catch {

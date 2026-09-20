@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { parseDomainEvent } from "@/lib/realtime/protocol";
-import {
-  makePublicUser,
-  postJsonRequest,
-} from "../helpers/auth.fixtures";
+import { makePublicUser, postJsonRequest } from "../helpers/auth.fixtures";
 import {
   complaintServiceMocks,
   resetComplaintMocks,

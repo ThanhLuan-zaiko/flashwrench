@@ -1,4 +1,5 @@
 import {
+  FiCompass,
   FiHome,
   FiLifeBuoy,
   FiPackage,
@@ -35,12 +36,19 @@ export const MECHANIC_LINK: NavItem = {
   icon: FiTool,
 };
 
-// Internal workspace link per role. Customer and dispatcher stay null
-// because they have no dedicated internal page.
+export const DISPATCH_LINK: NavItem = {
+  href: "/dispatch",
+  label: "Khu vực điều phối",
+  icon: FiCompass,
+};
+
+// Internal workspace link per role. Customers stay null because they have
+// no dedicated internal page.
 export function getRoleInternalLink(
   role: UserRole | null | undefined,
 ): NavItem | null {
   if (role === "admin") return ADMIN_LINK;
   if (role === "mechanic") return MECHANIC_LINK;
+  if (role === "dispatcher") return DISPATCH_LINK;
   return null;
 }
