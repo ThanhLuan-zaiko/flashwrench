@@ -12,12 +12,14 @@ import type {
   MechanicSavedLocation,
   MechanicStats,
 } from "@/lib/mechanic/mechanic.types";
+import type { MechanicPresence } from "@/lib/mechanic/mechanic-profile.service";
 import type { MechanicBookingAction } from "@/lib/mechanic/mechanic-status";
 import { AuthApiError, apiRequest } from "./auth.api";
 
 export type {
   MechanicBookingAction,
   MechanicBookingDetail,
+  MechanicPresence,
   MechanicBookingStatus,
   MechanicBookingSummary,
   MechanicIncomeEntry,
@@ -125,4 +127,26 @@ export function updateMechanicLocationRequest(
     "/api/mechanic/navigation",
     { method: "PATCH", body: JSON.stringify(payload) },
   );
+}
+
+export type UpdatePresencePayload = {
+  online: boolean;
+  skills: string[];
+  baseLat: number | null;
+  baseLng: number | null;
+};
+
+export function fetchMechanicPresence(): Promise<{
+  profile: MechanicPresence;
+}> {
+  return apiRequest<{ profile: MechanicPresence }>("/api/mechanic/profile");
+}
+
+export function updateMechanicPresenceRequest(
+  payload: UpdatePresencePayload,
+): Promise<{ profile: MechanicPresence }> {
+  return apiRequest<{ profile: MechanicPresence }>("/api/mechanic/profile", {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
 }

@@ -9,6 +9,7 @@ import {
 } from "../helpers/mechanic.mocks";
 import { serviceStubs, userRepoMocks } from "../helpers/service-mocks";
 import {
+  dispatchRepoMocks,
   mechanicProfileRepoMocks,
   realtimePublishMocks,
   resetWorkspaceMocks,
@@ -29,6 +30,7 @@ mock.module(
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/realtime/publish", () => realtimePublishMocks);
+mock.module("@/lib/dispatch/dispatch.repository", () => dispatchRepoMocks);
 
 import {
   getMechanicPresence,
@@ -170,5 +172,28 @@ describe("updateMechanicProfilePresence", () => {
       expect(result.data.online).toBe(false);
       expect(result.data.available).toBe(true);
     }
+  });
+
+  test("coming online sweeps the unassigned queue once", async () => {
+    mechanicStubs.profile = makeProfileRow({ is_online: false });
+    const result = await updateMechanicProfilePresence(
+      mechanic,
+      presenceBody({ online: true }),
+    );
+    expect(result.ok).toBe(true);
+    // The sweep scans the pending and confirmed buckets across the
+    // previous, current and next month partitions.
+    expect(
+      dispatchRepoMocks.listStatusBookingRefs.mock.calls.length,
+    ).toBeGreaterThan(0);
+  });
+
+  test("staying online never re-sweeps the queue", async () => {
+    const result = await updateMechanicProfilePresence(
+      mechanic,
+      presenceBody({ online: true }),
+    );
+    expect(result.ok).toBe(true);
+    expect(dispatchRepoMocks.listStatusBookingRefs.mock.calls.length).toBe(0);
   });
 });

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FiChevronsLeft, FiChevronsRight, FiHome, FiX } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
+import { MechanicPresenceCard } from "./MechanicPresenceCard";
 import { MECHANIC_SECTIONS, type MechanicSectionId } from "./mechanic-sections";
 
 type MechanicSidebarProps = {
@@ -135,22 +136,7 @@ export function MechanicSidebar({
               );
             })}
           </ul>
-          {!collapsed && (
-            <div className="mt-4 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
-              <p className="flex items-center gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                <span
-                  aria-hidden="true"
-                  className="h-1.5 w-1.5 rounded-full bg-zinc-900 motion-safe:animate-pulse dark:bg-zinc-100"
-                />
-                Sẵn sàng nhận việc
-              </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                {displayName
-                  ? `${displayName} đang trực tuyến.`
-                  : "Đơn mới sẽ hiện ngay trong lịch làm việc."}
-              </p>
-            </div>
-          )}
+          {!collapsed && <MechanicPresenceCard displayName={displayName} />}
         </nav>
 
         <div className="flex flex-col gap-1.5 border-t border-zinc-200 p-3 dark:border-zinc-800">

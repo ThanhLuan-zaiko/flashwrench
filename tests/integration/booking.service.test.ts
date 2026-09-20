@@ -3,7 +3,13 @@ import { monthKey } from "@/lib/mechanic/mechanic-period";
 import { makePublicUser, makeUserRow } from "../helpers/auth.fixtures";
 import { makeBookingInput } from "../helpers/booking.fixtures";
 import { makeCategoryRow, makeServiceRow } from "../helpers/catalog.fixtures";
-import { makeProfileRow } from "../helpers/mechanic.fixtures";
+import {
+  MECHANIC_ID,
+  makeAvailableMechanicRow,
+  makeBookingRow,
+  makeProfileRow,
+} from "../helpers/mechanic.fixtures";
+import { bookingWorkflowRepoMocks } from "../helpers/mechanic.mocks";
 import {
   bookingRepoMocks,
   bookingStubs,
@@ -11,6 +17,8 @@ import {
   catalogStubs,
   categoryRepoMocks,
   mechanicBookingsRepoMocks,
+  mechanicDirectoryRepoMocks,
+  mechanicDirectoryStubs,
   mechanicStubs,
   mechanicWorkspaceRepoMocks,
   resetServiceMocks,
@@ -18,6 +26,8 @@ import {
   userRepoMocks,
 } from "../helpers/service-mocks";
 import {
+  dispatchRepoMocks,
+  domainPublishMocks,
   resetWorkspaceMocks,
   vehicleRepoMocks,
 } from "../helpers/workspace.mocks";
@@ -42,6 +52,16 @@ mock.module(
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/vehicles/vehicle.repository", () => vehicleRepoMocks);
+mock.module(
+  "@/lib/mechanic/mechanic-directory.repository",
+  () => mechanicDirectoryRepoMocks,
+);
+mock.module(
+  "@/lib/booking/booking-workflow.repository",
+  () => bookingWorkflowRepoMocks,
+);
+mock.module("@/lib/dispatch/dispatch.repository", () => dispatchRepoMocks);
+mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 
@@ -195,6 +215,62 @@ describe("createCustomerBooking", () => {
     if (result.ok) return;
     expect(result.status).toBe(404);
     expect(bookingStubs.inserts).toHaveLength(0);
+  });
+
+  test("auto-dispatches to the nearest mechanic when none was picked", async () => {
+    // The just-inserted row reads back pending and unassigned, and the
+    // directory has one online mechanic near the pinned address.
+    mechanicStubs.bookingById = makeBookingRow({
+      mechanic_id: null,
+      mechanic_name: null,
+      status: "pending",
+      scheduled_at: new Date(Date.now() + 25 * 60 * 60 * 1000),
+    });
+    mechanicStubs.profile = makeProfileRow();
+    mechanicDirectoryStubs.rows = [makeAvailableMechanicRow()];
+
+    const result = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput({ lat: 10.7723, lng: 106.698 }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.mechanicId).toBe(MECHANIC_ID);
+    expect(result.data.mechanicName).toBe("Nguyen Van A");
+    expect(domainPublishMocks.publishBookingChange.mock.calls[0]?.[0]).toBe(
+      "booking-assigned",
+    );
+  });
+
+  test("stays unassigned when dispatch finds nobody or fails", async () => {
+    mechanicStubs.bookingById = makeBookingRow({
+      mechanic_id: null,
+      mechanic_name: null,
+      status: "pending",
+      scheduled_at: new Date(Date.now() + 25 * 60 * 60 * 1000),
+    });
+    // Empty directory: no candidate to offer.
+    const empty = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput(),
+    );
+    expect(empty.ok).toBe(true);
+    if (empty.ok) expect(empty.data.mechanicId).toBeNull();
+
+    // A storage error inside dispatch must not fail the created booking.
+    mechanicBookingsRepoMocks.findBookingRowById.mockImplementationOnce(
+      async () => {
+        throw new Error("db down");
+      },
+    );
+    const failed = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput(),
+    );
+    expect(failed.ok).toBe(true);
+    if (failed.ok) expect(failed.data.mechanicId).toBeNull();
+    expect(bookingStubs.inserts).toHaveLength(2);
   });
 
   test("returns 409 for a busy mechanic without writing", async () => {

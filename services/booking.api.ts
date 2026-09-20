@@ -3,7 +3,11 @@ import type {
   CreateBookingInput,
   CreatedBooking,
 } from "@/lib/booking/booking.types";
-import type { BookingSummary } from "@/lib/booking/workspace.types";
+import type {
+  BookingDetail,
+  BookingSummary,
+  CursorPage,
+} from "@/lib/booking/workspace.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
 export type { BookingFieldErrors, CreatedBooking, CreateBookingInput };
@@ -52,4 +56,26 @@ export async function fetchLastBooking(): Promise<BookingSummary | null> {
     nextCursor: string | null;
   }>("/api/bookings?limit=1");
   return page.items[0] ?? null;
+}
+
+const HISTORY_PAGE_SIZE = 10;
+
+// Customer booking history page, cursor-paged by the server.
+export async function fetchMyBookings(
+  cursor: string | null,
+): Promise<CursorPage<BookingSummary>> {
+  const params = new URLSearchParams({ limit: String(HISTORY_PAGE_SIZE) });
+  if (cursor) params.set("cursor", cursor);
+  return apiRequest<CursorPage<BookingSummary>>(`/api/bookings?${params}`);
+}
+
+// One owned booking: line items, timeline, payment state and the live
+// mechanic pin when the job is en route or in progress.
+export async function fetchMyBooking(
+  bookingId: string,
+): Promise<BookingDetail | null> {
+  const data = await apiRequest<{ booking: BookingDetail }>(
+    `/api/bookings/${bookingId}`,
+  );
+  return data.booking ?? null;
 }

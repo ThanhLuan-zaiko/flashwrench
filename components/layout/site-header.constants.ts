@@ -1,4 +1,5 @@
 import {
+  FiClock,
   FiCompass,
   FiHome,
   FiLifeBuoy,
@@ -19,6 +20,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/products", label: "Sản phẩm", icon: FiPackage },
   { href: "/services", label: "Dịch vụ", icon: FiSettings },
   { href: "/rescue", label: "Cứu hộ", icon: FiLifeBuoy },
+  { href: "/history", label: "Lịch sử", icon: FiClock },
 ];
 
 export const LOGIN_HREF = "/login";

@@ -1,8 +1,18 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import type { CreateBookingInput } from "@/services/booking.api";
-import { createBookingRequest, fetchLastBooking } from "@/services/booking.api";
+import {
+  createBookingRequest,
+  fetchLastBooking,
+  fetchMyBooking,
+  fetchMyBookings,
+} from "@/services/booking.api";
 import type { MechanicsQuery } from "@/services/mechanics.api";
 import { fetchAvailableMechanics } from "@/services/mechanics.api";
 
@@ -10,6 +20,8 @@ export const bookingKeys = {
   all: ["bookings"] as const,
   create: ["bookings", "create"] as const,
   last: ["bookings", "last"] as const,
+  mine: ["bookings", "mine"] as const,
+  detail: (bookingId: string) => ["bookings", "detail", bookingId] as const,
   mechanics: (query: MechanicsQuery) =>
     ["bookings", "mechanics", query] as const,
 };
@@ -37,6 +49,35 @@ export function useLastBooking() {
     staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 1,
+  });
+}
+
+// Customer booking history, cursor-paged. Realtime user-topic events
+// invalidate the whole list so new transitions surface without polling.
+export function useMyBookings() {
+  return useInfiniteQuery({
+    queryKey: bookingKeys.mine,
+    queryFn: ({ pageParam }) => fetchMyBookings(pageParam),
+    initialPageParam: null as string | null,
+    getNextPageParam: (page) => page.nextCursor,
+    staleTime: 15 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+}
+
+// One owned booking detail (timeline + live mechanic pin). The live pin
+// rides on the same user-topic invalidation; a short poll keeps the map
+// moving even if a socket event is missed.
+export function useMyBooking(bookingId: string | null, live = false) {
+  return useQuery({
+    queryKey: bookingKeys.detail(bookingId ?? ""),
+    queryFn: () => fetchMyBooking(bookingId as string),
+    enabled: bookingId !== null,
+    staleTime: 10 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: 1,
+    refetchInterval: live ? 15 * 1000 : false,
   });
 }
 

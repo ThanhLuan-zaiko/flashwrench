@@ -11,6 +11,7 @@ import {
 import { findCategoryRowById } from "@/lib/catalog/service-categories.repository";
 import { findServiceRowById } from "@/lib/catalog/services.repository";
 import { DEFAULT_TIME_ZONE } from "@/lib/datetime/timezone";
+import { autoDispatchBooking } from "@/lib/dispatch/auto-dispatch.service";
 import {
   isMechanicEligible,
   mechanicScheduleConflict,
@@ -162,6 +163,22 @@ export async function createCustomerBooking(
     mechanicId,
     mechanicName,
   });
+
+  // No mechanic picked: auto-dispatch runs the dispatcher's "assign"
+  // step immediately so the nearest eligible mechanic gets the offer.
+  // A dispatch failure must never fail a booking that already
+  // persisted — it just stays on the pending queue for a human.
+  if (mechanicId === null) {
+    try {
+      const dispatched = await autoDispatchBooking(bookingId);
+      if (dispatched) {
+        mechanicId = dispatched.mechanicId;
+        mechanicName = dispatched.mechanicName;
+      }
+    } catch {
+      // Left unassigned for the dispatcher queue.
+    }
+  }
 
   return {
     ok: true,

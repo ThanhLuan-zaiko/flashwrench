@@ -6,6 +6,7 @@ import {
   nextTransitionAt,
   transitionBooking,
 } from "@/lib/booking/booking-workflow.service";
+import { redispatchAfterDecline } from "@/lib/dispatch/auto-dispatch.service";
 import { isUuid } from "@/lib/validation";
 import type {
   MechanicBookingDetail,
@@ -302,6 +303,7 @@ export async function applyMechanicBookingAction(
   if (endsInvolvement) {
     if (action === "decline") {
       await releaseMechanicJob(mechanicId, bookingId);
+      await redispatchAfterDecline(bookingId, mechanicId);
     } else {
       await releaseMechanicIfIdle(mechanicId, bookingId, now);
     }

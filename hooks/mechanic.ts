@@ -14,15 +14,18 @@ import type {
   MechanicBookingAction,
   MechanicBookingSummary,
   UpdateLocationPayload,
+  UpdatePresencePayload,
 } from "@/services/mechanic.api";
 import {
   bookingActionRequest,
   fetchMechanicBooking,
   fetchMechanicBookings,
   fetchMechanicIncome,
+  fetchMechanicPresence,
   fetchMechanicStats,
   fetchNavigationBoard,
   updateMechanicLocationRequest,
+  updateMechanicPresenceRequest,
 } from "@/services/mechanic.api";
 
 export const mechanicKeys = {
@@ -34,6 +37,7 @@ export const mechanicKeys = {
   income: (limit?: number) => ["mechanic", "income", { limit }] as const,
   stats: ["mechanic", "stats"] as const,
   navigation: ["mechanic", "navigation"] as const,
+  presence: ["mechanic", "presence"] as const,
 };
 
 // Workload refreshes fastest (the mechanic acts on it), money and stats
@@ -203,6 +207,31 @@ export function useUpdateMechanicLocation() {
       void queryClient.invalidateQueries({
         queryKey: mechanicKeys.navigation,
       });
+    },
+  });
+}
+
+// Presence drives the bookable directory: going online lists the mechanic
+// for customer pickers and triggers the unassigned-booking sweep server
+// side. Refetch is cheap (one profile row) and keeps the sidebar honest.
+export function useMechanicPresence() {
+  return useQuery({
+    queryKey: mechanicKeys.presence,
+    queryFn: fetchMechanicPresence,
+    staleTime: 15 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: true,
+  });
+}
+
+export function useUpdateMechanicPresence() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: UpdatePresencePayload) =>
+      updateMechanicPresenceRequest(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(mechanicKeys.presence, data);
     },
   });
 }

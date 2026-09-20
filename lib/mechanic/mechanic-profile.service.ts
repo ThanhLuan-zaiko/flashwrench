@@ -1,4 +1,5 @@
 import type { PublicUser } from "@/lib/auth/user.types";
+import { redispatchUnassignedBookings } from "@/lib/dispatch/auto-dispatch.service";
 import {
   MECHANIC_DIRECTORY_TOPIC,
   OPERATIONS_TOPIC,
@@ -182,6 +183,12 @@ export async function updateMechanicProfilePresence(
     updatedAt: now,
   });
   await syncMechanicDirectory(user.id);
+  if (value.online && profile.is_online !== true) {
+    // Coming online may unlock bookings created while nobody was
+    // available: sweep the pending queue once per offline→online flip,
+    // not on every presence write.
+    void redispatchUnassignedBookings().catch(() => undefined);
+  }
   void Promise.all([
     publishRealtimeEvent(MECHANIC_DIRECTORY_TOPIC, {
       kind: "mechanic-updated",

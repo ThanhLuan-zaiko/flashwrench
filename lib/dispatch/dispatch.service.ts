@@ -14,6 +14,7 @@ import type {
   WorkspaceResult,
 } from "@/lib/booking/workspace.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
+import { autoDispatchBooking } from "@/lib/dispatch/auto-dispatch.service";
 import type { MechanicBookingStatus } from "@/lib/mechanic/mechanic.types";
 import {
   isMechanicEligible,
@@ -267,6 +268,21 @@ export async function applyDispatchAction(
     [row.mechanic_id, nextMechanicId],
   );
 
-  const summaries = await mapBookingSummaries([transition.data]);
+  // "confirm" releases a verified booking to the system: auto-dispatch
+  // offers it to the nearest eligible mechanic right away. Nobody free
+  // just means it stays confirmed until the next sweep.
+  let finalRow = transition.data;
+  if (action === "confirm") {
+    try {
+      const dispatched = await autoDispatchBooking(bookingId);
+      if (dispatched) {
+        finalRow = (await findBookingRowById(bookingId)) ?? finalRow;
+      }
+    } catch {
+      // The confirm already persisted; dispatch is best-effort.
+    }
+  }
+
+  const summaries = await mapBookingSummaries([finalRow]);
   return { ok: true, data: summaries[0] as BookingSummary };
 }

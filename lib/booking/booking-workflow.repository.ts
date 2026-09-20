@@ -1,4 +1,3 @@
-import { types } from "cassandra-driver";
 import { scylla } from "@/lib/db/client";
 import type { BookingWorkflowWrite } from "./booking-workflow.types";
 
@@ -126,6 +125,10 @@ export async function projectBookingTransition(
 
   await scylla.batch(queries, {
     prepare: true,
-    timestamp: types.Long.fromNumber(write.at.getTime() * 1000),
+    // Pass microseconds as a plain number: the driver converts it with its
+    // own Long class. A types.Long created here can come from a second
+    // bundled copy under the dev bundler and fails its instanceof check
+    // ("Expected Long, obtained Long") even though both are Long.
+    timestamp: write.at.getTime() * 1000,
   });
 }
