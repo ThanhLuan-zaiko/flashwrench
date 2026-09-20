@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { makeUserRow } from "../helpers/auth.fixtures";
 import {
   MECHANIC_ID,
   MECHANIC_OTHER_ID,
@@ -12,6 +13,7 @@ import {
   mechanicWorkspaceRepoMocks,
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
+import { serviceStubs, userRepoMocks } from "../helpers/service-mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports. The directory service reads one bounded
@@ -24,6 +26,7 @@ mock.module(
   "@/lib/mechanic/mechanic-workspace.repository",
   () => mechanicWorkspaceRepoMocks,
 );
+mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 
 import {
   listAvailableMechanics,
@@ -32,6 +35,8 @@ import {
 
 beforeEach(() => {
   resetMechanicMocks();
+  serviceStubs.userById = makeUserRow({ role: "mechanic", status: "active" });
+  mechanicStubs.profile = makeProfileRow();
 });
 
 describe("listAvailableMechanics", () => {
@@ -57,7 +62,7 @@ describe("listAvailableMechanics", () => {
     expect(result.data[0]).toMatchObject({
       displayName: "Nguyen Van A",
       ratingAvg: 4.8,
-      completedJobs: 30,
+      completedJobs: 3,
     });
   });
 
@@ -71,6 +76,19 @@ describe("listAvailableMechanics", () => {
         base_lng: 106.701,
       }),
     ];
+    mechanicStubs.profilesById.set(
+      MECHANIC_ID,
+      makeProfileRow({ base_lat: 10.9, base_lng: 106.9 }),
+    );
+    mechanicStubs.profilesById.set(
+      MECHANIC_OTHER_ID,
+      makeProfileRow({
+        mechanic_id: MECHANIC_OTHER_ID,
+        display_name: "Near Tho",
+        base_lat: 10.776,
+        base_lng: 106.701,
+      }),
+    );
 
     const result = await listAvailableMechanics({
       lat: 10.7769,
@@ -135,6 +153,6 @@ describe("syncMechanicDirectory", () => {
 
     expect(
       mechanicDirectoryRepoMocks.deleteAvailableMechanic.mock.calls[0],
-    ).toEqual([null, MECHANIC_ID]);
+    ).toEqual([0, MECHANIC_ID]);
   });
 });

@@ -56,15 +56,26 @@ describe("PATCH /api/admin/users/[userId]", () => {
       "user:target-1",
       { kind: "locked" },
     ]);
+    expect(realtimePublishMocks.publishRealtimeEvent.mock.calls[1]).toEqual([
+      "admin-users",
+      { kind: "user-updated", userId: "target-1" },
+    ]);
   });
 
-  test("stays silent for approve and unlock", async () => {
+  test("publishes the admin-users signal for approve and unlock", async () => {
     adminContext();
     await PATCH(patchRequest({ action: "approve" }), { params });
     await PATCH(patchRequest({ action: "unlock" }), { params });
 
     expect(adminUsersRouteMocks.applyAdminUserAction.mock.calls.length).toBe(2);
-    expect(realtimePublishMocks.publishRealtimeEvent.mock.calls.length).toBe(0);
+    expect(
+      realtimePublishMocks.publishRealtimeEvent.mock.calls.map(
+        (call) => call[0],
+      ),
+    ).toEqual(["admin-users", "admin-users"]);
+    expect(
+      realtimePublishMocks.publishRealtimeEvent.mock.calls[0]?.[1],
+    ).toEqual({ kind: "user-updated", userId: "target-1" });
   });
 
   test("passes rejected actions through without publishing", async () => {

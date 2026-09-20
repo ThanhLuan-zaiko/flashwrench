@@ -45,7 +45,7 @@ describe("parseBookingStatus", () => {
 describe("canApplyAction", () => {
   test("a mechanic can only run one workflow step at a time", () => {
     expect(canApplyAction("accept", "pending")).toBe(true);
-    expect(canApplyAction("accept", "confirmed")).toBe(false);
+    expect(canApplyAction("accept", "confirmed")).toBe(true);
     expect(canApplyAction("start-travel", "confirmed")).toBe(true);
     expect(canApplyAction("start-travel", "mechanic_assigned")).toBe(true);
     expect(canApplyAction("start-travel", "pending")).toBe(false);
@@ -108,10 +108,13 @@ describe("guards", () => {
 
   test("targets and sources stay consistent", () => {
     for (const [action, target] of Object.entries(ACTION_TARGET_STATUS)) {
+      if (action === "decline") continue;
       expect(
         ACTION_ALLOWED_FROM[action as keyof typeof ACTION_ALLOWED_FROM],
       ).not.toContain(target);
     }
+    expect(ACTION_TARGET_STATUS.decline).toBe("pending");
+    expect(ACTION_ALLOWED_FROM.decline).toContain("pending");
   });
 
   test("month buckets stay UTC stable", () => {

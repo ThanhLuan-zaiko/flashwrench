@@ -138,8 +138,8 @@ export async function setMechanicAvailability(
   updatedAt: Date,
 ): Promise<void> {
   await scylla.execute(
-    "UPDATE mechanics_by_id SET is_available = ?, is_online = ?, updated_at = ? WHERE mechanic_id = ?",
-    [isAvailable, true, updatedAt, mechanicId],
+    "UPDATE mechanics_by_id SET is_available = ?, updated_at = ? WHERE mechanic_id = ?",
+    [isAvailable, updatedAt, mechanicId],
     { prepare: true },
   );
 }
@@ -193,12 +193,30 @@ export async function listPaymentRowsByRefIds(
   const results = await Promise.all(
     refIds.map((refId) =>
       selectRows(
-        "SELECT ref_type, ref_id, payment_id, amount, status, method, paid_at, created_at FROM payments_by_ref WHERE ref_type = ? AND ref_id = ?",
+        "SELECT ref_type, ref_id, payment_id, amount, status, created_at FROM payments_by_ref WHERE ref_type = ? AND ref_id = ?",
         [refType, refId],
       ),
     ),
   );
-  return results.flat().map(toPaymentRow);
+  const refRows = results
+    .flat()
+    .filter((row) => String(row.ref_id) !== "" && row.payment_id);
+  const canonical = await Promise.all(
+    refRows.map((row) =>
+      selectFirst(
+        "SELECT ref_type, ref_id, payment_id, amount, status, method, paid_at, created_at FROM payments_by_id WHERE payment_id = ?",
+        [row.payment_id],
+      ),
+    ),
+  );
+  return refRows.map((row, index) => {
+    const detail = canonical[index];
+    const matches =
+      detail &&
+      String(detail.ref_type) === String(row.ref_type) &&
+      String(detail.ref_id) === String(row.ref_id);
+    return toPaymentRow(matches ? detail : row);
+  });
 }
 
 /** Query: newest reviews of one target (single partition, DESC). */

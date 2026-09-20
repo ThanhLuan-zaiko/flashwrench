@@ -1,5 +1,6 @@
 import { normalizeTimeZone } from "@/lib/datetime/timezone";
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
+import { isUuid } from "@/lib/validation";
 import type {
   BookingFieldErrors,
   CreateBookingInput,
@@ -206,9 +207,37 @@ export function validateCreateBookingInput(
     errors.location = "Vị trí trên bản đồ không hợp lệ. Vui lòng chọn lại.";
   }
 
-  const mechanicId =
-    typeof input.mechanicId === "string" ? input.mechanicId.trim() : "";
-  const normalizedMechanicId = mechanicId.length > 0 ? mechanicId : null;
+  let normalizedMechanicId: string | null = null;
+  if (input.mechanicId !== undefined && input.mechanicId !== null) {
+    if (typeof input.mechanicId !== "string") {
+      errors.mechanicId = "Thợ đã chọn không hợp lệ.";
+    } else {
+      const mechanicId = input.mechanicId.trim();
+      if (mechanicId.length > 0) {
+        if (!isUuid(mechanicId)) {
+          errors.mechanicId = "Thợ đã chọn không hợp lệ.";
+        } else {
+          normalizedMechanicId = mechanicId;
+        }
+      }
+    }
+  }
+
+  let normalizedVehicleId: string | null = null;
+  if (input.vehicleId !== undefined && input.vehicleId !== null) {
+    if (typeof input.vehicleId !== "string") {
+      errors.vehicleId = "Xe đã chọn không hợp lệ.";
+    } else {
+      const vehicleId = input.vehicleId.trim();
+      if (vehicleId.length > 0) {
+        if (!isUuid(vehicleId)) {
+          errors.vehicleId = "Xe đã chọn không hợp lệ.";
+        } else {
+          normalizedVehicleId = vehicleId;
+        }
+      }
+    }
+  }
 
   // The zone where the work happens. Optional on the wire; the service
   // falls back to the product default. Garbage zones fail loudly so a
@@ -244,6 +273,7 @@ export function validateCreateBookingInput(
       lat,
       lng,
       mechanicId: normalizedMechanicId,
+      vehicleId: normalizedVehicleId,
       vehiclePlate,
       vehicleBrand,
       vehicleModel,

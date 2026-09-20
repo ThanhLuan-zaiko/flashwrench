@@ -62,6 +62,9 @@ export function makeBookingRow(
     cancel_reason: null,
     created_at: new Date("2026-09-15T08:30:00.000Z"),
     updated_at: new Date("2026-09-15T08:30:00.000Z"),
+    vehicle_id: null,
+    mechanic_name: "Nguyen Van A",
+    month_bucket: "2026-09",
     ...overrides,
   };
 }

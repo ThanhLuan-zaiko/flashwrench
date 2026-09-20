@@ -6,6 +6,7 @@ import { subscribeRealtimeTopic } from "@/lib/realtime/realtime-client";
 type UseRealtimeTopicOptions = {
   enabled?: boolean;
   onEvent?: (payload: unknown) => void;
+  onReconnect?: () => void;
 };
 
 // Generic realtime subscription for any gateway topic. The underlying
@@ -17,11 +18,19 @@ export function useRealtimeTopic(
   const enabled = options?.enabled ?? true;
   const handler = useRef(options?.onEvent);
   handler.current = options?.onEvent;
+  const reconnectHandler = useRef(options?.onReconnect);
+  reconnectHandler.current = options?.onReconnect;
 
   useEffect(() => {
-    if (!enabled) return;
-    return subscribeRealtimeTopic(topic, (payload) => {
-      handler.current?.(payload);
-    });
+    if (!enabled || topic.length === 0) return;
+    return subscribeRealtimeTopic(
+      topic,
+      (payload) => {
+        handler.current?.(payload);
+      },
+      () => {
+        reconnectHandler.current?.();
+      },
+    );
   }, [topic, enabled]);
 }

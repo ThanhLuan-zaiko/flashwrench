@@ -36,6 +36,7 @@ export type InsertCustomerBookingParams = {
   unitPrice: number;
   mechanicId: string | null;
   mechanicName: string | null;
+  vehicleId: string | null;
 };
 
 // One batch keeps every denormalized copy in sync: the booking row, the
@@ -48,12 +49,13 @@ export async function insertCustomerBooking(
   const queries: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       params: [
         params.bookingId,
         params.customerId,
         params.customerName,
         params.customerPhone,
+        params.vehicleId,
         params.vehiclePlate,
         params.vehicleBrand,
         params.vehicleModel,

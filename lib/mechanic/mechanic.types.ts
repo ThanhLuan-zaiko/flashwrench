@@ -71,6 +71,9 @@ export type MechanicBookingRow = {
   cancel_reason: string | null;
   created_at: Date | null;
   updated_at: Date | null;
+  vehicle_id: string | null;
+  mechanic_name: string | null;
+  month_bucket: string | null;
 };
 
 export type MechanicBookingItemRow = {

@@ -6,6 +6,7 @@ import {
   type BookingInboxEvent,
   bookingTopic,
   parseBookingInboxEvent,
+  parseDomainEvent,
   userTopic,
 } from "@/lib/realtime/protocol";
 import type {
@@ -44,7 +45,8 @@ export function useMechanicBookings(query: BookingListQuery = {}) {
     staleTime: 15 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchInterval: 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -56,7 +58,8 @@ export function useMechanicBooking(bookingId: string | null) {
     staleTime: 15 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchInterval: 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -65,6 +68,9 @@ export function useBookingRealtime(bookingId: string | null) {
   useRealtimeTopic(bookingId ? bookingTopic(bookingId) : "", {
     enabled: Boolean(bookingId),
     onEvent: () => {
+      void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+    },
+    onReconnect: () => {
       void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
     },
   });
@@ -83,10 +89,14 @@ export function useMechanicInbox(
   useRealtimeTopic(mechanicId ? userTopic(mechanicId) : "", {
     enabled: Boolean(mechanicId),
     onEvent: (payload) => {
+      if (parseDomainEvent(payload)) {
+        void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+      }
       const event = parseBookingInboxEvent(payload);
-      if (!event) return;
+      if (event) onNotice?.(event);
+    },
+    onReconnect: () => {
       void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
-      onNotice?.(event);
     },
   });
 }
@@ -98,7 +108,8 @@ export function useMechanicIncome(limit?: number) {
     staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchInterval: 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -109,7 +120,8 @@ export function useMechanicStats() {
     staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchInterval: 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -120,7 +132,8 @@ export function useNavigationBoard() {
     staleTime: 10 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchInterval: 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 }
 

@@ -13,7 +13,7 @@ const WORKLOAD_COLUMNS =
   "mechanic_id, scheduled_at, booking_id, status, total, vehicle_plate, customer_name";
 
 const BOOKING_COLUMNS =
-  "booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, zone_id, address, scheduled_at, timezone, status, payment_status, total, notes, cancel_reason, created_at, updated_at";
+  "booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, zone_id, address, scheduled_at, timezone, status, payment_status, total, notes, cancel_reason, created_at, updated_at, vehicle_id, mechanic_name, month_bucket";
 
 type RawRow = Record<string, unknown>;
 
@@ -78,6 +78,9 @@ function toBookingRow(raw: RawRow): MechanicBookingRow {
     cancel_reason: toStringOrNull(raw.cancel_reason),
     created_at: toDateOrNull(raw.created_at),
     updated_at: toDateOrNull(raw.updated_at),
+    vehicle_id: toStringOrNull(raw.vehicle_id),
+    mechanic_name: toStringOrNull(raw.mechanic_name),
+    month_bucket: toStringOrNull(raw.month_bucket),
   };
 }
 
@@ -181,86 +184,65 @@ export async function listStatusHistoryRows(
   return rows.map(toHistoryRow);
 }
 
-export type BookingStatusWrite = {
-  bookingId: string;
-  mechanicId: string;
-  scheduledAt: Date | null;
-  monthBucket: string;
-  fromStatus: string;
-  toStatus: string;
-  customerId: string | null;
-  zoneId: string | null;
-  total: number | null;
-  changedBy: string;
-  note: string | null;
-};
-
-// One batch keeps every denormalized copy of the status in sync: the
-// booking row, the mechanic workload row, the dispatcher status bucket and
-// the tracking timeline. The status bucket is clustered by scheduled_at, so
-// a booking without a schedule can only move between buckets.
-export async function writeBookingStatus(
-  params: BookingStatusWrite,
-): Promise<void> {
-  const now = new Date();
-  const queries: { query: string; params: unknown[] }[] = [
-    {
-      query:
-        "UPDATE bookings_by_id SET status = ?, updated_at = ? WHERE booking_id = ?",
-      params: [params.toStatus, now, params.bookingId],
-    },
-    {
-      query:
-        "INSERT INTO bookings_by_status (status, month_bucket, scheduled_at, booking_id, customer_id, mechanic_id, zone_id, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      params: [
-        params.toStatus,
-        params.monthBucket,
-        params.scheduledAt ?? now,
-        params.bookingId,
-        params.customerId,
-        params.mechanicId,
-        params.zoneId,
-        params.total,
-      ],
-    },
-    {
-      query:
-        "INSERT INTO booking_status_history (booking_id, changed_at, old_status, new_status, changed_by, note) VALUES (?, ?, ?, ?, ?, ?)",
-      params: [
-        params.bookingId,
-        now,
-        params.fromStatus,
-        params.toStatus,
-        params.changedBy,
-        params.note,
-      ],
-    },
-  ];
-
-  if (params.scheduledAt) {
-    queries.push(
-      {
-        query:
-          "UPDATE bookings_by_mechanic SET status = ? WHERE mechanic_id = ? AND scheduled_at = ? AND booking_id = ?",
-        params: [
-          params.toStatus,
-          params.mechanicId,
-          params.scheduledAt,
-          params.bookingId,
-        ],
-      },
-      {
-        query:
-          "DELETE FROM bookings_by_status WHERE status = ? AND month_bucket = ? AND scheduled_at = ? AND booking_id = ?",
-        params: [
-          params.fromStatus,
-          params.monthBucket,
-          params.scheduledAt,
-          params.bookingId,
-        ],
-      },
-    );
-  }
-
-  await scylla.batch(queries, { prepare: true });
+export async function listWorkloadRowsInRange(
+  mechanicId: string,
+  start: Date,
+  end: Date,
+  limit: number,
+): Promise<MechanicWorkloadRow[]> {
+  const rows = await selectRows(
+    `SELECT ${WORKLOAD_COLUMNS} FROM bookings_by_mechanic WHERE mechanic_id = ? AND scheduled_at >= ? AND scheduled_at <= ? LIMIT ?`,
+    [mechanicId, start, end, limit],
+  );
+  return rows.map(toWorkloadRow);
 }
+
+export async function listWorkloadPage(
+  mechanicId: string,
+  pageState?: string | null,
+): Promise<{ rows: MechanicWorkloadRow[]; pageState: string | null }> {
+  const result = await scylla.execute(
+    `SELECT ${WORKLOAD_COLUMNS} FROM bookings_by_mechanic WHERE mechanic_id = ?`,
+    [mechanicId],
+    { prepare: true, fetchSize: 50, pageState: pageState ?? undefined },
+  );
+  return {
+    rows: (result.rows as unknown as RawRow[]).map(toWorkloadRow),
+    pageState: result.pageState ?? null,
+  };
+}
+
+export async function findMechanicActiveJob(
+  mechanicId: string,
+): Promise<string | null> {
+  const row = await selectFirst(
+    "SELECT booking_id FROM mechanic_active_jobs WHERE mechanic_id = ?",
+    [mechanicId],
+  );
+  return row?.booking_id ? String(row.booking_id) : null;
+}
+
+export async function insertMechanicActiveJob(
+  mechanicId: string,
+  bookingId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "INSERT INTO mechanic_active_jobs (mechanic_id, booking_id) VALUES (?, ?) IF NOT EXISTS",
+    [mechanicId, bookingId],
+    { prepare: true },
+  );
+  return (result.first() as unknown as RawRow | null)?.["[applied]"] === true;
+}
+
+export async function deleteMechanicActiveJob(
+  mechanicId: string,
+  bookingId: string,
+): Promise<void> {
+  await scylla.execute(
+    "DELETE FROM mechanic_active_jobs WHERE mechanic_id = ? IF booking_id = ?",
+    [mechanicId, bookingId],
+    { prepare: true },
+  );
+}
+
+

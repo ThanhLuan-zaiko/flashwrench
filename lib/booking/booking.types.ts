@@ -13,6 +13,7 @@ export type CreateBookingInput = {
   lat?: number | null;
   lng?: number | null;
   mechanicId?: string | null;
+  vehicleId?: string | null;
   vehiclePlate: string;
   vehicleBrand?: string;
   vehicleModel?: string;
@@ -31,6 +32,7 @@ export type NormalizedBookingInput = {
   lat: number | null;
   lng: number | null;
   mechanicId: string | null;
+  vehicleId: string | null;
   vehiclePlate: string;
   vehicleBrand: string | null;
   vehicleModel: string | null;
@@ -49,6 +51,7 @@ export type BookingFieldErrors = Partial<
     | "street"
     | "location"
     | "mechanicId"
+    | "vehicleId"
     | "vehiclePlate"
     | "vehicleBrand"
     | "vehicleModel"

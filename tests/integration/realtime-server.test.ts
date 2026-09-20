@@ -1,20 +1,45 @@
-import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  mock,
+  test,
+} from "bun:test";
 import { makePublicUser } from "../helpers/auth.fixtures";
+import { makeBookingRow } from "../helpers/mechanic.fixtures";
+import {
+  mechanicBookingsRepoMocks,
+  mechanicStubs,
+} from "../helpers/mechanic.mocks";
+import { mailbox, openSocket, publishEvent } from "../helpers/realtime-server";
 
 const adminUser = makePublicUser({ id: "admin-1", role: "admin" });
 const customerUser = makePublicUser({ id: "cust-1", role: "customer" });
+
+const revokedTokens = new Set<string>();
 
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports, so the gateway authenticates by token.
 mock.module("@/lib/auth/auth.service", () => ({
   authenticate: mock(async (token: string) => {
+    if (revokedTokens.has(token)) return null;
     if (token === "admin-token") return adminUser;
     if (token === "customer-token") return customerUser;
     return null;
   }),
 }));
 
-import { STAFF_PASSWORDS_TOPIC } from "@/lib/realtime/protocol";
+mock.module(
+  "@/lib/mechanic/mechanic-bookings.repository",
+  () => mechanicBookingsRepoMocks,
+);
+
+import {
+  SERVICE_CATALOG_TOPIC,
+  STAFF_PASSWORDS_TOPIC,
+} from "@/lib/realtime/protocol";
 import { startRealtimeServer } from "@/realtime/server";
 
 const SECRET = "test-publish-secret";
@@ -22,54 +47,18 @@ let base = "";
 let port = 0;
 let server: ReturnType<typeof startRealtimeServer>;
 
-// Buffered mailbox: WS frames can arrive before the test awaits them (the
-// /publish HTTP response and the broadcast race), so every frame is queued
-// and `next()` drains in order instead of dropping early arrivals.
-function mailbox(ws: WebSocket): { next: () => Promise<string> } {
-  const queue: string[] = [];
-  const waiters: Array<(value: string) => void> = [];
-  ws.onmessage = (event) => {
-    const text = String(event.data);
-    const waiter = waiters.shift();
-    if (waiter) waiter(text);
-    else queue.push(text);
-  };
-  return {
-    next: () =>
-      new Promise<string>((resolve, reject) => {
-        const queued = queue.shift();
-        if (queued !== undefined) {
-          resolve(queued);
-          return;
-        }
-        const timer = setTimeout(() => reject(new Error("Timed out.")), 5000);
-        waiters.push((value) => {
-          clearTimeout(timer);
-          resolve(value);
-        });
-      }),
-  };
-}
-
-async function openSocket(token?: string): Promise<WebSocket> {
-  const ws = new WebSocket(`ws://127.0.0.1:${port}/ws`, {
-    headers: token ? { Cookie: `fw_at=${token}` } : {},
-  } as never);
-  await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("Timed out.")), 5000);
-    ws.onopen = () => {
-      clearTimeout(timer);
-      resolve();
-    };
-    ws.onerror = () => reject(new Error("Connect failed."));
-  });
-  return ws;
-}
-
 beforeAll(() => {
   server = startRealtimeServer({ port: 0, publishSecret: SECRET });
   port = server.port ?? 0;
   base = `http://127.0.0.1:${port}`;
+});
+
+beforeEach(() => {
+  revokedTokens.clear();
+  mechanicStubs.bookingById = makeBookingRow({
+    customer_id: "cust-1",
+    mechanic_id: "mech-1",
+  });
 });
 
 afterAll(() => {
@@ -83,7 +72,7 @@ describe("realtime gateway", () => {
   });
 
   test("lets admins subscribe and fans out /publish events", async () => {
-    const ws = await openSocket("admin-token");
+    const ws = await openSocket(port, "admin-token");
     const box = mailbox(ws);
     try {
       ws.send(
@@ -93,17 +82,15 @@ describe("realtime gateway", () => {
         type: "subscribed",
         topic: STAFF_PASSWORDS_TOPIC,
       });
-      const published = await fetch(`${base}/publish`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-realtime-secret": SECRET,
+      const published = await publishEvent(
+        base,
+        SECRET,
+        STAFF_PASSWORDS_TOPIC,
+        {
+          kind: "changed",
+          userId: "u1",
         },
-        body: JSON.stringify({
-          topic: STAFF_PASSWORDS_TOPIC,
-          payload: { kind: "changed", userId: "u1" },
-        }),
-      });
+      );
       expect(published.status).toBe(200);
       expect(JSON.parse(await box.next())).toMatchObject({
         type: "event",
@@ -117,7 +104,7 @@ describe("realtime gateway", () => {
   });
 
   test("rejects forbidden subscriptions and bad publish secrets", async () => {
-    const ws = await openSocket("customer-token");
+    const ws = await openSocket(port, "customer-token");
     const box = mailbox(ws);
     try {
       ws.send(
@@ -139,8 +126,8 @@ describe("realtime gateway", () => {
   });
 
   test("supports two-way client publishes on allowed topics", async () => {
-    const a = await openSocket("customer-token");
-    const b = await openSocket("customer-token");
+    const a = await openSocket(port, "customer-token");
+    const b = await openSocket(port, "customer-token");
     const boxA = mailbox(a);
     const boxB = mailbox(b);
     try {
@@ -178,7 +165,7 @@ describe("realtime gateway", () => {
   });
 
   test("answers ping and rejects garbage", async () => {
-    const ws = await openSocket("admin-token");
+    const ws = await openSocket(port, "admin-token");
     const box = mailbox(ws);
     try {
       ws.send('{"type":"ping"}');
@@ -190,6 +177,82 @@ describe("realtime gateway", () => {
     } finally {
       ws.close();
     }
+  });
+
+  test("denies cross-origin upgrades and allows same-host ones", async () => {
+    const crossOrigin = await fetch(`${base}/ws`, {
+      headers: { Origin: "https://evil.example" },
+    });
+    expect(crossOrigin.status).toBe(403);
+
+    const crossScheme = await fetch(`${base}/ws`, {
+      headers: { Origin: "https://127.0.0.1:3000" },
+    });
+    expect(crossScheme.status).toBe(403);
+
+    const sameHost = await fetch(`${base}/ws`, {
+      headers: { Origin: "http://127.0.0.1:3000" },
+    });
+    expect(sameHost.status).toBe(400);
+
+    const noOrigin = await fetch(`${base}/ws`);
+    expect(noOrigin.status).toBe(400);
+
+    process.env.REALTIME_ALLOWED_ORIGINS = "https://app.example.com";
+    try {
+      const listed = await fetch(`${base}/ws`, {
+        headers: { Origin: "https://app.example.com" },
+      });
+      expect(listed.status).toBe(400);
+      const unlisted = await fetch(`${base}/ws`, {
+        headers: { Origin: "http://127.0.0.1:3000" },
+      });
+      expect(unlisted.status).toBe(403);
+    } finally {
+      delete process.env.REALTIME_ALLOWED_ORIGINS;
+    }
+  });
+
+  test("rejects malformed /publish bodies instead of crashing", async () => {
+    const headers = {
+      "Content-Type": "application/json",
+      "x-realtime-secret": SECRET,
+    };
+    for (const body of ["null", "[]", '"text"', "42"]) {
+      const response = await fetch(`${base}/publish`, {
+        method: "POST",
+        headers,
+        body,
+      });
+      expect(response.status).toBe(400);
+    }
+    for (const body of [
+      { topic: "BAD TOPIC", payload: {} },
+      { topic: "booking:b1" },
+      { payload: {} },
+    ]) {
+      const response = await fetch(`${base}/publish`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+      expect(response.status).toBe(400);
+    }
+  });
+
+  test("rejects UTF-8 oversize /publish payloads with 413", async () => {
+    const response = await fetch(`${base}/publish`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-realtime-secret": SECRET,
+      },
+      body: JSON.stringify({
+        topic: SERVICE_CATALOG_TOPIC,
+        payload: { text: "đ".repeat(40_000) },
+      }),
+    });
+    expect(response.status).toBe(413);
   });
 
   test("defaults the publish secret to AUTH_SECRET like Next routes", async () => {

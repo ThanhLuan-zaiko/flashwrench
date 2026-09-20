@@ -14,6 +14,11 @@ import {
   mechanicWorkspaceRepoMocks,
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
+import {
+  domainPublishMocks,
+  resetWorkspaceMocks,
+  workspaceStubs,
+} from "../helpers/workspace.mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports, matching tests/integration/*.test.ts.
@@ -25,6 +30,7 @@ mock.module(
   "@/lib/mechanic/mechanic-workspace.repository",
   () => mechanicWorkspaceRepoMocks,
 );
+mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 
 import {
   getNavigationBoard,
@@ -33,6 +39,7 @@ import {
 
 beforeEach(() => {
   resetMechanicMocks();
+  resetWorkspaceMocks();
 });
 
 describe("getNavigationBoard", () => {
@@ -96,6 +103,7 @@ describe("getNavigationBoard", () => {
 
 describe("saveMechanicLocation", () => {
   test("saves a valid GPS fix with its timestamp", async () => {
+    mechanicStubs.bookingById = makeBookingRow({ status: "en_route" });
     const result = await saveMechanicLocation(MECHANIC_ID, {
       latitude: 10.775,
       longitude: 106.701,
@@ -113,6 +121,65 @@ describe("saveMechanicLocation", () => {
     expect(
       mechanicWorkspaceRepoMocks.upsertMechanicLocation.mock.calls[0]?.[0],
     ).toMatchObject({ mechanicId: MECHANIC_ID, currentJobType: "booking" });
+    expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(1);
+  });
+
+  test("rejects a foreign or inactive booking without writing", async () => {
+    mechanicStubs.bookingById = makeBookingRow({
+      status: "en_route",
+      mechanic_id: "99999999-9999-4999-8999-999999999999",
+    });
+    const foreign = await saveMechanicLocation(MECHANIC_ID, {
+      latitude: 10.775,
+      longitude: 106.701,
+      currentJobId: BOOKING_ID,
+      currentJobType: "booking",
+    });
+    expect(foreign).toMatchObject({ ok: false, status: 404 });
+
+    mechanicStubs.bookingById = makeBookingRow({ status: "completed" });
+    const inactive = await saveMechanicLocation(MECHANIC_ID, {
+      latitude: 10.775,
+      longitude: 106.701,
+      currentJobId: BOOKING_ID,
+      currentJobType: "booking",
+    });
+    expect(inactive).toMatchObject({ ok: false, status: 400 });
+
+    expect(
+      mechanicWorkspaceRepoMocks.upsertMechanicLocation.mock.calls.length,
+    ).toBe(0);
+    expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(0);
+    expect(workspaceStubs.published).toHaveLength(0);
+  });
+
+  test("rejects non-booking job types and ids without a type", async () => {
+    const emergency = await saveMechanicLocation(MECHANIC_ID, {
+      latitude: 10.775,
+      longitude: 106.701,
+      currentJobId: BOOKING_ID,
+      currentJobType: "emergency",
+    });
+    expect(emergency).toMatchObject({ ok: false, status: 400 });
+
+    const danglingId = await saveMechanicLocation(MECHANIC_ID, {
+      latitude: 10.775,
+      longitude: 106.701,
+      currentJobId: BOOKING_ID,
+      currentJobType: "none",
+    });
+    expect(danglingId).toMatchObject({ ok: false, status: 400 });
+
+    const nonUuid = await saveMechanicLocation(MECHANIC_ID, {
+      latitude: 10.775,
+      longitude: 106.701,
+      currentJobId: "not-a-uuid",
+      currentJobType: "booking",
+    });
+    expect(nonUuid).toMatchObject({ ok: false, status: 400 });
+    expect(
+      mechanicWorkspaceRepoMocks.upsertMechanicLocation.mock.calls.length,
+    ).toBe(0);
   });
 
   test("rejects bad coordinates without touching storage", async () => {

@@ -32,5 +32,8 @@ export function useServiceCatalogRealtime(enabled = true) {
     onEvent: () => {
       void queryClient.invalidateQueries({ queryKey: publicCatalogKeys.all });
     },
+    onReconnect: () => {
+      void queryClient.invalidateQueries({ queryKey: publicCatalogKeys.all });
+    },
   });
 }

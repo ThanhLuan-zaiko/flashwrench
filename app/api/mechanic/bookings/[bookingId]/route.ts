@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
 import {
+  mutationOriginError,
+  readJsonObject,
+} from "@/lib/http/workspace-route";
+import {
   applyMechanicBookingAction,
   getMechanicBookingDetail,
 } from "@/lib/mechanic/mechanic-bookings.service";
-import { bookingTopic, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { publishBookingChange } from "@/lib/realtime/domain-publish";
 
 type RouteParams = { params: Promise<{ bookingId: string }> };
 
@@ -38,14 +41,14 @@ export async function GET(_request: Request, { params }: RouteParams) {
 // Run one workflow action: { action, note? }. The service moves the booking
 // to the next state; the route then tells the customer side in realtime.
 export async function PATCH(request: Request, { params }: RouteParams) {
+  const originError = mutationOriginError(request);
+  if (originError) return originError;
   const { response, user } = await requireRole("mechanic");
   if (response) return response;
   const { bookingId } = await params;
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
+  const body = await readJsonObject(request);
+  if (!body) {
     return NextResponse.json(
       { errors: { form: INVALID_JSON_MESSAGE } },
       { status: 400 },
@@ -65,15 +68,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         { status: result.status },
       );
     }
-    const event = {
-      type: "booking-status",
+    void publishBookingChange(
+      "booking-updated",
       bookingId,
-      status: result.data.booking.status,
-    };
-    void publishRealtimeEvent(bookingTopic(bookingId), event);
-    if (result.data.customerId) {
-      void publishRealtimeEvent(userTopic(result.data.customerId), event);
-    }
+      result.data.booking.status,
+      result.data.customerId,
+      [result.data.previousMechanicId, result.data.nextMechanicId],
+    );
     return NextResponse.json({ booking: result.data.booking });
   } catch {
     return NextResponse.json(

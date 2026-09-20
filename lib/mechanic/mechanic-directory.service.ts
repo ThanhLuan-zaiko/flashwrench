@@ -1,6 +1,7 @@
 // Bookable mechanic directory for the customer booking picker.
 // Services own every rule; the repository only runs raw CQL.
 
+import { findUserById } from "@/lib/auth/user.repository";
 import { type MechanicResult, toDecimalOr, toNumberOr } from "./mechanic.types";
 import {
   deleteAvailableMechanic,
@@ -26,6 +27,8 @@ export type MechanicDirectoryItem = {
   ratingCount: number;
   completedJobs: number;
   isOnline: boolean;
+  lat: number | null;
+  lng: number | null;
   distanceKm: number | null;
 };
 
@@ -51,6 +54,11 @@ function formError<T>(status: number, form: string): MechanicResult<T> {
   return { ok: false, status, errors: { form } };
 }
 
+async function activeMechanicUser(mechanicId: string): Promise<boolean> {
+  const user = await findUserById(mechanicId);
+  return user?.role === "mechanic" && user.status === "active";
+}
+
 // One bounded partition read, then filter and enrich in memory: the
 // directory stays small (bookable mechanics only) and rows missing
 // verification or a live connection never reach the picker. With a
@@ -67,21 +75,54 @@ export async function listAvailableMechanics(
   }
   const rows = await listAvailableMechanicRows(resolveLimit(params.limit));
   const items: MechanicDirectoryItem[] = [];
+  const seen = new Set<string>();
   for (const row of rows) {
+    if (seen.has(row.mechanic_id)) continue;
+    seen.add(row.mechanic_id);
     if (row.is_verified !== true) continue;
     if (row.is_online !== true) continue;
+    const [accountOk, profile] = await Promise.all([
+      activeMechanicUser(row.mechanic_id),
+      findMechanicProfileRow(row.mechanic_id),
+    ]);
+    if (!accountOk || !profile) {
+      await deleteAvailableMechanic(
+        toDecimalOr(row.rating_avg, 0),
+        row.mechanic_id,
+      );
+      continue;
+    }
+    if (
+      profile.is_verified !== true ||
+      profile.is_online !== true ||
+      profile.is_available !== true
+    ) {
+      await deleteAvailableMechanic(
+        toDecimalOr(row.rating_avg, 0),
+        row.mechanic_id,
+      );
+      continue;
+    }
     const base =
-      typeof row.base_lat === "number" && typeof row.base_lng === "number"
-        ? { lat: row.base_lat, lng: row.base_lng }
+      typeof profile.base_lat === "number" &&
+      typeof profile.base_lng === "number"
+        ? { lat: profile.base_lat, lng: profile.base_lng }
         : null;
     items.push({
       id: row.mechanic_id,
-      displayName: row.display_name?.trim() || "Thợ FlashWrench",
-      skills: (row.skills ?? []).map((skill) => skill.trim()).filter(Boolean),
-      ratingAvg: toDecimalOr(row.rating_avg),
-      ratingCount: toNumberOr(row.rating_count),
-      completedJobs: toNumberOr(row.completed_jobs),
+      displayName:
+        profile.display_name?.trim() ||
+        row.display_name?.trim() ||
+        "Thợ FlashWrench",
+      skills: (profile.skills ?? row.skills ?? [])
+        .map((skill) => skill.trim())
+        .filter(Boolean),
+      ratingAvg: toDecimalOr(profile.rating_avg ?? row.rating_avg),
+      ratingCount: toNumberOr(profile.rating_count ?? row.rating_count),
+      completedJobs: toNumberOr(profile.completed_jobs ?? row.completed_jobs),
       isOnline: true,
+      lat: base?.lat ?? null,
+      lng: base?.lng ?? null,
       distanceKm: origin && base ? haversineKm(origin, base) : null,
     });
   }
@@ -100,11 +141,13 @@ export async function listAvailableMechanics(
 export async function syncMechanicDirectory(mechanicId: string): Promise<void> {
   const profile = await findMechanicProfileRow(mechanicId);
   if (!profile) {
-    await deleteAvailableMechanic(null, mechanicId);
+    await deleteAvailableMechanic(0, mechanicId);
     return;
   }
   const rating = toDecimalOr(profile.rating_avg, 0);
+  const accountOk = await activeMechanicUser(mechanicId);
   const listable =
+    accountOk &&
     profile.is_verified === true &&
     profile.is_online === true &&
     profile.is_available === true;

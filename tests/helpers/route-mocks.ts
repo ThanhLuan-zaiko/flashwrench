@@ -1,6 +1,6 @@
 import { mock } from "bun:test";
 import { NextResponse } from "next/server";
-import type { AccountSession, AccountStatus } from "@/lib/auth/account-status";
+import type { AccountSession } from "@/lib/auth/account-status";
 import type { RefreshOutcome } from "@/lib/auth/auth.service";
 import type { StaffCreateResult } from "@/lib/auth/staff.types";
 import type { PendingStaffPassword } from "@/lib/auth/staff-pending.service";
@@ -10,7 +10,7 @@ import type {
   LoginInput,
   PublicUser,
   RegisterInput,
-  SessionTokens,
+  UserRole,
 } from "@/lib/auth/user.types";
 import type { SessionListItem } from "@/lib/auth/user-sessions";
 import type {
@@ -18,12 +18,17 @@ import type {
   CreateBookingInput,
   CreatedBooking,
 } from "@/lib/booking/booking.types";
+import type {
+  BookingSummary,
+  CursorPage,
+  WorkspaceResult,
+} from "@/lib/booking/workspace.types";
 import type { MechanicResult } from "@/lib/mechanic/mechanic.types";
 import type {
   ListMechanicsParams,
   MechanicDirectoryItem,
 } from "@/lib/mechanic/mechanic-directory.service";
-import { makePublicUser, makeSessionTokens } from "./auth.fixtures";
+import { makePublicUser } from "./auth.fixtures";
 import { resetCatalogRouteMocks } from "./catalog-route.mocks";
 import { mediaStorageMocks } from "./media.mocks";
 import { resetMediaRouteMocks } from "./media-route.mocks";
@@ -50,7 +55,9 @@ export const routeStubs = {
   meSession: null as AccountSession | null,
   bookingUser: null as PublicUser | null,
   bookingCreateResult: null as BookingResult<CreatedBooking> | null,
+  bookingListResult: null as WorkspaceResult<CursorPage<BookingSummary>> | null,
   mechanicsList: null as MechanicResult<MechanicDirectoryItem[]> | null,
+  workspaceResult: null as WorkspaceResult<unknown> | null,
 };
 export {
   avatarServiceMocks,
@@ -60,18 +67,21 @@ export {
   resetMediaRouteMocks,
 } from "./media-route.mocks";
 
-export function okAuthResult(): AuthResult {
-  return {
-    ok: true,
-    user: makePublicUser(),
-    tokens: makeSessionTokens(),
-  };
-}
+import {
+  okAccountSession,
+  okAuthResult,
+  okCreatedBooking,
+  okMechanicDirectoryItem,
+  okRefreshOutcome,
+} from "./route.fixtures";
 
-export function okRefreshOutcome(): RefreshOutcome {
-  const tokens: SessionTokens = makeSessionTokens();
-  return { ok: true, user: makePublicUser(), tokens };
-}
+export {
+  okAccountSession,
+  okAuthResult,
+  okCreatedBooking,
+  okMechanicDirectoryItem,
+  okRefreshOutcome,
+} from "./route.fixtures";
 
 export const guardMocks = {
   enforceRequestGuards: mock(
@@ -194,25 +204,29 @@ export const authorizationMocks = {
     }
     return { user: routeStubs.bookingUser, response: null } as const;
   }),
+  requireRole: mock(async (...allowed: UserRole[]) => {
+    const user = routeStubs.bookingUser;
+    if (!user) {
+      return {
+        user: null,
+        response: NextResponse.json(
+          { errors: { form: "Vui lòng đăng nhập để tiếp tục." } },
+          { status: 401 },
+        ),
+      } as const;
+    }
+    if (!allowed.includes(user.role)) {
+      return {
+        user: null,
+        response: NextResponse.json(
+          { errors: { form: "Bạn không có quyền truy cập." } },
+          { status: 403 },
+        ),
+      } as const;
+    }
+    return { user, response: null } as const;
+  }),
 };
-
-export function okCreatedBooking(): CreatedBooking {
-  return {
-    bookingId: "99999999-9999-4999-8999-999999999999",
-    status: "pending",
-    scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    timezone: "Asia/Ho_Chi_Minh",
-    total: 199000,
-    serviceId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
-    serviceName: "Thay dau dong co",
-    vehiclePlate: "51F-12345",
-    address: "123 Nguyen Trai, Phuong 5, Quan 3, TP Ho Chi Minh",
-    lat: 10.7769,
-    lng: 106.7009,
-    mechanicId: null,
-    mechanicName: null,
-  };
-}
 
 export const bookingServiceMocks = {
   createCustomerBooking: mock(
@@ -227,18 +241,18 @@ export const bookingServiceMocks = {
   ),
 };
 
-export function okMechanicDirectoryItem() {
-  return {
-    id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-    displayName: "Nguyen Van A",
-    skills: ["engine", "tire"],
-    ratingAvg: 4.8,
-    ratingCount: 12,
-    completedJobs: 30,
-    isOnline: true,
-    distanceKm: 1.2,
-  };
-}
+export const customerBookingServiceMocks = {
+  listCustomerBookings: mock(
+    async (
+      _customerId: string,
+      _params: unknown,
+    ): Promise<WorkspaceResult<CursorPage<BookingSummary>>> =>
+      routeStubs.bookingListResult ?? {
+        ok: true,
+        data: { items: [], nextCursor: null },
+      },
+  ),
+};
 
 // The GET /api/mechanics route only depends on the auth guard and the
 // directory service, driven through these handles in its suite.
@@ -253,16 +267,6 @@ export const mechanicDirectoryServiceMocks = {
       },
   ),
 };
-
-export function okAccountSession(
-  overrides?: Partial<AccountSession>,
-): AccountSession {
-  return {
-    user: makePublicUser(),
-    status: "active" as AccountStatus,
-    ...overrides,
-  };
-}
 
 // The `/api/auth/me` route resolves the account status through this service,
 // so route suites control "active / locked / deleted" with `routeStubs.meSession`.
@@ -302,7 +306,9 @@ export function resetRouteMocks(): void {
   routeStubs.meSession = null;
   routeStubs.bookingUser = null;
   routeStubs.bookingCreateResult = null;
+  routeStubs.bookingListResult = null;
   routeStubs.mechanicsList = null;
+  routeStubs.workspaceResult = null;
   resetCatalogRouteMocks();
   resetMediaRouteMocks();
   for (const fn of Object.values(guardMocks)) fn.mockClear();
@@ -318,6 +324,7 @@ export function resetRouteMocks(): void {
   for (const fn of Object.values(adminUsersRouteMocks)) fn.mockClear();
   for (const fn of Object.values(authorizationMocks)) fn.mockClear();
   for (const fn of Object.values(bookingServiceMocks)) fn.mockClear();
+  for (const fn of Object.values(customerBookingServiceMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicDirectoryServiceMocks)) fn.mockClear();
   for (const fn of Object.values(mediaStorageMocks)) fn.mockClear();
 }

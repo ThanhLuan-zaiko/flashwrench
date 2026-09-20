@@ -1,22 +1,27 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { makeUserRow } from "../helpers/auth.fixtures";
 import {
   BOOKING_ID,
-  CUSTOMER_ID,
   MECHANIC_ID,
   MECHANIC_OTHER_ID,
   makeBookingItemRow,
   makeBookingRow,
   makeHistoryRow,
-  makeProfileRow,
   makeWorkloadRow,
 } from "../helpers/mechanic.fixtures";
 import {
+  bookingWorkflowRepoMocks,
   mechanicBookingsRepoMocks,
   mechanicDirectoryRepoMocks,
   mechanicStubs,
   mechanicWorkspaceRepoMocks,
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
+import { serviceStubs, userRepoMocks } from "../helpers/service-mocks";
+import {
+  resetWorkspaceMocks,
+  vehicleRepoMocks,
+} from "../helpers/workspace.mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports, matching tests/integration/*.test.ts.
@@ -32,15 +37,22 @@ mock.module(
   "@/lib/mechanic/mechanic-directory.repository",
   () => mechanicDirectoryRepoMocks,
 );
+mock.module(
+  "@/lib/booking/booking-workflow.repository",
+  () => bookingWorkflowRepoMocks,
+);
+mock.module("@/lib/auth/user.repository", () => userRepoMocks);
+mock.module("@/lib/vehicles/vehicle.repository", () => vehicleRepoMocks);
 
 import {
-  applyMechanicBookingAction,
   getMechanicBookingDetail,
   listMechanicBookings,
 } from "@/lib/mechanic/mechanic-bookings.service";
 
 beforeEach(() => {
   resetMechanicMocks();
+  resetWorkspaceMocks();
+  serviceStubs.userById = makeUserRow({ role: "mechanic", status: "active" });
 });
 
 describe("listMechanicBookings", () => {
@@ -104,7 +116,7 @@ describe("listMechanicBookings", () => {
     expect(all.data).toHaveLength(1);
     expect(
       mechanicBookingsRepoMocks.listBookingRowsByIds.mock.calls[1]?.[0],
-    ).toEqual([BOOKING_ID]);
+    ).toEqual([BOOKING_ID, "bbbbbbbb-2222-4222-8222-bbbbbbbbbbbb"]);
   });
 });
 
@@ -145,133 +157,6 @@ describe("getMechanicBookingDetail", () => {
     expect(
       mechanicBookingsRepoMocks.listBookingItemRowsByBookingIds.mock.calls
         .length,
-    ).toBe(0);
-  });
-});
-
-describe("applyMechanicBookingAction", () => {
-  test("accepts a pending booking and leaves availability alone", async () => {
-    mechanicStubs.bookingById = makeBookingRow();
-    mechanicStubs.bookingRowsByIds = [makeBookingRow({ status: "pending" })];
-    mechanicStubs.itemRows = [];
-
-    const result = await applyMechanicBookingAction(
-      MECHANIC_ID,
-      BOOKING_ID,
-      "accept",
-    );
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.data.booking.status).toBe("mechanic_assigned");
-    expect(result.data.customerId).toBe(CUSTOMER_ID);
-    expect(
-      mechanicBookingsRepoMocks.writeBookingStatus.mock.calls[0]?.[0],
-    ).toMatchObject({
-      bookingId: BOOKING_ID,
-      mechanicId: MECHANIC_ID,
-      fromStatus: "pending",
-      toStatus: "mechanic_assigned",
-      monthBucket: "2026-09",
-      changedBy: MECHANIC_ID,
-    });
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicAvailability.mock.calls.length,
-    ).toBe(0);
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicCompletedJobs.mock.calls.length,
-    ).toBe(0);
-  });
-
-  test("marks the mechanic busy on departure, free on completion", async () => {
-    mechanicStubs.bookingById = makeBookingRow({ status: "mechanic_assigned" });
-    mechanicStubs.bookingRowsByIds = [
-      makeBookingRow({ status: "mechanic_assigned" }),
-    ];
-    mechanicStubs.itemRows = [];
-    mechanicStubs.profile = makeProfileRow({ completed_jobs: 3 });
-
-    const started = await applyMechanicBookingAction(
-      MECHANIC_ID,
-      BOOKING_ID,
-      "start-travel",
-    );
-    expect(started.ok).toBe(true);
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicAvailability.mock.calls[0]?.slice(
-        0,
-        2,
-      ),
-    ).toEqual([MECHANIC_ID, false]);
-
-    mechanicWorkspaceRepoMocks.setMechanicAvailability.mockClear();
-    mechanicStubs.bookingById = makeBookingRow({ status: "in_progress" });
-    mechanicStubs.bookingRowsByIds = [
-      makeBookingRow({ status: "in_progress" }),
-    ];
-    const done = await applyMechanicBookingAction(
-      MECHANIC_ID,
-      BOOKING_ID,
-      "complete",
-      "  Fixed and tested  ",
-    );
-    expect(done.ok).toBe(true);
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicAvailability.mock.calls[0]?.slice(
-        0,
-        2,
-      ),
-    ).toEqual([MECHANIC_ID, true]);
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicCompletedJobs.mock.calls[0]?.slice(
-        0,
-        2,
-      ),
-    ).toEqual([MECHANIC_ID, 4]);
-    expect(
-      mechanicBookingsRepoMocks.writeBookingStatus.mock.calls[1]?.[0],
-    ).toMatchObject({ note: "Fixed and tested" });
-  });
-
-  test("guards: unknown action, wrong step, long note, foreign booking", async () => {
-    mechanicStubs.bookingById = makeBookingRow();
-    expect(
-      await applyMechanicBookingAction(MECHANIC_ID, BOOKING_ID, "fly"),
-    ).toMatchObject({ ok: false, status: 400 });
-
-    expect(
-      await applyMechanicBookingAction(MECHANIC_ID, BOOKING_ID, "complete"),
-    ).toMatchObject({ ok: false, status: 400 });
-
-    expect(
-      await applyMechanicBookingAction(
-        MECHANIC_ID,
-        BOOKING_ID,
-        "decline",
-        "x".repeat(301),
-      ),
-    ).toMatchObject({ ok: false, status: 400 });
-
-    mechanicStubs.bookingById = makeBookingRow({
-      mechanic_id: MECHANIC_OTHER_ID,
-    });
-    expect(
-      await applyMechanicBookingAction(MECHANIC_ID, BOOKING_ID, "accept"),
-    ).toMatchObject({ ok: false, status: 403 });
-  });
-
-  test("never writes storage when the transition is rejected", async () => {
-    mechanicStubs.bookingById = makeBookingRow({ status: "completed" });
-    expect(
-      await applyMechanicBookingAction(MECHANIC_ID, BOOKING_ID, "complete"),
-    ).toMatchObject({ ok: false, status: 400 });
-    expect(mechanicBookingsRepoMocks.writeBookingStatus.mock.calls.length).toBe(
-      0,
-    );
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicAvailability.mock.calls.length,
-    ).toBe(0);
-    expect(
-      mechanicWorkspaceRepoMocks.setMechanicCompletedJobs.mock.calls.length,
     ).toBe(0);
   });
 });

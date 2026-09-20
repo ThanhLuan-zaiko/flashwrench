@@ -15,16 +15,26 @@ type ZonedParts = {
   minute: number;
 };
 
+const zoneFormatters = new Map<string, Intl.DateTimeFormat>();
+
 function zonedParts(date: Date, timeZone: string): ZonedParts {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).formatToParts(date);
+  let formatter = zoneFormatters.get(timeZone);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    if (zoneFormatters.size >= 16) {
+      zoneFormatters.delete(zoneFormatters.keys().next().value ?? "");
+    }
+    zoneFormatters.set(timeZone, formatter);
+  }
+  const parts = formatter.formatToParts(date);
   const read = (type: string): number =>
     Number(parts.find((part) => part.type === type)?.value ?? "0");
   // "24" appears for midnight in some ICU versions; normalize to 0.

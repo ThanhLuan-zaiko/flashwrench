@@ -195,6 +195,7 @@ CREATE TABLE IF NOT EXISTS vehicles_by_id (
   transmission   TEXT,  -- at | mt | cvt
   odometer_km    INT,
   is_default     BOOLEAN,
+  is_archived    BOOLEAN,
   created_at     TIMESTAMP,
   updated_at     TIMESTAMP
 );
@@ -210,6 +211,7 @@ CREATE TABLE IF NOT EXISTS vehicles_by_owner (
   year          INT,
   vehicle_type  TEXT,
   is_default    BOOLEAN,
+  is_archived   BOOLEAN,
   PRIMARY KEY ((owner_id), created_at, vehicle_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, vehicle_id ASC);
 
@@ -297,6 +299,11 @@ CREATE TABLE IF NOT EXISTS mechanic_locations (
   current_job_id   UUID,
   current_job_type TEXT, -- booking | emergency | none
   updated_at       TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS mechanic_active_jobs (
+  mechanic_id UUID PRIMARY KEY,
+  booking_id  UUID
 );
 
 -- ============================================================================
@@ -774,6 +781,11 @@ CREATE TABLE IF NOT EXISTS payments_by_ref (
 -- 10. REVIEWS (mechanics / services / parts)
 -- target_type = mechanic | service | part
 -- ============================================================================
+
+CREATE TABLE IF NOT EXISTS reviews_by_booking (
+  booking_id UUID PRIMARY KEY, review_id UUID, customer_id UUID,
+  mechanic_id UUID, customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS reviews_by_target (
   target_type TEXT,

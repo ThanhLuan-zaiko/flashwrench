@@ -8,10 +8,16 @@ import {
   isActiveFlag,
   isDeletedFlag,
 } from "@/lib/catalog/service-catalog.types";
+import { findCategoryRowById } from "@/lib/catalog/service-categories.repository";
 import { findServiceRowById } from "@/lib/catalog/services.repository";
 import { DEFAULT_TIME_ZONE } from "@/lib/datetime/timezone";
+import {
+  isMechanicEligible,
+  mechanicScheduleConflict,
+} from "@/lib/mechanic/mechanic-assignment.service";
 import { monthKey } from "@/lib/mechanic/mechanic-period";
 import { findMechanicProfileRow } from "@/lib/mechanic/mechanic-workspace.repository";
+import { findVehicleRowById } from "@/lib/vehicles/vehicle.repository";
 import { insertCustomerBooking } from "./booking.repository";
 import type {
   BookingResult,
@@ -50,9 +56,40 @@ export async function createCustomerBooking(
       "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
     );
   }
+  const category = service.category_id
+    ? await findCategoryRowById(service.category_id)
+    : null;
+  if (
+    !category ||
+    !isActiveFlag(category.is_active, true) ||
+    isDeletedFlag(category.is_deleted)
+  ) {
+    return fail(
+      404,
+      "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
+    );
+  }
 
   const serviceName = service.name ?? "";
   const unitPrice = service.base_price ?? 0;
+
+  let vehicleId: string | null = null;
+  let vehiclePlate = value.vehiclePlate;
+  let vehicleBrand = value.vehicleBrand;
+  let vehicleModel = value.vehicleModel;
+  if (value.vehicleId) {
+    const vehicle = await findVehicleRowById(value.vehicleId);
+    if (!vehicle || vehicle.owner_id !== customer.id) {
+      return fail(400, "Xe đã chọn không thuộc tài khoản của bạn.");
+    }
+    if (vehicle.is_archived === true) {
+      return fail(400, "Xe đã chọn đang lưu trữ. Vui lòng chọn xe khác.");
+    }
+    vehicleId = vehicle.vehicle_id;
+    vehiclePlate = vehicle.license_plate ?? value.vehiclePlate;
+    vehicleBrand = vehicle.brand ?? value.vehicleBrand;
+    vehicleModel = vehicle.model ?? value.vehicleModel;
+  }
 
   // A preselected mechanic is verified against the live profile: the
   // picker may be stale, so a missing or newly-busy mechanic fails here
@@ -60,22 +97,29 @@ export async function createCustomerBooking(
   let mechanicId: string | null = null;
   let mechanicName: string | null = null;
   if (value.mechanicId) {
-    const profile = await findMechanicProfileRow(value.mechanicId);
-    if (!profile) {
-      return fail(
-        404,
-        "Thợ đã chọn không còn khả dụng. Vui lòng chọn thợ khác.",
-      );
-    }
-    if (
-      profile.is_verified !== true ||
-      profile.is_online !== true ||
-      profile.is_available !== true
-    ) {
+    if (!(await isMechanicEligible(value.mechanicId))) {
+      const profile = await findMechanicProfileRow(value.mechanicId);
+      if (!profile) {
+        return fail(
+          404,
+          "Thợ đã chọn không còn khả dụng. Vui lòng chọn thợ khác.",
+        );
+      }
       return fail(409, "Thợ đã chọn hiện đang bận. Vui lòng chọn thợ khác.");
     }
-    mechanicId = profile.mechanic_id;
-    mechanicName = profile.display_name?.trim() || "Thợ FlashWrench";
+    const conflict = await mechanicScheduleConflict(
+      value.mechanicId,
+      value.scheduledAt,
+    );
+    if (conflict !== false) {
+      return fail(
+        409,
+        "Thợ đã chọn có lịch hẹn trùng giờ. Vui lòng chọn thợ khác.",
+      );
+    }
+    const profile = await findMechanicProfileRow(value.mechanicId);
+    mechanicId = value.mechanicId;
+    mechanicName = profile?.display_name?.trim() || "Thợ FlashWrench";
   }
 
   const now = new Date();
@@ -89,9 +133,10 @@ export async function createCustomerBooking(
     customerId: customer.id,
     customerName: customer.fullName,
     customerPhone: customer.phone,
-    vehiclePlate: value.vehiclePlate,
-    vehicleBrand: value.vehicleBrand,
-    vehicleModel: value.vehicleModel,
+    vehicleId,
+    vehiclePlate,
+    vehicleBrand,
+    vehicleModel,
     address: {
       province: value.province,
       district: value.district,
@@ -128,7 +173,7 @@ export async function createCustomerBooking(
       total: unitPrice,
       serviceId: service.service_id,
       serviceName,
-      vehiclePlate: value.vehiclePlate,
+      vehiclePlate,
       address: value.address,
       lat: value.lat,
       lng: value.lng,

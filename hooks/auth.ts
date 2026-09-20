@@ -70,6 +70,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginRequest,
     onSuccess: (data) => {
+      queryClient.clear();
       setAccountSession(queryClient, data.user);
     },
   });
@@ -80,6 +81,7 @@ export function useRegister() {
   return useMutation({
     mutationFn: registerRequest,
     onSuccess: (data) => {
+      queryClient.clear();
       setAccountSession(queryClient, data.user);
     },
   });
@@ -90,8 +92,8 @@ export function useLogout() {
   return useMutation({
     mutationFn: logoutRequest,
     onSuccess: () => {
+      queryClient.clear();
       setAccountSession(queryClient, null);
-      void queryClient.invalidateQueries({ queryKey: authKeys.all });
     },
   });
 }
@@ -101,8 +103,8 @@ export function useLogoutAll() {
   return useMutation({
     mutationFn: logoutAllRequest,
     onSuccess: () => {
+      queryClient.clear();
       setAccountSession(queryClient, null);
-      void queryClient.invalidateQueries({ queryKey: authKeys.all });
     },
   });
 }

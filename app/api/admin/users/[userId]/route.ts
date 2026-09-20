@@ -12,7 +12,11 @@ import {
 } from "@/lib/auth/staff.service";
 import { resetStaffTempPassword } from "@/lib/auth/staff-password-reset.service";
 import type { UserRole } from "@/lib/auth/user.types";
-import { STAFF_PASSWORDS_TOPIC, userTopic } from "@/lib/realtime/protocol";
+import {
+  ADMIN_USERS_TOPIC,
+  STAFF_PASSWORDS_TOPIC,
+  userTopic,
+} from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 type StaffAction = "update" | "soft" | "restore";
@@ -56,6 +60,10 @@ export async function PATCH(
             { status: result.status },
           );
         }
+        void publishRealtimeEvent(ADMIN_USERS_TOPIC, {
+          kind: "user-updated",
+          userId,
+        });
         return NextResponse.json({ user: result.user });
       }
       if (action === "restore") {
@@ -66,6 +74,10 @@ export async function PATCH(
             { status: result.status },
           );
         }
+        void publishRealtimeEvent(ADMIN_USERS_TOPIC, {
+          kind: "user-updated",
+          userId,
+        });
         return NextResponse.json({ user: result.user });
       }
       const input = body as {
@@ -88,6 +100,10 @@ export async function PATCH(
           { status: result.status },
         );
       }
+      void publishRealtimeEvent(ADMIN_USERS_TOPIC, {
+        kind: "user-updated",
+        userId,
+      });
       return NextResponse.json({ user: result.user });
     }
 
@@ -108,6 +124,10 @@ export async function PATCH(
     if (action === "lock") {
       void publishRealtimeEvent(userTopic(userId), { kind: "locked" });
     }
+    void publishRealtimeEvent(ADMIN_USERS_TOPIC, {
+      kind: "user-updated",
+      userId,
+    });
     return NextResponse.json({ user: result.user });
   } catch {
     return NextResponse.json(
@@ -150,6 +170,10 @@ export async function DELETE(
     }
     void publishRealtimeEvent(STAFF_PASSWORDS_TOPIC, {
       kind: "deleted",
+      userId,
+    });
+    void publishRealtimeEvent(ADMIN_USERS_TOPIC, {
+      kind: "user-updated",
       userId,
     });
     return NextResponse.json({ user: result.user });

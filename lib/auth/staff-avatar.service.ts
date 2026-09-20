@@ -1,10 +1,7 @@
 import { findAssetRowById } from "@/lib/media/media.repository";
 import { claimAssetForOwner } from "@/lib/media/media.service";
 import { isSafeAssetKey, publicAssetUrl } from "@/lib/media/media-paths";
-import {
-  type StaffFieldErrors,
-  validateStaffAvatarId,
-} from "./staff.validation";
+import type { StaffFieldErrors } from "./staff.validation";
 import { findUserById, setAvatarUrl } from "./user.repository";
 
 type AvatarResolution =

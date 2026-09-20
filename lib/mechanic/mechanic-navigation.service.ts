@@ -3,6 +3,8 @@
 // real coordinates, each with a distance and travel-time hint. Jobs without
 // coordinates or with an unknown status are left out instead of guessing.
 
+import { publishBookingChange } from "@/lib/realtime/domain-publish";
+import { isUuid } from "@/lib/validation";
 import {
   type MechanicBookingRow,
   type MechanicFieldErrors,
@@ -13,6 +15,7 @@ import {
   toIso,
 } from "./mechanic.types";
 import {
+  findBookingRowById,
   listBookingItemRowsByBookingIds,
   listBookingRowsByIds,
   listWorkloadRows,
@@ -191,9 +194,12 @@ export type SaveMechanicLocationInput = {
   currentJobType?: unknown;
 };
 
-function readJobType(value: unknown): NavigationCurrentType {
-  if (value === "booking" || value === "emergency") return value;
-  return "none";
+function readJobType(value: unknown): NavigationCurrentType | null {
+  if (value === undefined || value === null || value === "none") {
+    return "none";
+  }
+  if (value === "booking") return "booking";
+  return null;
 }
 
 // The app marks itself busy on the map the same time it shares GPS: the
@@ -210,29 +216,61 @@ export async function saveMechanicLocation(
   if (!isValidLongitude(longitude)) {
     errors.longitude = "Kinh độ không hợp lệ (từ -180 đến 180).";
   }
+  const jobType = readJobType(currentJobType);
+  if (jobType === null) {
+    errors.action = "Loại công việc không hợp lệ.";
+  }
   const jobId =
     typeof currentJobId === "string" && currentJobId.length > 0
       ? currentJobId
       : null;
+  if (jobType === "booking" && !isUuid(jobId)) {
+    errors.action = "Mã công việc không hợp lệ.";
+  }
+  if (jobType === "none" && jobId) {
+    errors.action = "Công việc trống không được kèm mã đơn.";
+  }
   if (Object.keys(errors).length > 0) return fieldError(400, errors);
 
+  let linkedBooking: MechanicBookingRow | null = null;
+  if (jobType === "booking" && jobId) {
+    linkedBooking = await findBookingRowById(jobId);
+    if (!linkedBooking || linkedBooking.mechanic_id !== mechanicId) {
+      return fieldError(404, { form: "Không tìm thấy đơn hàng này." });
+    }
+    const status = toBookingStatus(linkedBooking.status);
+    if (status !== "en_route" && status !== "in_progress") {
+      return fieldError(400, {
+        action: "Chỉ ghim vị trí khi đơn đang di chuyển hoặc đang sửa.",
+      });
+    }
+  }
+
   const savedAt = new Date();
-  const jobType = readJobType(currentJobType);
   await upsertMechanicLocation({
     mechanicId,
     lat: latitude as number,
     lng: longitude as number,
     currentJobId: jobType === "none" ? null : jobId,
-    currentJobType: jobType,
+    currentJobType: jobType === "booking" ? "booking" : "none",
     updatedAt: savedAt,
   });
+  if (linkedBooking) {
+    await publishBookingChange(
+      "booking-updated",
+      linkedBooking.booking_id,
+      linkedBooking.status ?? "",
+      linkedBooking.customer_id,
+      [mechanicId],
+    );
+  }
   return {
     ok: true,
     data: {
       lat: latitude as number,
       lng: longitude as number,
       currentJobId: jobType === "none" ? null : jobId,
-      currentJobType: jobType,
+      currentJobType: jobType === "booking" ? "booking" : "none",
       updatedAt: savedAt.toISOString(),
     },
   };

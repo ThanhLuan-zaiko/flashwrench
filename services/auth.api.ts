@@ -48,7 +48,11 @@ const NO_AUTO_REFRESH = new Set([
 
 async function parseBody(response: Response): Promise<Record<string, unknown>> {
   try {
-    return (await response.json()) as Record<string, unknown>;
+    const body: unknown = await response.json();
+    if (typeof body !== "object" || body === null || Array.isArray(body)) {
+      return {};
+    }
+    return body as Record<string, unknown>;
   } catch {
     return {};
   }
@@ -68,13 +72,41 @@ async function rawRequest(path: string, init?: RequestInit): Promise<Response> {
   });
 }
 
+let refreshPromise: Promise<boolean> | null = null;
+
+function reconnectTransport(): void {
+  void import("@/lib/realtime/realtime-client")
+    .then((client) => client.reconnectRealtime())
+    .catch(() => undefined);
+}
+
+export function refreshAccessSession(): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        const response = await rawRequest("/api/auth/refresh", {
+          method: "POST",
+        });
+        if (!response.ok) return false;
+        reconnectTransport();
+        return true;
+      } catch {
+        return false;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+  return refreshPromise;
+}
+
 // The access token lives only 15 minutes: on 401, try one refresh and
 // then replay the original request. Skipped for login/register/refresh.
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response = await rawRequest(path, init);
   if (response.status === 401 && !NO_AUTO_REFRESH.has(path)) {
-    const refreshed = await rawRequest("/api/auth/refresh", { method: "POST" });
-    if (refreshed.ok) {
+    const refreshed = await refreshAccessSession();
+    if (refreshed) {
       response = await rawRequest(path, init);
     }
   }
@@ -91,18 +123,22 @@ export function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   return request<T>(path, init);
 }
 
-export function registerRequest(payload: RegisterPayload) {
-  return request<{ user: PublicUser }>("/api/auth/register", {
+export async function registerRequest(payload: RegisterPayload) {
+  const data = await request<{ user: PublicUser }>("/api/auth/register", {
     method: "POST",
     body: JSON.stringify(payload),
   });
+  reconnectTransport();
+  return data;
 }
 
-export function loginRequest(payload: LoginPayload) {
-  return request<{ user: PublicUser }>("/api/auth/login", {
+export async function loginRequest(payload: LoginPayload) {
+  const data = await request<{ user: PublicUser }>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify(payload),
   });
+  reconnectTransport();
+  return data;
 }
 
 // Single source for "who am I and is my account still usable". Never throws:
@@ -127,16 +163,35 @@ export async function revokeSessionRequest(familyId: string): Promise<void> {
 }
 
 export async function logoutRequest(): Promise<void> {
-  await fetch("/api/auth/logout", { method: "POST" });
+  const response = await fetch("/api/auth/logout", { method: "POST" });
+  if (!response.ok) {
+    throw new AuthApiError(
+      response.status,
+      toFieldErrors(await parseBody(response)),
+    );
+  }
+  reconnectTransport();
 }
 
 export async function logoutAllRequest(): Promise<void> {
-  await fetch("/api/auth/logout-all", { method: "POST" });
+  const response = await fetch("/api/auth/logout-all", { method: "POST" });
+  if (!response.ok) {
+    throw new AuthApiError(
+      response.status,
+      toFieldErrors(await parseBody(response)),
+    );
+  }
+  reconnectTransport();
 }
 
-export function changePasswordRequest(payload: ChangePasswordPayload) {
-  return request<{ user: PublicUser }>("/api/auth/change-password", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+export async function changePasswordRequest(payload: ChangePasswordPayload) {
+  const data = await request<{ user: PublicUser }>(
+    "/api/auth/change-password",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+  reconnectTransport();
+  return data;
 }

@@ -23,8 +23,19 @@ export const complaintRepoMocks = {
   ),
 };
 
+export const complaintServiceMocks = {
+  listComplaints: mock(
+    async (..._args: unknown[]) => ({ ok: true as const, data: [] }),
+  ),
+  createComplaint: mock(async (..._args: unknown[]) => ({
+    ok: true as const,
+    data: { id: "c0mp1aint-1111-4111-8111-000000000000", subject: "subject" },
+  })),
+};
+
 export function resetComplaintMocks(): void {
   complaintStubs.complaintRows = [];
   complaintStubs.complaintById = null;
   for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(complaintServiceMocks)) fn.mockClear();
 }

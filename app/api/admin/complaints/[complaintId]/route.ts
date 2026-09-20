@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
 import type { ComplaintAction } from "@/lib/complaints/complaint.types";
 import { transitionComplaint } from "@/lib/complaints/complaints.service";
+import { COMPLAINTS_TOPIC } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 export async function PATCH(
   request: Request,
@@ -30,6 +32,10 @@ export async function PATCH(
         { errors: result.errors },
         { status: result.status },
       );
+    void publishRealtimeEvent(COMPLAINTS_TOPIC, {
+      kind: "complaint-updated",
+      complaintId,
+    });
     return NextResponse.json({ complaint: result.data });
   } catch {
     return NextResponse.json(

@@ -8,6 +8,10 @@ import {
   serviceStubs,
   userRepoMocks,
 } from "../helpers/service-mocks";
+import {
+  mechanicAccountSyncMocks,
+  resetWorkspaceMocks,
+} from "../helpers/workspace.mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports, and each factory only hands out the handles
@@ -17,6 +21,10 @@ mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 // Locking revokes the account's refresh families (forced logout), so the
 // session repository is stubbed too.
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
+mock.module(
+  "@/lib/mechanic/mechanic-account-sync.service",
+  () => mechanicAccountSyncMocks,
+);
 
 import {
   applyAdminUserAction,
@@ -27,6 +35,7 @@ const ADMIN_ID = "99999999-9999-4999-8999-999999999999";
 
 beforeEach(() => {
   resetServiceMocks();
+  resetWorkspaceMocks();
 });
 
 describe("listAdminUsers", () => {

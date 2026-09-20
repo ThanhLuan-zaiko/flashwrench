@@ -6,19 +6,35 @@
 // server-side events through POST /publish. See docs/realtime.md to add a
 // topic or a publish handler for a new feature.
 
-import { authenticate } from "@/lib/auth/auth.service";
 import { ACCESS_COOKIE } from "@/lib/auth/session";
+import {
+  authorizeTopic,
+  realtimeUser,
+} from "@/lib/realtime/authorization.service";
 import {
   canPublish,
   canSubscribe,
-  encodeServerMessage,
   isValidTopic,
   parseClientMessage,
   type RealtimeUser,
   resolvePublishSecret,
 } from "@/lib/realtime/protocol";
+import {
+  addSubscription,
+  createRegistry,
+  enqueueSocketTask,
+  fanout,
+  type RealtimeSocket,
+  type RealtimeSocketData,
+  removeSocket,
+  removeSubscription,
+  sendTo,
+  type TopicRegistry,
+} from "./registry";
+import { isAllowedRealtimeOrigin } from "./security";
 
 const MAX_PAYLOAD_BYTES = 64 * 1024;
+const MAX_SUBSCRIPTIONS_PER_SOCKET = 64;
 
 export type PublishContext = {
   user: RealtimeUser;
@@ -71,71 +87,164 @@ function readCookie(request: Request, name: string): string | null {
   return null;
 }
 
-async function userFromToken(
-  token: string | null,
-): Promise<RealtimeUser | null> {
-  if (!token) return null;
-  try {
-    const user = await authenticate(token);
-    return user ? { id: user.id, role: user.role } : null;
-  } catch {
-    return null;
-  }
+function utf8Length(text: string): number {
+  return Buffer.byteLength(text, "utf8");
 }
 
 function payloadTooLarge(payload: unknown): boolean {
   try {
-    return JSON.stringify(payload)?.length > MAX_PAYLOAD_BYTES;
+    const text = JSON.stringify(payload);
+    return text === undefined || utf8Length(text) > MAX_PAYLOAD_BYTES;
   } catch {
     return true;
   }
 }
 
-export type RealtimeServerOptions = {
-  port?: number;
-  publishSecret?: string;
-};
+async function authenticateSocket(
+  ws: RealtimeSocket,
+): Promise<RealtimeUser | null> {
+  try {
+    const user = await realtimeUser(ws.data.token);
+    if (user) ws.data.user = user;
+    return user;
+  } catch {
+    return null;
+  }
+}
 
-export function startRealtimeServer(options?: RealtimeServerOptions) {
-  const port = options?.port ?? Number(process.env.REALTIME_PORT ?? 3001);
-  const secret = options?.publishSecret ?? resolvePublishSecret();
+function hasPrivateSubscriptions(ws: RealtimeSocket): boolean {
+  for (const topic of ws.data.subscriptions) {
+    if (!canSubscribe(null, topic)) return true;
+  }
+  return false;
+}
 
-  // The access token is stored raw at upgrade time (upgrade must run
-  // synchronously) and authenticated lazily on the first message.
-  const server = Bun.serve<{
-    token: string | null;
-    user?: RealtimeUser | null;
-  }>({
-    port,
-    fetch(request, self) {
-      const url = new URL(request.url);
-      if (url.pathname === "/health") return json({ ok: true });
-      if (url.pathname === "/publish" && request.method === "POST") {
-        return handlePublish(request, self, secret);
-      }
-      if (url.pathname === "/ws") {
-        const upgraded = self.upgrade(request, {
-          data: { token: readCookie(request, ACCESS_COOKIE) },
-        });
-        if (upgraded) return undefined as unknown as Response;
-        return json({ errors: { form: "Can not upgrade." } }, 400);
-      }
-      return json({ errors: { form: "Not found." } }, 404);
-    },
-    websocket: {
-      open() {},
-      message(ws, raw) {
-        void handleSocketMessage(server, ws, raw);
-      },
-      close() {},
-    },
-  });
-  return server;
+async function handlePing(ws: RealtimeSocket): Promise<void> {
+  if (!hasPrivateSubscriptions(ws)) {
+    sendTo(ws, { type: "pong" });
+    return;
+  }
+  const user = await authenticateSocket(ws);
+  if (user) {
+    sendTo(ws, { type: "pong" });
+    return;
+  }
+  sendTo(ws, { type: "error", message: "Session expired." });
+  try {
+    ws.close(1008, "Session expired.");
+  } catch {
+    return;
+  }
+}
+
+async function handleSubscribe(
+  registry: TopicRegistry,
+  ws: RealtimeSocket,
+  topic: string,
+): Promise<void> {
+  let allowed = false;
+  try {
+    const user = await authenticateSocket(ws);
+    allowed = await authorizeTopic(user, topic);
+  } catch {
+    allowed = false;
+  }
+  if (!allowed) {
+    sendTo(ws, { type: "error", message: "Forbidden." });
+    return;
+  }
+  if (ws.data.closed) return;
+  if (!ws.data.subscriptions.has(topic)) {
+    if (ws.data.subscriptions.size >= MAX_SUBSCRIPTIONS_PER_SOCKET) {
+      sendTo(ws, { type: "error", message: "Too many subscriptions." });
+      return;
+    }
+    addSubscription(registry, ws, topic);
+  }
+  sendTo(ws, { type: "subscribed", topic });
+}
+
+async function handleUnsubscribe(
+  registry: TopicRegistry,
+  ws: RealtimeSocket,
+  topic: string,
+): Promise<void> {
+  removeSubscription(registry, ws, topic);
+  sendTo(ws, { type: "unsubscribed", topic });
+}
+
+async function handleClientPublish(
+  registry: TopicRegistry,
+  ws: RealtimeSocket,
+  topic: string,
+  payload: unknown,
+): Promise<void> {
+  const user = await authenticateSocket(ws);
+  if (!user || !canPublish(user, topic)) {
+    sendTo(ws, { type: "error", message: "Forbidden." });
+    return;
+  }
+  let allowed = false;
+  try {
+    allowed = await authorizeTopic(user, topic);
+  } catch {
+    allowed = false;
+  }
+  if (!allowed) {
+    sendTo(ws, { type: "error", message: "Forbidden." });
+    return;
+  }
+  if (payloadTooLarge(payload)) {
+    sendTo(ws, { type: "error", message: "Too large." });
+    return;
+  }
+  const publish: PublishContext["publish"] = (target, body, from) => {
+    void fanout(registry, target, body, from ?? user.id);
+  };
+  const entry = handlers.find((h) => topic.startsWith(h.prefix));
+  try {
+    if (entry) await entry.handler({ user, topic, payload, publish });
+    else await fanout(registry, topic, payload, user.id);
+  } catch {
+    sendTo(ws, { type: "error", message: "Failed." });
+  }
+}
+
+function handleSocketMessage(
+  registry: TopicRegistry,
+  ws: RealtimeSocket,
+  raw: string | Buffer,
+): void {
+  const text = typeof raw === "string" ? raw : raw.toString("utf8");
+  const bytes = typeof raw === "string" ? utf8Length(raw) : raw.length;
+  if (bytes > MAX_PAYLOAD_BYTES) {
+    sendTo(ws, { type: "error", message: "Too large." });
+    return;
+  }
+  const msg = parseClientMessage(text);
+  if (!msg) {
+    sendTo(ws, { type: "error", message: "Invalid." });
+    return;
+  }
+  switch (msg.type) {
+    case "ping":
+      void handlePing(ws);
+      return;
+    case "subscribe":
+      enqueueSocketTask(ws, () => handleSubscribe(registry, ws, msg.topic));
+      return;
+    case "unsubscribe":
+      enqueueSocketTask(ws, () => handleUnsubscribe(registry, ws, msg.topic));
+      return;
+    case "publish":
+      void handleClientPublish(registry, ws, msg.topic, msg.payload);
+      return;
+  }
 }
 
 async function handlePublish(
   request: Request,
-  self: { publish: (topic: string, data: string) => void },
+  registry: TopicRegistry,
   secret: string,
 ): Promise<Response> {
   if (!secret || request.headers.get("x-realtime-secret") !== secret) {
@@ -147,6 +256,9 @@ async function handlePublish(
   } catch {
     return json({ errors: { form: "Invalid payload." } }, 400);
   }
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return json({ errors: { form: "Invalid payload." } }, 400);
+  }
   const event = body as { topic?: unknown; payload?: unknown };
   if (!isValidTopic(event.topic) || event.payload === undefined) {
     return json({ errors: { form: "Invalid payload." } }, 400);
@@ -154,97 +266,62 @@ async function handlePublish(
   if (payloadTooLarge(event.payload)) {
     return json({ errors: { form: "Payload too large." } }, 413);
   }
-  self.publish(
-    event.topic,
-    encodeServerMessage({
-      type: "event",
-      topic: event.topic,
-      payload: event.payload,
-      from: "server",
-    }),
-  );
+  await fanout(registry, event.topic, event.payload);
   return json({ ok: true });
 }
 
-type Socket = {
-  data: { token: string | null; user?: RealtimeUser | null };
-  subscribe: (topic: string) => void;
-  unsubscribe: (topic: string) => void;
-  send: (data: string) => void;
+export type RealtimeServerOptions = {
+  port?: number;
+  publishSecret?: string;
 };
 
-async function socketUser(ws: Socket): Promise<RealtimeUser | null> {
-  if (ws.data.user === undefined) {
-    ws.data.user = await userFromToken(ws.data.token);
-  }
-  return ws.data.user;
-}
+export function startRealtimeServer(options?: RealtimeServerOptions) {
+  const port = options?.port ?? Number(process.env.REALTIME_PORT ?? 3001);
+  const secret = options?.publishSecret ?? resolvePublishSecret();
+  const registry = createRegistry();
 
-async function handleSocketMessage(
-  server: { publish: (topic: string, data: string) => void },
-  ws: Socket,
-  raw: string | Buffer,
-): Promise<void> {
-  const text = typeof raw === "string" ? raw : raw.toString("utf8");
-  if (text.length > MAX_PAYLOAD_BYTES) {
-    ws.send(encodeServerMessage({ type: "error", message: "Too large." }));
-    return;
-  }
-  const msg = parseClientMessage(text);
-  if (!msg) {
-    ws.send(encodeServerMessage({ type: "error", message: "Invalid." }));
-    return;
-  }
-  switch (msg.type) {
-    case "ping":
-      ws.send(encodeServerMessage({ type: "pong" }));
-      return;
-    case "subscribe": {
-      const subscriber = await socketUser(ws);
-      if (!canSubscribe(subscriber, msg.topic)) {
-        ws.send(encodeServerMessage({ type: "error", message: "Forbidden." }));
-        return;
+  // The access token is stored raw at upgrade time (upgrade must run
+  // synchronously) and authenticated lazily on the first message.
+  const server = Bun.serve<RealtimeSocketData>({
+    port,
+    fetch(request, self) {
+      const url = new URL(request.url);
+      if (url.pathname === "/health") return json({ ok: true });
+      if (url.pathname === "/publish" && request.method === "POST") {
+        return handlePublish(request, registry, secret);
       }
-      ws.subscribe(msg.topic);
-      ws.send(encodeServerMessage({ type: "subscribed", topic: msg.topic }));
-      return;
-    }
-    case "unsubscribe":
-      ws.unsubscribe(msg.topic);
-      ws.send(encodeServerMessage({ type: "unsubscribed", topic: msg.topic }));
-      return;
-    case "publish": {
-      const user = await socketUser(ws);
-      if (!user || !canPublish(user, msg.topic)) {
-        ws.send(encodeServerMessage({ type: "error", message: "Forbidden." }));
-        return;
+      if (url.pathname === "/ws") {
+        if (
+          !isAllowedRealtimeOrigin(request.url, request.headers.get("origin"))
+        ) {
+          return json({ errors: { form: "Forbidden." } }, 403);
+        }
+        const upgraded = self.upgrade(request, {
+          data: {
+            token: readCookie(request, ACCESS_COOKIE),
+            subscriptions: new Set<string>(),
+            queue: Promise.resolve(),
+            closed: false,
+          },
+        });
+        if (upgraded) return undefined as unknown as Response;
+        return json({ errors: { form: "Can not upgrade." } }, 400);
       }
-      if (payloadTooLarge(msg.payload)) {
-        ws.send(encodeServerMessage({ type: "error", message: "Too large." }));
-        return;
-      }
-      const publish: PublishContext["publish"] = (topic, payload, from) => {
-        server.publish(
-          topic,
-          encodeServerMessage({ type: "event", topic, payload, from }),
-        );
-      };
-      const entry = handlers.find((h) => msg.topic.startsWith(h.prefix));
-      try {
-        if (entry)
-          await entry.handler({
-            user,
-            topic: msg.topic,
-            payload: msg.payload,
-            publish,
-          });
-        else publish(msg.topic, msg.payload, user.id);
-      } catch {
-        ws.send(encodeServerMessage({ type: "error", message: "Failed." }));
-      }
-      return;
-    }
-  }
+      return json({ errors: { form: "Not found." } }, 404);
+    },
+    websocket: {
+      maxPayloadLength: MAX_PAYLOAD_BYTES,
+      open() {},
+      message(ws, raw) {
+        handleSocketMessage(registry, ws, raw);
+      },
+      close(ws) {
+        ws.data.closed = true;
+        removeSocket(registry, ws);
+      },
+    },
+  });
+  return server;
 }
 
 if (import.meta.main) {

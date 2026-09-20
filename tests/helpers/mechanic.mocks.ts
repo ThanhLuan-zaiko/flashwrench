@@ -13,7 +13,6 @@ import type {
   MechanicStatusHistoryRow,
   MechanicWorkloadRow,
 } from "@/lib/mechanic/mechanic.types";
-import type { BookingStatusWrite } from "@/lib/mechanic/mechanic-bookings.repository";
 import type {
   AvailableMechanicRow,
   UpsertAvailableMechanicParams,
@@ -22,14 +21,25 @@ import type { MechanicLocationWrite } from "@/lib/mechanic/mechanic-workspace.re
 
 export const mechanicStubs = {
   workloadRows: [] as MechanicWorkloadRow[],
+  workloadRowsInRange: [] as MechanicWorkloadRow[],
+  workloadPageRows: [] as MechanicWorkloadRow[],
+  workloadPageState: null as string | null,
   bookingById: null as MechanicBookingRow | null,
+  bookingReadQueue: [] as (MechanicBookingRow | null)[],
   bookingRowsByIds: [] as MechanicBookingRow[],
   itemRows: [] as MechanicBookingItemRow[],
   historyRows: [] as MechanicStatusHistoryRow[],
   profile: null as MechanicProfileRow | null,
+  profilesById: new Map<string, MechanicProfileRow>(),
+  profileReadQueue: [] as (MechanicProfileRow | null)[],
   location: null as MechanicLocationRow | null,
   paymentRows: [] as MechanicPaymentRow[],
   reviewRows: [] as MechanicReviewRow[],
+  activeJob: null as string | null,
+  activeJobClaimed: true,
+  activeJobReleased: [] as string[],
+  transitionClaimed: true,
+  transitionProjected: [] as unknown[],
 };
 
 export const mechanicBookingsRepoMocks = {
@@ -40,8 +50,12 @@ export const mechanicBookingsRepoMocks = {
     ): Promise<MechanicWorkloadRow[]> => mechanicStubs.workloadRows,
   ),
   findBookingRowById: mock(
-    async (_bookingId: string): Promise<MechanicBookingRow | null> =>
-      mechanicStubs.bookingById,
+    async (_bookingId: string): Promise<MechanicBookingRow | null> => {
+      if (mechanicStubs.bookingReadQueue.length > 0) {
+        return mechanicStubs.bookingReadQueue.shift() ?? null;
+      }
+      return mechanicStubs.bookingById;
+    },
   ),
   listBookingRowsByIds: mock(
     async (_bookingIds: string[]): Promise<MechanicBookingRow[]> =>
@@ -57,15 +71,58 @@ export const mechanicBookingsRepoMocks = {
       _limit: number,
     ): Promise<MechanicStatusHistoryRow[]> => mechanicStubs.historyRows,
   ),
-  writeBookingStatus: mock(
-    async (_params: BookingStatusWrite): Promise<void> => undefined,
+  listWorkloadRowsInRange: mock(
+    async (
+      _mechanicId: string,
+      _start: Date,
+      _end: Date,
+      _limit: number,
+    ): Promise<MechanicWorkloadRow[]> => mechanicStubs.workloadRowsInRange,
   ),
+  listWorkloadPage: mock(
+    async (
+      _mechanicId: string,
+      _pageState?: string | null,
+    ): Promise<{ rows: MechanicWorkloadRow[]; pageState: string | null }> => ({
+      rows: mechanicStubs.workloadPageRows,
+      pageState: mechanicStubs.workloadPageState,
+    }),
+  ),
+  findMechanicActiveJob: mock(
+    async (_mechanicId: string): Promise<string | null> =>
+      mechanicStubs.activeJob,
+  ),
+  insertMechanicActiveJob: mock(
+    async (_mechanicId: string, _bookingId: string): Promise<boolean> =>
+      mechanicStubs.activeJobClaimed,
+  ),
+  deleteMechanicActiveJob: mock(
+    async (_mechanicId: string, _bookingId: string): Promise<void> => {
+      mechanicStubs.activeJobReleased.push(_bookingId);
+    },
+  ),
+};
+
+export const bookingWorkflowRepoMocks = {
+  claimBookingTransition: mock(
+    async (_write: unknown): Promise<boolean> =>
+      mechanicStubs.transitionClaimed,
+  ),
+  projectBookingTransition: mock(async (_write: unknown): Promise<void> => {
+    mechanicStubs.transitionProjected.push(_write);
+  }),
 };
 
 export const mechanicWorkspaceRepoMocks = {
   findMechanicProfileRow: mock(
-    async (_mechanicId: string): Promise<MechanicProfileRow | null> =>
-      mechanicStubs.profile,
+    async (mechanicId: string): Promise<MechanicProfileRow | null> => {
+      if (mechanicStubs.profileReadQueue.length > 0) {
+        return mechanicStubs.profileReadQueue.shift() ?? null;
+      }
+      return (
+        mechanicStubs.profilesById.get(mechanicId) ?? mechanicStubs.profile
+      );
+    },
   ),
   findMechanicLocationRow: mock(
     async (_mechanicId: string): Promise<MechanicLocationRow | null> =>
@@ -123,16 +180,28 @@ export const mechanicDirectoryRepoMocks = {
 
 export function resetMechanicMocks(): void {
   mechanicStubs.workloadRows = [];
+  mechanicStubs.workloadRowsInRange = [];
+  mechanicStubs.workloadPageRows = [];
+  mechanicStubs.workloadPageState = null;
   mechanicStubs.bookingById = null;
+  mechanicStubs.bookingReadQueue = [];
   mechanicStubs.bookingRowsByIds = [];
   mechanicStubs.itemRows = [];
   mechanicStubs.historyRows = [];
   mechanicStubs.profile = null;
+  mechanicStubs.profilesById.clear();
+  mechanicStubs.profileReadQueue = [];
   mechanicStubs.location = null;
   mechanicStubs.paymentRows = [];
   mechanicStubs.reviewRows = [];
+  mechanicStubs.activeJob = null;
+  mechanicStubs.activeJobClaimed = true;
+  mechanicStubs.activeJobReleased = [];
+  mechanicStubs.transitionClaimed = true;
+  mechanicStubs.transitionProjected = [];
   mechanicDirectoryStubs.rows = [];
   for (const fn of Object.values(mechanicBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicWorkspaceRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicDirectoryRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(bookingWorkflowRepoMocks)) fn.mockClear();
 }

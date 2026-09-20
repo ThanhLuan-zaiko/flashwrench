@@ -1,3 +1,4 @@
+import { syncMechanicAccount } from "@/lib/mechanic/mechanic-account-sync.service";
 import {
   type AdminRoleRow,
   listRolePage,
@@ -212,6 +213,7 @@ export async function applyAdminUserAction(
   // come back on any device. The route then publishes the realtime notice
   // that makes the browser leave immediately.
   if (bumpToken) await revokeUserSessions(target.user_id);
+  if (role === "mechanic") await syncMechanicAccount(target.user_id);
 
   const updated = await findUserById(target.user_id);
   if (!updated) return fail(404, "Không tìm thấy người dùng.");

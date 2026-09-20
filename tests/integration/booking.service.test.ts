@@ -1,18 +1,26 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { monthKey } from "@/lib/mechanic/mechanic-period";
-import { makePublicUser } from "../helpers/auth.fixtures";
+import { makePublicUser, makeUserRow } from "../helpers/auth.fixtures";
 import { makeBookingInput } from "../helpers/booking.fixtures";
-import { makeServiceRow } from "../helpers/catalog.fixtures";
+import { makeCategoryRow, makeServiceRow } from "../helpers/catalog.fixtures";
 import { makeProfileRow } from "../helpers/mechanic.fixtures";
 import {
   bookingRepoMocks,
   bookingStubs,
   catalogServiceRepoMocks,
   catalogStubs,
+  categoryRepoMocks,
+  mechanicBookingsRepoMocks,
   mechanicStubs,
   mechanicWorkspaceRepoMocks,
   resetServiceMocks,
+  serviceStubs,
+  userRepoMocks,
 } from "../helpers/service-mocks";
+import {
+  resetWorkspaceMocks,
+  vehicleRepoMocks,
+} from "../helpers/workspace.mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
 // mock.module above imports. The booking service reads the catalog
@@ -21,15 +29,28 @@ import {
 mock.module("@/lib/booking/booking.repository", () => bookingRepoMocks);
 mock.module("@/lib/catalog/services.repository", () => catalogServiceRepoMocks);
 mock.module(
+  "@/lib/catalog/service-categories.repository",
+  () => categoryRepoMocks,
+);
+mock.module(
   "@/lib/mechanic/mechanic-workspace.repository",
   () => mechanicWorkspaceRepoMocks,
 );
+mock.module(
+  "@/lib/mechanic/mechanic-bookings.repository",
+  () => mechanicBookingsRepoMocks,
+);
+mock.module("@/lib/auth/user.repository", () => userRepoMocks);
+mock.module("@/lib/vehicles/vehicle.repository", () => vehicleRepoMocks);
 
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 
 beforeEach(() => {
   resetServiceMocks();
+  resetWorkspaceMocks();
   catalogStubs.serviceById = makeServiceRow();
+  catalogStubs.categoryById = makeCategoryRow();
+  serviceStubs.userById = makeUserRow({ role: "mechanic", status: "active" });
 });
 
 describe("createCustomerBooking", () => {
@@ -162,9 +183,12 @@ describe("createCustomerBooking", () => {
 
   test("returns 404 for an unknown mechanic without writing", async () => {
     mechanicStubs.profile = null;
+    serviceStubs.userById = null;
     const result = await createCustomerBooking(
       makePublicUser(),
-      makeBookingInput({ mechanicId: "no-such-mechanic" }),
+      makeBookingInput({
+        mechanicId: "99999999-9999-4999-8999-999999999999",
+      }),
     );
 
     expect(result.ok).toBe(false);

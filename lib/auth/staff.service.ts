@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { syncMechanicAccount } from "@/lib/mechanic/mechanic-account-sync.service";
 import { setIdStatus, setRoleStatus } from "./admin-users.repository";
 import { hashPassword } from "./password";
 import { deleteSession, listSessionsByUser } from "./refresh.repository";
@@ -218,6 +219,9 @@ export async function updateStaff(
   if (emailChanged && target.email) {
     await releaseEmail(target.email).catch(() => undefined);
   }
+  if (prevRole === "mechanic" || nextRole === "mechanic") {
+    await syncMechanicAccount(target.user_id);
+  }
 
   const updated = await findUserById(target.user_id);
   if (!updated) return fail(404, "Không tìm thấy người dùng.");
@@ -248,6 +252,7 @@ export async function softDeleteStaff(
     target.user_id,
     "deleted",
   );
+  if (role === "mechanic") await syncMechanicAccount(target.user_id);
   const updated = await findUserById(target.user_id);
   if (!updated) return fail(404, "Không tìm thấy người dùng.");
   return { ok: true, user: toStaffItem(updated) };
@@ -275,6 +280,7 @@ export async function restoreStaff(
     target.user_id,
     "active",
   );
+  if (role === "mechanic") await syncMechanicAccount(target.user_id);
   const updated = await findUserById(target.user_id);
   if (!updated) return fail(404, "Không tìm thấy người dùng.");
   return { ok: true, user: toStaffItem(updated) };

@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { resolveGatewayUrl } from "@/lib/realtime/realtime-client";
+import {
+  resolveGatewayUrl,
+  subscribeRealtimeTopic,
+} from "@/lib/realtime/realtime-client";
 
 const WINDOW_KEY = "window";
 
@@ -44,4 +47,75 @@ describe("resolveGatewayUrl", () => {
       else holder[WINDOW_KEY] = saved;
     }
   });
+});
+
+class FakeSocket {
+  static OPEN = 1;
+  static CONNECTING = 0;
+  readyState = 0;
+  onopen: (() => void) | null = null;
+  onmessage: ((event: { data: unknown }) => void) | null = null;
+  onclose: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  sent: unknown[] = [];
+
+  constructor(public url: string) {
+    fakeSockets.push(this);
+  }
+
+  send(data: unknown): void {
+    this.sent.push(JSON.parse(String(data)));
+  }
+
+  close(): void {
+    this.readyState = 3;
+  }
+
+  open(): void {
+    this.readyState = FakeSocket.OPEN;
+    this.onopen?.();
+  }
+
+  receive(message: unknown): void {
+    this.onmessage?.({ data: JSON.stringify(message) });
+  }
+}
+
+const fakeSockets: FakeSocket[] = [];
+const originalWebSocket = globalThis.WebSocket;
+const holder = globalThis as Record<string, unknown>;
+const savedWindow = holder[WINDOW_KEY];
+
+describe("subscribeRealtimeTopic acks", () => {
+  test("fires onReady once even if the gateway re-acks the topic", () => {
+    holder[WINDOW_KEY] = { location: { hostname: "x", protocol: "http:" } };
+    globalThis.WebSocket = FakeSocket as unknown as typeof WebSocket;
+    process.env.NEXT_PUBLIC_REALTIME_URL = "ws://127.0.0.1:3001/ws";
+    let readyCount = 0;
+    const events: unknown[] = [];
+    const unsubscribe = subscribeRealtimeTopic(
+      "admin-users",
+      (payload) => events.push(payload),
+      () => {
+        readyCount += 1;
+      },
+    );
+    const ws = fakeSockets.at(-1);
+    if (!ws) throw new Error("no socket opened");
+    ws.open();
+    ws.receive({ type: "subscribed", topic: "admin-users" });
+    ws.receive({ type: "subscribed", topic: "admin-users" });
+    expect(readyCount).toBe(1);
+
+    ws.receive({ type: "event", topic: "admin-users", payload: { a: 1 } });
+    expect(events).toEqual([{ a: 1 }]);
+    unsubscribe();
+  });
+});
+
+afterEach(() => {
+  globalThis.WebSocket = originalWebSocket;
+  if (savedWindow === undefined) delete holder[WINDOW_KEY];
+  else holder[WINDOW_KEY] = savedWindow;
+  fakeSockets.length = 0;
 });

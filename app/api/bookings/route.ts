@@ -2,18 +2,40 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/authorization";
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 import type { CreateBookingInput } from "@/lib/booking/booking.types";
+import { listCustomerBookings } from "@/lib/booking/customer-booking.service";
 import {
-  BOOKING_ASSIGNED_EVENT_KIND,
-  BOOKING_CREATED_EVENT_KIND,
-  bookingTopic,
-  userTopic,
-} from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+  mutationOriginError,
+  resultResponse,
+  routeFailure,
+} from "@/lib/http/workspace-route";
+import { publishBookingChange } from "@/lib/realtime/domain-publish";
 
 // Customer booking creation. Thin handler: parse input, call the service,
 // shape the response, then fan the new-booking signal out over the
 // gateway. Never CQL or business logic here.
+export async function GET(request: Request) {
+  const { response, user } = await requireAuth();
+  if (response) return response;
+  const url = new URL(request.url);
+  try {
+    const result = await listCustomerBookings(user.id, {
+      cursor: url.searchParams.get("cursor"),
+      limit: url.searchParams.get("limit") ?? undefined,
+    });
+    return resultResponse(result, (page) => ({
+      items: page.items,
+      nextCursor: page.nextCursor,
+    }));
+  } catch {
+    return routeFailure(
+      "Không tải được danh sách đơn hàng. Vui lòng thử lại sau.",
+    );
+  }
+}
+
 export async function POST(request: Request) {
+  const originError = mutationOriginError(request);
+  if (originError) return originError;
   const { response, user } = await requireAuth();
   if (response) return response;
 
@@ -42,6 +64,7 @@ export async function POST(request: Request) {
       lat: input.lat,
       lng: input.lng,
       mechanicId: input.mechanicId,
+      vehicleId: input.vehicleId,
       vehiclePlate: input.vehiclePlate ?? "",
       vehicleBrand: input.vehicleBrand,
       vehicleModel: input.vehicleModel,
@@ -55,23 +78,25 @@ export async function POST(request: Request) {
       );
     }
     const booking = result.data;
-    const signal = {
-      bookingId: booking.bookingId,
-      status: booking.status,
-    };
     // Signal only: subscribers refetch the real rows over HTTPS.
     // A preselected mechanic gets the job in their personal inbox, so
     // their queue updates without a reload; unassigned jobs stay on the
     // booking topic for the future dispatcher board.
-    void publishRealtimeEvent(bookingTopic(booking.bookingId), {
-      kind: BOOKING_CREATED_EVENT_KIND,
-      ...signal,
-    });
+    void publishBookingChange(
+      "booking-created",
+      booking.bookingId,
+      booking.status,
+      user.id,
+      [booking.mechanicId],
+    );
     if (booking.mechanicId) {
-      void publishRealtimeEvent(userTopic(booking.mechanicId), {
-        kind: BOOKING_ASSIGNED_EVENT_KIND,
-        ...signal,
-      });
+      void publishBookingChange(
+        "booking-assigned",
+        booking.bookingId,
+        booking.status,
+        user.id,
+        [booking.mechanicId],
+      );
     }
     return NextResponse.json({ booking }, { status: 201 });
   } catch {

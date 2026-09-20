@@ -18,5 +18,11 @@ export function useStaffPasswordRealtime(enabled = true) {
       });
       void queryClient.invalidateQueries({ queryKey: adminKeys.all });
     },
+    onReconnect: () => {
+      void queryClient.invalidateQueries({
+        queryKey: adminKeys.pendingPasswordsRoot,
+      });
+      void queryClient.invalidateQueries({ queryKey: adminKeys.all });
+    },
   });
 }

@@ -8,6 +8,8 @@ import {
   createComplaint,
   listComplaints,
 } from "@/lib/complaints/complaints.service";
+import { COMPLAINTS_TOPIC } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 function toCreateInput(body: Record<string, unknown>): CreateComplaintInput {
   return {
@@ -76,6 +78,10 @@ export async function POST(request: Request) {
         { errors: result.errors },
         { status: result.status },
       );
+    void publishRealtimeEvent(COMPLAINTS_TOPIC, {
+      kind: "complaint-updated",
+      complaintId: result.data.id,
+    });
     return NextResponse.json({ complaint: result.data }, { status: 201 });
   } catch {
     return NextResponse.json(

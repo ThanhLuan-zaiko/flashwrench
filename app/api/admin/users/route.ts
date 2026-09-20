@@ -6,7 +6,10 @@ import {
 import { requireRole } from "@/lib/auth/authorization";
 import { createStaff } from "@/lib/auth/staff.service";
 import type { UserRole, UserStatus } from "@/lib/auth/user.types";
-import { STAFF_PASSWORDS_TOPIC } from "@/lib/realtime/protocol";
+import {
+  ADMIN_USERS_TOPIC,
+  STAFF_PASSWORDS_TOPIC,
+} from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
 function parsePositiveInt(raw: string | null): number | undefined {
@@ -92,6 +95,10 @@ export async function POST(request: Request) {
     }
     void publishRealtimeEvent(STAFF_PASSWORDS_TOPIC, {
       kind: "created",
+      userId: result.user.id,
+    });
+    void publishRealtimeEvent(ADMIN_USERS_TOPIC, {
+      kind: "user-updated",
       userId: result.user.id,
     });
     return NextResponse.json(

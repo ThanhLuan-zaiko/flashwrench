@@ -59,7 +59,7 @@ export const ACTION_TARGET_STATUS: Record<
   MechanicBookingStatus
 > = {
   accept: "mechanic_assigned",
-  decline: "cancelled",
+  decline: "pending",
   "start-travel": "en_route",
   "start-work": "in_progress",
   complete: "completed",
@@ -72,8 +72,8 @@ export const ACTION_ALLOWED_FROM: Record<
   MechanicBookingAction,
   MechanicBookingStatus[]
 > = {
-  accept: ["pending"],
-  decline: ["pending"],
+  accept: ["pending", "confirmed"],
+  decline: ["pending", "confirmed"],
   "start-travel": ["confirmed", "mechanic_assigned"],
   "start-work": ["en_route"],
   complete: ["in_progress"],

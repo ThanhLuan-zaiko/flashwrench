@@ -11,6 +11,10 @@ import {
   staffRepoMocks,
   userRepoMocks,
 } from "../helpers/service-mocks";
+import {
+  mechanicAccountSyncMocks,
+  resetWorkspaceMocks,
+} from "../helpers/workspace.mocks";
 
 const mediaServiceMocks = {
   claimAssetForOwner: mock(
@@ -37,6 +41,10 @@ mock.module("@/lib/auth/password", () => passwordMocks);
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
 mock.module("@/lib/media/media.repository", () => mediaRepoMocks);
 mock.module("@/lib/media/media.service", () => mediaServiceMocks);
+mock.module(
+  "@/lib/mechanic/mechanic-account-sync.service",
+  () => mechanicAccountSyncMocks,
+);
 
 import { applyAdminUserAction } from "@/lib/auth/admin-users.service";
 import {
@@ -59,6 +67,7 @@ const CREATE_INPUT = {
 
 beforeEach(() => {
   resetServiceMocks();
+  resetWorkspaceMocks();
 });
 
 describe("createStaff", () => {
