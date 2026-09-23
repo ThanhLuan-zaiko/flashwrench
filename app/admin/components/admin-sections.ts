@@ -45,3 +45,12 @@ export const ADMIN_SECTIONS: AdminSection[] = [
 export function getAdminSection(id: AdminSectionId): AdminSection {
   return ADMIN_SECTIONS.find((s) => s.id === id) ?? ADMIN_SECTIONS[0];
 }
+
+// URL -> sidebar section. Order matters: every non-root /admin path must
+// resolve to its own section, unknown paths fall back to the dashboard.
+export function sectionIdForPath(pathname: string): AdminSectionId {
+  if (pathname.startsWith("/admin/users")) return "users";
+  if (pathname.startsWith("/admin/services")) return "services";
+  if (pathname.startsWith("/admin/products")) return "products";
+  return "dashboard";
+}

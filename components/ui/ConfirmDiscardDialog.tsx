@@ -1,6 +1,7 @@
 "use client";
 
 import { FiAlertTriangle, FiX } from "react-icons/fi";
+import { DIALOG_OVERLAY_NESTED_CLASSES } from "@/components/ui/dialog-overlay";
 
 type ConfirmDiscardDialogProps = {
   open: boolean;
@@ -32,7 +33,7 @@ export function ConfirmDiscardDialog({
       role="alertdialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-[60] flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_NESTED_CLASSES}
     >
       <button
         type="button"

@@ -36,7 +36,7 @@ export function DispatchDetailDialog({
       role="dialog"
       aria-modal="true"
       aria-label="Chi tiết đơn hàng"
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"
     >
       <button
         type="button"

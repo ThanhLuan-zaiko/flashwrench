@@ -2,6 +2,7 @@
 
 import { FiInbox, FiLayers, FiLoader } from "react-icons/fi";
 import type { PartItem } from "@/lib/parts/parts.types";
+import { CatalogCoverStack } from "../services/CatalogCoverStack";
 import { CatalogPager } from "../services/CatalogPager";
 import { formatVnd } from "../services/catalog-format";
 import { SelectDropdown } from "../services/SelectDropdown";
@@ -137,17 +138,12 @@ export function PartList({
                   className="flex flex-col gap-2 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900"
                 >
                   <span className="flex min-w-0 flex-1 items-center gap-2.5">
-                    {item.imageUrl ? (
-                      // biome-ignore lint/performance/noImgElement: admin thumbnails served immutable from the media store.
-                      <img
-                        src={item.imageUrl}
-                        alt=""
-                        loading="lazy"
-                        className="h-10 w-10 shrink-0 rounded-lg border border-zinc-200 object-cover dark:border-zinc-800"
-                      />
-                    ) : (
-                      <span className="h-10 w-10 shrink-0 rounded-lg border border-zinc-200 dark:border-zinc-800" />
-                    )}
+                    <CatalogCoverStack
+                      id={item.id}
+                      images={item.images}
+                      imageUrl={item.imageUrl}
+                      showPlaceholder
+                    />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                         {item.name}

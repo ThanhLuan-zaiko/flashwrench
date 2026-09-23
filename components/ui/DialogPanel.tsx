@@ -12,7 +12,7 @@ type DialogPanelProps = {
 export function DialogPanel({ children, wide = false }: DialogPanelProps) {
   return (
     <div
-      className={`relative max-h-[90vh] w-full ${wide ? "max-w-2xl" : "max-w-lg"} overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl sm:p-6 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
+      className={`relative max-h-[80dvh] w-full ${wide ? "max-w-2xl" : "max-w-lg"} overflow-y-auto scroll-pb-24 rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl sm:p-6 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
     >
       {children}
     </div>

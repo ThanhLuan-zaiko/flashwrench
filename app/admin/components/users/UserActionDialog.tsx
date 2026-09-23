@@ -8,6 +8,7 @@ import {
   FiUnlock,
   FiX,
 } from "react-icons/fi";
+import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import type { UserActionTarget } from "./useUserRowActions";
 
 type UserActionDialogProps = {
@@ -58,7 +59,7 @@ export function UserActionDialog({
       role="dialog"
       aria-modal="true"
       aria-label={copy.title}
-      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_CLASSES}
     >
       <button
         type="button"

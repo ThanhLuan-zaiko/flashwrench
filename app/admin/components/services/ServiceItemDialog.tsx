@@ -5,6 +5,7 @@ import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
+import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateService, useUpdateService } from "@/hooks/service-catalog";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import type {
@@ -19,6 +20,10 @@ import { ServiceItemBasicFields } from "./ServiceItemBasicFields";
 import { ServiceItemPricingFields } from "./ServiceItemPricingFields";
 import { ServiceItemSupportFields } from "./ServiceItemSupportFields";
 import { isServiceItemDirty } from "./service-item-dirty";
+import {
+  buildServiceItemPayload,
+  type ServiceItemFormFields,
+} from "./service-item-payload";
 import { useDeferredGallerySubmit } from "./useDeferredGallerySubmit";
 import { useStagedCovers } from "./useStagedCovers";
 
@@ -85,23 +90,7 @@ export function ServiceItemDialog({
       pendingOwnerId,
     },
     onSave: (gallery, uploaded) => {
-      const coverUrl = gallery[0] ?? "";
-      const payload = {
-        categoryId,
-        name: name.trim(),
-        slug: slug.trim(),
-        imageUrl: coverUrl,
-        imageAssetId: uploaded.find((u) => u.url === coverUrl)?.assetId,
-        images: gallery,
-        imageAssetIds: uploaded.map((u) => u.assetId),
-        description: description.trim(),
-        basePrice: Number.parseInt(basePrice, 10) || 0,
-        priceUnit,
-        durationMin: Number.parseInt(durationMin, 10) || 0,
-        isHomeSupported,
-        isEmergencySupported,
-        isActive: editing?.isActive ?? true,
-      };
+      const payload = buildServiceItemPayload(fields, gallery, uploaded);
       if (editing) {
         updateMutation.mutate(
           { id: editing.id, payload },
@@ -119,21 +108,23 @@ export function ServiceItemDialog({
 
   // Warn on refresh/tab close while anything is unsaved: typed fields,
   // toggles, gallery picks, or an upload/save still in flight.
+  const fields: ServiceItemFormFields = {
+    categoryId,
+    name,
+    slug,
+    description,
+    basePrice,
+    priceUnit,
+    durationMin,
+    isHomeSupported,
+    isEmergencySupported,
+    isActive: editing?.isActive ?? true,
+  };
   const dirty = isServiceItemDirty({
     editing,
     preset,
     liveFirstId,
-    draft: {
-      categoryId,
-      name,
-      slug,
-      description,
-      basePrice,
-      priceUnit,
-      durationMin,
-      isHomeSupported,
-      isEmergencySupported,
-    },
+    draft: fields,
     existing: covers.existing,
     stagedCount: covers.staged.length,
     pending,
@@ -168,7 +159,7 @@ export function ServiceItemDialog({
       role="dialog"
       aria-modal="true"
       aria-label={editing ? "Sửa mục giá" : "Thêm mục giá"}
-      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_CLASSES}
     >
       <button
         type="button"
@@ -183,7 +174,7 @@ export function ServiceItemDialog({
           onClose={guard.requestClose}
         />
 
-        <div className="mt-4 flex flex-col gap-5 pb-20 sm:pb-24">
+        <div className="mt-4 flex flex-col gap-5">
           <ServiceItemBasicFields
             editing={Boolean(editing)}
             categoryId={categoryId}

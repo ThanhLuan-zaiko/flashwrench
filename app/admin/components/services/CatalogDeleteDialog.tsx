@@ -7,6 +7,7 @@ import {
   FiTrash2,
   FiX,
 } from "react-icons/fi";
+import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 
 export type DeleteTarget = {
   kind: "category" | "service";
@@ -49,7 +50,7 @@ export function CatalogDeleteDialog({
       role="dialog"
       aria-modal="true"
       aria-label={isHard ? "Xóa vĩnh viễn" : "Xóa mềm"}
-      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_CLASSES}
     >
       <button
         type="button"

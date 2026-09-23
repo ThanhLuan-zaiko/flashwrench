@@ -114,7 +114,7 @@ export function AccountLockGuard() {
       role="dialog"
       aria-modal="true"
       aria-label={notice.title}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-4"
     >
       <div aria-hidden="true" className="fixed inset-0 bg-zinc-950/50" />
       <div className="relative w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 text-center shadow-xl dark:border-zinc-800 dark:bg-zinc-950">

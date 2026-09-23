@@ -5,6 +5,7 @@ import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
+import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
@@ -118,7 +119,7 @@ export function ServiceCategoryDialog({
       role="dialog"
       aria-modal="true"
       aria-label={editing ? "Sửa loại hình" : "Thêm loại hình"}
-      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_CLASSES}
     >
       <button
         type="button"

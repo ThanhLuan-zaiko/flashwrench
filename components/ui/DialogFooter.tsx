@@ -19,7 +19,7 @@ export function DialogFooter({
   onSubmit,
 }: DialogFooterProps) {
   return (
-    <div className="sticky bottom-0 -mx-5 mt-4 -mb-5 flex gap-2 border-t border-zinc-200 bg-white px-5 pt-3 pb-5 sm:-mx-6 sm:-mb-6 sm:px-6 sm:pb-6 dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="sticky bottom-0 -mx-5 mt-10 -mb-5 flex gap-2 border-t border-zinc-200 bg-white px-5 pt-3 pb-5 sm:-mx-6 sm:mt-12 sm:-mb-6 sm:px-6 sm:pb-6 dark:border-zinc-800 dark:bg-zinc-950">
       <button
         type="button"
         onClick={onClose}

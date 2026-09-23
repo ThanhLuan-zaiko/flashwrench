@@ -4,13 +4,7 @@ import { usePathname } from "next/navigation";
 import { type ReactNode, useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { AdminSidebar } from "./AdminSidebar";
-import { type AdminSectionId, getAdminSection } from "./admin-sections";
-
-function sectionIdForPath(pathname: string): AdminSectionId {
-  if (pathname.startsWith("/admin/users")) return "users";
-  if (pathname.startsWith("/admin/services")) return "services";
-  return "dashboard";
-}
+import { getAdminSection, sectionIdForPath } from "./admin-sections";
 
 // Shell owns layout only: sidebar plus sticky section header plus
 // centered bento content column. No business logic here.

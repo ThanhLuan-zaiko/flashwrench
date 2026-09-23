@@ -1,6 +1,7 @@
 "use client";
 
 import { FiImage } from "react-icons/fi";
+import { coverStackImages } from "./cover-stack";
 
 type CatalogCoverStackProps = {
   id: string;
@@ -18,12 +19,7 @@ export function CatalogCoverStack({
   imageUrl,
   showPlaceholder = false,
 }: CatalogCoverStackProps) {
-  const gallery =
-    Array.isArray(images) && images.length > 0
-      ? images
-      : imageUrl
-        ? [imageUrl]
-        : [];
+  const gallery = coverStackImages(images, imageUrl);
   if (gallery.length === 0) {
     if (!showPlaceholder) return null;
     return (

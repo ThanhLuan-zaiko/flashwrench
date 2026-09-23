@@ -182,7 +182,7 @@ export async function insertPart(
   const statements: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO parts_by_id (part_id, sku, name, slug, brand, category_id, category_name, car_brands, car_models, price, compare_price, stock_qty, sold_count, images, specs, description, rating_avg, rating_count, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 0, 0, ?, false, ?, ?, null)",
+        "INSERT INTO parts_by_id (part_id, sku, name, slug, brand, category_id, category_name, car_brands, car_models, price, compare_price, stock_qty, sold_count, images, specs, description, rating_avg, rating_count, is_active, is_deleted, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0, 0, ?, false, ?, ?, null)",
       params: [
         params.partId,
         params.sku,

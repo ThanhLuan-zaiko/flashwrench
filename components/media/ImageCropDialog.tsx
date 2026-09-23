@@ -73,7 +73,7 @@ export function ImageCropDialog({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-4"
     >
       <div aria-hidden="true" className="fixed inset-0 bg-zinc-950/50" />
       <div className="relative flex max-h-[90vh] w-full max-w-lg flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl md:p-5 dark:border-zinc-800 dark:bg-zinc-950">

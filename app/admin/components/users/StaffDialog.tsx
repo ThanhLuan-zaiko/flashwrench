@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FiLoader, FiSave, FiX } from "react-icons/fi";
+import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateStaff, useUpdateStaff } from "@/hooks/admin";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import type { UserRole } from "@/lib/auth/user.types";
@@ -123,7 +124,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
       role="dialog"
       aria-modal="true"
       aria-label={isCreate ? "Thêm nhân viên" : "Sửa nhân viên"}
-      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_CLASSES}
     >
       <button
         type="button"

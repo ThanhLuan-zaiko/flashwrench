@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FiLoader, FiSave } from "react-icons/fi";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
+import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateComplaint, useTransitionComplaint } from "@/hooks/complaints";
 import type {
   ComplaintAction,
@@ -75,7 +76,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
       role="dialog"
       aria-modal="true"
       aria-label={handling ? "Xử lý khiếu nại" : "Ghi nhận khiếu nại"}
-      className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+      className={DIALOG_OVERLAY_CLASSES}
     >
       <button
         type="button"
