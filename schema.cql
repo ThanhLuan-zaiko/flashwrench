@@ -702,6 +702,11 @@ CREATE TABLE IF NOT EXISTS orders_by_id (
   status         TEXT,
   payment_status TEXT,
   payment_method TEXT,
+  fulfillment_type TEXT,
+  courier_type   TEXT,
+  courier_id     UUID,
+  courier_name   TEXT,
+  tracking_code  TEXT,
   subtotal       BIGINT,
   shipping_fee   BIGINT,
   discount       BIGINT,
@@ -756,6 +761,27 @@ CREATE TABLE IF NOT EXISTS order_status_history (
   note       TEXT,
   PRIMARY KEY ((order_id), changed_at)
 ) WITH CLUSTERING ORDER BY (changed_at DESC);
+
+-- Query: deliveries assigned to one courier (mechanic board feed)
+CREATE TABLE IF NOT EXISTS orders_by_courier (
+  courier_id    UUID,
+  created_at    TIMESTAMP,
+  order_id      UUID,
+  status        TEXT,
+  total         BIGINT,
+  customer_name TEXT,
+  PRIMARY KEY ((courier_id), created_at, order_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, order_id ASC);
+
+-- Courier GPS breadcrumbs while an order is shipping (mirrors booking_travel_points_by_booking)
+CREATE TABLE IF NOT EXISTS order_travel_points_by_order (
+  order_id    UUID,
+  recorded_at TIMESTAMP,
+  courier_id  UUID,
+  lat         DOUBLE,
+  lng         DOUBLE,
+  PRIMARY KEY ((order_id), recorded_at)
+) WITH CLUSTERING ORDER BY (recorded_at ASC);
 
 -- ============================================================================
 -- 9. PAYMENTS (shared for bookings / rescues / parts orders)

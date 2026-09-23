@@ -10,11 +10,14 @@ const SAMPLE_INTERVAL_MS = 20_000;
 export function useTravelRouteSharing(
   bookingId: string | null,
   status: MechanicBookingStatus | null,
+  jobType: "booking" | "order" = "booking",
 ) {
   const toast = useToast();
   const saver = useUpdateMechanicLocation();
   const [sharing, setSharing] = useState(false);
   const sharingBookingIdRef = useRef<string | null>(null);
+  const jobTypeRef = useRef(jobType);
+  jobTypeRef.current = jobType;
   const saveLocationRef = useRef(saver.mutate);
   const toastRef = useRef(toast);
   saveLocationRef.current = saver.mutate;
@@ -22,7 +25,11 @@ export function useTravelRouteSharing(
 
   useEffect(() => {
     if (!sharing) return;
-    if (!bookingId || bookingId !== sharingBookingIdRef.current || status !== "en_route") {
+    if (
+      !bookingId ||
+      bookingId !== sharingBookingIdRef.current ||
+      status !== "en_route"
+    ) {
       sharingBookingIdRef.current = null;
       setSharing(false);
       return;
@@ -52,7 +59,7 @@ export function useTravelRouteSharing(
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             currentJobId: bookingId,
-            currentJobType: "booking",
+            currentJobType: jobTypeRef.current,
           },
           {
             onSuccess: () => {
@@ -63,7 +70,10 @@ export function useTravelRouteSharing(
               saving = false;
               if (active && !saveErrorShown) {
                 saveErrorShown = true;
-                toastRef.current.error("Không lưu được lộ trình", "Vui lòng thử lại.");
+                toastRef.current.error(
+                  "Không lưu được lộ trình",
+                  "Vui lòng thử lại.",
+                );
               }
             },
           },
@@ -90,7 +100,10 @@ export function useTravelRouteSharing(
     if (sharing) {
       sharingBookingIdRef.current = null;
       setSharing(false);
-      toast.info("Đã dừng chia sẻ lộ trình", "Vị trí mới sẽ không được ghi nhận.");
+      toast.info(
+        "Đã dừng chia sẻ lộ trình",
+        "Vị trí mới sẽ không được ghi nhận.",
+      );
       return true;
     }
     if (status !== "en_route" || !bookingId) return false;

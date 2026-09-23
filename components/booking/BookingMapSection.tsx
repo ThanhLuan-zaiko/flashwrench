@@ -26,10 +26,25 @@ const MapPicker = dynamic(
   },
 );
 
+type BookingMapSectionLabels = {
+  title: string;
+  searchPlaceholder: string;
+  pinnedHint: string;
+  emptyHint: string;
+};
+
+const DEFAULT_LABELS: BookingMapSectionLabels = {
+  title: "Vị trí sửa xe trên bản đồ",
+  searchPlaceholder: "Tìm địa chỉ gọi thợ tới…",
+  pinnedHint: "Đã ghim",
+  emptyHint: "Chạm lên bản đồ để ghim nơi thợ tới, hoặc tìm địa chỉ ở trên.",
+};
+
 type BookingMapSectionProps = {
   lat: number | null;
   lng: number | null;
   error?: string;
+  labels?: Partial<BookingMapSectionLabels>;
   onCoords: (point: MapPoint) => void;
   onAddress: (values: MapAddressValues) => void;
 };
@@ -41,9 +56,11 @@ export function BookingMapSection({
   lat,
   lng,
   error,
+  labels,
   onCoords,
   onAddress,
 }: BookingMapSectionProps) {
+  const text = { ...DEFAULT_LABELS, ...labels };
   const toast = useToast();
   const [search, setSearch] = useState("");
   const [view, setView] = useState<MapPoint>(() => defaultMapCenter());
@@ -89,7 +106,7 @@ export function BookingMapSection({
   return (
     <div className="flex flex-col gap-1.5">
       <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-        Vị trí sửa xe trên bản đồ
+        {text.title}
       </p>
       <div className="relative">
         <FiSearch
@@ -108,8 +125,8 @@ export function BookingMapSection({
           onKeyDown={(event) => {
             if (event.key === "Escape") setOpen(false);
           }}
-          placeholder="Tìm địa chỉ gọi thợ tới…"
-          aria-label="Tìm địa chỉ gọi thợ tới"
+          placeholder={text.searchPlaceholder}
+          aria-label={text.searchPlaceholder}
           autoComplete="off"
           className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
         />
@@ -184,8 +201,8 @@ export function BookingMapSection({
         {reverse.isPending
           ? "Đang tra địa chỉ cho điểm vừa ghim…"
           : marker
-            ? `Đã ghim: ${marker.lat.toFixed(5)}, ${marker.lng.toFixed(5)} — chạm chỗ khác để dời ghim.`
-            : "Chạm lên bản đồ để ghim nơi thợ tới, hoặc tìm địa chỉ ở trên."}
+            ? `${text.pinnedHint}: ${marker.lat.toFixed(5)}, ${marker.lng.toFixed(5)} — chạm chỗ khác để dời ghim.`
+            : text.emptyHint}
       </p>
       {error && (
         <p

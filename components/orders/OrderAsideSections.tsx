@@ -17,14 +17,24 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
         className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
       >
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-          Giao hàng
+          {order.fulfillmentType === "pickup" ? "Nhận hàng" : "Giao hàng"}
         </h2>
         <p className="mt-2 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
           {order.customerName} · {order.customerPhone}
         </p>
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-          {order.address?.fullText || "—"}
+          {order.fulfillmentType === "pickup"
+            ? "Nhận trực tiếp tại xưởng"
+            : order.address?.fullText || "—"}
         </p>
+        {order.courierName && (
+          <p className="mt-2 rounded-lg bg-zinc-50 px-3 py-2 text-[11px] text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+            {order.courierType === "mechanic"
+              ? `Thợ giao hàng: ${order.courierName}`
+              : `Đơn vị vận chuyển: ${order.courierName}`}
+            {order.trackingCode ? ` · Mã vận đơn: ${order.trackingCode}` : ""}
+          </p>
+        )}
         {order.note && (
           <p className="mt-2 rounded-lg bg-zinc-50 px-3 py-2 text-[11px] text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
             Ghi chú: {order.note}

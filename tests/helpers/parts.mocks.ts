@@ -9,6 +9,7 @@ import type {
   OrderHistoryRow,
   OrderItemRow,
   OrderRow,
+  OrderTravelPointRow,
 } from "@/lib/orders/orders.types";
 import type { PartCategoryRow, PartRow } from "@/lib/parts/parts.types";
 
@@ -31,9 +32,23 @@ export const partStubs = {
 export const orderStubs = {
   orderById: null as OrderRow | null,
   ordersByCustomer: [] as OrderRow[],
+  ordersByCourier: [] as OrderRow[],
   statusPage: { rows: [] as OrderRow[], pageState: null as string | null },
   itemRows: [] as OrderItemRow[],
   historyRows: [] as OrderHistoryRow[],
+};
+
+// Courier/payment/GPS side of the order model (orders-delivery.repository).
+export const orderDeliveryStubs = {
+  paymentRefs: [] as { paymentId: string; createdAt: Date }[],
+  travelPointRows: [] as OrderTravelPointRow[],
+  insertedTravelPoints: [] as {
+    orderId: string;
+    courierId: string;
+    lat: number;
+    lng: number;
+    recordedAt: Date;
+  }[],
 };
 
 export const cartStubs = {
@@ -195,6 +210,65 @@ export const orderRepoMocks = {
     async (_orderId: string): Promise<OrderHistoryRow[]> =>
       orderStubs.historyRows,
   ),
+  listOrderRowsByCourier: mock(
+    async (_courierId: string): Promise<OrderRow[]> =>
+      orderStubs.ordersByCourier,
+  ),
+};
+
+export const orderDeliveryRepoMocks = {
+  assignOrderCourier: mock(
+    async (_params: {
+      orderId: string;
+      courierType: string;
+      courierId: string | null;
+      courierName: string | null;
+      trackingCode: string | null;
+      orderCreatedAt: Date;
+      orderTotal: number;
+      customerName: string;
+      now: Date;
+    }): Promise<void> => undefined,
+  ),
+  updateOrderCourierStatus: mock(
+    async (_params: {
+      courierId: string;
+      orderCreatedAt: Date;
+      orderId: string;
+      status: string;
+    }): Promise<void> => undefined,
+  ),
+  markOrderPaymentStatus: mock(
+    async (_params: {
+      orderId: string;
+      customerId: string | null;
+      paymentStatus: string;
+      paidAt: Date | null;
+      now: Date;
+      paymentRefs: { paymentId: string; createdAt: Date }[];
+    }): Promise<void> => undefined,
+  ),
+  insertOrderTravelPoint: mock(
+    async (params: {
+      orderId: string;
+      courierId: string;
+      lat: number;
+      lng: number;
+      recordedAt: Date;
+    }): Promise<void> => {
+      orderDeliveryStubs.insertedTravelPoints.push(params);
+    },
+  ),
+  listOrderTravelPointRows: mock(
+    async (_orderId: string): Promise<OrderTravelPointRow[]> =>
+      orderDeliveryStubs.travelPointRows,
+  ),
+  listOrderPaymentRefs: mock(
+    async (
+      _orderId: string,
+    ): Promise<{ paymentId: string; createdAt: Date }[]> =>
+      orderDeliveryStubs.paymentRefs,
+  ),
 };
 
 export const orderWriteRepoMocks = {
@@ -244,9 +318,13 @@ export function resetPartsMocks(): void {
   partStubs.categorySlugClaimed = true;
   orderStubs.orderById = null;
   orderStubs.ordersByCustomer = [];
+  orderStubs.ordersByCourier = [];
   orderStubs.statusPage = { rows: [], pageState: null };
   orderStubs.itemRows = [];
   orderStubs.historyRows = [];
+  orderDeliveryStubs.paymentRefs = [];
+  orderDeliveryStubs.travelPointRows = [];
+  orderDeliveryStubs.insertedTravelPoints = [];
   cartStubs.cartRows = [];
   for (const fn of Object.values(partRepoMocks)) {
     if (typeof fn === "function" && "mockClear" in fn) fn.mockClear();
@@ -258,5 +336,6 @@ export function resetPartsMocks(): void {
     if (typeof fn === "function" && "mockClear" in fn) fn.mockClear();
   }
   for (const fn of Object.values(orderWriteRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(orderDeliveryRepoMocks)) fn.mockClear();
   for (const fn of Object.values(partsMediaServiceMocks)) fn.mockClear();
 }

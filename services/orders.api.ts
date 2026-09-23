@@ -2,6 +2,7 @@ import type {
   CheckoutInput,
   OrderDetail,
   OrderSummary,
+  OrderTrackView,
 } from "@/lib/orders/orders.types";
 import { apiRequest } from "./auth.api";
 
@@ -12,6 +13,14 @@ export function fetchMyOrders(): Promise<{ orders: OrderSummary[] }> {
 export function fetchMyOrder(orderId: string): Promise<{ order: OrderDetail }> {
   return apiRequest<{ order: OrderDetail }>(
     `/api/orders/${encodeURIComponent(orderId)}`,
+  );
+}
+
+export function fetchMyOrderTrack(
+  orderId: string,
+): Promise<{ track: OrderTrackView }> {
+  return apiRequest<{ track: OrderTrackView }>(
+    `/api/orders/${encodeURIComponent(orderId)}/track`,
   );
 }
 

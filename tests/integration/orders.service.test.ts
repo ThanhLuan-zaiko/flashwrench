@@ -6,6 +6,7 @@ import {
   makePartRow,
 } from "../helpers/parts.fixtures";
 import {
+  orderDeliveryRepoMocks,
   orderRepoMocks,
   orderStubs,
   orderWriteRepoMocks,
@@ -14,6 +15,7 @@ import {
   partStubs,
   partsMediaServiceMocks,
   resetServiceMocks,
+  userRepoMocks,
 } from "../helpers/service-mocks";
 
 // Helpers first, mocks second, system under test last.
@@ -25,6 +27,11 @@ mock.module(
 mock.module("@/lib/media/media.service", () => partsMediaServiceMocks);
 mock.module("@/lib/orders/orders.repository", () => orderRepoMocks);
 mock.module("@/lib/orders/orders-write.repository", () => orderWriteRepoMocks);
+mock.module(
+  "@/lib/orders/orders-delivery.repository",
+  () => orderDeliveryRepoMocks,
+);
+mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 
 import {
   cancelMyOrder,

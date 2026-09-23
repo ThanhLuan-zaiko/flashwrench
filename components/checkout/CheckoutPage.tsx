@@ -11,8 +11,13 @@ import { useCart } from "@/hooks/cart";
 import { useCheckout } from "@/hooks/orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { buildLoginHref } from "@/lib/auth/auth-redirect";
-import type { OrderFieldErrors } from "@/lib/orders/orders.types";
+import type {
+  FulfillmentType,
+  OrderFieldErrors,
+} from "@/lib/orders/orders.types";
 import { AuthApiError } from "@/services/auth.api";
+import type { MapAddressValues } from "@/services/geocode.api";
+import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
 import { CheckoutSummary } from "./CheckoutSummary";
 
 // Customer /checkout: shipping form plus an immutable summary of the
@@ -28,12 +33,31 @@ export function CheckoutPage() {
 
   const [recipientName, setRecipientName] = useState("");
   const [phone, setPhone] = useState("");
+  const [fulfillment, setFulfillment] = useState<FulfillmentType>("delivery");
   const [address, setAddress] = useState("");
+  const [addressLat, setAddressLat] = useState<number | null>(null);
+  const [addressLng, setAddressLng] = useState<number | null>(null);
+  const [addressParts, setAddressParts] = useState({
+    province: "",
+    district: "",
+    ward: "",
+    street: "",
+  });
   const [note, setNote] = useState("");
   const [errors, setErrors] = useState<OrderFieldErrors>({});
 
   const cartView = cart.data?.cart ?? null;
   const submitting = checkout.isPending;
+
+  const handleGeocode = (values: MapAddressValues) => {
+    setAddress(values.address);
+    setAddressParts({
+      province: values.province,
+      district: values.district,
+      ward: values.ward,
+      street: values.street,
+    });
+  };
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -42,7 +66,14 @@ export function CheckoutPage() {
       {
         recipientName: recipientName.trim(),
         phone: phone.trim(),
-        address: address.trim(),
+        fulfillment,
+        address: fulfillment === "delivery" ? address.trim() : "",
+        addressLat: fulfillment === "delivery" ? addressLat : null,
+        addressLng: fulfillment === "delivery" ? addressLng : null,
+        province: addressParts.province,
+        district: addressParts.district,
+        ward: addressParts.ward,
+        street: addressParts.street,
         note: note.trim() || undefined,
       },
       {
@@ -65,8 +96,8 @@ export function CheckoutPage() {
       <BigTypeHeader
         level={1}
         eyebrow="Đặt hàng"
-        title="Thông tin giao hàng."
-        subtitle="Nhân viên sẽ xác nhận đơn và phí giao hàng trước khi đóng gói."
+        title="Thông tin nhận hàng."
+        subtitle="Chọn giao tận nơi hoặc nhận tại xưởng — nhân viên sẽ xác nhận đơn trước khi đóng gói."
       />
 
       {me.isSuccess && me.data?.role !== "customer" && (
@@ -141,40 +172,22 @@ export function CheckoutPage() {
                 error={errors.phone}
                 disabled={submitting}
               />
-              <div>
-                <label
-                  htmlFor={`${fieldId}-address`}
-                  className="mb-1.5 block text-sm font-medium text-zinc-800 dark:text-zinc-200"
-                >
-                  Địa chỉ giao hàng
-                </label>
-                <textarea
-                  id={`${fieldId}-address`}
-                  value={address}
-                  onChange={(event) => setAddress(event.target.value)}
-                  placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
-                  rows={3}
-                  disabled={submitting}
-                  aria-invalid={Boolean(errors.address)}
-                  aria-describedby={
-                    errors.address ? `${fieldId}-address-error` : undefined
-                  }
-                  className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus-visible:ring-offset-zinc-950 ${
-                    errors.address
-                      ? "border-red-500 dark:border-red-400"
-                      : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-600"
-                  }`}
-                />
-                {errors.address && (
-                  <p
-                    id={`${fieldId}-address-error`}
-                    role="alert"
-                    className="mt-1.5 text-sm text-red-600 dark:text-red-400"
-                  >
-                    {errors.address}
-                  </p>
-                )}
-              </div>
+              <CheckoutFulfillmentFields
+                fieldId={fieldId}
+                fulfillment={fulfillment}
+                address={address}
+                addressLat={addressLat}
+                addressLng={addressLng}
+                errors={errors}
+                disabled={submitting}
+                onFulfillment={setFulfillment}
+                onAddress={setAddress}
+                onCoords={(lat, lng) => {
+                  setAddressLat(lat);
+                  setAddressLng(lng);
+                }}
+                onGeocode={handleGeocode}
+              />
               <div>
                 <label
                   htmlFor={`${fieldId}-note`}
@@ -194,7 +207,11 @@ export function CheckoutPage() {
               </div>
             </div>
 
-            <CheckoutSummary cart={cartView} submitting={submitting} />
+            <CheckoutSummary
+              cart={cartView}
+              fulfillment={fulfillment}
+              submitting={submitting}
+            />
           </form>
         )}
     </div>

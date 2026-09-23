@@ -1,8 +1,19 @@
-import type { OrderDetail, OrderSummary } from "@/lib/orders/orders.types";
+import type {
+  CourierConfigInput,
+  OrderDetail,
+  OrderSummary,
+} from "@/lib/orders/orders.types";
 import type { PartItem } from "@/lib/parts/parts.types";
 import { apiRequest } from "./auth.api";
 
-export type { OrderDetail, OrderSummary, PartItem };
+export type { CourierConfigInput, OrderDetail, OrderSummary, PartItem };
+
+export type CounterSalePayload = {
+  customerName?: string;
+  customerPhone?: string;
+  note?: string;
+  lines: { partId: string; quantity: number }[];
+};
 
 export type DispatchOrdersQuery = {
   status: string;
@@ -43,11 +54,21 @@ export function updateDispatchOrderStatus(
   orderId: string,
   status: string,
   note?: string,
+  courier?: CourierConfigInput,
 ): Promise<{ order: OrderDetail }> {
   return apiRequest<{ order: OrderDetail }>(
     `/api/dispatch/orders/${encodeURIComponent(orderId)}`,
-    { method: "PATCH", body: JSON.stringify({ status, note }) },
+    { method: "PATCH", body: JSON.stringify({ status, note, courier }) },
   );
+}
+
+export function createCounterSaleRequest(
+  payload: CounterSalePayload,
+): Promise<{ order: OrderDetail }> {
+  return apiRequest<{ order: OrderDetail }>("/api/dispatch/orders", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function fetchDispatchParts(): Promise<{ parts: PartItem[] }> {

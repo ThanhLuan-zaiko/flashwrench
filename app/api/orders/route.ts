@@ -30,11 +30,23 @@ export async function GET() {
   }
 }
 
+function toNumberOrNull(value: unknown): number | null {
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 function toCheckoutInput(body: Record<string, unknown>): CheckoutInput {
   return {
     recipientName: String(body.recipientName ?? ""),
     phone: String(body.phone ?? ""),
+    fulfillment: String(body.fulfillment ?? ""),
     address: String(body.address ?? ""),
+    addressLat: toNumberOrNull(body.addressLat),
+    addressLng: toNumberOrNull(body.addressLng),
+    province: String(body.province ?? ""),
+    district: String(body.district ?? ""),
+    ward: String(body.ward ?? ""),
+    street: String(body.street ?? ""),
     note: body.note === undefined ? undefined : String(body.note),
   };
 }

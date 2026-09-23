@@ -2,6 +2,7 @@
 // payments and reviews. No business logic: services own every rule.
 import { scylla } from "@/lib/db/client";
 import {
+  type MechanicJobType,
   type MechanicLocationRow,
   type MechanicPaymentRow,
   type MechanicProfileRow,
@@ -163,7 +164,7 @@ export type MechanicLocationWrite = {
   lat: number;
   lng: number;
   currentJobId: string | null;
-  currentJobType: "booking" | "emergency" | "none";
+  currentJobType: MechanicJobType;
   updatedAt: Date;
 };
 

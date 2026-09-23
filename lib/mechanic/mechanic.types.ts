@@ -222,6 +222,8 @@ export type MechanicReviewItem = {
 };
 
 export type MechanicNavigationTarget = {
+  // bookingId carries the job id for both kinds: booking id or order id.
+  kind: "booking" | "order";
   bookingId: string;
   customerName: string;
   addressText: string;
@@ -235,10 +237,12 @@ export type MechanicNavigationTarget = {
   serviceNames: string[];
 };
 
+export type MechanicJobType = "booking" | "emergency" | "order" | "none";
+
 export type MechanicNavigationBoard = {
   origin: { lat: number; lng: number; label: string } | null;
   currentJobId: string | null;
-  currentJobType: "booking" | "emergency" | "none";
+  currentJobType: MechanicJobType;
   targets: MechanicNavigationTarget[];
   locationSavedAt: string | null;
 };
@@ -247,7 +251,7 @@ export type MechanicSavedLocation = {
   lat: number;
   lng: number;
   currentJobId: string | null;
-  currentJobType: "booking" | "emergency" | "none";
+  currentJobType: MechanicJobType;
   updatedAt: string;
 };
 

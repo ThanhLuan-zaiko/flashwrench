@@ -84,8 +84,15 @@ export function NavigationList({
               }`}
             >
               <span className="flex items-center justify-between gap-2">
-                <span className="truncate text-sm font-semibold">
-                  {target.customerName || "Khách hàng"}
+                <span className="flex min-w-0 items-center gap-1.5">
+                  {target.kind === "order" && (
+                    <span className="shrink-0 rounded-full border border-current px-1.5 py-px text-[10px] font-semibold">
+                      Giao hàng
+                    </span>
+                  )}
+                  <span className="truncate text-sm font-semibold">
+                    {target.customerName || "Khách hàng"}
+                  </span>
                 </span>
                 <span
                   className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium ${statusTone(target.status)}`}

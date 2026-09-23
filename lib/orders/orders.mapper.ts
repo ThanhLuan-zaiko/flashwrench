@@ -1,4 +1,6 @@
 import {
+  isCourierType,
+  isFulfillmentType,
   isOrderStatus,
   type OrderDetail,
   type OrderHistoryEntry,
@@ -16,6 +18,13 @@ export function toOrderSummary(row: OrderRow): OrderSummary {
     status: isOrderStatus(row.status) ? row.status : "pending",
     paymentStatus: row.payment_status ?? "unpaid",
     paymentMethod: row.payment_method ?? "cod",
+    fulfillmentType: isFulfillmentType(row.fulfillment_type)
+      ? row.fulfillment_type
+      : "delivery",
+    courierType: isCourierType(row.courier_type) ? row.courier_type : null,
+    courierId: row.courier_id,
+    courierName: row.courier_name,
+    trackingCode: row.tracking_code,
     subtotal: row.subtotal ?? 0,
     shippingFee: row.shipping_fee ?? 0,
     discount: row.discount ?? 0,

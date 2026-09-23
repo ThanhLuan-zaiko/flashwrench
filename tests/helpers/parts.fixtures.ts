@@ -4,6 +4,7 @@ import type {
   OrderHistoryRow,
   OrderItemRow,
   OrderRow,
+  OrderTravelPointRow,
 } from "@/lib/orders/orders.types";
 import type {
   CreatePartInput,
@@ -116,6 +117,11 @@ export function makeOrderRow(overrides?: Partial<OrderRow>): OrderRow {
     status: "pending",
     payment_status: "unpaid",
     payment_method: "cod",
+    fulfillment_type: "delivery",
+    courier_type: null,
+    courier_id: null,
+    courier_name: null,
+    tracking_code: null,
     subtotal: 240000,
     shipping_fee: 30000,
     discount: 0,
@@ -165,8 +171,28 @@ export function makeCheckoutInput(
   return {
     recipientName: "Nguyen Van A",
     phone: "0901234567",
+    fulfillment: "delivery",
     address: "123 Duong ABC, Phuong Ben Nghe, Quan 1",
+    addressLat: 10.7626,
+    addressLng: 106.6601,
+    province: "Ho Chi Minh",
+    district: "Quan 1",
+    ward: "Phuong Ben Nghe",
+    street: "123 Duong ABC",
     note: "Giao gio hanh chinh",
+    ...overrides,
+  };
+}
+
+export function makeOrderTravelPointRow(
+  overrides?: Partial<OrderTravelPointRow>,
+): OrderTravelPointRow {
+  return {
+    order_id: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+    recorded_at: new Date("2026-01-05T01:00:00.000Z"),
+    courier_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    lat: 10.77,
+    lng: 106.7,
     ...overrides,
   };
 }

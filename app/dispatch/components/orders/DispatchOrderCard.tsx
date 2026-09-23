@@ -32,9 +32,19 @@ export function DispatchOrderCard({ order, onOpen }: DispatchOrderCardProps) {
             <span className={orderStatusBadgeClass(order.status)}>
               {ORDER_STATUS_LABELS[order.status]}
             </span>
+            <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+              {order.fulfillmentType === "pickup"
+                ? "Nhận tại xưởng"
+                : "Giao tận nơi"}
+            </span>
           </span>
           <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
             {formatDateTime(order.createdAt)}
+            {order.courierType === "mechanic" && order.courierName
+              ? ` · Thợ: ${order.courierName}`
+              : order.courierType === "third_party" && order.courierName
+                ? ` · ${order.courierName} · ${order.trackingCode ?? ""}`
+                : ""}
             {order.note && ` · ${order.note}`}
           </span>
         </span>

@@ -2,6 +2,10 @@ import type { UserRole } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
 import { restockForOrder } from "@/lib/parts/parts-lifecycle.service";
+import {
+  type ResolvedCourier,
+  resolveCourierConfig,
+} from "./order-courier.service";
 import { toOrderDetail, toOrderSummary } from "./orders.mapper";
 import {
   findOrderRowById,
@@ -11,16 +15,25 @@ import {
   listOrderRowsByStatus,
 } from "./orders.repository";
 import {
-  canTransition,
+  type CourierConfigInput,
+  canTransitionForOrder,
+  isFulfillmentType,
   isOrderStatus,
   type OrderDetail,
   type OrderFieldErrors,
+  type OrderRow,
   type OrderStatus,
   type OrderSummary,
   type OrdersResult,
   RESTOCK_TRANSITIONS,
   requiresAdminTransition,
 } from "./orders.types";
+import {
+  assignOrderCourier,
+  listOrderPaymentRefs,
+  markOrderPaymentStatus,
+  updateOrderCourierStatus,
+} from "./orders-delivery.repository";
 import {
   insertOrderHistory,
   updateOrderStatusRows,
@@ -97,7 +110,7 @@ export async function cancelMyOrder(
       "Đơn hàng đã được xử lý, không thể hủy. Vui lòng liên hệ cửa hàng.",
     );
   }
-  await applyStatusChange(row, "cancelled", customerId, "Khách hàng hủy");
+  await applyStatusChange(row, "cancelled", customerId, "Khách hàng hủy", null);
   const detail = await loadDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };
@@ -151,24 +164,29 @@ export async function listStaffOrders(
   };
 }
 
-// Staff transition: the state machine guards the move, admin-only targets
-// (refund) check the role, and a cancel restocks the purchased items.
+// Staff transition: the fulfillment-aware state machine guards the move,
+// shipping requires a courier assignment, delivery settles the COD
+// payment, and a cancel restocks the purchased items.
 export async function updateOrderStatus(
   actor: { id: string; role: UserRole },
   orderId: string,
   nextStatus: unknown,
   note?: string,
+  courier?: CourierConfigInput,
 ): Promise<OrdersResult<OrderDetail>> {
   if (!isOrderStatus(nextStatus)) {
     return failFields(400, { status: "Trạng thái đơn hàng không hợp lệ." });
   }
   const row = await findOrderRowById(orderId);
   if (!row) return fail(404, "Không tìm thấy đơn hàng.");
+  const fulfillment = isFulfillmentType(row.fulfillment_type)
+    ? row.fulfillment_type
+    : "delivery";
   const from = isOrderStatus(row.status) ? row.status : "pending";
   if (from === nextStatus) {
     return fail(400, "Đơn hàng đã ở trạng thái này.");
   }
-  if (!canTransition(from, nextStatus)) {
+  if (!canTransitionForOrder(from, nextStatus, fulfillment)) {
     return failFields(400, {
       status: "Không thể chuyển đơn hàng sang trạng thái này.",
     });
@@ -176,17 +194,30 @@ export async function updateOrderStatus(
   if (requiresAdminTransition(nextStatus) && actor.role !== "admin") {
     return fail(403, "Chỉ quản trị viên mới được hoàn tiền đơn hàng.");
   }
-  await applyStatusChange(row, nextStatus, actor.id, note ?? "");
+  let resolvedCourier: ResolvedCourier | null = null;
+  if (nextStatus === "shipping") {
+    const resolved = await resolveCourierConfig(courier);
+    if (!resolved.ok) return resolved;
+    resolvedCourier = resolved.data;
+  }
+  await applyStatusChange(
+    row,
+    nextStatus,
+    actor.id,
+    note ?? "",
+    resolvedCourier,
+  );
   const detail = await loadDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };
 }
 
 async function applyStatusChange(
-  row: NonNullable<Awaited<ReturnType<typeof findOrderRowById>>>,
+  row: OrderRow,
   nextStatus: OrderStatus,
   changedBy: string,
   note: string,
+  courier: ResolvedCourier | null,
 ): Promise<void> {
   const now = new Date();
   const createdAt = row.created_at ?? now;
@@ -202,6 +233,38 @@ async function applyStatusChange(
     total: row.total ?? 0,
     now,
   });
+  if (nextStatus === "shipping" && courier) {
+    await assignOrderCourier({
+      orderId: row.order_id,
+      courierType: courier.type,
+      courierId: courier.courierId,
+      courierName: courier.courierName,
+      trackingCode: courier.trackingCode,
+      orderCreatedAt: createdAt,
+      orderTotal: row.total ?? 0,
+      customerName: row.customer_name ?? "",
+      now,
+    });
+  }
+  if (row.courier_id && nextStatus !== "shipping") {
+    await updateOrderCourierStatus({
+      courierId: row.courier_id,
+      orderCreatedAt: createdAt,
+      orderId: row.order_id,
+      status: nextStatus,
+    });
+  }
+  if (nextStatus === "delivered" || nextStatus === "refunded") {
+    const paymentStatus = nextStatus === "delivered" ? "paid" : "refunded";
+    await markOrderPaymentStatus({
+      orderId: row.order_id,
+      customerId: row.customer_id,
+      paymentStatus,
+      paidAt: paymentStatus === "paid" ? now : null,
+      now,
+      paymentRefs: await listOrderPaymentRefs(row.order_id),
+    });
+  }
   await insertOrderHistory({
     orderId: row.order_id,
     oldStatus: row.status ?? null,

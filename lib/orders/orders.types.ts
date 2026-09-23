@@ -19,6 +19,30 @@ export const ORDER_STATUSES: OrderStatus[] = [
   "refunded",
 ];
 
+// How the customer receives the order: shipped to an address or picked
+// up / bought directly at the workshop counter.
+export type FulfillmentType = "delivery" | "pickup";
+
+export const FULFILLMENT_TYPES: FulfillmentType[] = ["delivery", "pickup"];
+
+export function isFulfillmentType(value: unknown): value is FulfillmentType {
+  return (
+    typeof value === "string" && (FULFILLMENT_TYPES as string[]).includes(value)
+  );
+}
+
+// Who carries a delivery order: an in-house mechanic (live GPS) or an
+// external carrier identified by name + tracking code.
+export type CourierType = "mechanic" | "third_party";
+
+export const COURIER_TYPES: CourierType[] = ["mechanic", "third_party"];
+
+export function isCourierType(value: unknown): value is CourierType {
+  return (
+    typeof value === "string" && (COURIER_TYPES as string[]).includes(value)
+  );
+}
+
 // Allowed forward/backward transitions for staff (dispatcher + admin).
 // Cancel restocks items; refund is admin-only and does not restock
 // automatically (goods may not come back).
@@ -30,6 +54,13 @@ export const STAFF_ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   delivered: ["refunded"],
   cancelled: [],
   refunded: [],
+};
+
+// Pickup orders never leave the counter: packing hands straight to
+// delivered and the shipping state does not exist for them.
+export const PICKUP_ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  ...STAFF_ORDER_TRANSITIONS,
+  packing: ["delivered", "cancelled"],
 };
 
 // Transitions that put purchased items back into stock.
@@ -46,6 +77,22 @@ export function isOrderStatus(value: unknown): value is OrderStatus {
 
 export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
   return STAFF_ORDER_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function orderTransitions(
+  fulfillment: FulfillmentType,
+): Record<OrderStatus, OrderStatus[]> {
+  return fulfillment === "pickup"
+    ? PICKUP_ORDER_TRANSITIONS
+    : STAFF_ORDER_TRANSITIONS;
+}
+
+export function canTransitionForOrder(
+  from: OrderStatus,
+  to: OrderStatus,
+  fulfillment: FulfillmentType,
+): boolean {
+  return orderTransitions(fulfillment)[from]?.includes(to) ?? false;
 }
 
 export function requiresAdminTransition(to: OrderStatus): boolean {
@@ -92,13 +139,18 @@ export type CartView = {
 
 export type OrderRow = {
   order_id: string;
-  customer_id: string;
+  customer_id: string | null;
   customer_name: string | null;
   customer_phone: string | null;
   shipping_address: AddressSnapshot | null;
   status: string | null;
   payment_status: string | null;
   payment_method: string | null;
+  fulfillment_type: string | null;
+  courier_type: string | null;
+  courier_id: string | null;
+  courier_name: string | null;
+  tracking_code: string | null;
   subtotal: number | null;
   shipping_fee: number | null;
   discount: number | null;
@@ -145,6 +197,11 @@ export type OrderSummary = {
   status: OrderStatus;
   paymentStatus: string;
   paymentMethod: string;
+  fulfillmentType: FulfillmentType;
+  courierType: CourierType | null;
+  courierId: string | null;
+  courierName: string | null;
+  trackingCode: string | null;
   subtotal: number;
   shippingFee: number;
   discount: number;
@@ -154,7 +211,7 @@ export type OrderSummary = {
 };
 
 export type OrderDetail = OrderSummary & {
-  customerId: string;
+  customerId: string | null;
   customerName: string;
   customerPhone: string;
   address: AddressSnapshot | null;
@@ -173,20 +230,72 @@ export type OrderHistoryEntry = {
 export type CheckoutInput = {
   recipientName: string;
   phone: string;
+  fulfillment: string;
   address: string;
+  addressLat: number | null;
+  addressLng: number | null;
+  province: string;
+  district: string;
+  ward: string;
+  street: string;
   note?: string;
+};
+
+// Delivery assignment picked by the dispatcher when an order ships.
+export type CourierConfigInput = {
+  type: string;
+  mechanicId?: string;
+  carrierName?: string;
+  trackingCode?: string;
+};
+
+// Walk-in counter sale: staff picks parts, the order is paid + handed
+// over immediately (delivered + paid, pickup fulfillment).
+export type CounterSaleInput = {
+  customerName?: string;
+  customerPhone?: string;
+  note?: string;
+  lines: { partId: string; quantity: number }[];
+};
+
+// GPS breadcrumb written by the courier while an order is shipping.
+export type OrderTravelPointRow = {
+  order_id: string;
+  recorded_at: Date | null;
+  courier_id: string | null;
+  lat: number | null;
+  lng: number | null;
+};
+
+export type OrderTravelPoint = {
+  lat: number;
+  lng: number;
+  recordedAt: string | null;
+};
+
+// Customer-facing delivery tracking payload.
+export type OrderTrackView = {
+  destination: { lat: number; lng: number } | null;
+  courier: { lat: number; lng: number; updatedAt: string | null } | null;
+  points: OrderTravelPoint[];
 };
 
 export type OrderFieldErrors = Partial<
   Record<
     | "recipientName"
     | "phone"
+    | "fulfillment"
     | "address"
     | "note"
     | "qty"
     | "partId"
     | "status"
     | "stockQty"
+    | "courier"
+    | "mechanicId"
+    | "carrierName"
+    | "trackingCode"
+    | "lines"
     | "form",
     string
   >

@@ -117,7 +117,7 @@ export type UpdateLocationPayload = {
   latitude: number;
   longitude: number;
   currentJobId?: string;
-  currentJobType?: "booking" | "emergency" | "none";
+  currentJobType?: "booking" | "emergency" | "order" | "none";
 };
 
 export function updateMechanicLocationRequest(

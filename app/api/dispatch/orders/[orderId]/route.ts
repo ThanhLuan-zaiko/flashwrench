@@ -8,6 +8,7 @@ import {
   getOrderForStaff,
   updateOrderStatus,
 } from "@/lib/orders/orders.service";
+import type { CourierConfigInput } from "@/lib/orders/orders.types";
 import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
@@ -34,8 +35,30 @@ export async function GET(
   }
 }
 
-// Staff status transition { status, note? }. The state machine in the
-// service guards the move; refund additionally requires the admin role.
+function toCourierInput(
+  body: Record<string, unknown>,
+): CourierConfigInput | undefined {
+  if (!body.courier || typeof body.courier !== "object") return undefined;
+  const courier = body.courier as Record<string, unknown>;
+  return {
+    type: String(courier.type ?? ""),
+    mechanicId:
+      courier.mechanicId === undefined ? undefined : String(courier.mechanicId),
+    carrierName:
+      courier.carrierName === undefined
+        ? undefined
+        : String(courier.carrierName),
+    trackingCode:
+      courier.trackingCode === undefined
+        ? undefined
+        : String(courier.trackingCode),
+  };
+}
+
+// Staff status transition { status, note?, courier? }. The state machine
+// in the service guards the move; shipping requires a courier payload
+// (mechanic assignment or third-party carrier + tracking code), and
+// refund additionally requires the admin role.
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ orderId: string }> },
@@ -58,6 +81,7 @@ export async function PATCH(
       orderId,
       body.status,
       body.note === undefined ? undefined : String(body.note),
+      toCourierInput(body),
     );
     if (!result.ok)
       return NextResponse.json(
@@ -68,10 +92,12 @@ export async function PATCH(
       kind: "orders-updated",
       updatedAt: new Date().toISOString(),
     });
-    void publishRealtimeEvent(userTopic(result.data.customerId), {
-      kind: "order-updated",
-      orderId,
-    });
+    if (result.data.customerId) {
+      void publishRealtimeEvent(userTopic(result.data.customerId), {
+        kind: "order-updated",
+        orderId,
+      });
+    }
     return NextResponse.json({ order: result.data });
   } catch {
     return NextResponse.json(

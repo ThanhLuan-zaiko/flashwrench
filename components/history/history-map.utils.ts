@@ -1,4 +1,3 @@
-import type { BookingTravelPoint } from "@/lib/booking/workspace.types";
 import type { TrackPoint } from "./TrackingMap";
 
 export type HistoryMapModel = {
@@ -11,10 +10,11 @@ export type HistoryMapModel = {
 export function historyMapModel(
   customer: TrackPoint | null,
   liveMechanic: TrackPoint | null,
-  points: BookingTravelPoint[],
+  points: { lat: number; lng: number }[],
 ): HistoryMapModel {
   const latest = points[points.length - 1];
-  const mechanic = liveMechanic ?? (latest ? { lat: latest.lat, lng: latest.lng } : null);
+  const mechanic =
+    liveMechanic ?? (latest ? { lat: latest.lat, lng: latest.lng } : null);
   const route =
     points.length > 1
       ? points.map(({ lat, lng }) => ({ lat, lng }))

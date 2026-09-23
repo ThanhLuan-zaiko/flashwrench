@@ -3,16 +3,24 @@
 import Link from "next/link";
 import { FiArrowLeft, FiLoader } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
-import type { CartView } from "@/lib/orders/orders.types";
+import { orderShippingFee } from "@/lib/orders/order-pricing";
+import type { CartView, FulfillmentType } from "@/lib/orders/orders.types";
 
 type CheckoutSummaryProps = {
   cart: CartView;
+  fulfillment: FulfillmentType;
   submitting: boolean;
 };
 
 // Order summary aside rendered inside the checkout form — the submit
-// button lives here so the form's grid columns stay balanced.
-export function CheckoutSummary({ cart, submitting }: CheckoutSummaryProps) {
+// button lives here so the form's grid columns stay balanced. The fee
+// mirrors the server-side orderShippingFee rule (pickup ships free).
+export function CheckoutSummary({
+  cart,
+  fulfillment,
+  submitting,
+}: CheckoutSummaryProps) {
+  const fee = orderShippingFee(fulfillment, cart.subtotal);
   return (
     <aside
       data-reveal
@@ -37,17 +45,34 @@ export function CheckoutSummary({ cart, submitting }: CheckoutSummaryProps) {
           </li>
         ))}
       </ul>
-      <div className="flex items-baseline justify-between border-t border-zinc-200 pt-3 dark:border-zinc-800">
+      <div className="flex items-baseline justify-between border-t border-zinc-200 pt-3 text-xs dark:border-zinc-800">
+        <span className="text-zinc-600 dark:text-zinc-400">Tạm tính</span>
+        <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+          {formatVnd(cart.subtotal)}
+        </span>
+      </div>
+      <div className="flex items-baseline justify-between text-xs">
+        <span className="text-zinc-600 dark:text-zinc-400">Phí giao hàng</span>
+        <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+          {fulfillment === "pickup"
+            ? "Nhận tại xưởng"
+            : fee === 0
+              ? "Miễn phí"
+              : formatVnd(fee)}
+        </span>
+      </div>
+      <div className="flex items-baseline justify-between">
         <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
           Tổng thanh toán
         </span>
         <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {formatVnd(cart.subtotal)}
+          {formatVnd(cart.subtotal + fee)}
         </span>
       </div>
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-        Thanh toán khi nhận hàng. Phí giao hàng (nếu có) sẽ được báo trước khi
-        đóng gói.
+        {fulfillment === "pickup"
+          ? "Thanh toán khi nhận hàng tại xưởng."
+          : "Thanh toán khi nhận hàng. Bạn có thể theo dõi đơn vận chuyển trong mục Lịch sử."}
       </p>
       <button
         type="submit"

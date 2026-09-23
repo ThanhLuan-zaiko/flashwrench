@@ -13,12 +13,13 @@ import {
   useDispatchOrder,
   useUpdateDispatchOrderStatus,
 } from "@/hooks/dispatch-orders";
-import type { OrderStatus } from "@/lib/orders/orders.types";
+import type { OrderFieldErrors, OrderStatus } from "@/lib/orders/orders.types";
 import {
+  orderTransitions,
   requiresAdminTransition,
-  STAFF_ORDER_TRANSITIONS,
 } from "@/lib/orders/orders.types";
 import { AuthApiError } from "@/services/auth.api";
+import { type CourierDraft, OrderCourierFields } from "./OrderCourierFields";
 import { OrderOpsDetail } from "./OrderOpsDetail";
 
 type OrderOpsDialogProps = {
@@ -44,19 +45,44 @@ export function OrderOpsDialog({
   const updateStatus = useUpdateDispatchOrderStatus();
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors>({});
+  const [courier, setCourier] = useState<CourierDraft>({
+    type: "mechanic",
+    mechanicId: "",
+    carrierName: "",
+    trackingCode: "",
+  });
   const order = query.data?.order ?? null;
 
   const isAdmin = me.data?.role === "admin";
   const transitions = order
-    ? (STAFF_ORDER_TRANSITIONS[order.status] ?? []).filter(
+    ? (orderTransitions(order.fulfillmentType)[order.status] ?? []).filter(
         (next) => isAdmin || !requiresAdminTransition(next),
       )
     : [];
+  const needsCourier =
+    order !== null &&
+    order.fulfillmentType === "delivery" &&
+    transitions.includes("shipping");
 
   const apply = (status: OrderStatus) => {
     setError("");
+    setFieldErrors({});
     updateStatus.mutate(
-      { orderId, status, note: note.trim() || undefined },
+      {
+        orderId,
+        status,
+        note: note.trim() || undefined,
+        courier:
+          status === "shipping"
+            ? {
+                type: courier.type,
+                mechanicId: courier.mechanicId || undefined,
+                carrierName: courier.carrierName || undefined,
+                trackingCode: courier.trackingCode || undefined,
+              }
+            : undefined,
+      },
       {
         onSuccess: () => {
           setNote("");
@@ -67,12 +93,15 @@ export function OrderOpsDialog({
           );
         },
         onError: (err) => {
-          const message =
-            err instanceof AuthApiError
-              ? ((err.errors as Record<string, string | undefined>).form ??
-                err.message)
-              : err.message;
-          setError(message || "Không cập nhật được trạng thái.");
+          if (err instanceof AuthApiError) {
+            const errors = err.errors as OrderFieldErrors;
+            setFieldErrors(errors);
+            setError(
+              errors.form ?? "Vui lòng kiểm tra lại thông tin giao hàng.",
+            );
+          } else {
+            setError(err.message || "Không cập nhật được trạng thái.");
+          }
         },
       },
     );
@@ -166,6 +195,18 @@ export function OrderOpsDialog({
                   aria-label="Ghi chú cập nhật trạng thái"
                   className="mt-2 h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
                 />
+                {needsCourier && (
+                  <div className="mt-3">
+                    <OrderCourierFields
+                      draft={courier}
+                      errors={fieldErrors}
+                      disabled={updateStatus.isPending}
+                      onChange={(patch) =>
+                        setCourier((current) => ({ ...current, ...patch }))
+                      }
+                    />
+                  </div>
+                )}
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {transitions.map((next) => (
                     <button

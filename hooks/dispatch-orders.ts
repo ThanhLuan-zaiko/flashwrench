@@ -2,8 +2,13 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { OPERATIONS_TOPIC, parseDomainEvent } from "@/lib/realtime/protocol";
-import type { DispatchOrdersQuery } from "@/services/dispatch-orders.api";
+import type {
+  CounterSalePayload,
+  CourierConfigInput,
+  DispatchOrdersQuery,
+} from "@/services/dispatch-orders.api";
 import {
+  createCounterSaleRequest,
   fetchDispatchOrder,
   fetchDispatchOrders,
   fetchDispatchParts,
@@ -85,13 +90,29 @@ export function useUpdateDispatchOrderStatus() {
       orderId,
       status,
       note,
+      courier,
     }: {
       orderId: string;
       status: string;
       note?: string;
-    }) => updateDispatchOrderStatus(orderId, status, note),
+      courier?: CourierConfigInput;
+    }) => updateDispatchOrderStatus(orderId, status, note, courier),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: dispatchOrderKeys.all });
+    },
+  });
+}
+
+export function useCreateCounterSale() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CounterSalePayload) =>
+      createCounterSaleRequest(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: dispatchOrderKeys.all });
+      void queryClient.invalidateQueries({
+        queryKey: dispatchOrderKeys.stock,
+      });
     },
   });
 }

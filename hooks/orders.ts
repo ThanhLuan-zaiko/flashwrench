@@ -8,6 +8,7 @@ import {
   checkoutRequest,
   fetchMyOrder,
   fetchMyOrders,
+  fetchMyOrderTrack,
 } from "@/services/orders.api";
 import { useMe } from "./auth";
 import { cartKeys } from "./cart";
@@ -16,6 +17,7 @@ import { useRealtimeTopic } from "./useRealtimeTopic";
 export const orderKeys = {
   all: ["orders"] as const,
   detail: (orderId: string) => ["orders", orderId] as const,
+  track: (orderId: string) => ["orders", orderId, "track"] as const,
 };
 
 export function useMyOrders() {
@@ -41,6 +43,20 @@ export function useMyOrder(orderId: string | null) {
     gcTime: 5 * 60 * 1000,
     retry: false,
     refetchOnWindowFocus: true,
+  });
+}
+
+// Live courier position + breadcrumb trail for a shipping order.
+export function useMyOrderTrack(orderId: string | null) {
+  const me = useMe();
+  return useQuery({
+    queryKey: orderKeys.track(orderId ?? ""),
+    queryFn: () => fetchMyOrderTrack(orderId as string),
+    enabled: me.data?.role === "customer" && Boolean(orderId),
+    staleTime: 10 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+    refetchInterval: 15 * 1000,
   });
 }
 

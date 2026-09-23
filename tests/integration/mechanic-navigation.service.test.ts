@@ -15,6 +15,11 @@ import {
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
 import {
+  orderDeliveryRepoMocks,
+  orderRepoMocks,
+  resetPartsMocks,
+} from "../helpers/parts.mocks";
+import {
   bookingTravelRepoMocks,
   domainPublishMocks,
   resetWorkspaceMocks,
@@ -35,6 +40,11 @@ mock.module(
   "@/lib/booking/booking-travel.repository",
   () => bookingTravelRepoMocks,
 );
+mock.module("@/lib/orders/orders.repository", () => orderRepoMocks);
+mock.module(
+  "@/lib/orders/orders-delivery.repository",
+  () => orderDeliveryRepoMocks,
+);
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 
 import {
@@ -45,6 +55,7 @@ import {
 beforeEach(() => {
   resetMechanicMocks();
   resetWorkspaceMocks();
+  resetPartsMocks();
 });
 
 describe("getNavigationBoard", () => {
@@ -223,3 +234,6 @@ describe("saveMechanicLocation", () => {
     ).toBe(0);
   });
 });
+
+// Order-delivery jobs live in mechanic-navigation-orders.test.ts; both
+// files mock the same modules and run in separate processes.

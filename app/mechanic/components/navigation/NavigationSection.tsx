@@ -45,7 +45,11 @@ export function NavigationSection() {
     targets.find((target) => target.bookingId === selectedId) ?? targets[0];
   const selectedBookingId = selected?.bookingId ?? null;
   const selectedStatus = selected?.status ?? null;
-  const routeSharing = useTravelRouteSharing(selectedBookingId, selectedStatus);
+  const routeSharing = useTravelRouteSharing(
+    selectedBookingId,
+    selectedStatus,
+    selected?.kind === "order" ? "order" : "booking",
+  );
 
   const shareLocation = () => {
     if (routeSharing.toggleSharing()) return;
@@ -64,7 +68,11 @@ export function NavigationSection() {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             currentJobId: selected?.bookingId,
-            currentJobType: selected ? "booking" : "none",
+            currentJobType: !selected
+              ? "none"
+              : selected.kind === "order"
+                ? "order"
+                : "booking",
           },
           {
             onSuccess: () => {

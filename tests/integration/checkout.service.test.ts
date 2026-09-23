@@ -158,4 +158,49 @@ describe("checkoutCart", () => {
     } | null;
     expect(insert?.shippingFee).toBe(0);
   });
+
+  test("delivery without a map pin is rejected before touching stock", async () => {
+    cartStubs.cartRows = [makeCartRow()];
+    const result = await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput({ addressLat: null, addressLng: null }),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(400);
+    expect(result.errors.address).toBeTruthy();
+    expect(partInventoryRepoMocks.decrementPartStockCas).not.toHaveBeenCalled();
+    expect(orderWriteRepoMocks.insertOrder).not.toHaveBeenCalled();
+  });
+
+  test("pickup orders skip the address and the shipping fee", async () => {
+    cartStubs.cartRows = [makeCartRow({ qty: 2 })];
+    partStubs.partById = makePartRow();
+    orderStubs.orderById = makeOrderRow({ fulfillment_type: "pickup" });
+    orderStubs.itemRows = [makeOrderItemRow()];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+
+    const result = await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput({
+        fulfillment: "pickup",
+        address: "",
+        addressLat: null,
+        addressLng: null,
+      }),
+    );
+    expect(result.ok).toBe(true);
+    const insert = orderWriteRepoMocks.insertOrder.mock.calls[0]?.at(0) as {
+      fulfillmentType: string;
+      address: unknown;
+      shippingFee: number;
+      total: number;
+    } | null;
+    expect(insert).toMatchObject({
+      fulfillmentType: "pickup",
+      address: null,
+      shippingFee: 0,
+      total: 240000,
+    });
+  });
 });

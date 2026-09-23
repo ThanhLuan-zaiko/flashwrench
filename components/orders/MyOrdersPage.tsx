@@ -113,6 +113,11 @@ export function MyOrdersPage() {
                     <span className={orderStatusBadgeClass(order.status)}>
                       {ORDER_STATUS_LABELS[order.status]}
                     </span>
+                    <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+                      {order.fulfillmentType === "pickup"
+                        ? "Nhận tại xưởng"
+                        : "Giao tận nơi"}
+                    </span>
                   </p>
                   <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                     {formatDateTime(order.createdAt)}

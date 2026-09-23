@@ -4,6 +4,12 @@
 // coordinates or with an unknown status are left out instead of guessing.
 
 import { insertBookingTravelPoint } from "@/lib/booking/booking-travel.repository";
+import {
+  findOrderRowById,
+  listOrderRowsByCourier,
+} from "@/lib/orders/orders.repository";
+import type { OrderRow } from "@/lib/orders/orders.types";
+import { insertOrderTravelPoint } from "@/lib/orders/orders-delivery.repository";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 import { isUuid } from "@/lib/validation";
 import {
@@ -28,6 +34,7 @@ import {
   isValidLongitude,
 } from "./mechanic-geo";
 import { groupItemsByBooking, toBookingStatus } from "./mechanic-mapper";
+import { orderNavigationTargets } from "./mechanic-order-targets";
 import { isOpenBookingStatus } from "./mechanic-status";
 import {
   findMechanicLocationRow,
@@ -48,7 +55,9 @@ function fieldError<T>(
 }
 
 function currentJobTypeOf(value: string | null): NavigationCurrentType {
-  return value === "booking" || value === "emergency" ? value : "none";
+  return value === "booking" || value === "emergency" || value === "order"
+    ? value
+    : "none";
 }
 
 /** Live GPS when the mechanic shares it, otherwise the garage base. */
@@ -94,23 +103,31 @@ async function resolveOrigin(
 
 function currentJobIdOf(
   rows: MechanicWorkloadRow[],
+  orderRows: OrderRow[],
   savedJobId: string | null,
 ): string | null {
-  if (savedJobId && rows.some((row) => row.booking_id === savedJobId)) {
+  if (
+    savedJobId &&
+    (rows.some((row) => row.booking_id === savedJobId) ||
+      orderRows.some((row) => row.order_id === savedJobId))
+  ) {
     return savedJobId;
   }
   const active = rows.find(
     (row) => row.status === "en_route" || row.status === "in_progress",
   );
-  return active?.booking_id ?? rows[0]?.booking_id ?? null;
+  return (
+    active?.booking_id ?? orderRows[0]?.order_id ?? rows[0]?.booking_id ?? null
+  );
 }
 
 export async function getNavigationBoard(
   mechanicId: string,
 ): Promise<MechanicResult<MechanicNavigationBoard>> {
-  const [rows, location] = await Promise.all([
+  const [rows, location, courierOrders] = await Promise.all([
     listWorkloadRows(mechanicId, MECHANIC_NAVIGATION_SCAN_LIMIT),
     findMechanicLocationRow(mechanicId),
+    listOrderRowsByCourier(mechanicId, MECHANIC_NAVIGATION_SCAN_LIMIT),
   ]);
   const open = rows.filter((row) => {
     const status = toBookingStatus(row.status);
@@ -150,6 +167,7 @@ export async function getNavigationBoard(
         : "Chưa có địa chỉ chi tiết";
     const distanceKm = origin ? haversineKm(origin, { lat, lng }) : 0;
     targets.push({
+      kind: "booking",
       bookingId: row.booking_id,
       customerName: detail?.customer_name ?? row.customer_name ?? "",
       addressText,
@@ -166,6 +184,12 @@ export async function getNavigationBoard(
     });
   }
 
+  // Delivery jobs assigned to this mechanic appear next to bookings: the
+  // order ships while status is shipping, and the shipping address is the
+  // destination the customer pinned at checkout.
+  const openOrders = courierOrders.filter((row) => row.status === "shipping");
+  targets.push(...orderNavigationTargets(courierOrders, origin));
+
   targets.sort((left, right) => {
     if (left.distanceKm !== right.distanceKm) {
       return left.distanceKm - right.distanceKm;
@@ -181,7 +205,11 @@ export async function getNavigationBoard(
     ok: true,
     data: {
       origin,
-      currentJobId: currentJobIdOf(open, location?.current_job_id ?? null),
+      currentJobId: currentJobIdOf(
+        open,
+        openOrders,
+        location?.current_job_id ?? null,
+      ),
       currentJobType: currentJobTypeOf(location?.current_job_type ?? null),
       targets,
       locationSavedAt: originResult.savedAt,
@@ -200,6 +228,7 @@ function readJobType(value: unknown): NavigationCurrentType | null {
     return "none";
   }
   if (value === "booking") return "booking";
+  if (value === "order") return "order";
   return null;
 }
 
@@ -225,7 +254,7 @@ export async function saveMechanicLocation(
     typeof currentJobId === "string" && currentJobId.length > 0
       ? currentJobId
       : null;
-  if (jobType === "booking" && !isUuid(jobId)) {
+  if ((jobType === "booking" || jobType === "order") && !isUuid(jobId)) {
     errors.action = "Mã công việc không hợp lệ.";
   }
   if (jobType === "none" && jobId) {
@@ -246,20 +275,47 @@ export async function saveMechanicLocation(
       });
     }
   }
+  let linkedOrder: OrderRow | null = null;
+  if (jobType === "order" && jobId) {
+    linkedOrder = await findOrderRowById(jobId);
+    if (
+      !linkedOrder ||
+      linkedOrder.courier_type !== "mechanic" ||
+      linkedOrder.courier_id !== mechanicId
+    ) {
+      return fieldError(404, { form: "Không tìm thấy đơn giao hàng này." });
+    }
+    if (linkedOrder.status !== "shipping") {
+      return fieldError(400, {
+        action: "Chỉ ghim vị trí khi đơn đang được giao.",
+      });
+    }
+  }
 
   const savedAt = new Date();
+  const savedJobType =
+    jobType === "booking" || jobType === "order" ? jobType : "none";
   await upsertMechanicLocation({
     mechanicId,
     lat: latitude as number,
     lng: longitude as number,
-    currentJobId: jobType === "none" ? null : jobId,
-    currentJobType: jobType === "booking" ? "booking" : "none",
+    currentJobId: savedJobType === "none" ? null : jobId,
+    currentJobType: savedJobType,
     updatedAt: savedAt,
   });
   if (linkedBooking && toBookingStatus(linkedBooking.status) === "en_route") {
     await insertBookingTravelPoint({
       bookingId: linkedBooking.booking_id,
       mechanicId,
+      lat: latitude as number,
+      lng: longitude as number,
+      recordedAt: savedAt,
+    });
+  }
+  if (linkedOrder) {
+    await insertOrderTravelPoint({
+      orderId: linkedOrder.order_id,
+      courierId: mechanicId,
       lat: latitude as number,
       lng: longitude as number,
       recordedAt: savedAt,
@@ -279,8 +335,8 @@ export async function saveMechanicLocation(
     data: {
       lat: latitude as number,
       lng: longitude as number,
-      currentJobId: jobType === "none" ? null : jobId,
-      currentJobType: jobType === "booking" ? "booking" : "none",
+      currentJobId: savedJobType === "none" ? null : jobId,
+      currentJobType: savedJobType,
       updatedAt: savedAt.toISOString(),
     },
   };

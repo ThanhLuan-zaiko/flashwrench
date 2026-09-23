@@ -7,7 +7,7 @@ import type {
 } from "./orders.types";
 
 export const ORDER_COLUMNS =
-  "order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at";
+  "order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at";
 
 function toAddressSnapshot(raw: unknown): AddressSnapshot | null {
   if (!raw || typeof raw !== "object") return null;
@@ -26,13 +26,18 @@ function toAddressSnapshot(raw: unknown): AddressSnapshot | null {
 export function toOrderRow(row: Record<string, unknown>): OrderRow {
   return {
     order_id: String(row.order_id),
-    customer_id: String(row.customer_id),
+    customer_id: row.customer_id ? String(row.customer_id) : null,
     customer_name: (row.customer_name as string | null) ?? null,
     customer_phone: (row.customer_phone as string | null) ?? null,
     shipping_address: toAddressSnapshot(row.shipping_address),
     status: (row.status as string | null) ?? null,
     payment_status: (row.payment_status as string | null) ?? null,
     payment_method: (row.payment_method as string | null) ?? null,
+    fulfillment_type: (row.fulfillment_type as string | null) ?? null,
+    courier_type: (row.courier_type as string | null) ?? null,
+    courier_id: row.courier_id ? String(row.courier_id) : null,
+    courier_name: (row.courier_name as string | null) ?? null,
+    tracking_code: (row.tracking_code as string | null) ?? null,
     subtotal: (row.subtotal as number | null) ?? null,
     shipping_fee: (row.shipping_fee as number | null) ?? null,
     discount: (row.discount as number | null) ?? null,
@@ -140,6 +145,23 @@ export async function listOrderRowsByStatus(
     rows: await findOrderRowsByIds(ids),
     pageState: result.pageState ?? null,
   };
+}
+
+// Mechanic courier board: deliveries assigned to one mechanic, newest
+// first, then fan out to orders_by_id for address coordinates.
+export async function listOrderRowsByCourier(
+  courierId: string,
+  limit = 50,
+): Promise<OrderRow[]> {
+  const result = await scylla.execute(
+    "SELECT order_id FROM orders_by_courier WHERE courier_id = ? LIMIT ?",
+    [courierId, limit],
+    { prepare: true },
+  );
+  const ids = result.rows.map((r) =>
+    String((r as unknown as { order_id: unknown }).order_id),
+  );
+  return findOrderRowsByIds(ids);
 }
 
 export async function listOrderItemRows(
