@@ -1,38 +1,81 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { FiAlertCircle, FiLoader, FiRefreshCw } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { bookingKeys, useMyBookings } from "@/hooks/booking";
 import { useDomainRealtime } from "@/hooks/useDomainRealtime";
 import { userTopic } from "@/lib/realtime/protocol";
-import { BookingCard } from "./BookingCard";
 import { BookingDetailDialog } from "./BookingDetailDialog";
-import { splitBookings } from "./history.utils";
+import { HistoryBookingList } from "./HistoryBookingList";
+import { HistoryRoutePanel } from "./HistoryRoutePanel";
 
 type HistoryEntryProps = {
   customerId: string;
 };
 
-// Customer booking history: in-flight orders on top (with live tracking
-// inside the detail dialog), finished ones behind. Server-sent events on
-// the customer's own topic refresh the list on every transition and
-// mechanic location pin.
 export function HistoryEntry({ customerId }: HistoryEntryProps) {
+  const [search, setSearch] = useState("");
+  const [querySearch, setQuerySearch] = useState("");
+  const [pageIndex, setPageIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const query = useMyBookings();
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const querySearchRef = useRef(querySearch);
+  querySearchRef.current = querySearch;
+  const query = useMyBookings(querySearch);
+  const pages = query.data?.pages ?? [];
+  const page = pages[pageIndex];
+  const bookings = page?.items ?? [];
+  const selectedBooking = pages
+    .flatMap((result) => result.items)
+    .find((booking) => booking.id === selectedId) ?? null;
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setQuerySearch(search.trim()), 250);
+    return () => window.clearTimeout(timeout);
+  }, [search]);
+
+  useEffect(() => {
+    if (pages.length > 0 && pageIndex >= pages.length) {
+      setPageIndex(pages.length - 1);
+    }
+  }, [pageIndex, pages.length]);
 
   useDomainRealtime(
     userTopic(customerId),
-    [bookingKeys.mine, ["bookings", "detail"]],
+    [
+      bookingKeys.mine,
+      ["bookings", "detail"],
+      bookingKeys.travelTrack(selectedId ?? ""),
+    ],
     Boolean(customerId),
   );
 
-  const buckets = useMemo(() => {
-    const items = query.data?.pages.flatMap((page) => page.items) ?? [];
-    return splitBookings(items);
-  }, [query.data]);
+  function handleSearch(value: string) {
+    setSearch(value);
+    setPageIndex(0);
+    setSelectedId(null);
+    setDetailId(null);
+  }
+
+  async function nextPage() {
+    if (pageIndex < pages.length - 1) {
+      setPageIndex((current) => current + 1);
+      return;
+    }
+    if (!query.hasNextPage || query.isFetchingNextPage) return;
+    const expectedSearch = querySearch;
+    const nextIndex = pageIndex + 1;
+    const result = await query.fetchNextPage();
+    if (
+      !result.isError &&
+      querySearchRef.current === expectedSearch &&
+      result.data?.pages[nextIndex]
+    ) {
+      setPageIndex(nextIndex);
+    }
+  }
+
+  const hasNext = pageIndex < pages.length - 1 || Boolean(query.hasNextPage);
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
@@ -40,110 +83,34 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
         level={1}
         eyebrow="Lịch sử"
         title="Đơn hàng của bạn."
-        subtitle="Theo dõi thợ đang trên đường, xem lại tiến trình và giao dịch của các đơn đã đặt."
+        subtitle="Chọn một đơn để xem lộ trình thợ; tìm kiếm và chuyển trang ngay trong danh sách."
       />
 
-      {query.isPending && (
-        <div aria-busy="true" className="flex flex-col gap-3">
-          <p className="sr-only">Đang tải lịch sử đơn hàng</p>
-          {["skeleton-a", "skeleton-b", "skeleton-c"].map((key) => (
-            <div
-              key={key}
-              className="h-28 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
-            />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 items-start gap-4 md:gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <HistoryRoutePanel booking={selectedBooking} />
+        <HistoryBookingList
+          bookings={bookings}
+          selectedId={selectedId}
+          search={search}
+          pageNumber={pageIndex + 1}
+          loading={query.isPending}
+          error={query.isError}
+          loadingNext={query.isFetchingNextPage}
+          hasPrevious={pageIndex > 0}
+          hasNext={hasNext}
+          onSearch={handleSearch}
+          onSelect={setSelectedId}
+          onOpen={setDetailId}
+          onPrevious={() => setPageIndex((current) => Math.max(0, current - 1))}
+          onNext={() => void nextPage()}
+          onRetry={() => void query.refetch()}
+        />
+      </div>
 
-      {query.isError && (
-        <div
-          role="alert"
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
-        >
-          <p className="flex items-center gap-2 font-semibold">
-            <FiAlertCircle aria-hidden="true" className="h-4 w-4" />
-            Không tải được lịch sử đơn hàng.
-          </p>
-          <button
-            type="button"
-            onClick={() => void query.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:border-red-800 dark:hover:bg-red-950"
-          >
-            <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
-            Thử tải lại
-          </button>
-        </div>
-      )}
-
-      {query.isSuccess && buckets.active.length + buckets.past.length === 0 && (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-950">
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Bạn chưa có đơn hàng nào
-          </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Đặt dịch vụ đầu tiên để theo dõi thợ và giao dịch tại đây.
-          </p>
-          <Link
-            href="/services"
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-          >
-            Xem dịch vụ
-          </Link>
-        </div>
-      )}
-
-      {buckets.active.length > 0 && (
-        <section aria-label="Đơn đang xử lý" className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Đang xử lý
-          </h2>
-          <ul className="flex flex-col gap-3">
-            {buckets.active.map((booking) => (
-              <BookingCard
-                key={booking.id}
-                booking={booking}
-                onOpen={() => setSelectedId(booking.id)}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {buckets.past.length > 0 && (
-        <section aria-label="Đơn đã kết thúc" className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Lịch sử giao dịch
-          </h2>
-          <ul className="flex flex-col gap-3">
-            {buckets.past.map((booking) => (
-              <BookingCard
-                key={booking.id}
-                booking={booking}
-                onOpen={() => setSelectedId(booking.id)}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {query.hasNextPage && (
-        <button
-          type="button"
-          onClick={() => void query.fetchNextPage()}
-          disabled={query.isFetchingNextPage}
-          className="mx-auto flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
-        >
-          {query.isFetchingNextPage && (
-            <FiLoader aria-hidden="true" className="h-4 w-4 animate-spin" />
-          )}
-          Tải thêm đơn cũ hơn
-        </button>
-      )}
-
-      {selectedId && (
+      {detailId && (
         <BookingDetailDialog
-          bookingId={selectedId}
-          onClose={() => setSelectedId(null)}
+          bookingId={detailId}
+          onClose={() => setDetailId(null)}
         />
       )}
     </div>

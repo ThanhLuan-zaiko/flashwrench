@@ -10,12 +10,14 @@ import {
   TileLayer,
   useMap,
 } from "react-leaflet";
+import { defaultMapCenter } from "@/services/geocode.api";
 
 export type TrackPoint = { lat: number; lng: number };
 
 type TrackingMapProps = {
   customer: TrackPoint | null;
-  mechanic: TrackPoint;
+  mechanic: TrackPoint | null;
+  route?: TrackPoint[];
 };
 
 function destinationIcon(): L.DivIcon {
@@ -38,26 +40,43 @@ function mechanicIcon(): L.DivIcon {
 
 // Keeps both pins in view as the mechanic moves; re-fits only when the
 // mechanic's coordinates actually change.
-function FitBounds({ customer, mechanic }: TrackingMapProps) {
+function FitBounds({ customer, mechanic, route }: TrackingMapProps) {
   const map = useMap();
   useEffect(() => {
-    const points: [number, number][] = [[mechanic.lat, mechanic.lng]];
+    const points: [number, number][] = route?.length
+      ? route.map((point): [number, number] => [point.lat, point.lng])
+      : [];
+    if (mechanic) points.push([mechanic.lat, mechanic.lng]);
     if (customer) points.push([customer.lat, customer.lng]);
-    map.fitBounds(L.latLngBounds(points), { padding: [48, 48], maxZoom: 16 });
-  }, [map, customer, mechanic]);
+    if (points.length > 0) {
+      map.fitBounds(L.latLngBounds(points), { padding: [48, 48], maxZoom: 16 });
+    }
+  }, [map, customer, mechanic, route]);
   return null;
 }
 
 // Read-only tracking map: the dark pin is the customer's address, the
 // inverted pin is the mechanic's live position.
-export function TrackingMap({ customer, mechanic }: TrackingMapProps) {
+export function TrackingMap({ customer, mechanic, route }: TrackingMapProps) {
   const icons = useMemo(
     () => ({ destination: destinationIcon(), mechanic: mechanicIcon() }),
     [],
   );
-  const center: [number, number] = customer
+  const path: [number, number][] = route?.length
+    ? route.map((point): [number, number] => [point.lat, point.lng])
+    : customer && mechanic
+      ? [
+          [mechanic.lat, mechanic.lng],
+          [customer.lat, customer.lng],
+        ]
+      : [];
+  const hasPath = route
+    ? route.length > 1
+    : customer !== null && mechanic !== null;
+  const fallbackCenter = customer ?? mechanic ?? defaultMapCenter();
+  const center: [number, number] = customer && mechanic
     ? [(customer.lat + mechanic.lat) / 2, (customer.lng + mechanic.lng) / 2]
-    : [mechanic.lat, mechanic.lng];
+    : [fallbackCenter.lat, fallbackCenter.lng];
 
   return (
     <div className="relative z-0 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
@@ -71,21 +90,24 @@ export function TrackingMap({ customer, mechanic }: TrackingMapProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <FitBounds customer={customer} mechanic={mechanic} />
+        <FitBounds customer={customer} mechanic={mechanic} route={route} />
         {customer && (
           <Marker
             position={[customer.lat, customer.lng]}
             icon={icons.destination}
           />
         )}
-        <Marker position={[mechanic.lat, mechanic.lng]} icon={icons.mechanic} />
-        {customer && (
+        {mechanic && (
+          <Marker position={[mechanic.lat, mechanic.lng]} icon={icons.mechanic} />
+        )}
+        {hasPath && (
           <Polyline
-            positions={[
-              [mechanic.lat, mechanic.lng],
-              [customer.lat, customer.lng],
-            ]}
-            pathOptions={{ dashArray: "6 8", weight: 2 }}
+            positions={path}
+            pathOptions={
+              route
+                ? { color: "#18181b", weight: 4 }
+                : { color: "#71717a", dashArray: "6 8", weight: 2 }
+            }
           />
         )}
       </MapContainer>

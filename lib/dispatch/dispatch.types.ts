@@ -7,6 +7,7 @@ export type DispatchListParams = {
   month?: string;
   cursor?: string | null;
   limit?: unknown;
+  search?: unknown;
 };
 
 export const DISPATCH_DEFAULT_STATUS: MechanicBookingStatus = "pending";

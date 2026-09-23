@@ -19,6 +19,7 @@ import {
 } from "../helpers/mechanic.mocks";
 import { serviceStubs, userRepoMocks } from "../helpers/service-mocks";
 import {
+  bookingTravelRepoMocks,
   customerBookingsRepoMocks,
   domainPublishMocks,
   resetWorkspaceMocks,
@@ -30,6 +31,10 @@ import {
 mock.module(
   "@/lib/booking/customer-bookings.repository",
   () => customerBookingsRepoMocks,
+);
+mock.module(
+  "@/lib/booking/booking-travel.repository",
+  () => bookingTravelRepoMocks,
 );
 mock.module(
   "@/lib/mechanic/mechanic-bookings.repository",
@@ -98,6 +103,50 @@ describe("listCustomerBookings", () => {
     expect(result.data.nextCursor).not.toBeNull();
     const scope = `customer-bookings:${CUSTOMER_ID}`;
     expect(decodeCursor(result.data.nextCursor, scope)).toBe("next-page");
+  });
+
+  test("continues scanning older cursor pages until search results are filled", async () => {
+    workspaceStubs.customerBookingPages = [
+      {
+        rows: [refRow(OTHER_ID)],
+        pageState: "older-page",
+      },
+      {
+        rows: [refRow(BOOKING_ID)],
+        pageState: null,
+      },
+    ];
+    mechanicStubs.bookingRowsByIdsQueue = [
+      [
+        makeBookingRow({
+          booking_id: OTHER_ID,
+          address: { full_text: "999 Other Road", lat: 10.77, lng: 106.7 },
+        }),
+      ],
+      [
+        makeBookingRow({
+          address: { full_text: "123 Le Loi, Quan 1", lat: 10.77, lng: 106.7 },
+        }),
+      ],
+    ];
+
+    const result = await listCustomerBookings(CUSTOMER_ID, {
+      limit: 1,
+      search: "lê lợi",
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items.map((item) => item.id)).toEqual([BOOKING_ID]);
+    expect(customerBookingsRepoMocks.listCustomerBookingRefs.mock.calls).toHaveLength(2);
+  });
+
+  test("rejects overlong search terms before reading storage", async () => {
+    const result = await listCustomerBookings(CUSTOMER_ID, {
+      search: "x".repeat(81),
+    });
+    expect(result).toMatchObject({ ok: false, status: 400 });
+    expect(customerBookingsRepoMocks.listCustomerBookingRefs.mock.calls).toHaveLength(0);
   });
 
   test("rejects invalid, malformed and wrong-scope cursors", async () => {

@@ -7,7 +7,9 @@ type DispatchQueueProps = {
   isError: boolean;
   filterLabel: string;
   items: BookingSummary[];
+  selectedId?: string | null;
   onRetry: () => void;
+  onSelect?: (bookingId: string) => void;
   onOpen: (bookingId: string) => void;
 };
 
@@ -17,7 +19,9 @@ export function DispatchQueue({
   isError,
   filterLabel,
   items,
+  selectedId = null,
   onRetry,
+  onSelect,
   onOpen,
 }: DispatchQueueProps) {
   if (isPending) {
@@ -74,6 +78,8 @@ export function DispatchQueue({
         <DispatchBookingCard
           key={booking.id}
           booking={booking}
+          selected={booking.id === selectedId}
+          onSelect={onSelect ? () => onSelect(booking.id) : undefined}
           onOpen={() => onOpen(booking.id)}
         />
       ))}

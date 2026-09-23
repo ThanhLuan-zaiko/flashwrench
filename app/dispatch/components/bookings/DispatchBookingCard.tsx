@@ -16,9 +16,13 @@ import {
 // stays a pure summary.
 export function DispatchBookingCard({
   booking,
+  selected = false,
+  onSelect,
   onOpen,
 }: {
   booking: BookingSummary;
+  selected?: boolean;
+  onSelect?: () => void;
   onOpen: () => void;
 }) {
   const serviceLine =
@@ -26,7 +30,9 @@ export function DispatchBookingCard({
       ? booking.serviceNames.join(" · ")
       : "Dịch vụ sửa chữa";
   return (
-    <li className="flex flex-col gap-3 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900">
+    <li
+      className={`flex flex-col gap-3 px-3 py-3 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900 ${selected ? "border-l-2 border-zinc-900 bg-zinc-50 dark:border-white dark:bg-zinc-900" : ""}`}
+    >
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-1.5">
           <span className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -61,7 +67,7 @@ export function DispatchBookingCard({
           </span>
         </span>
       </span>
-      <span className="flex shrink-0 items-center gap-1.5">
+      <span className="flex flex-wrap items-center gap-1.5 sm:flex-nowrap">
         <span className="mr-1 text-sm font-bold text-zinc-900 dark:text-zinc-50">
           {formatVnd(booking.total)}
         </span>
@@ -70,15 +76,25 @@ export function DispatchBookingCard({
             href={`tel:${booking.customerPhone}`}
             aria-label={`Gọi cho ${booking.customerName}`}
             onClick={(event) => event.stopPropagation()}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             <FiPhone aria-hidden="true" className="h-4 w-4" />
           </a>
         )}
+        {onSelect && (
+          <button
+            type="button"
+            onClick={onSelect}
+            aria-pressed={selected}
+            className="min-h-[44px] rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200"
+          >
+            Bản đồ
+          </button>
+        )}
         <button
           type="button"
           onClick={onOpen}
-          className="flex min-h-[44px] items-center rounded-xl bg-zinc-900 px-4 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] items-center rounded-xl bg-zinc-900 px-4 py-2 text-xs font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           Chi tiết
         </button>

@@ -6,10 +6,8 @@ import { useToast } from "@/components/toast/useToast";
 import { useCreateBooking } from "@/hooks/booking";
 import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import { validateCreateBookingInput } from "@/lib/booking/booking.validation";
-import type {
-  BookingFieldErrors,
-  CreatedBooking,
-} from "@/services/booking.api";
+import { BOOKING_SUCCESS_REDIRECT } from "@/lib/booking/booking-navigation";
+import type { BookingFieldErrors } from "@/services/booking.api";
 import { BookingApiError } from "@/services/booking.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import type { AddressValues } from "./BookingAddressSection";
@@ -60,7 +58,6 @@ export function useBookingForm({
     prefill?.vehicle ?? emptyVehicleValues(),
   );
   const [errors, setErrors] = useState<BookingFieldErrors>(EMPTY_ERRORS);
-  const [created, setCreated] = useState<CreatedBooking | null>(null);
   const [prefilled, setPrefilled] = useState(prefill !== null);
 
   const minSlot = useMemo(() => minScheduled(), []);
@@ -121,9 +118,9 @@ export function useBookingForm({
     }
     setErrors(EMPTY_ERRORS);
     createBooking.mutate(payload, {
-      onSuccess: (data) => {
-        setCreated(data.booking);
+      onSuccess: () => {
         toast.success("Đặt lịch thành công", "Thợ sẽ xác nhận trong vài phút.");
+        router.replace(BOOKING_SUCCESS_REDIRECT);
       },
       onError: (error) => {
         if (error instanceof BookingApiError) {
@@ -159,7 +156,6 @@ export function useBookingForm({
     vehicle,
     setVehicle,
     errors,
-    created,
     prefilled,
     pending: createBooking.isPending,
     minSlot,

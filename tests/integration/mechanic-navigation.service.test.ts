@@ -15,6 +15,7 @@ import {
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
 import {
+  bookingTravelRepoMocks,
   domainPublishMocks,
   resetWorkspaceMocks,
   workspaceStubs,
@@ -29,6 +30,10 @@ mock.module(
 mock.module(
   "@/lib/mechanic/mechanic-workspace.repository",
   () => mechanicWorkspaceRepoMocks,
+);
+mock.module(
+  "@/lib/booking/booking-travel.repository",
+  () => bookingTravelRepoMocks,
 );
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 
@@ -121,6 +126,27 @@ describe("saveMechanicLocation", () => {
     expect(
       mechanicWorkspaceRepoMocks.upsertMechanicLocation.mock.calls[0]?.[0],
     ).toMatchObject({ mechanicId: MECHANIC_ID, currentJobType: "booking" });
+    expect(workspaceStubs.insertedTravelPoints).toHaveLength(1);
+    expect(workspaceStubs.insertedTravelPoints[0]).toMatchObject({
+      bookingId: BOOKING_ID,
+      mechanicId: MECHANIC_ID,
+      lat: 10.775,
+      lng: 106.701,
+    });
+    expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(0);
+  });
+
+  test("does not record route points after the booking leaves en_route", async () => {
+    mechanicStubs.bookingById = makeBookingRow({ status: "in_progress" });
+    const result = await saveMechanicLocation(MECHANIC_ID, {
+      latitude: 10.775,
+      longitude: 106.701,
+      currentJobId: BOOKING_ID,
+      currentJobType: "booking",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(workspaceStubs.insertedTravelPoints).toEqual([]);
     expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(1);
   });
 
@@ -149,6 +175,7 @@ describe("saveMechanicLocation", () => {
     expect(
       mechanicWorkspaceRepoMocks.upsertMechanicLocation.mock.calls.length,
     ).toBe(0);
+    expect(workspaceStubs.insertedTravelPoints).toEqual([]);
     expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(0);
     expect(workspaceStubs.published).toHaveLength(0);
   });

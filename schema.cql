@@ -420,6 +420,16 @@ CREATE TABLE IF NOT EXISTS bookings_by_customer (
   PRIMARY KEY ((customer_id), scheduled_at, booking_id)
 ) WITH CLUSTERING ORDER BY (scheduled_at DESC, booking_id ASC);
 
+-- Actual mechanic GPS samples, written only during en_route and retained for one year.
+CREATE TABLE IF NOT EXISTS booking_travel_points_by_booking (
+  booking_id  UUID,
+  recorded_at TIMESTAMP,
+  mechanic_id UUID,
+  lat         DOUBLE,
+  lng         DOUBLE,
+  PRIMARY KEY ((booking_id), recorded_at)
+) WITH CLUSTERING ORDER BY (recorded_at ASC);
+
 -- Query: mechanic workload
 CREATE TABLE IF NOT EXISTS bookings_by_mechanic (
   mechanic_id  UUID,

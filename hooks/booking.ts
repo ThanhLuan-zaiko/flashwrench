@@ -9,6 +9,7 @@ import {
 import type { CreateBookingInput } from "@/services/booking.api";
 import {
   createBookingRequest,
+  fetchBookingTravelPoints,
   fetchLastBooking,
   fetchMyBooking,
   fetchMyBookings,
@@ -22,6 +23,8 @@ export const bookingKeys = {
   last: ["bookings", "last"] as const,
   mine: ["bookings", "mine"] as const,
   detail: (bookingId: string) => ["bookings", "detail", bookingId] as const,
+  travelTrack: (bookingId: string) =>
+    ["bookings", "travel-track", bookingId] as const,
   mechanics: (query: MechanicsQuery) =>
     ["bookings", "mechanics", query] as const,
 };
@@ -34,9 +37,11 @@ export function useCreateBooking() {
   return useMutation({
     mutationFn: (payload: CreateBookingInput) => createBookingRequest(payload),
     retry: false,
-    // The saved snapshot changes the moment a booking lands.
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: bookingKeys.last }),
+    // The saved snapshot and customer history change when a booking lands.
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: bookingKeys.last });
+      void queryClient.invalidateQueries({ queryKey: bookingKeys.mine });
+    },
   });
 }
 
@@ -54,10 +59,10 @@ export function useLastBooking() {
 
 // Customer booking history, cursor-paged. Realtime user-topic events
 // invalidate the whole list so new transitions surface without polling.
-export function useMyBookings() {
+export function useMyBookings(search = "") {
   return useInfiniteQuery({
-    queryKey: bookingKeys.mine,
-    queryFn: ({ pageParam }) => fetchMyBookings(pageParam),
+    queryKey: [...bookingKeys.mine, { search }],
+    queryFn: ({ pageParam }) => fetchMyBookings(pageParam, search),
     initialPageParam: null as string | null,
     getNextPageParam: (page) => page.nextCursor,
     staleTime: 15 * 1000,
@@ -76,6 +81,21 @@ export function useMyBooking(bookingId: string | null, live = false) {
     enabled: bookingId !== null,
     staleTime: 10 * 1000,
     gcTime: 5 * 60 * 1000,
+    retry: 1,
+    refetchInterval: live ? 15 * 1000 : false,
+  });
+}
+
+export function useBookingTravelPoints(
+  bookingId: string | null,
+  live = false,
+) {
+  return useQuery({
+    queryKey: bookingKeys.travelTrack(bookingId ?? ""),
+    queryFn: () => fetchBookingTravelPoints(bookingId as string),
+    enabled: bookingId !== null,
+    staleTime: live ? 5 * 1000 : 0,
+    gcTime: 10 * 60 * 1000,
     retry: 1,
     refetchInterval: live ? 15 * 1000 : false,
   });

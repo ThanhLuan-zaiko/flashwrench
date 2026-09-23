@@ -12,6 +12,7 @@ export async function GET(request: Request) {
       month: url.searchParams.get("month") ?? undefined,
       cursor: url.searchParams.get("cursor"),
       limit: url.searchParams.get("limit") ?? undefined,
+      search: url.searchParams.get("q") ?? undefined,
     });
     return resultResponse(result, (page) => ({
       items: page.items,

@@ -54,7 +54,7 @@ export function BookingMapSection({
 
   const marker: MapPoint | null =
     lat !== null && lng !== null ? { lat, lng } : null;
-  const pinnedRef = useRef(marker !== null);
+  const pinnedRef = useRef(false);
 
   function handlePick(point: MapPoint) {
     pinnedRef.current = true;

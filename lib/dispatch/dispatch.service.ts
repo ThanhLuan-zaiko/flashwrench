@@ -4,6 +4,11 @@ import {
   readBookingDetail,
 } from "@/lib/booking/booking-reader.service";
 import {
+  MAX_BOOKING_SEARCH_LENGTH,
+  matchesBookingSearch,
+  normalizeBookingSearch,
+} from "@/lib/booking/booking-search";
+import {
   nextTransitionAt,
   transitionBooking,
 } from "@/lib/booking/booking-workflow.service";
@@ -60,8 +65,14 @@ function isDispatcher(actor: PublicUser): boolean {
   return actor.role === "dispatcher" || actor.role === "admin";
 }
 
-function listScope(actorId: string, status: string, month: string): string {
-  return `dispatch:${actorId}:${status}:${month}`;
+function listScope(
+  actorId: string,
+  status: string,
+  month: string,
+  search: string,
+): string {
+  const scope = `dispatch:${actorId}:${status}:${month}`;
+  return search ? `${scope}:search:${search}` : scope;
 }
 
 export async function listDispatchBookings(
@@ -87,27 +98,54 @@ export async function listDispatchBookings(
     }
     limit = parsed;
   }
+  const rawSearch = params.search ?? "";
+  if (
+    typeof rawSearch !== "string" ||
+    rawSearch.length > MAX_BOOKING_SEARCH_LENGTH
+  ) {
+    return fieldFail(400, { search: "Từ khóa tìm kiếm không hợp lệ." });
+  }
+  const search = normalizeBookingSearch(rawSearch);
+  const scope = listScope(actor.id, status, month, search);
   let pageState: string | null = null;
   try {
-    pageState = decodeCursor(params.cursor, listScope(actor.id, status, month));
+    pageState = decodeCursor(params.cursor, scope);
   } catch {
     return fieldFail(400, { cursor: "Con trỏ trang không hợp lệ." });
   }
-  const page = await listStatusBookingRefs(status, month, limit, pageState);
-  const rows = await listBookingRowsByIds(
-    page.rows.map((row) => row.booking_id),
-  );
-  const matched = rows.filter(
-    (row) => row.status === status && row.month_bucket === month,
-  );
+
+  const items: BookingSummary[] = [];
+  let shouldContinue = true;
+  while (shouldContinue && items.length < limit) {
+    const previousPageState = pageState;
+    const page = await listStatusBookingRefs(
+      status,
+      month,
+      limit - items.length,
+      pageState,
+    );
+    const rows = await listBookingRowsByIds(
+      page.rows.map((row) => row.booking_id),
+    );
+    const matched = rows.filter(
+      (row) => row.status === status && row.month_bucket === month,
+    );
+    const summaries = await mapBookingSummaries(matched);
+    const matching = search
+      ? summaries.filter((summary) => matchesBookingSearch(summary, search))
+      : summaries;
+    items.push(...matching.slice(0, limit - items.length));
+    pageState = page.pageState;
+    shouldContinue = Boolean(
+      search && pageState && pageState !== previousPageState,
+    );
+  }
+
   return {
     ok: true,
     data: {
-      items: await mapBookingSummaries(matched),
-      nextCursor: encodeCursor(
-        page.pageState,
-        listScope(actor.id, status, month),
-      ),
+      items,
+      nextCursor: encodeCursor(pageState, scope),
     },
   };
 }

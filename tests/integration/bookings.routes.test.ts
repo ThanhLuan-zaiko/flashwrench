@@ -189,14 +189,14 @@ describe("GET /api/bookings", () => {
     };
 
     const res = await bookingsGet(
-      new Request("http://localhost/api/bookings?limit=20&cursor=abc"),
+      new Request("http://localhost/api/bookings?limit=20&cursor=abc&q=le%20loi"),
     );
 
     expect(res.status).toBe(200);
     expect(await readJsonBody(res)).toMatchObject({ nextCursor: "cursor-1" });
     expect(
       customerBookingServiceMocks.listCustomerBookings.mock.calls[0],
-    ).toEqual([user.id, { cursor: "abc", limit: "20" }]);
+    ).toEqual([user.id, { cursor: "abc", limit: "20", search: "le loi" }]);
   });
 
   test("passes service errors through with their status", async () => {

@@ -1,6 +1,7 @@
 import type {
   BookingDetail,
   BookingSummary,
+  BookingTravelPoint,
 } from "@/lib/booking/workspace.types";
 import type { DispatchAction } from "@/lib/dispatch/dispatch.types";
 import { AuthApiError, apiRequest } from "./auth.api";
@@ -13,6 +14,7 @@ export type DispatchListQuery = {
   month?: string;
   cursor?: string | null;
   limit?: number;
+  search?: string;
 };
 
 export type DispatchActionPayload = {
@@ -28,6 +30,7 @@ function toBookingsQueryString(query: DispatchListQuery): string {
   if (query.month) params.set("month", query.month);
   if (query.cursor) params.set("cursor", query.cursor);
   if (query.limit) params.set("limit", String(query.limit));
+  if (query.search) params.set("q", query.search);
   const text = params.toString();
   return text ? `?${text}` : "";
 }
@@ -48,6 +51,15 @@ export function fetchDispatchBooking(
   return apiRequest<{ booking: BookingDetail }>(
     `/api/dispatch/bookings/${encodeURIComponent(bookingId)}`,
   );
+}
+
+export async function fetchDispatchBookingTrack(
+  bookingId: string,
+): Promise<BookingTravelPoint[]> {
+  const response = await apiRequest<{ points: BookingTravelPoint[] }>(
+    `/api/dispatch/bookings/${encodeURIComponent(bookingId)}/track`,
+  );
+  return response.points;
 }
 
 // assign/confirm/cancel go through one endpoint. `expectedUpdatedAt` is the

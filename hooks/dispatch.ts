@@ -1,6 +1,11 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useRealtimeTopic } from "@/hooks/useRealtimeTopic";
 import {
   bookingTopic,
@@ -15,6 +20,7 @@ import type {
 import {
   dispatchBookingAction,
   fetchDispatchBooking,
+  fetchDispatchBookingTrack,
   fetchDispatchBookings,
 } from "@/services/dispatch.api";
 
@@ -24,6 +30,8 @@ export const dispatchKeys = {
     ["dispatch", "bookings", query] as const,
   booking: (bookingId: string) =>
     ["dispatch", "booking", { bookingId }] as const,
+  travelTrack: (bookingId: string) =>
+    ["dispatch", "travel-track", { bookingId }] as const,
 };
 
 type DispatchPage = { items: BookingSummary[]; nextCursor: string | null };
@@ -39,10 +47,11 @@ export function useDispatchBookings(query: DispatchListQuery) {
     retry: false,
     refetchInterval: 60 * 1000,
     refetchOnWindowFocus: true,
+    placeholderData: keepPreviousData,
   });
 }
 
-export function useDispatchBooking(bookingId: string | null) {
+export function useDispatchBooking(bookingId: string | null, live = false) {
   return useQuery({
     queryKey: dispatchKeys.booking(bookingId ?? ""),
     queryFn: () => fetchDispatchBooking(bookingId as string),
@@ -50,7 +59,23 @@ export function useDispatchBooking(bookingId: string | null) {
     staleTime: 15 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,
-    refetchInterval: 60 * 1000,
+    refetchInterval: live ? 15 * 1000 : 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+}
+
+export function useDispatchBookingTrack(
+  bookingId: string | null,
+  live = false,
+) {
+  return useQuery({
+    queryKey: dispatchKeys.travelTrack(bookingId ?? ""),
+    queryFn: () => fetchDispatchBookingTrack(bookingId as string),
+    enabled: Boolean(bookingId),
+    staleTime: live ? 5 * 1000 : 0,
+    gcTime: 10 * 60 * 1000,
+    retry: false,
+    refetchInterval: live ? 15 * 1000 : false,
     refetchOnWindowFocus: true,
   });
 }

@@ -1,0 +1,1 @@
+export const BOOKING_TRAVEL_TTL_SECONDS = 365 * 24 * 60 * 60;

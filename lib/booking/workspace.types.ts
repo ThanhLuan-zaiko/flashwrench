@@ -26,6 +26,12 @@ export type BookingReview = {
   createdAt: string;
 };
 
+export type BookingTravelPoint = {
+  lat: number;
+  lng: number;
+  recordedAt: string;
+};
+
 export type BookingDetail = BookingSummary & {
   items: MechanicBookingItem[];
   timeline: MechanicBookingTimelineEntry[];

@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { ScheduleSection } from "../../components/schedule/ScheduleSection";
-import {
-  isScheduleTab,
-  SCHEDULE_TABS,
-} from "../../components/schedule/schedule-tabs";
+import { SCHEDULE_TABS } from "../../components/schedule/schedule-tabs";
 
 type StatusParams = { params: Promise<{ status: string }> };
 
@@ -21,10 +16,6 @@ export async function generateMetadata({
   };
 }
 
-export default async function MechanicScheduleStatusPage({
-  params,
-}: StatusParams) {
-  const { status } = await params;
-  if (!isScheduleTab(status)) notFound();
-  return <ScheduleSection key={status} status={status} />;
+export default function MechanicScheduleStatusPage() {
+  return null;
 }

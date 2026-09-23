@@ -9,7 +9,6 @@ import { BookingPrefillNotice } from "./BookingPrefillNotice";
 import { BookingServiceGallery } from "./BookingServiceGallery";
 import { BookingServiceSection } from "./BookingServiceSection";
 import { BookingSubmitButton } from "./BookingSubmitButton";
-import { BookingSuccess } from "./BookingSuccess";
 import type { BookingPrefill } from "./booking-prefill";
 import { MechanicSection } from "./MechanicSection";
 import { useBookingForm } from "./useBookingForm";
@@ -45,7 +44,6 @@ export function BookingForm({
     vehicle,
     setVehicle,
     errors,
-    created,
     prefilled,
     pending,
     minSlot,
@@ -60,8 +58,6 @@ export function BookingForm({
     () => preselected ?? services.find((s) => s.id === serviceId) ?? null,
     [preselected, services, serviceId],
   );
-
-  if (created) return <BookingSuccess booking={created} />;
 
   return (
     <form

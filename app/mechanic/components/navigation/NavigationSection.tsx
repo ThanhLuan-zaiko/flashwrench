@@ -13,6 +13,7 @@ import { MapPanel } from "./MapPanel";
 import { NavigationHeader } from "./NavigationHeader";
 import { NavigationList } from "./NavigationList";
 import { googleDirectionsUrl } from "./navigation-directions";
+import { useTravelRouteSharing } from "./useTravelRouteSharing";
 
 // Bento root for navigation: an embedded live map of the current job,
 // every open job with distance and ETA, one-tap directions, and a GPS
@@ -42,8 +43,12 @@ export function NavigationSection() {
 
   const selected =
     targets.find((target) => target.bookingId === selectedId) ?? targets[0];
+  const selectedBookingId = selected?.bookingId ?? null;
+  const selectedStatus = selected?.status ?? null;
+  const routeSharing = useTravelRouteSharing(selectedBookingId, selectedStatus);
 
   const shareLocation = () => {
+    if (routeSharing.toggleSharing()) return;
     if (!("geolocation" in navigator)) {
       toast.error(
         "Thiết bị không hỗ trợ định vị",
@@ -95,7 +100,9 @@ export function NavigationSection() {
             loading={board.isPending}
             originLabel={origin?.label ?? null}
             jobCount={targets.length}
-            locating={locating || saver.isPending}
+            locating={locating}
+            canShareRoute={selectedStatus === "en_route"}
+            sharingRoute={routeSharing.sharing}
             onShare={shareLocation}
           />
           <MapPanel origin={origin} target={selected ?? null} />
@@ -113,7 +120,7 @@ export function NavigationSection() {
                 href={googleDirectionsUrl(origin, selected)}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 <FiNavigation aria-hidden="true" className="h-4 w-4" />
                 Chỉ đường
@@ -139,8 +146,8 @@ export function NavigationSection() {
         </BentoCard>
       </div>
       <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
-        Khoảng cách và thời gian là ước tính; tuyến đường chính xác nằm trong
-        ứng dụng bản đồ khi bạn bấm “Chỉ đường”.
+        Khoảng cách là ước tính. Lộ trình chỉ được lưu khi thợ bật chia sẻ trong
+        lúc “Đang di chuyển” và được giữ tối đa một năm.
       </p>
     </div>
   );

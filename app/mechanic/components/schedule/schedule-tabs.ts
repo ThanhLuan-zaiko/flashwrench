@@ -83,6 +83,13 @@ export function isScheduleTab(value: unknown): value is ScheduleTab {
   return SCHEDULE_TABS.some((tab) => tab.id === value);
 }
 
+export function shouldResetSchedulePager(
+  previous: ScheduleTab,
+  next: ScheduleTab,
+): boolean {
+  return previous !== next;
+}
+
 export function scheduleTabHref(id: ScheduleTab): string {
   return tabHref(id);
 }

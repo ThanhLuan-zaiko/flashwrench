@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { useDispatchBookings } from "@/hooks/dispatch";
@@ -10,6 +10,7 @@ import { FilterTabs } from "../../../mechanic/components/FilterTabs";
 import { DispatchDetailDialog } from "./DispatchDetailDialog";
 import { DispatchPager } from "./DispatchPager";
 import { DispatchQueue } from "./DispatchQueue";
+import { DispatchTrackingBoardView } from "./DispatchTrackingBoardView";
 import {
   type CursorStack,
   canGoBack,
@@ -39,23 +40,87 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
   const [month, setMonth] = useState(monthKeyNow());
   const [appliedMonth, setAppliedMonth] = useState(month);
   const [stack, setStack] = useState<CursorStack>(FIRST_PAGE_STACK);
+  const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [appliedStatus, setAppliedStatus] = useState(status);
+  const [selectedMapId, setSelectedMapId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Reset-on-prop-change pattern: switching month restarts the cursor walk
-  // synchronously, before the next paint, never in an effect.
-  if (month !== appliedMonth) {
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setAppliedSearch(search.trim());
+      setStack(FIRST_PAGE_STACK);
+      setSelectedMapId(null);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  if (month !== appliedMonth || status !== appliedStatus) {
     setAppliedMonth(month);
+    setAppliedStatus(status);
     setStack(FIRST_PAGE_STACK);
+    setSelectedMapId(null);
   }
 
+  const trackingStatus = status === "en_route" || status === "in_progress";
   const query = useDispatchBookings({
     status,
     month: appliedMonth,
     cursor: currentCursor(stack),
     limit: DISPATCH_PAGE_SIZE,
+    search: trackingStatus ? appliedSearch : undefined,
   });
   const items = query.data?.items ?? [];
   const nextCursor = query.data?.nextCursor ?? null;
+  const detailDialog = selectedId && (
+    <DispatchDetailDialog
+      bookingId={selectedId}
+      onClose={() => setSelectedId(null)}
+      onToast={(variant, title, description) =>
+        variant === "success"
+          ? toast.success(title, description)
+          : toast.error(title, description)
+      }
+    />
+  );
+
+  if (trackingStatus) {
+    return (
+      <div ref={rootRef} className="flex flex-col gap-4 md:gap-5">
+        <DispatchTrackingBoardView
+          status={status}
+          month={appliedMonth}
+          search={search}
+          bookings={items}
+          selectedId={selectedMapId}
+          isPending={query.isPending}
+          isError={query.isError}
+          isFetching={query.isFetching}
+          page={pageNumber(stack)}
+          canBack={canGoBack(stack)}
+          canNext={canGoNext(nextCursor)}
+          onMonthChange={setMonth}
+          onSearch={(value) => {
+            setSearch(value);
+            setSelectedMapId(null);
+          }}
+          onSelect={setSelectedMapId}
+          onOpen={setSelectedId}
+          onRetry={() => void query.refetch()}
+          onBack={() => {
+            setStack(popCursor);
+            setSelectedMapId(null);
+          }}
+          onNext={() => {
+            if (!nextCursor) return;
+            setStack((prev) => pushCursor(prev, nextCursor));
+            setSelectedMapId(null);
+          }}
+        />
+        {detailDialog}
+      </div>
+    );
+  }
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
@@ -160,17 +225,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
           />
         </BentoCard>
       </div>
-      {selectedId && (
-        <DispatchDetailDialog
-          bookingId={selectedId}
-          onClose={() => setSelectedId(null)}
-          onToast={(variant, title, description) =>
-            variant === "success"
-              ? toast.success(title, description)
-              : toast.error(title, description)
-          }
-        />
-      )}
+      {detailDialog}
     </div>
   );
 }

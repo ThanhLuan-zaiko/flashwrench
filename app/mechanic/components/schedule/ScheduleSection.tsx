@@ -18,7 +18,11 @@ import { BookingDetailDialog } from "./BookingDetailDialog";
 import { ScheduleBody } from "./ScheduleBody";
 import { SchedulePager } from "./SchedulePager";
 import { ScheduleStatCards } from "./ScheduleStatCards";
-import { SCHEDULE_TABS, type ScheduleTab } from "./schedule-tabs";
+import {
+  SCHEDULE_TABS,
+  shouldResetSchedulePager,
+  type ScheduleTab,
+} from "./schedule-tabs";
 
 // Bento root for the schedule: live counts, a filterable work queue with
 // paging, and a detail dialog for accepting, routing and closing jobs.
@@ -28,7 +32,13 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const toast = useToast();
   const [page, setPage] = useState(0);
+  const [appliedStatus, setAppliedStatus] = useState(status);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  if (shouldResetSchedulePager(appliedStatus, status)) {
+    setAppliedStatus(status);
+    setPage(0);
+  }
 
   const query = useMechanicBookings({ status });
   // Unfiltered load for the per-tab counts. Shares the cache key with the

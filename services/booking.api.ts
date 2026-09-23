@@ -6,6 +6,7 @@ import type {
 import type {
   BookingDetail,
   BookingSummary,
+  BookingTravelPoint,
   CursorPage,
 } from "@/lib/booking/workspace.types";
 import { AuthApiError, apiRequest } from "./auth.api";
@@ -63,10 +64,21 @@ const HISTORY_PAGE_SIZE = 10;
 // Customer booking history page, cursor-paged by the server.
 export async function fetchMyBookings(
   cursor: string | null,
+  search = "",
 ): Promise<CursorPage<BookingSummary>> {
   const params = new URLSearchParams({ limit: String(HISTORY_PAGE_SIZE) });
   if (cursor) params.set("cursor", cursor);
+  if (search) params.set("q", search);
   return apiRequest<CursorPage<BookingSummary>>(`/api/bookings?${params}`);
+}
+
+export async function fetchBookingTravelPoints(
+  bookingId: string,
+): Promise<BookingTravelPoint[]> {
+  const response = await apiRequest<{ points: BookingTravelPoint[] }>(
+    `/api/bookings/${encodeURIComponent(bookingId)}/track`,
+  );
+  return response.points;
 }
 
 // One owned booking: line items, timeline, payment state and the live

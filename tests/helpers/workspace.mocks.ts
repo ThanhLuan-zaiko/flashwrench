@@ -4,6 +4,10 @@ import type {
   BookingReviewRow,
   BookingReviewWrite,
 } from "@/lib/booking/review.repository";
+import type {
+  BookingTravelPointRow,
+  BookingTravelPointWrite,
+} from "@/lib/booking/booking-travel.repository";
 import type { StatusBookingPage } from "@/lib/dispatch/dispatch.repository";
 import type {
   MechanicPresenceUpdateParams,
@@ -54,7 +58,11 @@ export const workspaceStubs = {
   paymentWrites: [] as PaymentWrite[],
   paymentStatusClaims: 0,
   customerBookingPage: { rows: [], pageState: null } as CustomerBookingPage,
+  customerBookingPages: [] as CustomerBookingPage[],
+  bookingTravelPoints: [] as BookingTravelPointRow[],
+  insertedTravelPoints: [] as BookingTravelPointWrite[],
   dispatchRefPage: { rows: [], pageState: null } as StatusBookingPage,
+  dispatchRefPages: [] as StatusBookingPage[],
   profileInit: [] as MechanicProfileInitParams[],
   presenceUpdates: [] as MechanicPresenceUpdateParams[],
   published: [] as { topic: string; payload: unknown }[],
@@ -200,7 +208,21 @@ export const customerBookingsRepoMocks = {
       _customerId: string,
       _limit: number,
       _pageState?: string | null,
-    ): Promise<CustomerBookingPage> => workspaceStubs.customerBookingPage,
+    ): Promise<CustomerBookingPage> =>
+      workspaceStubs.customerBookingPages.shift() ??
+      workspaceStubs.customerBookingPage,
+  ),
+};
+
+export const bookingTravelRepoMocks = {
+  insertBookingTravelPoint: mock(
+    async (point: BookingTravelPointWrite): Promise<void> => {
+      workspaceStubs.insertedTravelPoints.push(point);
+    },
+  ),
+  listBookingTravelPoints: mock(
+    async (_bookingId: string): Promise<BookingTravelPointRow[]> =>
+      workspaceStubs.bookingTravelPoints,
   ),
 };
 
@@ -211,7 +233,8 @@ export const dispatchRepoMocks = {
       _month: string,
       _limit: number,
       _pageState?: string | null,
-    ): Promise<StatusBookingPage> => workspaceStubs.dispatchRefPage,
+    ): Promise<StatusBookingPage> =>
+      workspaceStubs.dispatchRefPages.shift() ?? workspaceStubs.dispatchRefPage,
   ),
 };
 
@@ -268,7 +291,11 @@ export function resetWorkspaceMocks(): void {
   workspaceStubs.paymentWrites = [];
   workspaceStubs.paymentStatusClaims = 0;
   workspaceStubs.customerBookingPage = { rows: [], pageState: null };
+  workspaceStubs.customerBookingPages = [];
+  workspaceStubs.bookingTravelPoints = [];
+  workspaceStubs.insertedTravelPoints = [];
   workspaceStubs.dispatchRefPage = { rows: [], pageState: null };
+  workspaceStubs.dispatchRefPages = [];
   workspaceStubs.profileInit = [];
   workspaceStubs.presenceUpdates = [];
   workspaceStubs.published = [];
@@ -277,6 +304,7 @@ export function resetWorkspaceMocks(): void {
   for (const fn of Object.values(reviewRepoMocks)) fn.mockClear();
   for (const fn of Object.values(paymentRepoMocks)) fn.mockClear();
   for (const fn of Object.values(customerBookingsRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(bookingTravelRepoMocks)) fn.mockClear();
   for (const fn of Object.values(dispatchRepoMocks)) fn.mockClear();
   for (const fn of Object.values(domainPublishMocks)) fn.mockClear();
   for (const fn of Object.values(realtimePublishMocks)) fn.mockClear();

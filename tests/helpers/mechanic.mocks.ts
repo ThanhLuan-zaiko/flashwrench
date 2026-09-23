@@ -28,6 +28,7 @@ export const mechanicStubs = {
   bookingById: null as MechanicBookingRow | null,
   bookingReadQueue: [] as (MechanicBookingRow | null)[],
   bookingRowsByIds: [] as MechanicBookingRow[],
+  bookingRowsByIdsQueue: [] as MechanicBookingRow[][],
   itemRows: [] as MechanicBookingItemRow[],
   historyRows: [] as MechanicStatusHistoryRow[],
   profile: null as MechanicProfileRow | null,
@@ -60,6 +61,7 @@ export const mechanicBookingsRepoMocks = {
   ),
   listBookingRowsByIds: mock(
     async (_bookingIds: string[]): Promise<MechanicBookingRow[]> =>
+      mechanicStubs.bookingRowsByIdsQueue.shift() ??
       mechanicStubs.bookingRowsByIds,
   ),
   listBookingItemRowsByBookingIds: mock(
@@ -207,6 +209,7 @@ export function resetMechanicMocks(): void {
   mechanicStubs.bookingById = null;
   mechanicStubs.bookingReadQueue = [];
   mechanicStubs.bookingRowsByIds = [];
+  mechanicStubs.bookingRowsByIdsQueue = [];
   mechanicStubs.itemRows = [];
   mechanicStubs.historyRows = [];
   mechanicStubs.profile = null;

@@ -183,7 +183,7 @@ export function ServiceItemDialog({
           onClose={guard.requestClose}
         />
 
-        <div className="mt-4 flex flex-col gap-5">
+        <div className="mt-4 flex flex-col gap-5 pb-20 sm:pb-24">
           <ServiceItemBasicFields
             editing={Boolean(editing)}
             categoryId={categoryId}

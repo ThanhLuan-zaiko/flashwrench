@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     const result = await listCustomerBookings(user.id, {
       cursor: url.searchParams.get("cursor"),
       limit: url.searchParams.get("limit") ?? undefined,
+      search: url.searchParams.get("q") ?? undefined,
     });
     return resultResponse(result, (page) => ({
       items: page.items,

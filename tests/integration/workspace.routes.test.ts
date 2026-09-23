@@ -181,13 +181,14 @@ describe("dispatch routes", () => {
   test("GET /api/dispatch/bookings serves dispatchers and admins", async () => {
     routeStubs.bookingUser = makePublicUser({ role: "dispatcher" });
     const res = await dispatchGet(
-      new Request("http://localhost/api/dispatch/bookings?status=pending"),
+      new Request("http://localhost/api/dispatch/bookings?status=pending&q=nguyen"),
     );
     expect(res.status).toBe(200);
     expect(
       dispatchServiceMocks.listDispatchBookings.mock.calls[0]?.[1],
     ).toMatchObject({
       status: "pending",
+      search: "nguyen",
     });
   });
 

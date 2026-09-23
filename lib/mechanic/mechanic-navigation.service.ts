@@ -3,6 +3,7 @@
 // real coordinates, each with a distance and travel-time hint. Jobs without
 // coordinates or with an unknown status are left out instead of guessing.
 
+import { insertBookingTravelPoint } from "@/lib/booking/booking-travel.repository";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 import { isUuid } from "@/lib/validation";
 import {
@@ -255,7 +256,16 @@ export async function saveMechanicLocation(
     currentJobType: jobType === "booking" ? "booking" : "none",
     updatedAt: savedAt,
   });
-  if (linkedBooking) {
+  if (linkedBooking && toBookingStatus(linkedBooking.status) === "en_route") {
+    await insertBookingTravelPoint({
+      bookingId: linkedBooking.booking_id,
+      mechanicId,
+      lat: latitude as number,
+      lng: longitude as number,
+      recordedAt: savedAt,
+    });
+  }
+  if (linkedBooking && toBookingStatus(linkedBooking.status) !== "en_route") {
     await publishBookingChange(
       "booking-updated",
       linkedBooking.booking_id,

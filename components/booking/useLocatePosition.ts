@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
 import type { MapPoint } from "./MapPicker";
+import { shouldIgnoreLocatedPosition } from "./location-guards";
 
 type UseLocatePositionOptions = {
   pinnedRef: React.RefObject<boolean>;
@@ -39,7 +40,7 @@ export function useLocatePosition({
 
     function applyPosition(position: GeolocationPosition) {
       setLocating(false);
-      if (onlyIfUnpinned && pinnedRef.current) return;
+      if (shouldIgnoreLocatedPosition(pinnedRef.current, onlyIfUnpinned)) return;
       onPointRef.current({
         lat: position.coords.latitude,
         lng: position.coords.longitude,
