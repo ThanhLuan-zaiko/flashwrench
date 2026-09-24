@@ -3,9 +3,7 @@ import { historyMapModel } from "@/components/history/history-map.utils";
 
 describe("history map model", () => {
   test("keeps the customer map visible while route samples are pending", () => {
-    expect(
-      historyMapModel({ lat: 10.77, lng: 106.7 }, null, []),
-    ).toEqual({
+    expect(historyMapModel({ lat: 10.77, lng: 106.7 }, null, [])).toEqual({
       customer: { lat: 10.77, lng: 106.7 },
       mechanic: null,
       route: undefined,

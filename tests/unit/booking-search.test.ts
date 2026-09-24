@@ -17,9 +17,7 @@ const booking: BookingSearchable = {
 
 describe("booking history search", () => {
   test("normalizes Vietnamese accents and spacing", () => {
-    expect(normalizeBookingSearch("  Đang di chuyển  ")).toBe(
-      "dang di chuyen",
-    );
+    expect(normalizeBookingSearch("  Đang di chuyển  ")).toBe("dang di chuyen");
   });
 
   test("matches customer, service, mechanic, address, plate, id and status", () => {

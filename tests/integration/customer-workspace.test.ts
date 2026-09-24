@@ -138,7 +138,9 @@ describe("listCustomerBookings", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.items.map((item) => item.id)).toEqual([BOOKING_ID]);
-    expect(customerBookingsRepoMocks.listCustomerBookingRefs.mock.calls).toHaveLength(2);
+    expect(
+      customerBookingsRepoMocks.listCustomerBookingRefs.mock.calls,
+    ).toHaveLength(2);
   });
 
   test("rejects overlong search terms before reading storage", async () => {
@@ -146,7 +148,9 @@ describe("listCustomerBookings", () => {
       search: "x".repeat(81),
     });
     expect(result).toMatchObject({ ok: false, status: 400 });
-    expect(customerBookingsRepoMocks.listCustomerBookingRefs.mock.calls).toHaveLength(0);
+    expect(
+      customerBookingsRepoMocks.listCustomerBookingRefs.mock.calls,
+    ).toHaveLength(0);
   });
 
   test("rejects invalid, malformed and wrong-scope cursors", async () => {

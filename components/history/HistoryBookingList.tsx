@@ -162,7 +162,10 @@ export function HistoryBookingList({
             />
           </div>
           <div className="flex flex-col gap-2 border-t border-zinc-200 pt-3 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
-            <p aria-live="polite" className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p
+              aria-live="polite"
+              className="text-xs text-zinc-500 dark:text-zinc-400"
+            >
               Trang {pageNumber} · {bookings.length} đơn
             </p>
             {(hasPrevious || hasNext) && (
@@ -183,7 +186,12 @@ export function HistoryBookingList({
                   aria-label="Trang sau"
                   className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
                 >
-                  {loadingNext && <FiLoader aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />}
+                  {loadingNext && (
+                    <FiLoader
+                      aria-hidden="true"
+                      className="h-4 w-4 motion-safe:animate-spin"
+                    />
+                  )}
                   Trang sau
                 </button>
               </div>

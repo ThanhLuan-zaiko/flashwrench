@@ -83,7 +83,10 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
               aria-busy="true"
               className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
             >
-              <FiLoader aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />
+              <FiLoader
+                aria-hidden="true"
+                className="h-4 w-4 motion-safe:animate-spin"
+              />
               Đang tải dữ liệu lộ trình…
             </p>
           )}
@@ -94,7 +97,10 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
               className="flex flex-col items-start gap-2 rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
             >
               <p className="flex items-center gap-2">
-                <FiAlertCircle aria-hidden="true" className="h-4 w-4 shrink-0" />
+                <FiAlertCircle
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0"
+                />
                 Không tải được lộ trình.
               </p>
               <button
@@ -116,7 +122,10 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           )}
 
           {query.isSuccess && points.length === 0 && map.hasMap && (
-            <p aria-live="polite" className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p
+              aria-live="polite"
+              className="text-xs text-zinc-500 dark:text-zinc-400"
+            >
               {booking.status === "en_route"
                 ? liveMechanic
                   ? "Bản đồ đang hiển thị vị trí mới nhất của thợ; đường đi sẽ hiện khi có thêm điểm GPS."
@@ -128,7 +137,10 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           )}
 
           {query.isSuccess && points.length > 0 && latest && (
-            <p aria-live="polite" className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p
+              aria-live="polite"
+              className="text-[11px] text-zinc-500 dark:text-zinc-400"
+            >
               {points.length > 1
                 ? `${points.length} điểm lộ trình · Cập nhật ${new Date(latest.recordedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}`
                 : "Đã ghi nhận điểm đầu tiên; đường đi sẽ hiện sau lần cập nhật tiếp theo."}

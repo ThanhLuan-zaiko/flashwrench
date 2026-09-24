@@ -1,14 +1,11 @@
 import type { PublicUser } from "@/lib/auth/user.types";
+import { listBookingTravelPoints } from "@/lib/booking/booking-travel.repository";
 import type {
   BookingTravelPoint,
   WorkspaceResult,
 } from "@/lib/booking/workspace.types";
-import { listBookingTravelPoints } from "@/lib/booking/booking-travel.repository";
 import { findBookingRowById } from "@/lib/mechanic/mechanic-bookings.repository";
-import {
-  isValidLatitude,
-  isValidLongitude,
-} from "@/lib/mechanic/mechanic-geo";
+import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import { isUuid } from "@/lib/validation";
 
 function fail<T>(status: number, form: string): WorkspaceResult<T> {

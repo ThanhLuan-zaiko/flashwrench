@@ -20,8 +20,8 @@ import { SchedulePager } from "./SchedulePager";
 import { ScheduleStatCards } from "./ScheduleStatCards";
 import {
   SCHEDULE_TABS,
-  shouldResetSchedulePager,
   type ScheduleTab,
+  shouldResetSchedulePager,
 } from "./schedule-tabs";
 
 // Bento root for the schedule: live counts, a filterable work queue with

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FiPackage } from "react-icons/fi";
+import { FiInfo, FiPackage } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import type { PartItem } from "@/lib/parts/parts.types";
 import { AddToCartButton } from "./AddToCartButton";
@@ -76,7 +76,17 @@ export function ProductCard({ part }: ProductCardProps) {
           </span>
         </p>
       </div>
-      <AddToCartButton part={part} returnHref={href} />
+      <div className="flex flex-col gap-2">
+        <AddToCartButton part={part} returnHref={href} />
+        <Link
+          href={href}
+          aria-label={`Xem chi tiết sản phẩm ${part.name}`}
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        >
+          <FiInfo aria-hidden="true" className="h-4 w-4" />
+          Chi tiết sản phẩm
+        </Link>
+      </div>
     </article>
   );
 }

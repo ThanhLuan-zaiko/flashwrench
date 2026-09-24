@@ -29,7 +29,9 @@ export function BookingCard({
 
   return (
     <li>
-      <div className={`rounded-2xl border bg-white dark:bg-zinc-950 ${selectedTone}`}>
+      <div
+        className={`rounded-2xl border bg-white dark:bg-zinc-950 ${selectedTone}`}
+      >
         <button
           type="button"
           onClick={onSelect}

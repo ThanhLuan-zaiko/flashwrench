@@ -1,9 +1,6 @@
 import { requireAuth } from "@/lib/auth/authorization";
 import { getCustomerBookingTrack } from "@/lib/booking/customer-booking.service";
-import {
-  resultResponse,
-  routeFailure,
-} from "@/lib/http/workspace-route";
+import { resultResponse, routeFailure } from "@/lib/http/workspace-route";
 
 type RouteParams = { params: Promise<{ bookingId: string }> };
 

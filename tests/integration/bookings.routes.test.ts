@@ -189,7 +189,9 @@ describe("GET /api/bookings", () => {
     };
 
     const res = await bookingsGet(
-      new Request("http://localhost/api/bookings?limit=20&cursor=abc&q=le%20loi"),
+      new Request(
+        "http://localhost/api/bookings?limit=20&cursor=abc&q=le%20loi",
+      ),
     );
 
     expect(res.status).toBe(200);

@@ -6,12 +6,13 @@ type AuthTextFieldProps = {
   label: string;
   type?: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   placeholder?: string;
   autoComplete?: string;
   inputMode?: "text" | "email" | "tel";
   error?: string;
   disabled?: boolean;
+  readOnly?: boolean;
 };
 
 export function AuthTextField({
@@ -25,6 +26,7 @@ export function AuthTextField({
   inputMode,
   error,
   disabled = false,
+  readOnly = false,
 }: AuthTextFieldProps) {
   const [visible, setVisible] = useState(false);
   const isPassword = type === "password";
@@ -44,17 +46,18 @@ export function AuthTextField({
           name={id}
           type={resolvedType}
           value={value}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => onChange?.(event.target.value)}
           placeholder={placeholder}
           autoComplete={autoComplete}
           inputMode={inputMode}
           disabled={disabled}
+          readOnly={readOnly}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus-visible:ring-offset-zinc-950 ${
+          className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 read-only:cursor-default read-only:bg-zinc-100 read-only:text-zinc-600 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus-visible:ring-offset-zinc-950 dark:read-only:bg-zinc-800 dark:read-only:text-zinc-400 ${
             error
               ? "border-red-500 dark:border-red-400"
-              : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-600"
+              : "border-zinc-300 hover:border-zinc-400 read-only:hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:read-only:hover:border-zinc-700"
           } ${isPassword ? "pr-11" : ""}`}
         />
         {isPassword && (

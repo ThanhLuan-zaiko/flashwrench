@@ -19,6 +19,7 @@ import { AuthApiError } from "@/services/auth.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
 import { CheckoutSummary } from "./CheckoutSummary";
+import { accountRecipient } from "./checkout-utils";
 
 // Customer /checkout: shipping form plus an immutable summary of the
 // cart being purchased. Submits once; the server snapshots prices and
@@ -31,8 +32,9 @@ export function CheckoutPage() {
   const checkout = useCheckout();
   const fieldId = useId();
 
-  const [recipientName, setRecipientName] = useState("");
-  const [phone, setPhone] = useState("");
+  // Recipient contact is locked to the signed-in account: the order keeps
+  // verified name + phone, so the fields render read-only from `me`.
+  const { recipientName, phone } = accountRecipient(me.data ?? null);
   const [fulfillment, setFulfillment] = useState<FulfillmentType>("delivery");
   const [address, setAddress] = useState("");
   const [addressLat, setAddressLat] = useState<number | null>(null);
@@ -150,15 +152,17 @@ export function CheckoutPage() {
               className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 md:col-span-3 dark:border-zinc-800 dark:bg-zinc-950"
             >
               {errors.form && <FormAlert message={errors.form} />}
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Tên người nhận và số điện thoại được lấy từ tài khoản của bạn.
+              </p>
               <AuthTextField
                 id={`${fieldId}-name`}
                 label="Tên người nhận"
                 value={recipientName}
-                onChange={setRecipientName}
-                placeholder="Nguyễn Văn A"
                 autoComplete="name"
                 error={errors.recipientName}
                 disabled={submitting}
+                readOnly
               />
               <AuthTextField
                 id={`${fieldId}-phone`}
@@ -166,11 +170,10 @@ export function CheckoutPage() {
                 type="tel"
                 inputMode="tel"
                 value={phone}
-                onChange={setPhone}
-                placeholder="0901234567"
                 autoComplete="tel"
                 error={errors.phone}
                 disabled={submitting}
+                readOnly
               />
               <CheckoutFulfillmentFields
                 fieldId={fieldId}

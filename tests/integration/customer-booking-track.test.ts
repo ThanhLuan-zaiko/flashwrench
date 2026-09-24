@@ -68,7 +68,9 @@ describe("getCustomerBookingTrack", () => {
     const result = await getCustomerBookingTrack(CUSTOMER_ID, BOOKING_ID);
 
     expect(result).toMatchObject({ ok: false, status: 404 });
-    expect(bookingTravelRepoMocks.listBookingTravelPoints).not.toHaveBeenCalled();
+    expect(
+      bookingTravelRepoMocks.listBookingTravelPoints,
+    ).not.toHaveBeenCalled();
   });
 
   test("rejects malformed booking ids before storage access", async () => {
@@ -76,6 +78,8 @@ describe("getCustomerBookingTrack", () => {
 
     expect(result).toMatchObject({ ok: false, status: 400 });
     expect(mechanicBookingsRepoMocks.findBookingRowById).not.toHaveBeenCalled();
-    expect(bookingTravelRepoMocks.listBookingTravelPoints).not.toHaveBeenCalled();
+    expect(
+      bookingTravelRepoMocks.listBookingTravelPoints,
+    ).not.toHaveBeenCalled();
   });
 });

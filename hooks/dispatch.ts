@@ -20,8 +20,8 @@ import type {
 import {
   dispatchBookingAction,
   fetchDispatchBooking,
-  fetchDispatchBookingTrack,
   fetchDispatchBookings,
+  fetchDispatchBookingTrack,
 } from "@/services/dispatch.api";
 
 export const dispatchKeys = {

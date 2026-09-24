@@ -7,6 +7,7 @@ import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { usePartsCatalogRealtime, usePublicPart } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { AddToCartButton } from "./AddToCartButton";
+import { ProductGallery } from "./ProductGallery";
 import { discountPercent, stockLabel } from "./products-utils";
 
 // Public /products/[slug] detail: full gallery, specs, compatibility and
@@ -70,32 +71,7 @@ export function ProductDetail({ slug }: { slug: string }) {
         <>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
             <div data-reveal>
-              {part.imageUrl ? (
-                // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
-                <img
-                  src={part.imageUrl}
-                  alt={part.name}
-                  className="h-64 w-full rounded-2xl border border-zinc-200 object-cover md:h-80 dark:border-zinc-800"
-                />
-              ) : (
-                <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-zinc-200 text-zinc-300 md:h-80 dark:border-zinc-800 dark:text-zinc-700">
-                  <FiPackage aria-hidden="true" className="h-16 w-16" />
-                </div>
-              )}
-              {part.images.length > 1 && (
-                <div className="mt-2 grid grid-cols-4 gap-2">
-                  {part.images.slice(1, 5).map((image) => (
-                    // biome-ignore lint/performance/noImgElement: gallery thumbs served immutable from the media store.
-                    <img
-                      key={image}
-                      src={image}
-                      alt=""
-                      loading="lazy"
-                      className="h-16 w-full rounded-xl border border-zinc-200 object-cover dark:border-zinc-800"
-                    />
-                  ))}
-                </div>
-              )}
+              <ProductGallery images={part.images} name={part.name} />
             </div>
 
             <div

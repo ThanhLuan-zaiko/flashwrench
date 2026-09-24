@@ -64,6 +64,8 @@ describe("getDispatchBookingTrack", () => {
 
     expect(result).toMatchObject({ ok: false, status: 403 });
     expect(mechanicBookingsRepoMocks.findBookingRowById).not.toHaveBeenCalled();
-    expect(bookingTravelRepoMocks.listBookingTravelPoints).not.toHaveBeenCalled();
+    expect(
+      bookingTravelRepoMocks.listBookingTravelPoints,
+    ).not.toHaveBeenCalled();
   });
 });

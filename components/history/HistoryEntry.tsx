@@ -25,9 +25,10 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
   const pages = query.data?.pages ?? [];
   const page = pages[pageIndex];
   const bookings = page?.items ?? [];
-  const selectedBooking = pages
-    .flatMap((result) => result.items)
-    .find((booking) => booking.id === selectedId) ?? null;
+  const selectedBooking =
+    pages
+      .flatMap((result) => result.items)
+      .find((booking) => booking.id === selectedId) ?? null;
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setQuerySearch(search.trim()), 250);

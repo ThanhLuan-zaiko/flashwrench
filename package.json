@@ -10,6 +10,7 @@
     "dev:all": "bun run scripts/dev-all.ts",
     "start:all": "bun run scripts/start-all.ts",
     "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "type-check": "tsc --noEmit",
     "check:lines": "bun .github/scripts/check-file-limits.ts",
     "check:all": "bun run lint && bun run type-check && bun run check:lines",

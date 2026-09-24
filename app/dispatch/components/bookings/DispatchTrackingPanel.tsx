@@ -2,13 +2,16 @@
 
 import dynamic from "next/dynamic";
 import { FiAlertCircle, FiLoader, FiMapPin } from "react-icons/fi";
-import { useDispatchBooking, useDispatchBookingTrack } from "@/hooks/dispatch";
 import { historyMapModel } from "@/components/history/history-map.utils";
+import { useDispatchBooking, useDispatchBookingTrack } from "@/hooks/dispatch";
 import type { BookingSummary } from "@/services/dispatch.api";
 import { DISPATCH_STATUS_LABELS } from "./dispatch-tabs";
 
 const TrackingMap = dynamic(
-  () => import("@/components/history/TrackingMap").then((module) => module.TrackingMap),
+  () =>
+    import("@/components/history/TrackingMap").then(
+      (module) => module.TrackingMap,
+    ),
   { ssr: false },
 );
 
@@ -76,13 +79,22 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
           </div>
 
           {trackQuery.isPending && (
-            <p aria-busy="true" className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-              <FiLoader aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />
+            <p
+              aria-busy="true"
+              className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+            >
+              <FiLoader
+                aria-hidden="true"
+                className="h-4 w-4 motion-safe:animate-spin"
+              />
               Đang tải lộ trình…
             </p>
           )}
           {trackQuery.isError && (
-            <p role="alert" className="flex items-center gap-2 text-xs text-red-600 dark:text-red-400">
+            <p
+              role="alert"
+              className="flex items-center gap-2 text-xs text-red-600 dark:text-red-400"
+            >
               <FiAlertCircle aria-hidden="true" className="h-4 w-4" />
               Không tải được lộ trình.
             </p>
@@ -109,7 +121,10 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
           )}
 
           {trackQuery.isSuccess && points.length > 0 && latest && (
-            <p aria-live="polite" className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p
+              aria-live="polite"
+              className="text-[11px] text-zinc-500 dark:text-zinc-400"
+            >
               {points.length > 1
                 ? `${points.length} điểm lộ trình · Cập nhật ${new Date(latest.recordedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}`
                 : "Đã ghi nhận điểm đầu tiên; đường đi sẽ hiện sau lần cập nhật tiếp theo."}

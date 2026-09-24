@@ -5,9 +5,13 @@ import type { BookingSummary } from "@/services/dispatch.api";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
 import { DispatchPager } from "./DispatchPager";
 import { DispatchQueue } from "./DispatchQueue";
-import { formatMonthKey, isMonthKey } from "./dispatch-format";
-import { DISPATCH_STATUS_LABELS, DISPATCH_TABS, type DispatchTab } from "./dispatch-tabs";
 import { DispatchTrackingPanel } from "./DispatchTrackingPanel";
+import { formatMonthKey, isMonthKey } from "./dispatch-format";
+import {
+  DISPATCH_STATUS_LABELS,
+  DISPATCH_TABS,
+  type DispatchTab,
+} from "./dispatch-tabs";
 
 type DispatchTrackingBoardViewProps = {
   status: DispatchTab;
@@ -50,7 +54,8 @@ export function DispatchTrackingBoardView({
   onBack,
   onNext,
 }: DispatchTrackingBoardViewProps) {
-  const selected = bookings.find((booking) => booking.id === selectedId) ?? null;
+  const selected =
+    bookings.find((booking) => booking.id === selectedId) ?? null;
 
   return (
     <div className="flex flex-col gap-4 md:gap-5">
@@ -70,7 +75,8 @@ export function DispatchTrackingBoardView({
               type="month"
               value={month}
               onChange={(event) => {
-                if (isMonthKey(event.target.value)) onMonthChange(event.target.value);
+                if (isMonthKey(event.target.value))
+                  onMonthChange(event.target.value);
               }}
               className="mt-1 min-h-[44px] rounded-xl border border-zinc-300 bg-white px-3 text-sm font-normal dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
             />

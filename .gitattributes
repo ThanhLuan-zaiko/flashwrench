@@ -1,0 +1,20 @@
+# Force LF in the working tree on every platform (Windows included) so
+# Biome's formatter check behaves identically on local machines and CI.
+* text=auto eol=lf
+
+# Windows batch scripts genuinely require CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary formats — never normalize.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.avif binary
+*.woff binary
+*.woff2 binary
+*.mp4 binary
+*.lockb binary

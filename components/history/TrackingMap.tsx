@@ -74,9 +74,10 @@ export function TrackingMap({ customer, mechanic, route }: TrackingMapProps) {
     ? route.length > 1
     : customer !== null && mechanic !== null;
   const fallbackCenter = customer ?? mechanic ?? defaultMapCenter();
-  const center: [number, number] = customer && mechanic
-    ? [(customer.lat + mechanic.lat) / 2, (customer.lng + mechanic.lng) / 2]
-    : [fallbackCenter.lat, fallbackCenter.lng];
+  const center: [number, number] =
+    customer && mechanic
+      ? [(customer.lat + mechanic.lat) / 2, (customer.lng + mechanic.lng) / 2]
+      : [fallbackCenter.lat, fallbackCenter.lng];
 
   return (
     <div className="relative z-0 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
@@ -98,7 +99,10 @@ export function TrackingMap({ customer, mechanic, route }: TrackingMapProps) {
           />
         )}
         {mechanic && (
-          <Marker position={[mechanic.lat, mechanic.lng]} icon={icons.mechanic} />
+          <Marker
+            position={[mechanic.lat, mechanic.lng]}
+            icon={icons.mechanic}
+          />
         )}
         {hasPath && (
           <Polyline

@@ -5,6 +5,8 @@ import { describe, expect, test } from "bun:test";
 import {
   discountPercent,
   filterPublicParts,
+  galleryStep,
+  normalizeGalleryImages,
   PRODUCTS_PAGE_SIZE,
   paginateParts,
   stockLabel,
@@ -137,6 +139,35 @@ describe("discountPercent", () => {
     expect(discountPercent(120000, 0)).toBe(0);
     expect(discountPercent(120000, 120000)).toBe(0);
     expect(discountPercent(130000, 120000)).toBe(0);
+  });
+});
+
+describe("normalizeGalleryImages", () => {
+  test("drops empty entries and duplicates while preserving order", () => {
+    expect(normalizeGalleryImages(["a", "", "b", "a", "c", "b"])).toEqual([
+      "a",
+      "b",
+      "c",
+    ]);
+  });
+
+  test("returns an empty list for empty input", () => {
+    expect(normalizeGalleryImages([])).toEqual([]);
+    expect(normalizeGalleryImages(["", ""])).toEqual([]);
+  });
+});
+
+describe("galleryStep", () => {
+  test("wraps forward and backward around the set", () => {
+    expect(galleryStep(4, 1, 5)).toBe(0);
+    expect(galleryStep(0, -1, 5)).toBe(4);
+    expect(galleryStep(2, 1, 5)).toBe(3);
+    expect(galleryStep(2, -1, 5)).toBe(1);
+  });
+
+  test("clamps to 0 when the gallery is empty", () => {
+    expect(galleryStep(0, 1, 0)).toBe(0);
+    expect(galleryStep(3, -1, 0)).toBe(0);
   });
 });
 

@@ -73,6 +73,26 @@ export function discountPercent(price: number, comparePrice: number): number {
   return Math.round(((comparePrice - price) / comparePrice) * 100);
 }
 
+// Gallery helpers for the detail viewer: drop empty/duplicate URLs while
+// preserving order, and step with wrap-around so prev/next cycles the set.
+export function normalizeGalleryImages(images: string[]): string[] {
+  const seen = new Set<string>();
+  return images.filter((url) => {
+    if (!url || seen.has(url)) return false;
+    seen.add(url);
+    return true;
+  });
+}
+
+export function galleryStep(
+  index: number,
+  delta: number,
+  total: number,
+): number {
+  if (total <= 0) return 0;
+  return (((index + delta) % total) + total) % total;
+}
+
 export function stockLabel(part: PartItem): string {
   if (part.stockQty <= 0) return "Hết hàng";
   if (part.stockQty <= 5) return `Còn ${part.stockQty} sản phẩm`;

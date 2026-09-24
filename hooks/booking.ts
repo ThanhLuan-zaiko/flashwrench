@@ -86,10 +86,7 @@ export function useMyBooking(bookingId: string | null, live = false) {
   });
 }
 
-export function useBookingTravelPoints(
-  bookingId: string | null,
-  live = false,
-) {
+export function useBookingTravelPoints(bookingId: string | null, live = false) {
   return useQuery({
     queryKey: bookingKeys.travelTrack(bookingId ?? ""),
     queryFn: () => fetchBookingTravelPoints(bookingId as string),

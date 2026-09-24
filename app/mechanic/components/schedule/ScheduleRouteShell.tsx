@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ScheduleSection } from "./ScheduleSection";
-import { SCHEDULE_TABS, isScheduleTab, scheduleTabHref } from "./schedule-tabs";
+import { isScheduleTab, SCHEDULE_TABS, scheduleTabHref } from "./schedule-tabs";
 
 export function ScheduleRouteShell() {
   const params = useParams();

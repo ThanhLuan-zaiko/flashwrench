@@ -105,7 +105,9 @@ describe("dispatch booking search", () => {
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.data.items.map((booking) => booking.id)).toEqual([BOOKING_ID]);
+    expect(result.data.items.map((booking) => booking.id)).toEqual([
+      BOOKING_ID,
+    ]);
     expect(dispatchRepoMocks.listStatusBookingRefs.mock.calls).toHaveLength(2);
   });
 

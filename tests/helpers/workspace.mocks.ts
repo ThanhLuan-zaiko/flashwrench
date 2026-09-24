@@ -1,13 +1,13 @@
 import { mock } from "bun:test";
+import type {
+  BookingTravelPointRow,
+  BookingTravelPointWrite,
+} from "@/lib/booking/booking-travel.repository";
 import type { CustomerBookingPage } from "@/lib/booking/customer-bookings.repository";
 import type {
   BookingReviewRow,
   BookingReviewWrite,
 } from "@/lib/booking/review.repository";
-import type {
-  BookingTravelPointRow,
-  BookingTravelPointWrite,
-} from "@/lib/booking/booking-travel.repository";
 import type { StatusBookingPage } from "@/lib/dispatch/dispatch.repository";
 import type {
   MechanicPresenceUpdateParams,
