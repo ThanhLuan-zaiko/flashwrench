@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileMenuAuth } from "./MobileMenuAuth";
+import { isNavActive } from "./nav-active";
 import type { NavItem } from "./site-header.types";
 
 const ITEM_ENTER_DELAYS = [
@@ -36,7 +37,7 @@ export function MobileMenu({
           <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {items.map((item, index) => {
               const Icon = item.icon;
-              const isActive = currentPath === item.href;
+              const isActive = isNavActive(currentPath, item.href);
               const delay = ITEM_ENTER_DELAYS[index % ITEM_ENTER_DELAYS.length];
               return (
                 <li

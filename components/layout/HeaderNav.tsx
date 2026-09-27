@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isNavActive } from "./nav-active";
 import type { NavItem } from "./site-header.types";
 
 type HeaderNavProps = {
@@ -12,7 +13,7 @@ export function HeaderNav({ items, currentPath = "/" }: HeaderNavProps) {
       <ul className="flex items-center gap-1">
         {items.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPath === item.href;
+          const isActive = isNavActive(currentPath, item.href);
           return (
             <li key={item.href}>
               <Link

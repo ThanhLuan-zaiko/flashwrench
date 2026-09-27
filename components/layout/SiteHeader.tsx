@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -14,7 +15,11 @@ type SiteHeaderProps = {
   currentPath?: string;
 };
 
-export function SiteHeader({ currentPath = "/" }: SiteHeaderProps) {
+// The header reads the live pathname so /rescue highlights Rescue
+// instead of Home. The optional prop stays as a test override.
+export function SiteHeader({ currentPath }: SiteHeaderProps) {
+  const pathname = usePathname();
+  const activePath = currentPath ?? pathname ?? "/";
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -23,7 +28,7 @@ export function SiteHeader({ currentPath = "/" }: SiteHeaderProps) {
         <SiteLogo />
 
         <div className="absolute left-1/2 hidden -translate-x-1/2 md:block">
-          <HeaderNav items={NAV_ITEMS} currentPath={currentPath} />
+          <HeaderNav items={NAV_ITEMS} currentPath={activePath} />
         </div>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
@@ -53,7 +58,7 @@ export function SiteHeader({ currentPath = "/" }: SiteHeaderProps) {
       <MobileMenu
         open={menuOpen}
         items={NAV_ITEMS}
-        currentPath={currentPath}
+        currentPath={activePath}
         onNavigate={() => setMenuOpen(false)}
       />
     </header>
