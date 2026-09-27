@@ -4,9 +4,17 @@ import type {
   OrderSummary,
 } from "@/lib/orders/orders.types";
 import type { PartItem } from "@/lib/parts/parts.types";
+import type { OrderInvoice } from "@/lib/payments/order-payment.types";
 import { apiRequest } from "./auth.api";
+import type { OrderPaymentResult } from "./orders.api";
 
-export type { CourierConfigInput, OrderDetail, OrderSummary, PartItem };
+export type {
+  CourierConfigInput,
+  OrderDetail,
+  OrderInvoice,
+  OrderSummary,
+  PartItem,
+};
 
 export type CounterSalePayload = {
   customerName?: string;
@@ -50,6 +58,15 @@ export function fetchDispatchOrder(
   );
 }
 
+// Invoice view: order detail plus the latest payment receipt row.
+export function fetchDispatchOrderInvoice(
+  orderId: string,
+): Promise<{ invoice: OrderInvoice }> {
+  return apiRequest<{ invoice: OrderInvoice }>(
+    `/api/dispatch/orders/${encodeURIComponent(orderId)}/invoice`,
+  );
+}
+
 export function updateDispatchOrderStatus(
   orderId: string,
   status: string,
@@ -59,6 +76,17 @@ export function updateDispatchOrderStatus(
   return apiRequest<{ order: OrderDetail }>(
     `/api/dispatch/orders/${encodeURIComponent(orderId)}`,
     { method: "PATCH", body: JSON.stringify({ status, note, courier }) },
+  );
+}
+
+// Staff collects a "Thanh toán tại quầy" order at the till while the
+// customer is present — settles payment without touching the status.
+export function collectDispatchOrderPayment(
+  orderId: string,
+): Promise<OrderPaymentResult> {
+  return apiRequest<OrderPaymentResult>(
+    `/api/dispatch/orders/${encodeURIComponent(orderId)}`,
+    { method: "PATCH", body: JSON.stringify({ action: "collect-payment" }) },
   );
 }
 

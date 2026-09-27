@@ -239,6 +239,7 @@ export type CheckoutInput = {
   ward: string;
   street: string;
   note?: string;
+  paymentMethod?: string;
 };
 
 // Delivery assignment picked by the dispatcher when an order ships.
@@ -285,6 +286,7 @@ export type OrderFieldErrors = Partial<
     | "recipientName"
     | "phone"
     | "fulfillment"
+    | "paymentMethod"
     | "address"
     | "note"
     | "qty"

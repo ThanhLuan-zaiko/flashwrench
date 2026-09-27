@@ -1,7 +1,18 @@
 import type { IconType } from "react-icons";
-import { FiBarChart2, FiPackage, FiSettings, FiUsers } from "react-icons/fi";
+import {
+  FiBarChart2,
+  FiFileText,
+  FiPackage,
+  FiSettings,
+  FiUsers,
+} from "react-icons/fi";
 
-export type AdminSectionId = "dashboard" | "users" | "services" | "products";
+export type AdminSectionId =
+  | "dashboard"
+  | "users"
+  | "services"
+  | "products"
+  | "orders";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -39,6 +50,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Quản lý danh mục và linh kiện đang bán.",
     href: "/admin/products/categories",
     icon: FiPackage,
+  },
+  {
+    id: "orders",
+    label: "Đơn hàng & hóa đơn",
+    description: "Theo dõi đơn linh kiện và xem hóa đơn thu tiền.",
+    href: "/dispatch/orders/pending",
+    icon: FiFileText,
   },
 ];
 

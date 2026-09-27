@@ -9,7 +9,11 @@ import { useMyOrders, useMyOrdersRealtime } from "@/hooks/orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { buildLoginHref } from "@/lib/auth/auth-redirect";
 import { formatDateTime } from "@/lib/datetime/format";
-import { ORDER_STATUS_LABELS, orderStatusBadgeClass } from "./order-format";
+import {
+  canMockPayOnline,
+  ORDER_STATUS_LABELS,
+  orderStatusBadgeClass,
+} from "./order-format";
 
 // Customer /orders page: every parts order with a live status badge.
 // Status events arrive on the customer user topic and invalidate the list.
@@ -118,6 +122,11 @@ export function MyOrdersPage() {
                         ? "Nhận tại xưởng"
                         : "Giao tận nơi"}
                     </span>
+                    {canMockPayOnline(order) && (
+                      <span className="rounded-full border border-zinc-900 px-2 py-0.5 text-[11px] font-semibold text-zinc-900 dark:border-zinc-300 dark:text-zinc-200">
+                        Chờ thanh toán
+                      </span>
+                    )}
                   </p>
                   <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                     {formatDateTime(order.createdAt)}

@@ -1,3 +1,4 @@
+import { FiFileText } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { ORDER_STATUS_LABELS } from "@/components/orders/order-format";
 import { formatDateTime } from "@/lib/datetime/format";
@@ -5,7 +6,13 @@ import type { OrderDetail, OrderStatus } from "@/lib/orders/orders.types";
 
 // Read-only detail body for the ops dialog: customer, items, history.
 // Transition controls live in OrderOpsDialog.
-export function OrderOpsDetail({ order }: { order: OrderDetail }) {
+export function OrderOpsDetail({
+  order,
+  onViewInvoice,
+}: {
+  order: OrderDetail;
+  onViewInvoice?: () => void;
+}) {
   return (
     <>
       <section aria-label="Khách hàng">
@@ -67,6 +74,17 @@ export function OrderOpsDetail({ order }: { order: OrderDetail }) {
           ))}
         </ol>
       </section>
+
+      {onViewInvoice && (
+        <button
+          type="button"
+          onClick={onViewInvoice}
+          className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        >
+          <FiFileText aria-hidden="true" className="h-4 w-4" />
+          Xem hóa đơn chi tiết
+        </button>
+      )}
     </>
   );
 }

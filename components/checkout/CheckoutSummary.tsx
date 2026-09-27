@@ -5,12 +5,30 @@ import { FiArrowLeft, FiLoader } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { orderShippingFee } from "@/lib/orders/order-pricing";
 import type { CartView, FulfillmentType } from "@/lib/orders/orders.types";
+import type { OrderPaymentMethod } from "@/lib/payments/order-payment.types";
 
 type CheckoutSummaryProps = {
   cart: CartView;
   fulfillment: FulfillmentType;
+  paymentMethod: OrderPaymentMethod;
   submitting: boolean;
 };
+
+// One-line expectation under the total, matched to the chosen method.
+function paymentHint(
+  fulfillment: FulfillmentType,
+  method: OrderPaymentMethod,
+): string {
+  if (method === "bank_transfer") {
+    return "Bạn sẽ thanh toán online (giả lập) ngay sau khi đặt hàng.";
+  }
+  if (method === "counter") {
+    return "Thanh toán tại quầy khi đến xưởng.";
+  }
+  return fulfillment === "pickup"
+    ? "Thanh toán khi nhận hàng tại xưởng."
+    : "Thanh toán khi nhận hàng. Bạn có thể theo dõi đơn vận chuyển trong mục Lịch sử.";
+}
 
 // Order summary aside rendered inside the checkout form — the submit
 // button lives here so the form's grid columns stay balanced. The fee
@@ -18,6 +36,7 @@ type CheckoutSummaryProps = {
 export function CheckoutSummary({
   cart,
   fulfillment,
+  paymentMethod,
   submitting,
 }: CheckoutSummaryProps) {
   const fee = orderShippingFee(fulfillment, cart.subtotal);
@@ -70,9 +89,7 @@ export function CheckoutSummary({
         </span>
       </div>
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-        {fulfillment === "pickup"
-          ? "Thanh toán khi nhận hàng tại xưởng."
-          : "Thanh toán khi nhận hàng. Bạn có thể theo dõi đơn vận chuyển trong mục Lịch sử."}
+        {paymentHint(fulfillment, paymentMethod)}
       </p>
       <button
         type="submit"

@@ -48,12 +48,15 @@ function toCheckoutInput(body: Record<string, unknown>): CheckoutInput {
     ward: String(body.ward ?? ""),
     street: String(body.street ?? ""),
     note: body.note === undefined ? undefined : String(body.note),
+    paymentMethod:
+      body.paymentMethod === undefined ? undefined : String(body.paymentMethod),
   };
 }
 
-// Checkout: cart -> pending order + COD payment, stock decremented with
-// CAS. The operations topic notifies the dispatch board and the customer
-// topic refreshes their own orders list.
+// Checkout: cart -> pending order + payment row for the chosen method
+// (cod / counter / mock bank_transfer), stock decremented with CAS. The
+// operations topic notifies the dispatch board and the customer topic
+// refreshes their own orders list.
 export async function POST(request: Request) {
   const { user, response } = await requireRole("customer");
   if (response) return response;

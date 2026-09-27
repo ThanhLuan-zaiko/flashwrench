@@ -1,8 +1,10 @@
 "use client";
 
-import type { UseQueryResult } from "@tanstack/react-query";
+import { type UseQueryResult, useQueryClient } from "@tanstack/react-query";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
+import { dispatchOrderKeys } from "@/hooks/dispatch-orders";
 import type { OrderSummary } from "@/lib/orders/orders.types";
+import { fetchDispatchOrders } from "@/services/dispatch-orders.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
 import { DispatchPager } from "../bookings/DispatchPager";
@@ -14,7 +16,10 @@ import {
   popCursor,
   pushCursor,
 } from "../bookings/dispatch-cursor";
-import { formatMonthKey } from "../bookings/dispatch-format";
+import {
+  DISPATCH_PAGE_SIZE,
+  formatMonthKey,
+} from "../bookings/dispatch-format";
 import { DispatchOrderCard } from "./DispatchOrderCard";
 import {
   DISPATCH_ORDER_TABS,
@@ -34,7 +39,9 @@ type OrdersQueueCardProps = {
 };
 
 // The paged order queue card: status tabs, the month's order list and the
-// cursor pager that walks the status partition.
+// cursor pager that walks the status partition. Hovering/focusing a tab
+// prefetches its first page so the packing→handover flow switches feel
+// instant; TanStack dedupes prefetches that are already cached.
 export function OrdersQueueCard({
   status,
   appliedMonth,
@@ -45,6 +52,26 @@ export function OrdersQueueCard({
   onStack,
   onOpen,
 }: OrdersQueueCardProps) {
+  const queryClient = useQueryClient();
+  const prefetchTab = (tabId: string) => {
+    void queryClient.prefetchQuery({
+      queryKey: dispatchOrderKeys.list({
+        status: tabId,
+        month: appliedMonth,
+        cursor: null,
+        limit: DISPATCH_PAGE_SIZE,
+      }),
+      queryFn: () =>
+        fetchDispatchOrders({
+          status: tabId,
+          month: appliedMonth,
+          cursor: null,
+          limit: DISPATCH_PAGE_SIZE,
+        }),
+      staleTime: 15 * 1000,
+    });
+  };
+
   return (
     <BentoCard label="Hàng đợi xử lý" className="sm:col-span-2 lg:col-span-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -60,6 +87,7 @@ export function OrdersQueueCard({
           tabs={DISPATCH_ORDER_TABS}
           activeId={status}
           ariaLabel="Lọc đơn theo trạng thái"
+          onTabPrefetch={prefetchTab}
         />
       </div>
 

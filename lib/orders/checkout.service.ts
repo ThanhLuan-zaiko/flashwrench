@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { normalizePhone, validatePhone } from "@/lib/auth/validation";
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
+import { resolveOrderPaymentMethod } from "@/lib/payments/order-payment.types";
 import { clearCartRows, listCartRows } from "./cart.repository";
 import { reserveOrderLines } from "./order-lines.service";
 import { orderShippingFee } from "./order-pricing";
@@ -52,20 +53,28 @@ export function validateCheckoutInput(
   if (phoneError) errors.phone = phoneError;
   if (!isFulfillmentType(input.fulfillment)) {
     errors.fulfillment = "Vui lòng chọn hình thức nhận hàng.";
-  } else if (input.fulfillment === "delivery") {
-    const address = input.address.trim();
-    if (!address) errors.address = "Vui lòng nhập địa chỉ nhận hàng.";
-    else if (
-      address.length < ORDER_ADDRESS_MIN ||
-      address.length > ORDER_ADDRESS_MAX
-    )
-      errors.address = `Địa chỉ phải từ ${ORDER_ADDRESS_MIN} đến ${ORDER_ADDRESS_MAX} ký tự.`;
+  } else {
+    if (input.fulfillment === "delivery") {
+      const address = input.address.trim();
+      if (!address) errors.address = "Vui lòng nhập địa chỉ nhận hàng.";
+      else if (
+        address.length < ORDER_ADDRESS_MIN ||
+        address.length > ORDER_ADDRESS_MAX
+      )
+        errors.address = `Địa chỉ phải từ ${ORDER_ADDRESS_MIN} đến ${ORDER_ADDRESS_MAX} ký tự.`;
+      if (
+        !isValidLatitude(input.addressLat) ||
+        !isValidLongitude(input.addressLng)
+      ) {
+        errors.address =
+          errors.address ?? "Vui lòng ghim vị trí giao hàng trên bản đồ.";
+      }
+    }
     if (
-      !isValidLatitude(input.addressLat) ||
-      !isValidLongitude(input.addressLng)
+      resolveOrderPaymentMethod(input.fulfillment, input.paymentMethod) === null
     ) {
-      errors.address =
-        errors.address ?? "Vui lòng ghim vị trí giao hàng trên bản đồ.";
+      errors.paymentMethod =
+        "Phương thức thanh toán không hợp lệ cho hình thức nhận hàng này.";
     }
   }
   if (input.note !== undefined && input.note.length > ORDER_NOTE_MAX) {
@@ -85,6 +94,15 @@ export async function checkoutCart(
   const fieldErrors = validateCheckoutInput(raw);
   if (fieldErrors) return failFields(400, fieldErrors);
   const fulfillment = raw.fulfillment as "delivery" | "pickup";
+  const paymentMethod = resolveOrderPaymentMethod(
+    fulfillment,
+    raw.paymentMethod,
+  );
+  if (!paymentMethod) {
+    return failFields(400, {
+      paymentMethod: "Phương thức thanh toán không hợp lệ.",
+    });
+  }
 
   const cartRows = await listCartRows(customerId);
   if (cartRows.length === 0) {
@@ -125,6 +143,7 @@ export async function checkoutCart(
     status: "pending",
     paymentStatus: "unpaid",
     paidAt: null,
+    paymentMethod,
     fulfillmentType: fulfillment,
     historyNote: "Đặt hàng",
     createdBy: customerId,

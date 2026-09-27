@@ -265,6 +265,18 @@ async function applyStatusChange(
       paymentRefs: await listOrderPaymentRefs(row.order_id),
     });
   }
+  // A mock-paid order can still be cancelled while pending: the money is
+  // simulated, so cancelling flips its payment rows straight to refunded.
+  if (nextStatus === "cancelled" && row.payment_status === "paid") {
+    await markOrderPaymentStatus({
+      orderId: row.order_id,
+      customerId: row.customer_id,
+      paymentStatus: "refunded",
+      paidAt: null,
+      now,
+      paymentRefs: await listOrderPaymentRefs(row.order_id),
+    });
+  }
   await insertOrderHistory({
     orderId: row.order_id,
     oldStatus: row.status ?? null,

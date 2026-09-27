@@ -18,18 +18,22 @@ type FilterTabsProps = {
   activeId: string;
   ariaLabel: string;
   counts?: Record<string, number>;
+  onTabPrefetch?: (tabId: string) => void;
 };
 
 // Scrollable pill strip shared by the mechanic workspace filters. One URL
 // per tab (Next Link), monochrome active state, optional live counts.
 // Horizontal scroll keeps every tab reachable on 360px screens without
 // pushing the content below down. The active pill scrolls itself into the
-// center of the strip on mount and on every tab switch.
+// center of the strip on mount and on every tab switch. `onTabPrefetch`
+// lets callers warm the query cache on hover/focus so the first visit to
+// a tab renders instantly instead of waiting for a fetch.
 export function FilterTabs({
   tabs,
   activeId,
   ariaLabel,
   counts,
+  onTabPrefetch,
 }: FilterTabsProps) {
   const itemRefs = useRef(new Map<string, HTMLAnchorElement>());
 
@@ -59,6 +63,8 @@ export function FilterTabs({
             href={tab.href}
             scroll={false}
             prefetch
+            onMouseEnter={() => onTabPrefetch?.(tab.id)}
+            onFocus={() => onTabPrefetch?.(tab.id)}
             role="tab"
             aria-selected={selected}
             aria-current={selected ? "page" : undefined}

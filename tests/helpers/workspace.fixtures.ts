@@ -52,6 +52,7 @@ export function makePaymentReceiptRow(
     amount: 450000,
     method: "cod",
     status: "paid",
+    provider_ref: null,
     paid_at: new Date("2026-09-16T10:00:00.000Z"),
     created_at: new Date("2026-09-16T10:00:00.000Z"),
     ...overrides,

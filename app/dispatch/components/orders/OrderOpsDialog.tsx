@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FiAlertCircle, FiLoader, FiX } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import {
+  type OpsToast,
   ORDER_STATUS_LABELS,
   orderStatusBadgeClass,
 } from "@/components/orders/order-format";
@@ -19,17 +20,19 @@ import {
   requiresAdminTransition,
 } from "@/lib/orders/orders.types";
 import { AuthApiError } from "@/services/auth.api";
-import { type CourierDraft, OrderCourierFields } from "./OrderCourierFields";
+import { OrderCollectSection } from "./OrderCollectSection";
+import {
+  type CourierDraft,
+  EMPTY_COURIER_DRAFT,
+  OrderCourierFields,
+} from "./OrderCourierFields";
 import { OrderOpsDetail } from "./OrderOpsDetail";
 
 type OrderOpsDialogProps = {
   orderId: string;
   onClose: () => void;
-  onToast: (
-    variant: "success" | "error",
-    title: string,
-    description?: string,
-  ) => void;
+  onToast: OpsToast;
+  onViewInvoice?: () => void;
 };
 
 // Ops dialog for one parts order: items, totals, address, history and the
@@ -39,6 +42,7 @@ export function OrderOpsDialog({
   orderId,
   onClose,
   onToast,
+  onViewInvoice,
 }: OrderOpsDialogProps) {
   const me = useMe();
   const query = useDispatchOrder(orderId);
@@ -46,12 +50,7 @@ export function OrderOpsDialog({
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors>({});
-  const [courier, setCourier] = useState<CourierDraft>({
-    type: "mechanic",
-    mechanicId: "",
-    carrierName: "",
-    trackingCode: "",
-  });
+  const [courier, setCourier] = useState<CourierDraft>(EMPTY_COURIER_DRAFT);
   const order = query.data?.order ?? null;
 
   const isAdmin = me.data?.role === "admin";
@@ -64,7 +63,6 @@ export function OrderOpsDialog({
     order !== null &&
     order.fulfillmentType === "delivery" &&
     transitions.includes("shipping");
-
   const apply = (status: OrderStatus) => {
     setError("");
     setFieldErrors({});
@@ -181,7 +179,13 @@ export function OrderOpsDialog({
               </span>
             </div>
 
-            <OrderOpsDetail order={order} />
+            <OrderOpsDetail order={order} onViewInvoice={onViewInvoice} />
+
+            <OrderCollectSection
+              order={order}
+              onToast={onToast}
+              onError={setError}
+            />
 
             {transitions.length > 0 && (
               <section aria-label="Cập nhật trạng thái">

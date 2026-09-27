@@ -15,9 +15,15 @@ import type {
   FulfillmentType,
   OrderFieldErrors,
 } from "@/lib/orders/orders.types";
+import {
+  defaultPaymentMethodFor,
+  type OrderPaymentMethod,
+  paymentMethodsFor,
+} from "@/lib/payments/order-payment.types";
 import { AuthApiError } from "@/services/auth.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
+import { CheckoutPaymentFields } from "./CheckoutPaymentFields";
 import { CheckoutSummary } from "./CheckoutSummary";
 import { accountRecipient } from "./checkout-utils";
 
@@ -36,6 +42,7 @@ export function CheckoutPage() {
   // verified name + phone, so the fields render read-only from `me`.
   const { recipientName, phone } = accountRecipient(me.data ?? null);
   const [fulfillment, setFulfillment] = useState<FulfillmentType>("delivery");
+  const [paymentMethod, setPaymentMethod] = useState<OrderPaymentMethod>("cod");
   const [address, setAddress] = useState("");
   const [addressLat, setAddressLat] = useState<number | null>(null);
   const [addressLng, setAddressLng] = useState<number | null>(null);
@@ -50,6 +57,15 @@ export function CheckoutPage() {
 
   const cartView = cart.data?.cart ?? null;
   const submitting = checkout.isPending;
+
+  // Pickup drops cod from the method list, so a stale selection has to be
+  // coerced back to a legal method for the new fulfillment type.
+  const handleFulfillment = (value: FulfillmentType) => {
+    setFulfillment(value);
+    if (!paymentMethodsFor(value).includes(paymentMethod)) {
+      setPaymentMethod(defaultPaymentMethodFor(value));
+    }
+  };
 
   const handleGeocode = (values: MapAddressValues) => {
     setAddress(values.address);
@@ -77,6 +93,7 @@ export function CheckoutPage() {
         ward: addressParts.ward,
         street: addressParts.street,
         note: note.trim() || undefined,
+        paymentMethod,
       },
       {
         onSuccess: (data) => {
@@ -183,13 +200,20 @@ export function CheckoutPage() {
                 addressLng={addressLng}
                 errors={errors}
                 disabled={submitting}
-                onFulfillment={setFulfillment}
+                onFulfillment={handleFulfillment}
                 onAddress={setAddress}
                 onCoords={(lat, lng) => {
                   setAddressLat(lat);
                   setAddressLng(lng);
                 }}
                 onGeocode={handleGeocode}
+              />
+              <CheckoutPaymentFields
+                fulfillment={fulfillment}
+                paymentMethod={paymentMethod}
+                errors={errors}
+                disabled={submitting}
+                onPaymentMethod={setPaymentMethod}
               />
               <div>
                 <label
@@ -213,6 +237,7 @@ export function CheckoutPage() {
             <CheckoutSummary
               cart={cartView}
               fulfillment={fulfillment}
+              paymentMethod={paymentMethod}
               submitting={submitting}
             />
           </form>

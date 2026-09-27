@@ -8,6 +8,7 @@ export type PaymentRow = {
   amount: number | null;
   method: string | null;
   status: string | null;
+  provider_ref: string | null;
   paid_at: Date | null;
   created_at: Date | null;
 };
@@ -52,6 +53,7 @@ function toPaymentRow(raw: RawRow): PaymentRow {
     amount: toNumberOrNull(raw.amount),
     method: toStringOrNull(raw.method),
     status: toStringOrNull(raw.status),
+    provider_ref: toStringOrNull(raw.provider_ref),
     paid_at: toDateOrNull(raw.paid_at),
     created_at: toDateOrNull(raw.created_at),
   };
@@ -61,7 +63,7 @@ export async function findPaymentRowById(
   paymentId: string,
 ): Promise<PaymentRow | null> {
   const result = await scylla.execute(
-    "SELECT payment_id, ref_type, ref_id, customer_id, amount, method, status, paid_at, created_at FROM payments_by_id WHERE payment_id = ?",
+    "SELECT payment_id, ref_type, ref_id, customer_id, amount, method, status, provider_ref, paid_at, created_at FROM payments_by_id WHERE payment_id = ?",
     [paymentId],
     { prepare: true },
   );

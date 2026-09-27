@@ -1,4 +1,5 @@
 import { STATUS_LABELS } from "@/lib/mechanic/mechanic-status";
+import { normalizeSearchText } from "@/lib/search-text";
 import type { BookingSummary } from "./workspace.types";
 
 export const MAX_BOOKING_SEARCH_LENGTH = 80;
@@ -14,12 +15,7 @@ export type BookingSearchable = Pick<
 >;
 
 export function normalizeBookingSearch(value: string): string {
-  return value
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/gi, "d")
-    .toLocaleLowerCase("vi");
+  return normalizeSearchText(value);
 }
 
 export function matchesBookingSearch(

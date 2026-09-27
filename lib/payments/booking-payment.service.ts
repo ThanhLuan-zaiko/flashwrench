@@ -233,6 +233,7 @@ export async function recordBookingPayment(
       amount: write.amount,
       method: write.method,
       status: write.status,
+      provider_ref: null,
       paid_at: write.paidAt,
       created_at: write.createdAt,
     },

@@ -18,6 +18,8 @@ export const PAYMENT_STATUS_LABELS: Record<string, string> = {
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cod: "Thanh toán khi nhận hàng",
+  counter: "Thanh toán tại quầy",
+  bank_transfer: "Thanh toán online (giả lập)",
 };
 
 // Monochrome badges: borders + text contrast only, per the palette rule.
@@ -38,4 +40,42 @@ export function orderStatusBadgeClass(status: OrderStatus): string {
 // Customers may cancel only while the order is still pending.
 export function canCustomerCancel(status: OrderStatus): boolean {
   return status === "pending";
+}
+
+// Toast callback shared by the order ops/payment controls.
+export type OpsToast = (
+  variant: "success" | "error",
+  title: string,
+  description?: string,
+) => void;
+
+const TERMINAL_ORDER_STATUSES: OrderStatus[] = [
+  "delivered",
+  "cancelled",
+  "refunded",
+];
+
+type PaymentState = {
+  status: OrderStatus;
+  paymentStatus: string;
+  paymentMethod: string;
+};
+
+// The mock gateway only makes sense while the order is alive, unpaid and
+// bound to the online (bank_transfer) method.
+export function canMockPayOnline(order: PaymentState): boolean {
+  return (
+    order.paymentMethod === "bank_transfer" &&
+    order.paymentStatus === "unpaid" &&
+    !TERMINAL_ORDER_STATUSES.includes(order.status)
+  );
+}
+
+// Staff can collect a counter order any time before it leaves the shop.
+export function canCollectCounterPayment(order: PaymentState): boolean {
+  return (
+    order.paymentMethod === "counter" &&
+    order.paymentStatus === "unpaid" &&
+    !TERMINAL_ORDER_STATUSES.includes(order.status)
+  );
 }

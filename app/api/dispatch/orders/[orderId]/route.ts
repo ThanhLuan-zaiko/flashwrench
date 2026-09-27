@@ -4,6 +4,7 @@ import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
+import { collectCounterPayment } from "@/lib/orders/order-payment.service";
 import {
   getOrderForStaff,
   updateOrderStatus,
@@ -55,10 +56,9 @@ function toCourierInput(
   };
 }
 
-// Staff status transition { status, note?, courier? }. The state machine
-// in the service guards the move; shipping requires a courier payload
-// (mechanic assignment or third-party carrier + tracking code), and
-// refund additionally requires the admin role.
+// Staff actions: { action: "collect-payment" } settles a counter order at
+// the till, otherwise { status, note?, courier? } drives the state machine
+// (shipping needs a courier payload, refund is admin-only).
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ orderId: string }> },
@@ -76,6 +76,31 @@ export async function PATCH(
   }
   try {
     const { orderId } = await params;
+    if (body.action === "collect-payment") {
+      const collected = await collectCounterPayment(user.id, orderId);
+      if (!collected.ok)
+        return NextResponse.json(
+          { errors: collected.errors },
+          { status: collected.status },
+        );
+      void publishRealtimeEvent(OPERATIONS_TOPIC, {
+        kind: "orders-updated",
+        updatedAt: new Date().toISOString(),
+      });
+      if (collected.data.order.customerId) {
+        void publishRealtimeEvent(userTopic(collected.data.order.customerId), {
+          kind: "order-updated",
+          orderId,
+        });
+      }
+      return NextResponse.json({
+        order: collected.data.order,
+        payment: {
+          providerRef: collected.data.providerRef,
+          paidAt: collected.data.paidAt,
+        },
+      });
+    }
     const result = await updateOrderStatus(
       { id: user.id, role: user.role },
       orderId,

@@ -246,6 +246,7 @@ export const orderDeliveryRepoMocks = {
       paidAt: Date | null;
       now: Date;
       paymentRefs: { paymentId: string; createdAt: Date }[];
+      providerRef?: string | null;
     }): Promise<void> => undefined,
   ),
   insertOrderTravelPoint: mock(

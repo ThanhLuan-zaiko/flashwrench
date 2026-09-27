@@ -8,8 +8,10 @@ import type {
   DispatchOrdersQuery,
 } from "@/services/dispatch-orders.api";
 import {
+  collectDispatchOrderPayment,
   createCounterSaleRequest,
   fetchDispatchOrder,
+  fetchDispatchOrderInvoice,
   fetchDispatchOrders,
   fetchDispatchParts,
   setPartStockRequest,
@@ -23,6 +25,8 @@ export const dispatchOrderKeys = {
     ["dispatch-orders", "list", query] as const,
   detail: (orderId: string) =>
     ["dispatch-orders", "detail", { orderId }] as const,
+  invoice: (orderId: string) =>
+    ["dispatch-orders", "invoice", { orderId }] as const,
   stock: ["dispatch-stock"] as const,
 };
 
@@ -49,6 +53,19 @@ export function useDispatchOrder(orderId: string | null) {
     gcTime: 5 * 60 * 1000,
     retry: false,
     refetchOnWindowFocus: true,
+  });
+}
+
+// Invoice fetches on demand when the receipt dialog opens; realtime
+// orders-updated events still refresh it through dispatchOrderKeys.all.
+export function useDispatchOrderInvoice(orderId: string | null) {
+  return useQuery({
+    queryKey: dispatchOrderKeys.invoice(orderId ?? ""),
+    queryFn: () => fetchDispatchOrderInvoice(orderId as string),
+    enabled: Boolean(orderId),
+    staleTime: 15 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
   });
 }
 
@@ -97,6 +114,17 @@ export function useUpdateDispatchOrderStatus() {
       note?: string;
       courier?: CourierConfigInput;
     }) => updateDispatchOrderStatus(orderId, status, note, courier),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: dispatchOrderKeys.all });
+    },
+  });
+}
+
+// Staff settles a counter-paid order at the till.
+export function useCollectOrderPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (orderId: string) => collectDispatchOrderPayment(orderId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: dispatchOrderKeys.all });
     },

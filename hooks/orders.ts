@@ -9,6 +9,7 @@ import {
   fetchMyOrder,
   fetchMyOrders,
   fetchMyOrderTrack,
+  payOrderOnlineRequest,
 } from "@/services/orders.api";
 import { useMe } from "./auth";
 import { cartKeys } from "./cart";
@@ -90,6 +91,17 @@ export function useCheckout() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: orderKeys.all });
       void queryClient.invalidateQueries({ queryKey: cartKeys.all });
+    },
+  });
+}
+
+// Simulated online payment from the order detail page.
+export function usePayOrderOnline() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (orderId: string) => payOrderOnlineRequest(orderId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: orderKeys.all });
     },
   });
 }

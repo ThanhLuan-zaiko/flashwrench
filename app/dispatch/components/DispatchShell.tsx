@@ -16,6 +16,7 @@ import {
 
 function sectionIdForPath(pathname: string): DispatchSectionId {
   if (pathname.startsWith("/dispatch/orders")) return "orders";
+  if (pathname.startsWith("/dispatch/stock")) return "stock";
   return "board";
 }
 

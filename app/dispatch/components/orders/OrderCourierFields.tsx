@@ -13,6 +13,13 @@ export type CourierDraft = {
   trackingCode: string;
 };
 
+export const EMPTY_COURIER_DRAFT: CourierDraft = {
+  type: "mechanic",
+  mechanicId: "",
+  carrierName: "",
+  trackingCode: "",
+};
+
 type OrderCourierFieldsProps = {
   draft: CourierDraft;
   errors: OrderFieldErrors;

@@ -11,6 +11,7 @@ import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { formatDateTime } from "@/lib/datetime/format";
 import { OrderCancelSection, OrderProgressSection } from "./OrderAsideSections";
 import { OrderLinesSection } from "./OrderLinesSection";
+import { OrderPaymentSection } from "./OrderPaymentSection";
 import {
   ORDER_STATUS_LABELS,
   orderStatusBadgeClass,
@@ -111,6 +112,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
             <OrderLinesSection order={order} />
             <div className="flex flex-col gap-3 md:gap-4">
+              <OrderPaymentSection order={order} onError={setFormError} />
               <OrderProgressSection order={order} />
               <OrderCancelSection
                 orderId={order.id}

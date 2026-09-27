@@ -60,8 +60,10 @@ export async function updateOrderCourierStatus(params: {
   );
 }
 
-// COD settlement: delivery is the collection point, so delivered marks
-// the order and its payment rows paid; a refund flips them to refunded.
+// Payment settlement: delivery is the collection point for cod/counter
+// orders, the mock gateway settles online payments early, and a refund
+// flips rows to refunded. providerRef stamps the simulated transaction
+// reference on payments_by_id when the caller has one.
 export async function markOrderPaymentStatus(params: {
   orderId: string;
   customerId: string | null;
@@ -69,6 +71,7 @@ export async function markOrderPaymentStatus(params: {
   paidAt: Date | null;
   now: Date;
   paymentRefs: { paymentId: string; createdAt: Date }[];
+  providerRef?: string | null;
 }): Promise<void> {
   const statements: { query: string; params: unknown[] }[] = [
     {
@@ -79,11 +82,22 @@ export async function markOrderPaymentStatus(params: {
   ];
   for (const ref of params.paymentRefs) {
     statements.push(
-      {
-        query:
-          "UPDATE payments_by_id SET status = ?, paid_at = ? WHERE payment_id = ?",
-        params: [params.paymentStatus, params.paidAt, ref.paymentId],
-      },
+      params.providerRef === undefined
+        ? {
+            query:
+              "UPDATE payments_by_id SET status = ?, paid_at = ? WHERE payment_id = ?",
+            params: [params.paymentStatus, params.paidAt, ref.paymentId],
+          }
+        : {
+            query:
+              "UPDATE payments_by_id SET status = ?, paid_at = ?, provider_ref = ? WHERE payment_id = ?",
+            params: [
+              params.paymentStatus,
+              params.paidAt,
+              params.providerRef,
+              ref.paymentId,
+            ],
+          },
       {
         query:
           "UPDATE payments_by_ref SET status = ? WHERE ref_type = 'order' AND ref_id = ? AND created_at = ? AND payment_id = ?",

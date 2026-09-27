@@ -1,7 +1,7 @@
 import type { IconType } from "react-icons";
-import { FiCompass, FiPackage } from "react-icons/fi";
+import { FiArchive, FiCompass, FiPackage } from "react-icons/fi";
 
-export type DispatchSectionId = "board" | "orders";
+export type DispatchSectionId = "board" | "orders" | "stock";
 
 export type DispatchSection = {
   id: DispatchSectionId;
@@ -25,6 +25,13 @@ export const DISPATCH_SECTIONS: DispatchSection[] = [
     description: "Xác nhận, đóng gói và giao đơn mua linh kiện",
     href: "/dispatch/orders/pending",
     icon: FiPackage,
+  },
+  {
+    id: "stock",
+    label: "Tồn kho",
+    description: "Kiểm kê và điều chỉnh số lượng linh kiện",
+    href: "/dispatch/stock",
+    icon: FiArchive,
   },
 ];
 

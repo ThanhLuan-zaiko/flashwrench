@@ -203,4 +203,83 @@ describe("checkoutCart", () => {
       total: 240000,
     });
   });
+
+  test("stores the chosen payment method on the order rows", async () => {
+    cartStubs.cartRows = [makeCartRow()];
+    partStubs.partById = makePartRow();
+    orderStubs.orderById = makeOrderRow();
+    orderStubs.itemRows = [makeOrderItemRow()];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+
+    const result = await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput({ paymentMethod: "counter" }),
+    );
+    expect(result.ok).toBe(true);
+    const insert = orderWriteRepoMocks.insertOrder.mock.calls[0]?.at(0) as {
+      paymentMethod: string;
+      paymentStatus: string;
+    } | null;
+    expect(insert?.paymentMethod).toBe("counter");
+    expect(insert?.paymentStatus).toBe("unpaid");
+  });
+
+  test("defaults to cod for delivery and counter for pickup", async () => {
+    cartStubs.cartRows = [makeCartRow()];
+    partStubs.partById = makePartRow();
+    orderStubs.orderById = makeOrderRow();
+    orderStubs.itemRows = [makeOrderItemRow()];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+
+    await checkoutCart(CUSTOMER, makeCheckoutInput());
+    const delivery = orderWriteRepoMocks.insertOrder.mock.calls[0]?.at(0) as {
+      paymentMethod: string;
+    } | null;
+    expect(delivery?.paymentMethod).toBe("cod");
+
+    cartStubs.cartRows = [makeCartRow()];
+    await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput({
+        fulfillment: "pickup",
+        address: "",
+        addressLat: null,
+        addressLng: null,
+      }),
+    );
+    const pickup = orderWriteRepoMocks.insertOrder.mock.calls.at(-1)?.at(0) as {
+      paymentMethod: string;
+    } | null;
+    expect(pickup?.paymentMethod).toBe("counter");
+  });
+
+  test("rejects cod on a pickup order before touching the cart", async () => {
+    const result = await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput({
+        fulfillment: "pickup",
+        address: "",
+        addressLat: null,
+        addressLng: null,
+        paymentMethod: "cod",
+      }),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(400);
+    expect(result.errors.paymentMethod).toBeTruthy();
+    expect(cartRepoMocks.listCartRows).not.toHaveBeenCalled();
+  });
+
+  test("rejects an unknown payment method before touching the cart", async () => {
+    const result = await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput({ paymentMethod: "momo" }),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(400);
+    expect(result.errors.paymentMethod).toBeTruthy();
+    expect(cartRepoMocks.listCartRows).not.toHaveBeenCalled();
+  });
 });

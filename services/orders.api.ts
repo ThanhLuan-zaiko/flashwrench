@@ -41,3 +41,19 @@ export function cancelOrderRequest(
     { method: "PATCH", body: JSON.stringify({ action: "cancel" }) },
   );
 }
+
+export type OrderPaymentResult = {
+  order: OrderDetail;
+  payment: { providerRef: string | null; paidAt: string | null };
+};
+
+// Mock gateway settlement: POST { action: "pay" } marks the order paid
+// with a simulated MOCK-* provider reference.
+export function payOrderOnlineRequest(
+  orderId: string,
+): Promise<OrderPaymentResult> {
+  return apiRequest<OrderPaymentResult>(
+    `/api/orders/${encodeURIComponent(orderId)}/payment`,
+    { method: "POST", body: JSON.stringify({ action: "pay" }) },
+  );
+}

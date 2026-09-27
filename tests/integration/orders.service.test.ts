@@ -109,6 +109,42 @@ describe("cancelMyOrder", () => {
       3,
     ]);
   });
+
+  test("cancelling a mock-paid order flips its payments to refunded", async () => {
+    orderStubs.orderById = makeOrderRow({
+      status: "pending",
+      payment_status: "paid",
+      payment_method: "bank_transfer",
+    });
+    orderStubs.itemRows = [makeOrderItemRow({ quantity: 1 })];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+    partStubs.partById = makePartRow({ stock_qty: 4, sold_count: 1 });
+
+    const result = await cancelMyOrder(CUSTOMER, ORDER_ID);
+    expect(result.ok).toBe(true);
+    const paymentCall = orderDeliveryRepoMocks.markOrderPaymentStatus.mock
+      .calls[0]?.[0] as { paymentStatus: string; paidAt: Date | null } | null;
+    expect(paymentCall?.paymentStatus).toBe("refunded");
+    expect(paymentCall?.paidAt).toBeNull();
+    // Stock still comes back — refunding does not skip the restock.
+    expect(partInventoryRepoMocks.setPartStock).toHaveBeenCalled();
+  });
+
+  test("cancelling an unpaid order leaves payments untouched", async () => {
+    orderStubs.orderById = makeOrderRow({
+      status: "pending",
+      payment_status: "unpaid",
+    });
+    orderStubs.itemRows = [makeOrderItemRow()];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+    partStubs.partById = makePartRow({ stock_qty: 4, sold_count: 0 });
+
+    const result = await cancelMyOrder(CUSTOMER, ORDER_ID);
+    expect(result.ok).toBe(true);
+    expect(
+      orderDeliveryRepoMocks.markOrderPaymentStatus,
+    ).not.toHaveBeenCalled();
+  });
 });
 
 function makePartItemRowId(): string {

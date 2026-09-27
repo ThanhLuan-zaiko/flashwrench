@@ -20,29 +20,33 @@ import {
   isMonthKey,
   monthKeyNow,
 } from "../bookings/dispatch-format";
+import { OrderInvoiceDialog } from "./OrderInvoiceDialog";
 import { OrderOpsDialog } from "./OrderOpsDialog";
 import { OrdersQueueCard } from "./OrdersQueueCard";
 import { type DispatchOrderTab, ORDER_TAB_LABELS } from "./order-tabs";
 import { PosSaleDialog } from "./PosSaleDialog";
-import { StockPanel } from "./StockPanel";
 
 // Bento root for the parts-order console: hero context card, month picker
-// (the API buckets by month), the paged order queue, and a quick stock
-// panel so packers can correct counts in place. The active tab comes from
-// the route; the cursor stack resets the moment the month changes.
+// (the API buckets by month), and the paged order queue. Stock counts live
+// on their own /dispatch/stock page. The active tab comes from the route;
+// the cursor stack resets the moment the month or the tab changes.
 export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const toast = useToast();
   const [month, setMonth] = useState(monthKeyNow());
   const [appliedMonth, setAppliedMonth] = useState(month);
+  const [appliedStatus, setAppliedStatus] = useState(status);
   const [stack, setStack] = useState<CursorStack>(FIRST_PAGE_STACK);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
   const [posOpen, setPosOpen] = useState(false);
 
-  // Reset-on-prop-change pattern: switching month restarts the cursor walk
-  // synchronously, before the next paint, never in an effect.
-  if (month !== appliedMonth) {
+  // Reset-on-prop-change pattern: switching month or status tab restarts
+  // the cursor walk synchronously — a pageState only belongs to its own
+  // status partition, so reusing it across tabs would page the wrong set.
+  if (month !== appliedMonth || status !== appliedStatus) {
     setAppliedMonth(month);
+    setAppliedStatus(status);
     setStack(FIRST_PAGE_STACK);
   }
 
@@ -136,31 +140,27 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
           onStack={setStack}
           onOpen={setSelectedId}
         />
-
-        <BentoCard
-          label="Tồn kho nhanh"
-          className="sm:col-span-2 lg:col-span-4"
-        >
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Điều chỉnh tồn kho
-          </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Sửa số lượng sau kiểm kê hoặc nhập hàng. Sửa giá/danh mục nằm ở
-            trang quản trị.
-          </p>
-          <StockPanel />
-        </BentoCard>
       </div>
 
       {selectedId && (
         <OrderOpsDialog
           orderId={selectedId}
           onClose={() => setSelectedId(null)}
+          onViewInvoice={() => {
+            setInvoiceId(selectedId);
+            setSelectedId(null);
+          }}
           onToast={(variant, title, description) =>
             variant === "success"
               ? toast.success(title, description)
               : toast.error(title, description)
           }
+        />
+      )}
+      {invoiceId && (
+        <OrderInvoiceDialog
+          orderId={invoiceId}
+          onClose={() => setInvoiceId(null)}
         />
       )}
       {posOpen && (

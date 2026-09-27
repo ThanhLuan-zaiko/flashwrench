@@ -19,6 +19,7 @@ export type InsertOrderParams = {
   address: AddressSnapshot | null;
   status: string;
   paymentStatus: string;
+  paymentMethod: string;
   paidAt: Date | null;
   fulfillmentType: string;
   historyNote: string;
@@ -42,7 +43,7 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
   const statements: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO orders_by_id (order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'cod', ?, null, null, null, null, ?, ?, 0, ?, null, ?, ?, ?, ?)",
+        "INSERT INTO orders_by_id (order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, null, null, null, null, ?, ?, 0, ?, null, ?, ?, ?, ?)",
       params: [
         params.orderId,
         params.customerId,
@@ -51,6 +52,7 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
         params.address,
         params.status,
         params.paymentStatus,
+        params.paymentMethod,
         params.fulfillmentType,
         params.subtotal,
         params.shippingFee,
@@ -86,12 +88,13 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
     },
     {
       query:
-        "INSERT INTO payments_by_id (payment_id, ref_type, ref_id, customer_id, amount, method, status, provider_ref, paid_at, created_at) VALUES (?, 'order', ?, ?, ?, 'cod', ?, null, ?, ?)",
+        "INSERT INTO payments_by_id (payment_id, ref_type, ref_id, customer_id, amount, method, status, provider_ref, paid_at, created_at) VALUES (?, 'order', ?, ?, ?, ?, ?, null, ?, ?)",
       params: [
         params.paymentId,
         params.orderId,
         params.customerId,
         params.total,
+        params.paymentMethod,
         params.paymentStatus,
         params.paidAt,
         params.now,

@@ -71,6 +71,7 @@ export async function createCounterSale(
     address: null,
     status: "delivered",
     paymentStatus: "paid",
+    paymentMethod: "counter",
     paidAt: now,
     fulfillmentType: "pickup",
     historyNote: "Bán tại quầy",
