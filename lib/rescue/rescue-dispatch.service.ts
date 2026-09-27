@@ -5,6 +5,7 @@
 import { isMechanicEligible } from "@/lib/mechanic/mechanic-assignment.service";
 import { listAvailableMechanics } from "@/lib/mechanic/mechanic-directory.service";
 import { publishRescueChange } from "@/lib/realtime/domain-publish";
+import { getDispatchConfig } from "./rescue-config.service";
 import { isRescueOfferExpired, rescueOfferExpiresAt } from "./rescue-status";
 import {
   claimRescueTransition,
@@ -20,7 +21,7 @@ const DECLINE_SCAN_LIMIT = 50;
 // Scheduler has no user account, so its writes carry the nil UUID.
 const SYSTEM_ACTOR_ID = "00000000-0000-0000-0000-000000000000";
 const AUTO_DISPATCH_NOTE = "Hệ thống tự điều phối thợ gần nhất.";
-const EXPIRE_NOTE = "Hết 30 giây chờ xác nhận, tự động chuyển thợ kế tiếp.";
+const EXPIRE_NOTE = "Hết thời gian chờ xác nhận, tự động chuyển thợ kế tiếp.";
 
 export type RescueDispatchOutcome = {
   mechanicId: string;
@@ -60,7 +61,8 @@ function dispatchOrigin(row: RescueRow): { lat?: number; lng?: number } {
 
 // Offer the rescue to the nearest eligible mechanic. Without a map pin
 // the directory falls back to rating order, which broadcasts to every
-// online mechanic regardless of zone.
+// online mechanic regardless of zone. Stops when declines pass the admin
+// re-offer cap so hopeless rescues stay open for a human.
 export async function autoDispatchRescue(
   requestId: string,
   options?: { excludeMechanicIds?: Iterable<string> },
@@ -73,9 +75,12 @@ export async function autoDispatchRescue(
   const excluded = await declinedMechanicIds(requestId);
   for (const id of options?.excludeMechanicIds ?? []) excluded.add(id);
 
+  const config = await getDispatchConfig();
+  if (excluded.size > config.maxReoffers) return null;
+
   const candidates = await listAvailableMechanics({
     ...dispatchOrigin(row),
-    limit: RESCUE_DISPATCH_CANDIDATE_LIMIT,
+    limit: config.candidateLimit,
   });
   if (!candidates.ok) return null;
 
@@ -115,7 +120,7 @@ export async function autoDispatchRescue(
     return {
       mechanicId: candidate.id,
       mechanicName: candidate.displayName,
-      offerExpiresAt: rescueOfferExpiresAt(at),
+      offerExpiresAt: rescueOfferExpiresAt(at, config.offerTimeoutMs),
     };
   }
   return null;
@@ -134,20 +139,22 @@ export async function redispatchAfterDecline(
   }
 }
 
-// Called 30s after the offer by the mechanic timer, the dispatcher
+// Called after one offer lifetime by the mechanic timer, the dispatcher
 // monitor, or a cron sweep. Only the still-holding mechanic is expired.
-// force skips the 30s check for a dispatcher "expire now" override.
+// force skips the lifetime check for a dispatcher "expire now" override.
 export async function expireRescueOffer(
   requestId: string,
   now: Date = new Date(),
   options?: { force?: boolean },
 ): Promise<RescueExpireOutcome> {
   const row = await findRescueRowById(requestId);
+  const config = await getDispatchConfig();
   if (
     !row ||
     row.status !== "dispatched" ||
     !row.assigned_mechanic_id ||
-    (!options?.force && !isRescueOfferExpired(row.updated_at, now))
+    (!options?.force &&
+      !isRescueOfferExpired(row.updated_at, now, config.offerTimeoutMs))
   ) {
     return { expired: false };
   }

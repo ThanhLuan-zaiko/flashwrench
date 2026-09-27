@@ -3,6 +3,7 @@ import { makePublicUser } from "../helpers/auth.fixtures";
 import { MECHANIC_ID } from "../helpers/mechanic.fixtures";
 import {
   makeRescueRow,
+  rescueConfigMocks,
   rescueStubs,
   rescueWorkflowRepoMocks,
   resetRescueMocks,
@@ -15,6 +16,7 @@ mock.module(
   "@/lib/rescue/rescue-workflow.repository",
   () => rescueWorkflowRepoMocks,
 );
+mock.module("@/lib/rescue/rescue-config.service", () => rescueConfigMocks);
 
 import {
   getRescueDetail,

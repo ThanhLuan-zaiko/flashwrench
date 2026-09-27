@@ -5,7 +5,7 @@ import type { PublicUser } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { isUuid } from "@/lib/validation";
 import type { RescueResult } from "./rescue.types";
-import { RESCUE_OFFER_TIMEOUT_MS } from "./rescue-status";
+import { getDispatchConfig } from "./rescue-config.service";
 import {
   findRescueRowById,
   listRescueHistoryRows,
@@ -50,7 +50,7 @@ function isStaff(actor: PublicUser): boolean {
   );
 }
 
-function toDetail(row: RescueRow): RescueDetail {
+function toDetail(row: RescueRow, offerTimeoutMs: number): RescueDetail {
   return {
     requestId: row.request_id,
     status: row.status ?? "open",
@@ -66,9 +66,7 @@ function toDetail(row: RescueRow): RescueDetail {
     assignedMechanicName: row.assigned_mechanic_name,
     offerExpiresAt:
       row.status === "dispatched" && row.updated_at
-        ? new Date(
-            row.updated_at.getTime() + RESCUE_OFFER_TIMEOUT_MS,
-          ).toISOString()
+        ? new Date(row.updated_at.getTime() + offerTimeoutMs).toISOString()
         : null,
     updatedAt: row.updated_at?.toISOString() ?? null,
   };
@@ -96,10 +94,11 @@ export async function getRescueDetail(
     return fail(403, "Yêu cầu này không thuộc về bạn.");
   }
   const history = await listRescueHistoryRows(requestId, 50);
+  const config = await getDispatchConfig();
   return {
     ok: true,
     data: {
-      rescue: toDetail(row),
+      rescue: toDetail(row, config.offerTimeoutMs),
       timeline: history.map((item) => ({
         changedAt: item.changed_at.toISOString(),
         oldStatus: item.old_status,
@@ -147,10 +146,12 @@ export async function listDispatchRescues(
     RESCUE_BOARD_PAGE_SIZE,
     pageState,
   );
+  const config = await getDispatchConfig();
   const items: RescueDetail[] = [];
   for (const ref of page.rows) {
     const row = await findRescueRowById(ref.request_id);
-    if (row && row.status === status) items.push(toDetail(row));
+    if (row && row.status === status)
+      items.push(toDetail(row, config.offerTimeoutMs));
   }
   return {
     ok: true,
@@ -166,6 +167,7 @@ export async function listMechanicRescues(
     return fail(403, "Bạn không có quyền thực hiện thao tác này.");
   }
   const refs = await listRescueRefsByMechanic(actor.id);
+  const config = await getDispatchConfig();
   const items: RescueDetail[] = [];
   for (const ref of refs) {
     const row = await findRescueRowById(ref.request_id);
@@ -174,7 +176,7 @@ export async function listMechanicRescues(
       (row.status === "dispatched" || row.status === "accepted") &&
       row.assigned_mechanic_id === actor.id
     ) {
-      items.push(toDetail(row));
+      items.push(toDetail(row, config.offerTimeoutMs));
     }
   }
   return { ok: true, data: { items } };

@@ -2,6 +2,7 @@ import type { IconType } from "react-icons";
 import {
   FiBarChart2,
   FiFileText,
+  FiLifeBuoy,
   FiPackage,
   FiSettings,
   FiUsers,
@@ -12,7 +13,8 @@ export type AdminSectionId =
   | "users"
   | "services"
   | "products"
-  | "orders";
+  | "orders"
+  | "rescue";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -52,6 +54,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: FiPackage,
   },
   {
+    id: "rescue",
+    label: "Cứu hộ khẩn cấp",
+    description: "Vùng phục vụ và cấu hình tự điều phối.",
+    href: "/admin/rescue",
+    icon: FiLifeBuoy,
+  },
+  {
     id: "orders",
     label: "Đơn hàng & hóa đơn",
     description: "Theo dõi đơn linh kiện và xem hóa đơn thu tiền.",
@@ -70,5 +79,6 @@ export function sectionIdForPath(pathname: string): AdminSectionId {
   if (pathname.startsWith("/admin/users")) return "users";
   if (pathname.startsWith("/admin/services")) return "services";
   if (pathname.startsWith("/admin/products")) return "products";
+  if (pathname.startsWith("/admin/rescue")) return "rescue";
   return "dashboard";
 }

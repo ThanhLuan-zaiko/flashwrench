@@ -15,6 +15,8 @@ import {
 } from "../helpers/mechanic.mocks";
 import {
   makeRescueRow,
+  rescueConfigMocks,
+  rescueConfigStubs,
   rescueStubs,
   rescueWorkflowRepoMocks,
   resetRescueMocks,
@@ -32,6 +34,7 @@ mock.module(
   "@/lib/rescue/rescue-workflow.repository",
   () => rescueWorkflowRepoMocks,
 );
+mock.module("@/lib/rescue/rescue-config.service", () => rescueConfigMocks);
 mock.module(
   "@/lib/mechanic/mechanic-directory.repository",
   () => mechanicDirectoryRepoMocks,
@@ -93,6 +96,32 @@ describe("autoDispatchRescue", () => {
   });
 
   test("skips declined mechanics and stays open when nobody is free", async () => {
+    rescueStubs.rowById = makeRescueRow({ status: "open" });
+    rescueStubs.historyRows = [
+      {
+        request_id: REQUEST_ID,
+        changed_at: new Date(),
+        old_status: "dispatched",
+        new_status: "open",
+        changed_by: MECHANIC_ID,
+        note: "declined",
+      },
+    ];
+
+    const outcome = await autoDispatchRescue(REQUEST_ID);
+
+    expect(outcome).toBeNull();
+    expect(rescueStubs.transitions).toHaveLength(0);
+  });
+
+  test("stops when declines pass the admin re-offer cap", async () => {
+    rescueConfigStubs.values = {
+      offerTimeoutMs: 30_000,
+      maxReoffers: 0,
+      candidateLimit: 50,
+      isDefault: false,
+      updatedAt: new Date().toISOString(),
+    };
     rescueStubs.rowById = makeRescueRow({ status: "open" });
     rescueStubs.historyRows = [
       {

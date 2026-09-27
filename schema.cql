@@ -237,6 +237,17 @@ CREATE TABLE IF NOT EXISTS service_zones (
   created_at TIMESTAMP
 );
 
+-- Rescue auto-dispatch tuning (single row, config_id = 'default').
+-- Admins change offer windows and re-offer caps here instead of deploys.
+CREATE TABLE IF NOT EXISTS rescue_dispatch_config (
+  config_id        TEXT PRIMARY KEY, -- constant 'default'
+  offer_timeout_ms INT,    -- one mechanic offer lifetime (10s..300s)
+  max_reoffers     INT,    -- re-offers after decline/timeout (0..20)
+  candidate_limit  INT,    -- mechanics considered per pass (5..50)
+  updated_at       TIMESTAMP,
+  updated_by       UUID
+);
+
 -- Query: mechanic profile details (app joins users_by_id + mechanics_by_id)
 CREATE TABLE IF NOT EXISTS mechanics_by_id (
   mechanic_id      UUID PRIMARY KEY, -- = user_id

@@ -105,6 +105,23 @@ export const zoneServiceMocks = {
   ),
 };
 
+export const rescueConfigStubs = {
+  values: {
+    offerTimeoutMs: 30_000,
+    maxReoffers: 10,
+    candidateLimit: 50,
+    isDefault: true,
+    updatedAt: null as string | null,
+  },
+};
+
+export const rescueConfigMocks = {
+  getDispatchConfig: mock(
+    async (): Promise<typeof rescueConfigStubs.values> =>
+      rescueConfigStubs.values,
+  ),
+};
+
 export const rescueDispatchMocks = {
   autoDispatchRescue: mock(
     async (
@@ -134,8 +151,16 @@ export function resetRescueMocks(): void {
   rescueStubs.transitions = [];
   rescueDispatchStubs.autoDispatch = null;
   zoneStubs.zoneId = null;
+  rescueConfigStubs.values = {
+    offerTimeoutMs: 30_000,
+    maxReoffers: 10,
+    candidateLimit: 50,
+    isDefault: true,
+    updatedAt: null,
+  };
   for (const fn of Object.values(rescueRepoMocks)) fn.mockClear();
   for (const fn of Object.values(rescueWorkflowRepoMocks)) fn.mockClear();
   for (const fn of Object.values(rescueDispatchMocks)) fn.mockClear();
   for (const fn of Object.values(zoneServiceMocks)) fn.mockClear();
+  for (const fn of Object.values(rescueConfigMocks)) fn.mockClear();
 }

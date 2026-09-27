@@ -44,18 +44,21 @@ export function isRescueMechanicAction(
 
 // An offer starts at the row updated_at (the dispatch write). Past the
 // timeout the assigned mechanic loses the claim and the system re-offers.
+// The timeout comes from admin config; the default keeps old callers safe.
 export function isRescueOfferExpired(
   dispatchedAt: Date | null | undefined,
   now: Date = new Date(),
+  timeoutMs: number = RESCUE_OFFER_TIMEOUT_MS,
 ): boolean {
   if (!(dispatchedAt instanceof Date) || Number.isNaN(dispatchedAt.getTime())) {
     return false;
   }
-  return now.getTime() - dispatchedAt.getTime() >= RESCUE_OFFER_TIMEOUT_MS;
+  return now.getTime() - dispatchedAt.getTime() >= timeoutMs;
 }
 
-export function rescueOfferExpiresAt(dispatchedAt: Date): string {
-  return new Date(
-    dispatchedAt.getTime() + RESCUE_OFFER_TIMEOUT_MS,
-  ).toISOString();
+export function rescueOfferExpiresAt(
+  dispatchedAt: Date,
+  timeoutMs: number = RESCUE_OFFER_TIMEOUT_MS,
+): string {
+  return new Date(dispatchedAt.getTime() + timeoutMs).toISOString();
 }
