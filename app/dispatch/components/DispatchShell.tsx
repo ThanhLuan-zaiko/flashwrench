@@ -15,6 +15,7 @@ import {
 } from "./dispatch-sections";
 
 function sectionIdForPath(pathname: string): DispatchSectionId {
+  if (pathname.startsWith("/dispatch/rescue")) return "rescue";
   if (pathname.startsWith("/dispatch/orders")) return "orders";
   if (pathname.startsWith("/dispatch/stock")) return "stock";
   return "board";
@@ -51,6 +52,12 @@ export function DispatchShell({ children }: { children: ReactNode }) {
       toast.success(
         "Có đơn mới",
         "Một khách hàng vừa đặt lịch. Mở tab Chờ xử lý để điều phối.",
+      );
+    }
+    if (event.kind === "rescue-created") {
+      toast.success(
+        "Có cứu hộ mới",
+        "Hệ thống đang tự giao thợ gần nhất. Mở tab Cứu hộ để theo dõi.",
       );
     }
   });

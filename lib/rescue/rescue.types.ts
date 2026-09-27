@@ -65,8 +65,24 @@ export type CreatedRescue = {
   customerName: string;
   customerPhone: string;
   createdAt: string;
+  assignedMechanicId: string | null;
+  assignedMechanicName: string | null;
+  offerExpiresAt: string | null;
 };
 
 export type RescueResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number; errors: RescueFieldErrors };
+
+// Staff action errors (dispatcher override, mechanic inbox): field names
+// differ from the public form, so they get their own error shape.
+export type RescueActionErrors = Partial<
+  Record<
+    "action" | "mechanicId" | "expectedUpdatedAt" | "note" | "form",
+    string
+  >
+>;
+
+export type RescueActionResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; status: number; errors: RescueActionErrors };

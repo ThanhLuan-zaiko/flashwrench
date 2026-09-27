@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { RescueInboxSection } from "../rescue/RescueInboxSection";
 import { ScheduleSection } from "./ScheduleSection";
 import { isScheduleTab, SCHEDULE_TABS, scheduleTabHref } from "./schedule-tabs";
 
@@ -42,5 +43,10 @@ export function ScheduleRouteShell() {
     );
   }
 
-  return <ScheduleSection status={status} />;
+  return (
+    <div className="flex flex-col gap-4">
+      <RescueInboxSection />
+      <ScheduleSection status={status} />
+    </div>
+  );
 }

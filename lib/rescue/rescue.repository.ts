@@ -20,6 +20,7 @@ export type InsertRescueParams = {
   vehiclePlate: string;
   vehicleBrand: string | null;
   vehicleModel: string | null;
+  zoneId: string | null;
   address: RescueAddress;
   issueType: string;
   description: string | null;
@@ -49,7 +50,7 @@ export async function insertRescueRequest(
         params.vehiclePlate,
         params.vehicleBrand,
         params.vehicleModel,
-        null,
+        params.zoneId,
         params.address,
         params.issueType,
         params.description,
@@ -77,6 +78,18 @@ export async function insertRescueRequest(
         params.status,
         params.customerId,
         null,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO emergency_by_status (status, created_at, request_id, priority, issue_type, zone_id) VALUES (?, ?, ?, ?, ?, ?)",
+      params: [
+        params.status,
+        params.createdAt,
+        params.requestId,
+        params.priority,
+        params.issueType,
+        params.zoneId,
       ],
     },
   ];

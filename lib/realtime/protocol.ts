@@ -44,6 +44,8 @@ export function bookingIdFromTopic(topic: string): string | null {
 // booking notices share one socket subscription without colliding.
 export const BOOKING_CREATED_EVENT_KIND = "booking-created";
 export const BOOKING_ASSIGNED_EVENT_KIND = "booking-assigned";
+export type { RescueInboxEvent } from "./rescue-inbox-protocol";
+export { RESCUE_ASSIGNED_EVENT_KIND } from "./rescue-inbox-protocol";
 
 export type BookingInboxEvent = {
   kind: typeof BOOKING_CREATED_EVENT_KIND | typeof BOOKING_ASSIGNED_EVENT_KIND;
@@ -85,10 +87,14 @@ export type DomainEvent = {
     | "user-updated"
     | "complaint-updated"
     | "orders-updated"
-    | "order-updated";
+    | "order-updated"
+    | "rescue-created"
+    | "rescue-assigned"
+    | "rescue-updated";
   bookingId?: string;
   orderId?: string;
   userId?: string;
+  rescueId?: string;
   status?: string;
 };
 
@@ -104,6 +110,9 @@ const DOMAIN_EVENT_KINDS = new Set<DomainEvent["kind"]>([
   "complaint-updated",
   "orders-updated",
   "order-updated",
+  "rescue-created",
+  "rescue-assigned",
+  "rescue-updated",
 ]);
 
 const LEGACY_BOOKING_STATUS_TYPE = "booking-status";
@@ -133,11 +142,13 @@ export function parseDomainEvent(payload: unknown): DomainEvent | null {
   const bookingId = optionalField(body.bookingId);
   const orderId = optionalField(body.orderId);
   const userId = optionalField(body.userId);
+  const rescueId = optionalField(body.rescueId);
   const status = optionalField(body.status);
   if (
     bookingId === null ||
     orderId === null ||
     userId === null ||
+    rescueId === null ||
     status === null
   )
     return null;
@@ -145,6 +156,7 @@ export function parseDomainEvent(payload: unknown): DomainEvent | null {
   if (bookingId !== undefined) event.bookingId = bookingId;
   if (orderId !== undefined) event.orderId = orderId;
   if (userId !== undefined) event.userId = userId;
+  if (rescueId !== undefined) event.rescueId = rescueId;
   if (status !== undefined) event.status = status;
   return event;
 }

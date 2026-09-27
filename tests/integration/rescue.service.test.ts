@@ -2,20 +2,30 @@ import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { makePublicUser } from "../helpers/auth.fixtures";
 import { makeRescueInput } from "../helpers/rescue.fixtures";
 import {
+  rescueDispatchMocks,
   rescueRepoMocks,
   rescueStubs,
   resetRescueMocks,
+  zoneServiceMocks,
 } from "../helpers/rescue.mocks";
+import {
+  domainPublishMocks,
+  resetWorkspaceMocks,
+} from "../helpers/workspace.mocks";
 
 // Helpers first, mocks second, system under test last: bun hoists
-// mock.module above imports. The rescue service validates guest input
-// then writes one batch with no catalog or mechanic lookup.
+// mock.module above imports. The rescue service validates guest input,
+// writes one batch, publishes created, then best-effort auto-offers.
 mock.module("@/lib/rescue/rescue.repository", () => rescueRepoMocks);
+mock.module("@/lib/rescue/rescue-dispatch.service", () => rescueDispatchMocks);
+mock.module("@/lib/zones/zone.service", () => zoneServiceMocks);
+mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 
 import { createRescueRequest } from "@/lib/rescue/rescue.service";
 
 beforeEach(() => {
   resetRescueMocks();
+  resetWorkspaceMocks();
 });
 
 describe("createRescueRequest", () => {
@@ -84,5 +94,38 @@ describe("createRescueRequest", () => {
     if (result.ok) return;
     expect(result.status).toBe(400);
     expect(rescueStubs.inserts).toHaveLength(0);
+  });
+
+  test("returns dispatched assignment when auto-dispatch offers", async () => {
+    const { rescueDispatchStubs } = await import("../helpers/rescue.mocks");
+    rescueDispatchStubs.autoDispatch = {
+      mechanicId: "77777777-7777-4777-8777-777777777777",
+      mechanicName: "Nguyen Van A",
+      offerExpiresAt: new Date(Date.now() + 30_000).toISOString(),
+    };
+
+    const result = await createRescueRequest(null, makeRescueInput());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.status).toBe("dispatched");
+    expect(result.data.assignedMechanicId).toBe(
+      "77777777-7777-4777-8777-777777777777",
+    );
+    expect(typeof result.data.offerExpiresAt).toBe("string");
+  });
+
+  test("stays open when auto-dispatch throws", async () => {
+    rescueDispatchMocks.autoDispatchRescue.mockImplementationOnce(async () => {
+      throw new Error("dispatch down");
+    });
+
+    const result = await createRescueRequest(null, makeRescueInput());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.status).toBe("open");
+    expect(result.data.assignedMechanicId).toBeNull();
+    expect(rescueStubs.inserts).toHaveLength(1);
   });
 });

@@ -253,6 +253,21 @@ export const domainPublishMocks = {
       });
     },
   ),
+  publishRescueChange: mock(
+    async (
+      _kind: string,
+      _requestId: string,
+      _status: string,
+      _customerId: string | null,
+      _mechanicIds: (string | null)[],
+      _zoneId: string | null,
+    ): Promise<void> => {
+      workspaceStubs.published.push({
+        topic: "*",
+        payload: { kind: _kind, rescueId: _requestId },
+      });
+    },
+  ),
 };
 
 export const realtimePublishMocks = {

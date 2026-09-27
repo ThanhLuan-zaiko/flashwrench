@@ -7,6 +7,7 @@ import { FiMenu } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { useLogout, useMe } from "@/hooks/auth";
 import { useMechanicBookings, useMechanicInbox } from "@/hooks/mechanic";
+import { useRescueInbox } from "@/hooks/rescue-inbox";
 import { MechanicSidebar } from "./MechanicSidebar";
 import {
   getMechanicSection,
@@ -52,6 +53,13 @@ export function MechanicShell({ children }: { children: ReactNode }) {
         "Bạn vừa được giao một đơn. Mở hàng đợi để xem chi tiết.",
       );
     }
+  });
+  // Rescue offers arrive on the same inbox topic with 30s to answer.
+  useRescueInbox(me.data?.id ?? null, () => {
+    toast.success(
+      "Có cứu hộ khẩn cấp",
+      "Bạn vừa được giao một ca cứu hộ. Trả lời trong 30 giây.",
+    );
   });
   const pendingCount =
     queue.data?.bookings.filter((booking) => booking.status === "pending")

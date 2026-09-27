@@ -558,6 +558,18 @@ CREATE TABLE IF NOT EXISTS emergency_by_mechanic (
   PRIMARY KEY ((mechanic_id), created_at, request_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, request_id ASC);
 
+-- Query: dispatcher rescue board (all zones). Rescues stay discoverable
+-- even without a zone_id, unlike emergency_by_zone_status which needs one.
+CREATE TABLE IF NOT EXISTS emergency_by_status (
+  status      TEXT,
+  created_at  TIMESTAMP,
+  request_id  UUID,
+  priority    TEXT,
+  issue_type  TEXT,
+  zone_id     UUID,
+  PRIMARY KEY ((status), created_at, request_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, request_id ASC);
+
 -- Dispatch / status-change history of a rescue
 CREATE TABLE IF NOT EXISTS emergency_status_history (
   request_id UUID,

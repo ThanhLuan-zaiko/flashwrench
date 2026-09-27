@@ -129,11 +129,11 @@ export function RescueForm({ form }: RescueFormProps) {
         />
       </div>
 
-      <div className="lg:col-span-2">
+      <div className="flex flex-col items-center lg:col-span-2">
         <button
           type="submit"
           disabled={pending}
-          className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-8 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] sm:w-auto sm:min-w-64 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
         >
           <FiLifeBuoy
             aria-hidden="true"
