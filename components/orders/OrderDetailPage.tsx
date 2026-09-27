@@ -12,6 +12,7 @@ import { formatDateTime } from "@/lib/datetime/format";
 import { OrderCancelSection, OrderProgressSection } from "./OrderAsideSections";
 import { OrderLinesSection } from "./OrderLinesSection";
 import { OrderPaymentSection } from "./OrderPaymentSection";
+import { OrderReturnSection } from "./OrderReturnSection";
 import {
   ORDER_STATUS_LABELS,
   orderStatusBadgeClass,
@@ -113,6 +114,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
             <OrderLinesSection order={order} />
             <div className="flex flex-col gap-3 md:gap-4">
               <OrderPaymentSection order={order} onError={setFormError} />
+              <OrderReturnSection order={order} onError={setFormError} />
               <OrderProgressSection order={order} />
               <OrderCancelSection
                 orderId={order.id}

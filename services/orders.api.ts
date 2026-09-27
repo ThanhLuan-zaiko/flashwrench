@@ -42,6 +42,21 @@ export function cancelOrderRequest(
   );
 }
 
+// Return/refund request on a delivered order: reason + evidence photo
+// URLs (uploaded to /api/media first). Server enforces the 3-day window.
+export function requestOrderReturnRequest(
+  orderId: string,
+  input: { reason: string; images: string[] },
+): Promise<{ order: OrderDetail }> {
+  return apiRequest<{ order: OrderDetail }>(
+    `/api/orders/${encodeURIComponent(orderId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ action: "request-return", ...input }),
+    },
+  );
+}
+
 export type OrderPaymentResult = {
   order: OrderDetail;
   payment: { providerRef: string | null; paidAt: string | null };

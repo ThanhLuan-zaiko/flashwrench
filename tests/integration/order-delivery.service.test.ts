@@ -131,7 +131,7 @@ describe("updateOrderStatus courier assignment", () => {
     expect(orderWriteRepoMocks.updateOrderStatusRows).toHaveBeenCalled();
   });
 
-  test("third-party courier needs a carrier name and tracking code", async () => {
+  test("third-party courier still needs a carrier name", async () => {
     packingOrder();
     const noName = await updateOrderStatus(
       DISPATCHER,
@@ -143,18 +143,24 @@ describe("updateOrderStatus courier assignment", () => {
     expect(noName.ok).toBe(false);
     if (noName.ok) return;
     expect(noName.errors.carrierName).toBeTruthy();
+    expect(orderDeliveryRepoMocks.assignOrderCourier).not.toHaveBeenCalled();
+  });
 
-    const noCode = await updateOrderStatus(
+  test("third-party shipping auto-generates the tracking code", async () => {
+    packingOrder();
+    const result = await updateOrderStatus(
       DISPATCHER,
       ORDER_ID,
       "shipping",
       "",
       { type: "third_party", carrierName: "GiaoHangNhanh" },
     );
-    expect(noCode.ok).toBe(false);
-    if (noCode.ok) return;
-    expect(noCode.errors.trackingCode).toBeTruthy();
-    expect(orderDeliveryRepoMocks.assignOrderCourier).not.toHaveBeenCalled();
+    expect(result.ok).toBe(true);
+    const assign = orderDeliveryRepoMocks.assignOrderCourier.mock.calls[0]?.at(
+      0,
+    ) as { trackingCode: string | null } | null;
+    // Shop-issued code derived from the order id.
+    expect(assign?.trackingCode).toBe("FW-FFFFFFFF");
   });
 
   test("stores carrier name + tracking code for third-party shipping", async () => {

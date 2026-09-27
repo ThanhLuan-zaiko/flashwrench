@@ -30,6 +30,16 @@ describe("order status guards", () => {
     expect(canTransition("delivered", "refunded")).toBe(true);
   });
 
+  test("return requests resolve to refunded or back to delivered", () => {
+    expect(canTransition("return_requested", "refunded")).toBe(true);
+    expect(canTransition("return_requested", "delivered")).toBe(true);
+    expect(canTransition("return_requested", "cancelled")).toBe(false);
+    expect(canTransition("return_requested", "shipping")).toBe(false);
+    // Customers reach return_requested through their own action, not the
+    // staff transition table.
+    expect(canTransition("delivered", "return_requested")).toBe(false);
+  });
+
   test("allows staff cancellation before shipping", () => {
     expect(canTransition("pending", "cancelled")).toBe(true);
     expect(canTransition("confirmed", "cancelled")).toBe(true);
@@ -57,10 +67,13 @@ describe("order status guards", () => {
     }
   });
 
-  test("refund is the only admin-only target, cancel the only restock", () => {
-    expect(requiresAdminTransition("refunded")).toBe(true);
-    expect(requiresAdminTransition("delivered")).toBe(false);
-    expect(ADMIN_ONLY_TRANSITIONS).toEqual(["refunded"]);
+  test("direct refund is admin-only, request approval is not", () => {
+    expect(requiresAdminTransition("delivered", "refunded")).toBe(true);
+    expect(requiresAdminTransition("return_requested", "refunded")).toBe(false);
+    expect(requiresAdminTransition("return_requested", "delivered")).toBe(
+      false,
+    );
+    expect(ADMIN_ONLY_TRANSITIONS).toEqual([["delivered", "refunded"]]);
     expect(RESTOCK_TRANSITIONS).toEqual(["cancelled"]);
   });
 });

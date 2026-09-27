@@ -216,6 +216,44 @@ export async function updateOrderStatusRows(params: {
   await scylla.batch(statements, { prepare: true });
 }
 
+// Customer return request: payload lands on the order row while the
+// status move itself goes through updateOrderStatusRows. Decision fields
+// reset so a stale verdict never shadows a fresh request.
+export async function saveOrderReturnRequest(params: {
+  orderId: string;
+  reason: string;
+  images: string[];
+  now: Date;
+}): Promise<void> {
+  await scylla.execute(
+    "UPDATE orders_by_id SET return_reason = ?, return_images = ?, return_requested_at = ?, return_decision = null, return_decision_note = null, return_decided_by = null, return_decided_at = null WHERE order_id = ?",
+    [params.reason, params.images, params.now, params.orderId],
+    { prepare: true },
+  );
+}
+
+// Staff verdict on the pending request: approved (refund) or rejected
+// (order falls back to delivered). The note is the staff-facing reason.
+export async function saveOrderReturnDecision(params: {
+  orderId: string;
+  decision: string;
+  note: string;
+  decidedBy: string;
+  now: Date;
+}): Promise<void> {
+  await scylla.execute(
+    "UPDATE orders_by_id SET return_decision = ?, return_decision_note = ?, return_decided_by = ?, return_decided_at = ? WHERE order_id = ?",
+    [
+      params.decision,
+      params.note,
+      params.decidedBy,
+      params.now,
+      params.orderId,
+    ],
+    { prepare: true },
+  );
+}
+
 export async function insertOrderHistory(params: {
   orderId: string;
   oldStatus: string | null;

@@ -7,6 +7,7 @@ import {
   type OrderFieldErrors,
   type OrdersResult,
 } from "./orders.types";
+import { generateTrackingCode } from "./tracking-code";
 
 // Delivery assignment resolved from the dispatcher's courier payload.
 // Mechanic couriers must point at a real active mechanic; third-party
@@ -27,6 +28,7 @@ function failFields<T>(
 
 export async function resolveCourierConfig(
   input: CourierConfigInput | undefined,
+  orderId: string,
 ): Promise<OrdersResult<ResolvedCourier>> {
   if (!input || !isCourierType(input.type)) {
     return failFields(400, {
@@ -63,12 +65,15 @@ export async function resolveCourierConfig(
       carrierName: "Tên đơn vị vận chuyển phải từ 2 đến 100 ký tự.",
     });
   }
-  const trackingCode = (input.trackingCode ?? "").trim();
-  if (trackingCode.length < 3 || trackingCode.length > 64) {
+  const provided = (input.trackingCode ?? "").trim();
+  if (provided && (provided.length < 3 || provided.length > 64)) {
     return failFields(400, {
       trackingCode: "Mã vận đơn phải từ 3 đến 64 ký tự.",
     });
   }
+  // No code typed: the shop issues one itself instead of forcing staff
+  // to invent a string by hand.
+  const trackingCode = provided || generateTrackingCode(orderId);
   return {
     ok: true,
     data: {

@@ -54,7 +54,7 @@ export function CheckoutPaymentFields({
       <legend className="mb-1.5 text-sm font-medium text-zinc-800 dark:text-zinc-200">
         Phương thức thanh toán
       </legend>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2">
         {options.map((method) => {
           const active = paymentMethod === method;
           const { label, hint, Icon } = METHOD_META[method];

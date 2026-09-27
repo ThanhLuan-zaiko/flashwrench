@@ -6,6 +6,7 @@ export type OrderStatus =
   | "packing"
   | "shipping"
   | "delivered"
+  | "return_requested"
   | "cancelled"
   | "refunded";
 
@@ -15,6 +16,7 @@ export const ORDER_STATUSES: OrderStatus[] = [
   "packing",
   "shipping",
   "delivered",
+  "return_requested",
   "cancelled",
   "refunded",
 ];
@@ -44,14 +46,17 @@ export function isCourierType(value: unknown): value is CourierType {
 }
 
 // Allowed forward/backward transitions for staff (dispatcher + admin).
-// Cancel restocks items; refund is admin-only and does not restock
-// automatically (goods may not come back).
+// Cancel restocks items; refunds never restock automatically (goods may
+// not come back). return_requested is reached only by the customer's
+// return action; staff then approve (-> refunded) or reject (-> delivered,
+// rejection note required).
 export const STAFF_ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   pending: ["confirmed", "cancelled"],
   confirmed: ["packing", "cancelled"],
   packing: ["shipping", "cancelled"],
   shipping: ["delivered"],
   delivered: ["refunded"],
+  return_requested: ["refunded", "delivered"],
   cancelled: [],
   refunded: [],
 };
@@ -66,8 +71,11 @@ export const PICKUP_ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 // Transitions that put purchased items back into stock.
 export const RESTOCK_TRANSITIONS: OrderStatus[] = ["cancelled"];
 
-// delivered -> refunded is restricted to admins.
-export const ADMIN_ONLY_TRANSITIONS: OrderStatus[] = ["refunded"];
+// Refunding straight from delivered skips the review queue, so it stays
+// admin-only; approving a pending request is fine for any staff member.
+export const ADMIN_ONLY_TRANSITIONS: [OrderStatus, OrderStatus][] = [
+  ["delivered", "refunded"],
+];
 
 export function isOrderStatus(value: unknown): value is OrderStatus {
   return (
@@ -95,8 +103,11 @@ export function canTransitionForOrder(
   return orderTransitions(fulfillment)[from]?.includes(to) ?? false;
 }
 
-export function requiresAdminTransition(to: OrderStatus): boolean {
-  return ADMIN_ONLY_TRANSITIONS.includes(to);
+export function requiresAdminTransition(
+  from: OrderStatus,
+  to: OrderStatus,
+): boolean {
+  return ADMIN_ONLY_TRANSITIONS.some(([f, t]) => f === from && t === to);
 }
 
 export type AddressSnapshot = {
@@ -160,6 +171,13 @@ export type OrderRow = {
   month_bucket: string | null;
   created_at: Date | null;
   updated_at: Date | null;
+  return_reason: string | null;
+  return_images: string[] | null;
+  return_requested_at: Date | null;
+  return_decision: string | null;
+  return_decision_note: string | null;
+  return_decided_by: string | null;
+  return_decided_at: Date | null;
 };
 
 export type OrderItemRow = {
@@ -210,6 +228,20 @@ export type OrderSummary = {
   createdAt: string | null;
 };
 
+// Latest customer return request on an order: evidence photos + the
+// customer's reason, then the staff decision once reviewed. Re-requesting
+// after a rejection overwrites the previous request fields.
+export type OrderReturnDecision = "approved" | "rejected";
+
+export type OrderReturnRequest = {
+  reason: string;
+  images: string[];
+  requestedAt: string | null;
+  decision: OrderReturnDecision | null;
+  decisionNote: string;
+  decidedAt: string | null;
+};
+
 export type OrderDetail = OrderSummary & {
   customerId: string | null;
   customerName: string;
@@ -217,6 +249,7 @@ export type OrderDetail = OrderSummary & {
   address: AddressSnapshot | null;
   items: OrderItem[];
   history: OrderHistoryEntry[];
+  returnRequest: OrderReturnRequest | null;
 };
 
 export type OrderHistoryEntry = {
@@ -298,6 +331,8 @@ export type OrderFieldErrors = Partial<
     | "carrierName"
     | "trackingCode"
     | "lines"
+    | "reason"
+    | "images"
     | "form",
     string
   >

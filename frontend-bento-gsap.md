@@ -94,6 +94,11 @@ Rules:
       (`placeholderData: keepPreviousData`). Large tables paginate
       server-side (limit/offset or cursor); client-side slicing is
       allowed only for small config tables.
+    - ScyllaDB note: partitioned tables page by `pageState` cursor
+      (prev/next only — no arbitrary "page N" jumps). Use numbered
+      page buttons only when the list is fetched in full and sliced
+      client-side. See `AGENTS.md` Section 7.2 for the repo's paging
+      patterns and reference files.
 
 Preferred Tailwind skeleton (compose, do not copy blindly):
 

@@ -10,6 +10,7 @@ export type MediaScope =
   | "booking"
   | "emergency"
   | "review"
+  | "return"
   | "misc";
 
 export type MediaAsset = {

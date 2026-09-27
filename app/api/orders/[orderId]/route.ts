@@ -4,6 +4,7 @@ import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
+import { requestOrderReturn } from "@/lib/orders/order-return.service";
 import { cancelMyOrder, getMyOrder } from "@/lib/orders/orders.service";
 import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
@@ -31,8 +32,9 @@ export async function GET(
   }
 }
 
-// Customer actions on their own order. v1 supports "cancel" only, and only
-// while the order is still pending (service enforces the guard).
+// Customer actions on their own order: "cancel" while pending, or
+// "request-return" {reason, images[]} on a delivered order inside the
+// 3-day window. Guards live in the services.
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ orderId: string }> },
@@ -42,15 +44,23 @@ export async function PATCH(
   const origin = mutationOriginError(request);
   if (origin) return origin;
   const body = (await readJsonObject(request)) ?? {};
-  if (body.action !== "cancel") {
-    return NextResponse.json(
-      { errors: { form: "Hành động không hợp lệ." } },
-      { status: 400 },
-    );
-  }
   try {
     const { orderId } = await params;
-    const result = await cancelMyOrder(user.id, orderId);
+    const result =
+      body.action === "cancel"
+        ? await cancelMyOrder(user.id, orderId)
+        : body.action === "request-return"
+          ? await requestOrderReturn(user.id, orderId, {
+              reason: body.reason,
+              images: body.images,
+            })
+          : null;
+    if (!result) {
+      return NextResponse.json(
+        { errors: { form: "Hành động không hợp lệ." } },
+        { status: 400 },
+      );
+    }
     if (!result.ok)
       return NextResponse.json(
         { errors: result.errors },
@@ -67,7 +77,9 @@ export async function PATCH(
     return NextResponse.json({ order: result.data });
   } catch {
     return NextResponse.json(
-      { errors: { form: "Không hủy được đơn hàng. Vui lòng thử lại sau." } },
+      {
+        errors: { form: "Không cập nhật được đơn hàng. Vui lòng thử lại sau." },
+      },
       { status: 500 },
     );
   }

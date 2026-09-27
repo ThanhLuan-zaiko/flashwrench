@@ -7,7 +7,7 @@ import type {
 } from "./orders.types";
 
 export const ORDER_COLUMNS =
-  "order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at";
+  "order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at, return_reason, return_images, return_requested_at, return_decision, return_decision_note, return_decided_by, return_decided_at";
 
 function toAddressSnapshot(raw: unknown): AddressSnapshot | null {
   if (!raw || typeof raw !== "object") return null;
@@ -47,6 +47,15 @@ export function toOrderRow(row: Record<string, unknown>): OrderRow {
     month_bucket: (row.month_bucket as string | null) ?? null,
     created_at: (row.created_at as Date | null) ?? null,
     updated_at: (row.updated_at as Date | null) ?? null,
+    return_reason: (row.return_reason as string | null) ?? null,
+    return_images: (row.return_images as string[] | null) ?? null,
+    return_requested_at: (row.return_requested_at as Date | null) ?? null,
+    return_decision: (row.return_decision as string | null) ?? null,
+    return_decision_note: (row.return_decision_note as string | null) ?? null,
+    return_decided_by: row.return_decided_by
+      ? String(row.return_decided_by)
+      : null,
+    return_decided_at: (row.return_decided_at as Date | null) ?? null,
   };
 }
 

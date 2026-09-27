@@ -224,13 +224,32 @@ describe("updateOrderStatus", () => {
     expect(historyCall?.newStatus).toBe("confirmed");
   });
 
-  test("staff cancel restocks items", async () => {
+  test("staff cancel without a reason writes no rows", async () => {
+    orderStubs.orderById = makeOrderRow({ status: "confirmed" });
+    const result = await updateOrderStatus(DISPATCHER, ORDER_ID, "cancelled");
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(400);
+    expect(result.errors.note).toBeTruthy();
+    expect(orderWriteRepoMocks.updateOrderStatusRows).not.toHaveBeenCalled();
+    expect(partInventoryRepoMocks.setPartStock).not.toHaveBeenCalled();
+  });
+
+  test("staff cancel restocks items and echoes the reason to history", async () => {
     orderStubs.orderById = makeOrderRow({ status: "packing" });
     orderStubs.itemRows = [makeOrderItemRow({ quantity: 1 })];
     orderStubs.historyRows = [makeOrderHistoryRow()];
     partStubs.partById = makePartRow({ stock_qty: 4, sold_count: 0 });
-    const result = await updateOrderStatus(DISPATCHER, ORDER_ID, "cancelled");
+    const result = await updateOrderStatus(
+      DISPATCHER,
+      ORDER_ID,
+      "cancelled",
+      "Khach bao doi y, khong mua nua",
+    );
     expect(result.ok).toBe(true);
+    const historyCall = orderWriteRepoMocks.insertOrderHistory.mock
+      .calls[0]?.[0] as { note: string } | null;
+    expect(historyCall?.note).toBe("Khach bao doi y, khong mua nua");
     const restockCall = partInventoryRepoMocks.setPartStock.mock.calls[0];
     expect(restockCall?.slice(0, 4)).toEqual([
       makePartItemRowId(),

@@ -36,6 +36,7 @@ import {
 } from "./orders-delivery.repository";
 import {
   insertOrderHistory,
+  saveOrderReturnDecision,
   updateOrderStatusRows,
 } from "./orders-write.repository";
 
@@ -60,7 +61,9 @@ export async function listMyOrders(
   return { ok: true, data: rows.map(toOrderSummary) };
 }
 
-async function loadDetail(orderId: string): Promise<OrderDetail | null> {
+export async function loadOrderDetail(
+  orderId: string,
+): Promise<OrderDetail | null> {
   const row = await findOrderRowById(orderId);
   if (!row) return null;
   const [items, history] = await Promise.all([
@@ -80,7 +83,7 @@ export async function getMyOrder(
   if (row.customer_id !== customerId) {
     return fail(403, "Đơn hàng này không thuộc tài khoản của bạn.");
   }
-  const detail = await loadDetail(orderId);
+  const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(404, "Không tìm thấy đơn hàng.");
   return { ok: true, data: detail };
 }
@@ -88,7 +91,7 @@ export async function getMyOrder(
 export async function getOrderForStaff(
   orderId: string,
 ): Promise<OrdersResult<OrderDetail>> {
-  const detail = await loadDetail(orderId);
+  const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(404, "Không tìm thấy đơn hàng.");
   return { ok: true, data: detail };
 }
@@ -111,7 +114,7 @@ export async function cancelMyOrder(
     );
   }
   await applyStatusChange(row, "cancelled", customerId, "Khách hàng hủy", null);
-  const detail = await loadDetail(orderId);
+  const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };
 }
@@ -191,12 +194,28 @@ export async function updateOrderStatus(
       status: "Không thể chuyển đơn hàng sang trạng thái này.",
     });
   }
-  if (requiresAdminTransition(nextStatus) && actor.role !== "admin") {
+  if (requiresAdminTransition(from, nextStatus) && actor.role !== "admin") {
     return fail(403, "Chỉ quản trị viên mới được hoàn tiền đơn hàng.");
+  }
+  // Rejecting a return request always needs a reason — it lands on the
+  // order timeline and is shown back to the customer.
+  if (
+    from === "return_requested" &&
+    nextStatus === "delivered" &&
+    !(note ?? "").trim()
+  ) {
+    return failFields(400, { note: "Nhập lý do từ chối yêu cầu đổi trả." });
+  }
+  // Staff-side cancels carry a reason for the same reason: the note is
+  // the customer's only explanation on their timeline.
+  if (nextStatus === "cancelled" && !(note ?? "").trim()) {
+    return failFields(400, {
+      note: "Nhập lý do hủy đơn — khách hàng sẽ thấy thông báo này.",
+    });
   }
   let resolvedCourier: ResolvedCourier | null = null;
   if (nextStatus === "shipping") {
-    const resolved = await resolveCourierConfig(courier);
+    const resolved = await resolveCourierConfig(courier, orderId);
     if (!resolved.ok) return resolved;
     resolvedCourier = resolved.data;
   }
@@ -207,7 +226,7 @@ export async function updateOrderStatus(
     note ?? "",
     resolvedCourier,
   );
-  const detail = await loadDetail(orderId);
+  const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };
 }
@@ -275,6 +294,17 @@ async function applyStatusChange(
       paidAt: null,
       now,
       paymentRefs: await listOrderPaymentRefs(row.order_id),
+    });
+  }
+  // Leaving the review queue: approving means the money goes back, a
+  // rejection puts the order back on the delivered shelf.
+  if (row.status === "return_requested") {
+    await saveOrderReturnDecision({
+      orderId: row.order_id,
+      decision: nextStatus === "refunded" ? "approved" : "rejected",
+      note,
+      decidedBy: changedBy,
+      now,
     });
   }
   await insertOrderHistory({

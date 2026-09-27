@@ -715,7 +715,14 @@ CREATE TABLE IF NOT EXISTS orders_by_id (
   note           TEXT,
   month_bucket   TEXT,
   created_at     TIMESTAMP,
-  updated_at     TIMESTAMP
+  updated_at     TIMESTAMP,
+  return_reason       TEXT,
+  return_images       LIST<TEXT>,
+  return_requested_at TIMESTAMP,
+  return_decision     TEXT,
+  return_decision_note TEXT,
+  return_decided_by   UUID,
+  return_decided_at   TIMESTAMP
 );
 
 -- Query: my orders

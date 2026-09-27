@@ -6,6 +6,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   packing: "Đang đóng gói",
   shipping: "Đang giao",
   delivered: "Đã giao",
+  return_requested: "Chờ duyệt trả hàng",
   cancelled: "Đã hủy",
   refunded: "Đã hoàn tiền",
 };
@@ -51,6 +52,7 @@ export type OpsToast = (
 
 const TERMINAL_ORDER_STATUSES: OrderStatus[] = [
   "delivered",
+  "return_requested",
   "cancelled",
   "refunded",
 ];

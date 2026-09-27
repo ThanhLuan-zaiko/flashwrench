@@ -10,6 +10,7 @@ import {
   fetchMyOrders,
   fetchMyOrderTrack,
   payOrderOnlineRequest,
+  requestOrderReturnRequest,
 } from "@/services/orders.api";
 import { useMe } from "./auth";
 import { cartKeys } from "./cart";
@@ -110,6 +111,21 @@ export function useCancelOrder() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (orderId: string) => cancelOrderRequest(orderId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: orderKeys.all });
+    },
+  });
+}
+
+// Customer files a return/refund request with evidence photos.
+export function useRequestOrderReturn() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: {
+      orderId: string;
+      reason: string;
+      images: string[];
+    }) => requestOrderReturnRequest(input.orderId, input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: orderKeys.all });
     },

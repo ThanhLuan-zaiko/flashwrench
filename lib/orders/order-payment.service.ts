@@ -43,7 +43,12 @@ function failFields<T>(
   return { ok: false, status, errors };
 }
 
-const TERMINAL_STATUSES = new Set(["delivered", "cancelled", "refunded"]);
+const TERMINAL_STATUSES = new Set([
+  "delivered",
+  "return_requested",
+  "cancelled",
+  "refunded",
+]);
 
 async function loadDetail(orderId: string): Promise<OrderDetail | null> {
   const row = await findOrderRowById(orderId);

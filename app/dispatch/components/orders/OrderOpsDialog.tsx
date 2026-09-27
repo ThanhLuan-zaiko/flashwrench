@@ -10,23 +10,10 @@ import {
 } from "@/components/orders/order-format";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMe } from "@/hooks/auth";
-import {
-  useDispatchOrder,
-  useUpdateDispatchOrderStatus,
-} from "@/hooks/dispatch-orders";
-import type { OrderFieldErrors, OrderStatus } from "@/lib/orders/orders.types";
-import {
-  orderTransitions,
-  requiresAdminTransition,
-} from "@/lib/orders/orders.types";
-import { AuthApiError } from "@/services/auth.api";
+import { useDispatchOrder } from "@/hooks/dispatch-orders";
 import { OrderCollectSection } from "./OrderCollectSection";
-import {
-  type CourierDraft,
-  EMPTY_COURIER_DRAFT,
-  OrderCourierFields,
-} from "./OrderCourierFields";
 import { OrderOpsDetail } from "./OrderOpsDetail";
+import { OrderOpsTransitions } from "./OrderOpsTransitions";
 
 type OrderOpsDialogProps = {
   orderId: string;
@@ -46,64 +33,10 @@ export function OrderOpsDialog({
 }: OrderOpsDialogProps) {
   const me = useMe();
   const query = useDispatchOrder(orderId);
-  const updateStatus = useUpdateDispatchOrderStatus();
-  const [note, setNote] = useState("");
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors>({});
-  const [courier, setCourier] = useState<CourierDraft>(EMPTY_COURIER_DRAFT);
   const order = query.data?.order ?? null;
 
   const isAdmin = me.data?.role === "admin";
-  const transitions = order
-    ? (orderTransitions(order.fulfillmentType)[order.status] ?? []).filter(
-        (next) => isAdmin || !requiresAdminTransition(next),
-      )
-    : [];
-  const needsCourier =
-    order !== null &&
-    order.fulfillmentType === "delivery" &&
-    transitions.includes("shipping");
-  const apply = (status: OrderStatus) => {
-    setError("");
-    setFieldErrors({});
-    updateStatus.mutate(
-      {
-        orderId,
-        status,
-        note: note.trim() || undefined,
-        courier:
-          status === "shipping"
-            ? {
-                type: courier.type,
-                mechanicId: courier.mechanicId || undefined,
-                carrierName: courier.carrierName || undefined,
-                trackingCode: courier.trackingCode || undefined,
-              }
-            : undefined,
-      },
-      {
-        onSuccess: () => {
-          setNote("");
-          onToast(
-            "success",
-            "Đã cập nhật đơn",
-            `Đơn #${orderId.slice(0, 8)} → ${ORDER_STATUS_LABELS[status]}`,
-          );
-        },
-        onError: (err) => {
-          if (err instanceof AuthApiError) {
-            const errors = err.errors as OrderFieldErrors;
-            setFieldErrors(errors);
-            setError(
-              errors.form ?? "Vui lòng kiểm tra lại thông tin giao hàng.",
-            );
-          } else {
-            setError(err.message || "Không cập nhật được trạng thái.");
-          }
-        },
-      },
-    );
-  };
 
   return (
     <div
@@ -187,51 +120,11 @@ export function OrderOpsDialog({
               onError={setError}
             />
 
-            {transitions.length > 0 && (
-              <section aria-label="Cập nhật trạng thái">
-                <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  Chuyển trạng thái
-                </h3>
-                <input
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="Ghi chú nội bộ (không bắt buộc)"
-                  aria-label="Ghi chú cập nhật trạng thái"
-                  className="mt-2 h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-                />
-                {needsCourier && (
-                  <div className="mt-3">
-                    <OrderCourierFields
-                      draft={courier}
-                      errors={fieldErrors}
-                      disabled={updateStatus.isPending}
-                      onChange={(patch) =>
-                        setCourier((current) => ({ ...current, ...patch }))
-                      }
-                    />
-                  </div>
-                )}
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {transitions.map((next) => (
-                    <button
-                      key={next}
-                      type="button"
-                      disabled={updateStatus.isPending}
-                      onClick={() => apply(next)}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-                    >
-                      {updateStatus.isPending && (
-                        <FiLoader
-                          aria-hidden="true"
-                          className="h-4 w-4 motion-safe:animate-spin"
-                        />
-                      )}
-                      {ORDER_STATUS_LABELS[next]}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            )}
+            <OrderOpsTransitions
+              order={order}
+              isAdmin={isAdmin}
+              onToast={onToast}
+            />
 
             {error && (
               <p

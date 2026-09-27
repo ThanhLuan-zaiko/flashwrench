@@ -4,14 +4,21 @@ import Link from "next/link";
 import { FiArrowLeft, FiLoader } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { orderShippingFee } from "@/lib/orders/order-pricing";
-import type { CartView, FulfillmentType } from "@/lib/orders/orders.types";
+import type {
+  CartView,
+  FulfillmentType,
+  OrderFieldErrors,
+} from "@/lib/orders/orders.types";
 import type { OrderPaymentMethod } from "@/lib/payments/order-payment.types";
+import { CheckoutPaymentFields } from "./CheckoutPaymentFields";
 
 type CheckoutSummaryProps = {
   cart: CartView;
   fulfillment: FulfillmentType;
   paymentMethod: OrderPaymentMethod;
+  errors: OrderFieldErrors;
   submitting: boolean;
+  onPaymentMethod: (value: OrderPaymentMethod) => void;
 };
 
 // One-line expectation under the total, matched to the chosen method.
@@ -37,7 +44,9 @@ export function CheckoutSummary({
   cart,
   fulfillment,
   paymentMethod,
+  errors,
   submitting,
+  onPaymentMethod,
 }: CheckoutSummaryProps) {
   const fee = orderShippingFee(fulfillment, cart.subtotal);
   return (
@@ -87,6 +96,15 @@ export function CheckoutSummary({
         <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           {formatVnd(cart.subtotal + fee)}
         </span>
+      </div>
+      <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">
+        <CheckoutPaymentFields
+          fulfillment={fulfillment}
+          paymentMethod={paymentMethod}
+          errors={errors}
+          disabled={submitting}
+          onPaymentMethod={onPaymentMethod}
+        />
       </div>
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
         {paymentHint(fulfillment, paymentMethod)}

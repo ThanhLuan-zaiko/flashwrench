@@ -97,6 +97,15 @@ When each tab owns its own URL (one URL per tab so links stay shareable and the 
 - Unknown or retired tab slugs show a friendly guidance panel linking back to the default tab. Never guess or silently fall back to another tab's data.
 - Reference implementation: `app/services/layout.tsx` + `components/services/ServicesRouteShell.tsx` (see `frontend-bento-gsap.md` Section 4.5 for the motion side).
 
+### 7.2. Pagination for Growing Lists
+Any screen listing data that grows over time (orders, bookings, history, stock, admin tables — e.g. every `/dispatch/orders/*` tab) MUST paginate. Never render an unbounded list.
+- **Server-side cursor paging (default for partitioned ScyllaDB tables):** repository uses `fetchSize` + `pageState`; the opaque token is signed via `encodeCursor`/`decodeCursor` in `lib/db/cursor.ts` with a per-list scope. The API returns `{ items, nextCursor }`; the client keeps a cursor stack for Trước/Sau paging. Note that `pageState` is sequential — arbitrary "jump to page N" is NOT possible with cursor paging.
+- **Reset cursors on context change:** switching tabs, month buckets, or filters MUST reset the cursor stack (a cursor from one partition must never be reused on another) and land on page 1 — do it during render, not in an effect.
+- **Client-side numbered paging (small dev-scale lists only):** when the endpoint already returns a bounded full list (e.g. `/dispatch/stock`), slice per page and render numbered page buttons (`1 … 5 6 7 … 12`), a "Hiển thị A–B / N mục" range line, hide the pager on a single page, and clamp the current page when the list shrinks (deletes/filters).
+- **UI contract:** pager buttons keep the 44px touch target and Vietnamese `aria-label`s ("Trang trước" / "Trang sau"); search/filter changes reset to page 1.
+- Reference implementations: server cursor paging — `lib/orders/orders.service.ts` (`listStaffOrders`) + `app/dispatch/components/orders/OrdersQueueCard.tsx`; client numbered paging — `app/dispatch/components/stock/` (`stock-pager.ts`, `StockPager.tsx`, `StockBoard.tsx`).
+- For the visual/interaction contract of the pager UI, see `frontend-bento-gsap.md` Section 3 rule 11.
+
 ---
 
 ## 8. AI Agent Instructions

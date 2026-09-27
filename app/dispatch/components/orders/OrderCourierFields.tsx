@@ -1,10 +1,11 @@
 "use client";
 
 import { useId } from "react";
-import { FiLoader, FiTool, FiTruck } from "react-icons/fi";
+import { FiLoader, FiRefreshCw, FiTool, FiTruck } from "react-icons/fi";
 import { SelectDropdown } from "@/app/admin/components/services/SelectDropdown";
 import { useAvailableMechanics } from "@/hooks/booking";
 import type { CourierType, OrderFieldErrors } from "@/lib/orders/orders.types";
+import { generateTrackingCode } from "@/lib/orders/tracking-code";
 
 export type CourierDraft = {
   type: CourierType;
@@ -21,6 +22,7 @@ export const EMPTY_COURIER_DRAFT: CourierDraft = {
 };
 
 type OrderCourierFieldsProps = {
+  orderId: string;
   draft: CourierDraft;
   errors: OrderFieldErrors;
   disabled: boolean;
@@ -29,8 +31,11 @@ type OrderCourierFieldsProps = {
 
 // Courier assignment inside the ops dialog: the dispatcher picks an
 // in-house mechanic (live GPS for the customer) or a third-party
-// carrier identified by name + tracking code.
+// carrier identified by name + tracking code. The tracking code is
+// auto-generated from the order id — staff only edits it when the
+// carrier gave them a real one.
 export function OrderCourierFields({
+  orderId,
   draft,
   errors,
   disabled,
@@ -63,7 +68,16 @@ export function OrderCourierFields({
               key={value}
               type="button"
               disabled={disabled}
-              onClick={() => onChange({ type: value })}
+              onClick={() =>
+                onChange(
+                  value === "third_party" && !draft.trackingCode
+                    ? {
+                        type: value,
+                        trackingCode: generateTrackingCode(orderId),
+                      }
+                    : { type: value },
+                )
+              }
               aria-pressed={active}
               className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.98] ${
                 active
@@ -131,15 +145,31 @@ export function OrderCourierFields({
               {errors.carrierName}
             </p>
           )}
-          <input
-            id={`${fieldId}-tracking`}
-            value={draft.trackingCode}
-            onChange={(event) => onChange({ trackingCode: event.target.value })}
-            placeholder="Mã vận đơn"
-            aria-label="Mã vận đơn"
-            disabled={disabled}
-            className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-          />
+          <div className="flex gap-2">
+            <input
+              id={`${fieldId}-tracking`}
+              value={draft.trackingCode}
+              onChange={(event) =>
+                onChange({ trackingCode: event.target.value })
+              }
+              placeholder="Mã vận đơn"
+              aria-label="Mã vận đơn"
+              disabled={disabled}
+              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            />
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() =>
+                onChange({ trackingCode: generateTrackingCode(orderId) })
+              }
+              aria-label="Tạo lại mã vận đơn"
+              title="Tạo lại mã vận đơn"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
+            </button>
+          </div>
           {errors.trackingCode && (
             <p role="alert" className="text-xs text-red-600 dark:text-red-400">
               {errors.trackingCode}

@@ -280,6 +280,12 @@ export const orderWriteRepoMocks = {
   insertOrderHistory: mock(
     async (_params: unknown): Promise<void> => undefined,
   ),
+  saveOrderReturnRequest: mock(
+    async (_params: unknown): Promise<void> => undefined,
+  ),
+  saveOrderReturnDecision: mock(
+    async (_params: unknown): Promise<void> => undefined,
+  ),
 };
 
 // Media service stand-in for parts.service / parts-lifecycle.service:

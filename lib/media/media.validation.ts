@@ -11,6 +11,7 @@ export const MEDIA_SCOPES: MediaScope[] = [
   "booking",
   "emergency",
   "review",
+  "return",
   "misc",
 ];
 

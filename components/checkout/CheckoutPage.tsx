@@ -23,7 +23,6 @@ import {
 import { AuthApiError } from "@/services/auth.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
-import { CheckoutPaymentFields } from "./CheckoutPaymentFields";
 import { CheckoutSummary } from "./CheckoutSummary";
 import { accountRecipient } from "./checkout-utils";
 
@@ -208,13 +207,6 @@ export function CheckoutPage() {
                 }}
                 onGeocode={handleGeocode}
               />
-              <CheckoutPaymentFields
-                fulfillment={fulfillment}
-                paymentMethod={paymentMethod}
-                errors={errors}
-                disabled={submitting}
-                onPaymentMethod={setPaymentMethod}
-              />
               <div>
                 <label
                   htmlFor={`${fieldId}-note`}
@@ -238,7 +230,9 @@ export function CheckoutPage() {
               cart={cartView}
               fulfillment={fulfillment}
               paymentMethod={paymentMethod}
+              errors={errors}
               submitting={submitting}
+              onPaymentMethod={setPaymentMethod}
             />
           </form>
         )}

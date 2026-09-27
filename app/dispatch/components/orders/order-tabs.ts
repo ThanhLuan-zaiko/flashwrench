@@ -6,6 +6,7 @@ import {
   FiCheck,
   FiCheckCircle,
   FiClock,
+  FiRepeat,
   FiRotateCcw,
   FiTruck,
   FiX,
@@ -33,6 +34,7 @@ export const ORDER_TAB_LABELS: Record<OrderStatus, string> = {
   packing: "Đang đóng gói",
   shipping: "Đang giao",
   delivered: "Đã giao",
+  return_requested: "Chờ duyệt trả",
   cancelled: "Đã hủy",
   refunded: "Đã hoàn tiền",
 };
@@ -67,6 +69,12 @@ export const DISPATCH_ORDER_TABS: DispatchOrderTabDef[] = [
     label: ORDER_TAB_LABELS.delivered,
     href: tabHref("delivered"),
     icon: FiCheck,
+  },
+  {
+    id: "return_requested",
+    label: ORDER_TAB_LABELS.return_requested,
+    href: tabHref("return_requested"),
+    icon: FiRepeat,
   },
   {
     id: "cancelled",

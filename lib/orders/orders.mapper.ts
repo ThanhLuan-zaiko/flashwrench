@@ -7,6 +7,7 @@ import {
   type OrderHistoryRow,
   type OrderItem,
   type OrderItemRow,
+  type OrderReturnDecision,
   type OrderRow,
   type OrderSummary,
   orderToIso,
@@ -69,5 +70,24 @@ export function toOrderDetail(
     address: row.shipping_address,
     items: items.map(toOrderItem),
     history: history.map(toHistoryEntry),
+    returnRequest: toReturnRequest(row),
+  };
+}
+
+// The request block only exists once the customer filed one; a rejected
+// request stays on the detail so the customer still sees the reason.
+function toReturnRequest(row: OrderRow): OrderDetail["returnRequest"] {
+  if (!row.return_requested_at) return null;
+  const decision: OrderReturnDecision | null =
+    row.return_decision === "approved" || row.return_decision === "rejected"
+      ? row.return_decision
+      : null;
+  return {
+    reason: row.return_reason ?? "",
+    images: row.return_images ?? [],
+    requestedAt: orderToIso(row.return_requested_at),
+    decision,
+    decisionNote: row.return_decision_note ?? "",
+    decidedAt: orderToIso(row.return_decided_at),
   };
 }
