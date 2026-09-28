@@ -1,19 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {
-  FiAlertCircle,
-  FiLoader,
-  FiMapPin,
-  FiStar,
-  FiUser,
-  FiX,
-} from "react-icons/fi";
+import { FiAlertCircle, FiLoader, FiMapPin, FiUser, FiX } from "react-icons/fi";
 import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyBooking } from "@/hooks/booking";
 import { formatDateTime } from "@/lib/datetime/format";
 import { STATUS_LABELS } from "@/lib/mechanic/mechanic-status";
+import { BookingFeedbackSection } from "./BookingFeedbackSection";
 import { BookingTimeline } from "./BookingTimeline";
 import {
   isTrackableStatus,
@@ -212,13 +206,7 @@ export function BookingDetailDialog({
                 </p>
               )}
 
-              {booking.review && (
-                <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-                  <FiStar aria-hidden="true" className="h-3.5 w-3.5" />
-                  Bạn đã đánh giá {booking.review.rating}/5
-                  {booking.review.body ? ` — ${booking.review.body}` : ""}
-                </p>
-              )}
+              <BookingFeedbackSection booking={booking} />
 
               <section
                 aria-label="Tiến trình đơn"

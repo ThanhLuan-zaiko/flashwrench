@@ -12,6 +12,7 @@ export type ComplaintRefType =
 
 export type ComplaintRow = {
   complaint_id: string;
+  reporter_user_id: string | null;
   reporter_name: string | null;
   reporter_phone: string | null;
   target_user_id: string | null;
@@ -39,6 +40,7 @@ export type ComplaintByStatusRow = {
 
 export type ComplaintItem = {
   id: string;
+  reporterUserId: string | null;
   reporterName: string;
   reporterPhone: string;
   targetUserId: string | null;
@@ -56,6 +58,7 @@ export type ComplaintItem = {
 };
 
 export type CreateComplaintInput = {
+  reporterUserId?: string;
   reporterName: string;
   reporterPhone?: string;
   targetUserId?: string;

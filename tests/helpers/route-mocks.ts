@@ -192,6 +192,11 @@ export const adminUsersRouteMocks = {
 // The POST /api/bookings route only depends on the auth guard and the
 // booking service, so suites drive both through these handles.
 export const authorizationMocks = {
+  // Optional-auth entry point for routes that allow anonymous reads
+  // (public comments / review feeds). Mirrors requireAuth's stub.
+  authenticateRequest: mock(
+    async (): Promise<PublicUser | null> => routeStubs.bookingUser,
+  ),
   requireAuth: mock(async () => {
     if (!routeStubs.bookingUser) {
       return {

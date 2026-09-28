@@ -14,6 +14,7 @@ import type {
 import { AuthApiError } from "@/services/complaints.api";
 import { fieldError } from "../services/catalog-errors";
 import { ComplaintCreateFields } from "./ComplaintCreateFields";
+import { ComplaintThread } from "./ComplaintThread";
 import { COMPLAINT_STATUS_LABELS } from "./complaint-format";
 
 export type ComplaintDialogState =
@@ -169,6 +170,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
                 </button>
               )}
             </div>
+            <ComplaintThread complaintId={handling.id} />
           </div>
         ) : (
           <ComplaintCreateFields

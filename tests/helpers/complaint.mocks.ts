@@ -6,12 +6,17 @@ import type { ComplaintRow } from "@/lib/complaints/complaint.types";
 // `mock.calls`. Split out to keep service-mocks.ts under the file limit.
 export const complaintStubs = {
   complaintRows: [] as ComplaintRow[],
+  complaintRowsByUser: [] as ComplaintRow[],
   complaintById: null as ComplaintRow | null,
 };
 
 export const complaintRepoMocks = {
   listComplaintRows: mock(
     async (): Promise<ComplaintRow[]> => complaintStubs.complaintRows,
+  ),
+  listComplaintRowsByUser: mock(
+    async (_userId: string, _limit: number): Promise<ComplaintRow[]> =>
+      complaintStubs.complaintRowsByUser,
   ),
   findComplaintRowById: mock(
     async (_complaintId: string): Promise<ComplaintRow | null> =>
@@ -32,10 +37,19 @@ export const complaintServiceMocks = {
     ok: true as const,
     data: { id: "c0mp1aint-1111-4111-8111-000000000000", subject: "subject" },
   })),
+  createCustomerComplaint: mock(async (..._args: unknown[]) => ({
+    ok: true as const,
+    data: { id: "c0mp1aint-1111-4111-8111-000000000000", subject: "subject" },
+  })),
+  listMyComplaints: mock(async (..._args: unknown[]) => ({
+    ok: true as const,
+    data: [],
+  })),
 };
 
 export function resetComplaintMocks(): void {
   complaintStubs.complaintRows = [];
+  complaintStubs.complaintRowsByUser = [];
   complaintStubs.complaintById = null;
   for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
   for (const fn of Object.values(complaintServiceMocks)) fn.mockClear();

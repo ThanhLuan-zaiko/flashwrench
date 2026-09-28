@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { monthBucket } from "@/lib/auth/user.types";
+import { monthBucket, type PublicUser } from "@/lib/auth/user.types";
+import { findBookingRowById } from "@/lib/mechanic/mechanic-bookings.repository";
+import { findOrderRowById } from "@/lib/orders/orders.repository";
+import { findRescueRowById } from "@/lib/rescue/rescue-workflow.repository";
+import { isUuid } from "@/lib/validation";
 import type {
   ComplaintAction,
   ComplaintFieldErrors,
@@ -20,6 +24,7 @@ import {
   findComplaintRowById,
   insertComplaint,
   listComplaintRows,
+  listComplaintRowsByUser,
   updateComplaintStatus,
 } from "./complaints.repository";
 
@@ -34,6 +39,7 @@ export type ComplaintResult<T> =
 function toItem(row: ComplaintRow): ComplaintItem {
   return {
     id: row.complaint_id,
+    reporterUserId: row.reporter_user_id,
     reporterName: row.reporter_name ?? "",
     reporterPhone: row.reporter_phone ?? "",
     targetUserId: row.target_user_id,
@@ -101,6 +107,7 @@ export async function createComplaint(
   const complaintId = randomUUID();
   await insertComplaint({
     complaintId,
+    reporterUserId: raw.reporterUserId?.trim() || null,
     reporterName: raw.reporterName.trim(),
     reporterPhone: (raw.reporterPhone ?? "").trim(),
     targetUserId: (raw.targetUserId ?? "").trim() || null,
@@ -116,6 +123,88 @@ export async function createComplaint(
   if (!row)
     return fail(500, "Không ghi nhận được khiếu nại. Vui lòng thử lại.");
   return { ok: true, data: toItem(row) };
+}
+
+// Ref ownership check for customer-filed complaints. Only refs the
+// customer actually owns can be cited; everything else reads as a
+// plain 404 so existence is never leaked.
+async function ownsRef(
+  userId: string,
+  refType: ComplaintRefType,
+  refId: string,
+): Promise<boolean> {
+  if (refType === "booking") {
+    const row = await findBookingRowById(refId);
+    return row !== null && row.customer_id === userId;
+  }
+  if (refType === "order") {
+    const row = await findOrderRowById(refId);
+    return row !== null && row.customer_id === userId;
+  }
+  if (refType === "emergency") {
+    const row = await findRescueRowById(refId);
+    return row !== null && row.customer_id === userId;
+  }
+  return true;
+}
+
+// Self-service path: the signed-in customer files a complaint, reporter
+// identity comes from the session (no free-text name spoofing).
+export async function createCustomerComplaint(
+  user: PublicUser,
+  raw: {
+    targetUserId?: string;
+    targetName?: string;
+    refType?: string;
+    refId?: string;
+    subject?: string;
+    body?: string;
+  },
+): Promise<ComplaintResult<ComplaintItem>> {
+  const fieldErrors = validateComplaintInput({
+    reporterName: user.fullName,
+    reporterPhone: user.phone,
+    targetUserId: raw.targetUserId,
+    targetName: raw.targetName,
+    refType: raw.refType,
+    refId: raw.refId,
+    subject: raw.subject ?? "",
+    body: raw.body ?? "",
+  });
+  if (fieldErrors) return failFields(400, fieldErrors);
+
+  const refType = (raw.refType ?? "other") as ComplaintRefType;
+  const refId = (raw.refId ?? "").trim();
+  const ownedTypes: ComplaintRefType[] = ["booking", "order", "emergency"];
+  if (ownedTypes.includes(refType)) {
+    if (!refId || !isUuid(refId)) {
+      return failFields(400, { refId: "Mã liên quan không hợp lệ." });
+    }
+    if (!(await ownsRef(user.id, refType, refId))) {
+      return fail(404, "Không tìm thấy mục bạn muốn phản ánh.");
+    }
+  }
+
+  return createComplaint({
+    reporterUserId: user.id,
+    reporterName: user.fullName,
+    reporterPhone: user.phone,
+    targetUserId: raw.targetUserId,
+    targetName: raw.targetName,
+    refType,
+    refId,
+    subject: raw.subject ?? "",
+    body: raw.body ?? "",
+  });
+}
+
+// The customer's own complaint list, newest first via complaints_by_user.
+export async function listMyComplaints(
+  userId: string,
+): Promise<ComplaintResult<ComplaintItem[]>> {
+  if (!isUuid(userId)) return fail(400, "Mã người dùng không hợp lệ.");
+  const rows = await listComplaintRowsByUser(userId, 50);
+  return { ok: true, data: rows.map(toItem) };
 }
 
 function nextStatus(
@@ -167,6 +256,7 @@ export async function transitionComplaint(
     updatedAt: now,
     subject: existing.subject ?? "",
     reporterPhone: existing.reporter_phone ?? "",
+    reporterUserId: existing.reporter_user_id,
   });
   const row = await findComplaintRowById(complaintId);
   if (!row) return fail(500, "Không cập nhật được khiếu nại.");

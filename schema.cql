@@ -909,6 +909,25 @@ CREATE TABLE IF NOT EXISTS reviews_by_booking (
   mechanic_id UUID, customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP
 );
 
+-- Query: one overall experience review per delivered parts order
+CREATE TABLE IF NOT EXISTS reviews_by_order (
+  order_id UUID PRIMARY KEY, review_id UUID, customer_id UUID,
+  customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP
+);
+
+-- Query: one review per purchased part inside a delivered order
+CREATE TABLE IF NOT EXISTS reviews_by_order_part (
+  order_id UUID, part_id UUID, review_id UUID, customer_id UUID,
+  customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP,
+  PRIMARY KEY ((order_id), part_id)
+);
+
+-- Query: one review per completed rescue request (targets the mechanic)
+CREATE TABLE IF NOT EXISTS reviews_by_rescue (
+  request_id UUID PRIMARY KEY, review_id UUID, customer_id UUID,
+  mechanic_id UUID, customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS reviews_by_target (
   target_type TEXT,
   target_id   UUID,
@@ -918,6 +937,7 @@ CREATE TABLE IF NOT EXISTS reviews_by_target (
   customer_name TEXT,
   booking_id  UUID, -- nullable: review after using a service
   order_id    UUID, -- nullable: review after buying a part
+  rescue_id   UUID, -- nullable: review after a completed rescue
   rating      INT,  -- 1..5
   title       TEXT,
   body        TEXT,
@@ -944,6 +964,24 @@ CREATE TABLE IF NOT EXISTS rating_counters (
   total_count COUNTER,
   PRIMARY KEY ((target_type, target_id))
 );
+
+-- ============================================================================
+-- 10b. COMMENT THREADS (one discussion area per entity)
+-- target_type = booking | order | rescue | complaint | part
+-- part threads are public; the rest stay owner + staff only (API enforced)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS comments_by_target (
+  target_type TEXT,
+  target_id   UUID,
+  created_at  TIMESTAMP,
+  comment_id  UUID,
+  user_id     UUID,
+  user_name   TEXT,
+  user_role   TEXT, -- customer | mechanic | dispatcher | admin
+  body        TEXT,
+  PRIMARY KEY ((target_type, target_id), created_at, comment_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, comment_id ASC);
 
 -- ============================================================================
 -- 11. PROMOTIONS / COUPONS
@@ -1016,8 +1054,10 @@ CREATE TABLE IF NOT EXISTS notifications_by_user (
 -- ============================================================================
 
 -- Query: single complaint details (reporter/target names denormalized)
+-- reporter_user_id links account-filed complaints; null for staff-recorded ones
 CREATE TABLE IF NOT EXISTS complaints_by_id (
   complaint_id    UUID PRIMARY KEY,
+  reporter_user_id UUID,
   reporter_name   TEXT,
   reporter_phone  TEXT,
   target_user_id  UUID,
@@ -1043,4 +1083,16 @@ CREATE TABLE IF NOT EXISTS complaints_by_status (
   subject        TEXT,
   reporter_phone TEXT,
   PRIMARY KEY ((status, month_bucket), created_at, complaint_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, complaint_id ASC);
+
+-- Query: a customer reviews their own complaints and sees the latest status
+-- (status/subject are regular columns so transitions UPDATE in place)
+CREATE TABLE IF NOT EXISTS complaints_by_user (
+  user_id       UUID,
+  created_at    TIMESTAMP,
+  complaint_id  UUID,
+  subject       TEXT,
+  status        TEXT,
+  ref_type      TEXT,
+  PRIMARY KEY ((user_id), created_at, complaint_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, complaint_id ASC);

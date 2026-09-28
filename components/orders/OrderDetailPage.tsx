@@ -13,6 +13,7 @@ import { OrderCancelSection, OrderProgressSection } from "./OrderAsideSections";
 import { OrderLinesSection } from "./OrderLinesSection";
 import { OrderPaymentSection } from "./OrderPaymentSection";
 import { OrderReturnSection } from "./OrderReturnSection";
+import { OrderReviewSection } from "./OrderReviewSection";
 import {
   ORDER_STATUS_LABELS,
   orderStatusBadgeClass,
@@ -123,6 +124,8 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
               />
             </div>
           </div>
+
+          <OrderReviewSection order={order} />
         </>
       )}
     </div>

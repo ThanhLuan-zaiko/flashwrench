@@ -9,6 +9,7 @@ import {
 import type { CreateBookingInput } from "@/services/booking.api";
 import {
   createBookingRequest,
+  createBookingReviewRequest,
   fetchBookingTravelPoints,
   fetchLastBooking,
   fetchMyBooking,
@@ -83,6 +84,23 @@ export function useMyBooking(bookingId: string | null, live = false) {
     gcTime: 5 * 60 * 1000,
     retry: 1,
     refetchInterval: live ? 15 * 1000 : false,
+  });
+}
+
+// Review submission for a completed booking; refreshes the detail so the
+// saved review replaces the form without a reload.
+export function useCreateBookingReview(bookingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { rating: number; body?: string }) =>
+      createBookingReviewRequest(bookingId, payload),
+    retry: false,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: bookingKeys.detail(bookingId),
+      });
+      void queryClient.invalidateQueries({ queryKey: bookingKeys.mine });
+    },
   });
 }
 

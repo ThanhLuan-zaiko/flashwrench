@@ -11,6 +11,7 @@ export function makeComplaintRow(
 ): ComplaintRow {
   return {
     complaint_id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+    reporter_user_id: null,
     reporter_name: "Nguyen Van A",
     reporter_phone: "0912345678",
     target_user_id: null,

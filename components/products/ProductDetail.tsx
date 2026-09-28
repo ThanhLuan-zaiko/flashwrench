@@ -8,6 +8,7 @@ import { usePartsCatalogRealtime, usePublicPart } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { AddToCartButton } from "./AddToCartButton";
 import { ProductGallery } from "./ProductGallery";
+import { ProductReviewsSection } from "./ProductReviewsSection";
 import { discountPercent, stockLabel } from "./products-utils";
 
 // Public /products/[slug] detail: full gallery, specs, compatibility and
@@ -181,6 +182,8 @@ export function ProductDetail({ slug }: { slug: string }) {
               )}
             </div>
           )}
+
+          <ProductReviewsSection slug={slug} partId={part.id} />
         </>
       )}
     </div>

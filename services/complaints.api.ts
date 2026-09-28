@@ -44,3 +44,29 @@ export function transitionComplaintRequest(
     { method: "PATCH", body: JSON.stringify({ action, note }) },
   );
 }
+
+// Customer self-service: the signed-in customer files a complaint and
+// follows the handling status of their own reports.
+export type CustomerComplaintInput = {
+  refType?: string;
+  refId?: string;
+  targetUserId?: string;
+  targetName?: string;
+  subject: string;
+  body: string;
+};
+
+export function fetchMyComplaints(): Promise<{
+  complaints: ComplaintItem[];
+}> {
+  return apiRequest<{ complaints: ComplaintItem[] }>("/api/complaints");
+}
+
+export function createMyComplaintRequest(
+  payload: CustomerComplaintInput,
+): Promise<{ complaint: ComplaintItem }> {
+  return apiRequest<{ complaint: ComplaintItem }>("/api/complaints", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

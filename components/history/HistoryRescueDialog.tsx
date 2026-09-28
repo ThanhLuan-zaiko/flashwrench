@@ -13,6 +13,7 @@ import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyRescueDetail } from "@/hooks/rescue";
 import { formatDateTime } from "@/lib/datetime/format";
+import { RescueFeedbackSection } from "./RescueFeedbackSection";
 
 type HistoryRescueDialogProps = {
   requestId: string;
@@ -145,6 +146,8 @@ export function HistoryRescueDialog({
               <FiPhone aria-hidden="true" className="h-4 w-4" />
               Gọi hotline {RESCUE_HOTLINE}
             </a>
+
+            <RescueFeedbackSection rescue={rescue} />
 
             {detail.data && detail.data.timeline.length > 0 && (
               <ol className="flex flex-col gap-1.5 border-t border-zinc-200 pt-3 dark:border-zinc-800">

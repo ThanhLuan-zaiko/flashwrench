@@ -4,6 +4,9 @@ import type { ComplaintRow } from "./complaint.types";
 function toComplaintRow(row: Record<string, unknown>): ComplaintRow {
   return {
     complaint_id: String(row.complaint_id),
+    reporter_user_id: row.reporter_user_id
+      ? String(row.reporter_user_id)
+      : null,
     reporter_name: (row.reporter_name as string | null) ?? null,
     reporter_phone: (row.reporter_phone as string | null) ?? null,
     target_user_id: row.target_user_id ? String(row.target_user_id) : null,
@@ -21,11 +24,14 @@ function toComplaintRow(row: Record<string, unknown>): ComplaintRow {
   };
 }
 
+const COMPLAINT_COLUMNS =
+  "complaint_id, reporter_user_id, reporter_name, reporter_phone, target_user_id, target_name, ref_type, ref_id, subject, body, status, resolution_note, month_bucket, created_at, updated_at, resolved_at";
+
 // Complaint tables are tiny (admin-handled records), so a full-table
 // scan is intentional here, mirroring the catalog config tables.
 export async function listComplaintRows(): Promise<ComplaintRow[]> {
   const result = await scylla.execute(
-    "SELECT complaint_id, reporter_name, reporter_phone, target_user_id, target_name, ref_type, ref_id, subject, body, status, resolution_note, month_bucket, created_at, updated_at, resolved_at FROM complaints_by_id",
+    `SELECT ${COMPLAINT_COLUMNS} FROM complaints_by_id`,
     [],
     { prepare: true },
   );
@@ -34,11 +40,31 @@ export async function listComplaintRows(): Promise<ComplaintRow[]> {
   );
 }
 
+// Customer-side list: ids from the per-user partition, then hydrated
+// through complaints_by_id so stale mirrors never leak old statuses.
+export async function listComplaintRowsByUser(
+  userId: string,
+  limit: number,
+): Promise<ComplaintRow[]> {
+  const refs = await scylla.execute(
+    "SELECT complaint_id FROM complaints_by_user WHERE user_id = ? LIMIT ?",
+    [userId, limit],
+    { prepare: true },
+  );
+  const rows: ComplaintRow[] = [];
+  for (const ref of refs.rows) {
+    const id = String((ref as unknown as Record<string, unknown>).complaint_id);
+    const row = await findComplaintRowById(id);
+    if (row) rows.push(row);
+  }
+  return rows;
+}
+
 export async function findComplaintRowById(
   complaintId: string,
 ): Promise<ComplaintRow | null> {
   const result = await scylla.execute(
-    "SELECT complaint_id, reporter_name, reporter_phone, target_user_id, target_name, ref_type, ref_id, subject, body, status, resolution_note, month_bucket, created_at, updated_at, resolved_at FROM complaints_by_id WHERE complaint_id = ?",
+    `SELECT ${COMPLAINT_COLUMNS} FROM complaints_by_id WHERE complaint_id = ?`,
     [complaintId],
     { prepare: true },
   );
@@ -48,6 +74,7 @@ export async function findComplaintRowById(
 
 export type InsertComplaintParams = {
   complaintId: string;
+  reporterUserId: string | null;
   reporterName: string;
   reporterPhone: string;
   targetUserId: string | null;
@@ -63,40 +90,54 @@ export type InsertComplaintParams = {
 export async function insertComplaint(
   params: InsertComplaintParams,
 ): Promise<void> {
-  await scylla.batch(
-    [
-      {
-        query:
-          "INSERT INTO complaints_by_id (complaint_id, reporter_name, reporter_phone, target_user_id, target_name, ref_type, ref_id, subject, body, status, resolution_note, month_bucket, created_at, updated_at, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', '', ?, ?, ?, null)",
-        params: [
-          params.complaintId,
-          params.reporterName,
-          params.reporterPhone,
-          params.targetUserId,
-          params.targetName,
-          params.refType,
-          params.refId,
-          params.subject,
-          params.body,
-          params.monthBucket,
-          params.now,
-          params.now,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO complaints_by_status (status, month_bucket, created_at, complaint_id, subject, reporter_phone) VALUES ('open', ?, ?, ?, ?, ?)",
-        params: [
-          params.monthBucket,
-          params.now,
-          params.complaintId,
-          params.subject,
-          params.reporterPhone,
-        ],
-      },
-    ],
-    { prepare: true },
-  );
+  const statements: { query: string; params: unknown[] }[] = [
+    {
+      query:
+        "INSERT INTO complaints_by_id (complaint_id, reporter_user_id, reporter_name, reporter_phone, target_user_id, target_name, ref_type, ref_id, subject, body, status, resolution_note, month_bucket, created_at, updated_at, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', '', ?, ?, ?, null)",
+      params: [
+        params.complaintId,
+        params.reporterUserId,
+        params.reporterName,
+        params.reporterPhone,
+        params.targetUserId,
+        params.targetName,
+        params.refType,
+        params.refId,
+        params.subject,
+        params.body,
+        params.monthBucket,
+        params.now,
+        params.now,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO complaints_by_status (status, month_bucket, created_at, complaint_id, subject, reporter_phone) VALUES ('open', ?, ?, ?, ?, ?)",
+      params: [
+        params.monthBucket,
+        params.now,
+        params.complaintId,
+        params.subject,
+        params.reporterPhone,
+      ],
+    },
+  ];
+  // Account-filed complaints also land on the per-user list so the
+  // customer can follow their own reports.
+  if (params.reporterUserId) {
+    statements.push({
+      query:
+        "INSERT INTO complaints_by_user (user_id, created_at, complaint_id, subject, status, ref_type) VALUES (?, ?, ?, ?, 'open', ?)",
+      params: [
+        params.reporterUserId,
+        params.now,
+        params.complaintId,
+        params.subject,
+        params.refType,
+      ],
+    });
+  }
+  await scylla.batch(statements, { prepare: true });
 }
 
 export type UpdateComplaintStatusParams = {
@@ -110,47 +151,60 @@ export type UpdateComplaintStatusParams = {
   updatedAt: Date;
   subject: string;
   reporterPhone: string;
+  reporterUserId: string | null;
 };
 
 export async function updateComplaintStatus(
   params: UpdateComplaintStatusParams,
 ): Promise<void> {
-  await scylla.batch(
-    [
-      {
-        query:
-          "UPDATE complaints_by_id SET status = ?, resolution_note = ?, resolved_at = ?, updated_at = ? WHERE complaint_id = ?",
-        params: [
-          params.status,
-          params.resolutionNote,
-          params.resolvedAt,
-          params.updatedAt,
-          params.complaintId,
-        ],
-      },
-      {
-        query:
-          "DELETE FROM complaints_by_status WHERE status = ? AND month_bucket = ? AND created_at = ? AND complaint_id = ?",
-        params: [
-          params.oldStatus,
-          params.monthBucket,
-          params.createdAt,
-          params.complaintId,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO complaints_by_status (status, month_bucket, created_at, complaint_id, subject, reporter_phone) VALUES (?, ?, ?, ?, ?, ?)",
-        params: [
-          params.status,
-          params.monthBucket,
-          params.createdAt,
-          params.complaintId,
-          params.subject,
-          params.reporterPhone,
-        ],
-      },
-    ],
-    { prepare: true },
-  );
+  const statements: { query: string; params: unknown[] }[] = [
+    {
+      query:
+        "UPDATE complaints_by_id SET status = ?, resolution_note = ?, resolved_at = ?, updated_at = ? WHERE complaint_id = ?",
+      params: [
+        params.status,
+        params.resolutionNote,
+        params.resolvedAt,
+        params.updatedAt,
+        params.complaintId,
+      ],
+    },
+    {
+      query:
+        "DELETE FROM complaints_by_status WHERE status = ? AND month_bucket = ? AND created_at = ? AND complaint_id = ?",
+      params: [
+        params.oldStatus,
+        params.monthBucket,
+        params.createdAt,
+        params.complaintId,
+      ],
+    },
+    {
+      query:
+        "INSERT INTO complaints_by_status (status, month_bucket, created_at, complaint_id, subject, reporter_phone) VALUES (?, ?, ?, ?, ?, ?)",
+      params: [
+        params.status,
+        params.monthBucket,
+        params.createdAt,
+        params.complaintId,
+        params.subject,
+        params.reporterPhone,
+      ],
+    },
+  ];
+  // Keep the owner's mirror row in sync so "Khiếu nại của tôi" shows
+  // the live status without a second lookup.
+  if (params.reporterUserId) {
+    statements.push({
+      query:
+        "UPDATE complaints_by_user SET status = ? WHERE user_id = ? AND created_at = ? AND complaint_id = ?",
+      params: [
+        params.status,
+        params.reporterUserId,
+        params.createdAt,
+        params.complaintId,
+      ],
+    });
+  }
+  await scylla.batch(statements, { prepare: true });
 }

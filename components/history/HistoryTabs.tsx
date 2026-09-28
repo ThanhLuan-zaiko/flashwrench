@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiLifeBuoy, FiPackage, FiTool } from "react-icons/fi";
+import { FiFlag, FiLifeBuoy, FiPackage, FiTool } from "react-icons/fi";
 
 const HISTORY_TABS = [
   { href: "/history", label: "Đơn sửa xe", icon: FiTool },
   { href: "/history/orders", label: "Đơn mua linh kiện", icon: FiPackage },
   { href: "/history/rescue", label: "Cứu hộ", icon: FiLifeBuoy },
+  { href: "/history/complaints", label: "Khiếu nại", icon: FiFlag },
 ] as const;
 
 // URL tabs for the /history segment: real Links so a switch keeps the

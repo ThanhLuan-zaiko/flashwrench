@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  FiChevronDown,
-  FiRefreshCw,
-  FiStar,
-  FiUser,
-  FiWifi,
-} from "react-icons/fi";
+import { FiChevronDown, FiRefreshCw } from "react-icons/fi";
 import { useAvailableMechanics } from "@/hooks/booking";
+import { MechanicPickerCard } from "./MechanicPickerCard";
 
 type MechanicSectionProps = {
   lat: number | null;
@@ -18,13 +13,6 @@ type MechanicSectionProps = {
   disabled?: boolean;
   onChange: (mechanicId: string | null) => void;
 };
-
-function formatDistance(distanceKm: number | null): string {
-  if (distanceKm === null) return "";
-  return distanceKm < 1
-    ? `Cách bạn khoảng ${Math.max(1, Math.round(distanceKm * 1000))} m`
-    : `Cách bạn khoảng ${distanceKm.toFixed(1)} km`;
-}
 
 function cardClasses(active: boolean): string {
   return `flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors duration-200 ${
@@ -138,47 +126,14 @@ export function MechanicSection({
           )}
 
           {mechanics.isSuccess &&
-            items.map((item) => {
-              const selected = value === item.id;
-              return (
-                <label key={item.id} className={cardClasses(selected)}>
-                  <input
-                    type="radio"
-                    name="mechanicPick"
-                    checked={selected}
-                    onChange={() => onChange(item.id)}
-                    aria-label={`Chọn thợ ${item.displayName}`}
-                    className="h-4 w-4 shrink-0 accent-zinc-900 dark:accent-white"
-                  />
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                    <FiUser aria-hidden="true" className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                      {item.displayName}
-                    </span>
-                    <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-                      <span className="flex items-center gap-1">
-                        <FiStar aria-hidden="true" className="h-3 w-3" />
-                        {item.ratingAvg.toFixed(1)} · {item.completedJobs} đơn
-                      </span>
-                      {item.distanceKm !== null && (
-                        <span>{formatDistance(item.distanceKm)}</span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <FiWifi aria-hidden="true" className="h-3 w-3" />
-                        Đang trực tuyến
-                      </span>
-                    </span>
-                    {item.skills.length > 0 && (
-                      <span className="mt-1 block truncate text-[11px] text-zinc-500 dark:text-zinc-400">
-                        {item.skills.join(" · ")}
-                      </span>
-                    )}
-                  </span>
-                </label>
-              );
-            })}
+            items.map((item) => (
+              <MechanicPickerCard
+                key={item.id}
+                item={item}
+                selected={value === item.id}
+                onSelect={onChange}
+              />
+            ))}
 
           {mechanics.isSuccess && items.length === 0 && (
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400">

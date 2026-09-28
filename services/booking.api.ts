@@ -91,3 +91,14 @@ export async function fetchMyBooking(
   );
   return data.booking ?? null;
 }
+
+// One review per completed booking; targets the assigned mechanic.
+export async function createBookingReviewRequest(
+  bookingId: string,
+  payload: { rating: number; body?: string },
+): Promise<{ review: BookingDetail["review"] }> {
+  return apiRequest<{ review: BookingDetail["review"] }>(
+    `/api/bookings/${encodeURIComponent(bookingId)}/review`,
+    { method: "POST", body: JSON.stringify(payload) },
+  );
+}

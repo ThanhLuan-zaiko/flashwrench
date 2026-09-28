@@ -3,10 +3,13 @@ import type {
   ComplaintAction,
   ComplaintStatus,
   CreateComplaintInput,
+  CustomerComplaintInput,
 } from "@/services/complaints.api";
 import {
   createComplaintRequest,
+  createMyComplaintRequest,
   fetchComplaints,
+  fetchMyComplaints,
   transitionComplaintRequest,
 } from "@/services/complaints.api";
 
@@ -14,6 +17,7 @@ export const complaintKeys = {
   all: ["complaints"] as const,
   list: (query: { status?: ComplaintStatus }) =>
     ["complaints", "list", query] as const,
+  mine: ["complaints", "mine"] as const,
 };
 
 export function useComplaints(query: { status?: ComplaintStatus } = {}) {
@@ -56,6 +60,28 @@ export function useTransitionComplaint() {
       action: ComplaintAction;
       note?: string;
     }) => transitionComplaintRequest(id, action, note),
+    onSuccess: invalidate,
+  });
+}
+
+// Customer self-service: the signed-in customer's own complaint list.
+export function useMyComplaints(enabled = true) {
+  return useQuery({
+    queryKey: complaintKeys.mine,
+    queryFn: fetchMyComplaints,
+    enabled,
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useCreateMyComplaint() {
+  const invalidate = useInvalidateComplaints();
+  return useMutation({
+    mutationFn: (payload: CustomerComplaintInput) =>
+      createMyComplaintRequest(payload),
     onSuccess: invalidate,
   });
 }
