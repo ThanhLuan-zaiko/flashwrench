@@ -124,6 +124,7 @@ export function statusTone(status: MechanicBookingStatus): string {
 
 export function paymentStateLabel(state: MechanicPaymentState): string {
   if (state === "paid") return "Đã thanh toán";
+  if (state === "partial") return "Thu một phần";
   if (state === "refunded") return "Đã hoàn tiền";
   return "Chưa thanh toán";
 }

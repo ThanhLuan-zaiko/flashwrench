@@ -52,6 +52,7 @@ export const workspaceStubs = {
   reviewClaimed: true,
   reviewWrites: [] as BookingReviewWrite[],
   paymentById: null as PaymentRow | null,
+  paymentRowsById: new Map<string, PaymentRow>(),
   paymentRefIds: [] as string[],
   paymentClaimed: true,
   paymentStatusClaimed: true,
@@ -174,7 +175,8 @@ export const reviewRepoMocks = {
 
 export const paymentRepoMocks = {
   findPaymentRowById: mock(
-    async (_paymentId: string): Promise<PaymentRow | null> =>
+    async (paymentId: string): Promise<PaymentRow | null> =>
+      workspaceStubs.paymentRowsById.get(paymentId) ??
       workspaceStubs.paymentById,
   ),
   listPaymentRefPaymentIds: mock(
@@ -300,6 +302,7 @@ export function resetWorkspaceMocks(): void {
   workspaceStubs.reviewClaimed = true;
   workspaceStubs.reviewWrites = [];
   workspaceStubs.paymentById = null;
+  workspaceStubs.paymentRowsById.clear();
   workspaceStubs.paymentRefIds = [];
   workspaceStubs.paymentClaimed = true;
   workspaceStubs.paymentStatusClaimed = true;

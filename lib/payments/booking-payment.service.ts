@@ -21,6 +21,12 @@ import {
   type BookingPaymentMethod,
 } from "./booking-payment.types";
 
+type PaymentTotals = {
+  received: number;
+  outstanding: number;
+  paymentStatus: "partial" | "paid";
+};
+
 function fail<T>(status: number, form: string): WorkspaceResult<T> {
   return { ok: false, status, errors: { form } };
 }
@@ -32,13 +38,16 @@ function fieldFail<T>(
   return { ok: false, status, errors };
 }
 
-function toPayment(row: PaymentRow): BookingPayment {
+function toPayment(row: PaymentRow, totals: PaymentTotals): BookingPayment {
   return {
     id: row.payment_id,
     bookingId: row.ref_id ?? "",
     amount: row.amount ?? 0,
     method: (row.method ?? "cod") as BookingPaymentMethod,
     paidAt: toIso(row.paid_at),
+    received: totals.received,
+    outstanding: totals.outstanding,
+    paymentStatus: totals.paymentStatus,
   };
 }
 
@@ -60,6 +69,10 @@ function writeFromRow(row: PaymentRow): PaymentWrite {
   };
 }
 
+// A booking can be settled in installments: each accepted request writes one
+// 'paid' receipt keyed by the caller-supplied paymentId (default: bookingId),
+// so retries replay instead of double-charging. The booking's payment_status
+// moves unpaid -> partial -> paid as received reaches the total.
 export async function recordBookingPayment(
   actor: PublicUser,
   bookingId: string,
@@ -85,7 +98,11 @@ export async function recordBookingPayment(
       confirmed: "Vui lòng xác nhận đã nhận đủ tiền.",
     });
   }
+  if (raw.paymentId !== undefined && !isUuid(raw.paymentId)) {
+    return fieldFail(400, { paymentId: "Mã giao dịch không hợp lệ." });
+  }
   const method = raw.method as BookingPaymentMethod;
+  const paymentId = (raw.paymentId as string | undefined) ?? bookingId;
 
   const booking = await findBookingRowById(bookingId);
   if (!booking) return fail(404, "Không tìm thấy đơn hàng này.");
@@ -97,6 +114,7 @@ export async function recordBookingPayment(
   }
   if (
     booking.payment_status !== "unpaid" &&
+    booking.payment_status !== "partial" &&
     booking.payment_status !== "paid"
   ) {
     return fail(409, "Trạng thái thanh toán không hợp lệ.");
@@ -105,30 +123,36 @@ export async function recordBookingPayment(
   if (!Number.isSafeInteger(total) || total < 0) {
     return fail(400, "Tổng tiền đơn hàng không hợp lệ.");
   }
-  if (raw.amount !== undefined && numericInput(raw.amount) !== total) {
-    return fieldFail(400, { amount: "Số tiền phải khớp tổng đơn hàng." });
-  }
   const customerId = booking.customer_id;
   if (!customerId || !isUuid(customerId)) {
     return fail(409, "Đơn hàng thiếu thông tin khách hàng.");
   }
 
   const refPaymentIds = await listPaymentRefPaymentIds("booking", bookingId);
-  const siblings = await Promise.all(
-    refPaymentIds
-      .filter((paymentId) => paymentId !== bookingId)
-      .map((paymentId) => findPaymentRowById(paymentId)),
-  );
+  const siblings = (
+    await Promise.all(refPaymentIds.map((id) => findPaymentRowById(id)))
+  ).filter((row): row is PaymentRow => row !== null);
+  // Installments all read as 'paid' receipts; any other status on a sibling
+  // is foreign to this flow (partial writes, refunds, gateway attempts).
   const conflicting = siblings.find(
     (row) =>
-      row !== null &&
-      (row.customer_id !== customerId ||
-        (row.amount ?? 0) !== 0 ||
-        row.status === "partial" ||
-        row.status === "refunded"),
+      row.customer_id !== customerId ||
+      (row.status !== "paid" && row.status !== "failed"),
   );
   if (conflicting) {
     return fail(409, "Đơn này đã có giao dịch thanh toán khác.");
+  }
+  const received = siblings
+    .filter((row) => row.status === "paid")
+    .reduce((sum, row) => sum + (row.amount ?? 0), 0);
+  const outstanding = Math.max(0, total - received);
+  const requestedAmount =
+    raw.amount === undefined ? null : numericInput(raw.amount);
+  if (
+    requestedAmount !== null &&
+    (!Number.isSafeInteger(requestedAmount) || requestedAmount <= 0)
+  ) {
+    return fieldFail(400, { amount: "Số tiền không hợp lệ." });
   }
 
   const status = booking.status ?? "completed";
@@ -136,31 +160,69 @@ export async function recordBookingPayment(
     row.ref_type === "booking" &&
     row.ref_id === bookingId &&
     row.customer_id === customerId &&
-    row.amount === total &&
     row.method === method &&
     row.status === "paid" &&
     isValidDate(row.paid_at) &&
-    isValidDate(row.created_at);
+    isValidDate(row.created_at) &&
+    (requestedAmount === null || row.amount === requestedAmount);
+
+  // Already settled: replay only the exact receipt this request refers to.
+  if (booking.payment_status === "paid" || outstanding === 0) {
+    const receipt = await findPaymentRowById(paymentId);
+    if (!receipt || !matchesReceipt(receipt)) {
+      return fail(409, "Đơn này đã có giao dịch thanh toán khác.");
+    }
+    await projectBookingPayment(writeFromRow(receipt));
+    await publishBookingChange(
+      "payment-recorded",
+      bookingId,
+      status,
+      customerId,
+      [booking.mechanic_id],
+    );
+    return {
+      ok: true,
+      data: toPayment(receipt, {
+        received,
+        outstanding: 0,
+        paymentStatus: "paid",
+      }),
+    };
+  }
+
+  const amount = requestedAmount ?? outstanding;
+  if (amount > outstanding) {
+    return fieldFail(400, {
+      amount: "Số tiền không vượt quá phần còn lại của đơn.",
+    });
+  }
+  const nextPaymentStatus: PaymentTotals["paymentStatus"] =
+    amount === outstanding ? "paid" : "partial";
+  const after: PaymentTotals = {
+    received: received + amount,
+    outstanding: outstanding - amount,
+    paymentStatus: nextPaymentStatus,
+  };
+  const matchesAmount = (row: PaymentRow): boolean =>
+    matchesReceipt(row) && row.amount === amount;
 
   const settleStatus = async (at: Date): Promise<boolean> => {
     const applied = await claimBookingPaymentStatus(
       bookingId,
-      "paid",
+      nextPaymentStatus,
       "completed",
       booking.payment_status ?? "unpaid",
       at,
     );
     if (applied) return true;
     const reread = await findBookingRowById(bookingId);
-    if (
-      !reread ||
-      toBookingStatus(reread.status) !== "completed" ||
-      reread.payment_status !== "paid"
-    ) {
-      return false;
-    }
-    const rereadReceipt = await findPaymentRowById(bookingId);
-    return rereadReceipt !== null && matchesReceipt(rereadReceipt);
+    return (
+      !!reread &&
+      toBookingStatus(reread.status) === "completed" &&
+      (reread.payment_status === "paid" ||
+        (nextPaymentStatus === "partial" &&
+          reread.payment_status === "partial"))
+    );
   };
 
   const settleAndPublish = async (
@@ -178,39 +240,24 @@ export async function recordBookingPayment(
       customerId,
       [booking.mechanic_id],
     );
-    return { ok: true, data: toPayment(receipt) };
+    return { ok: true, data: toPayment(receipt, after) };
   };
 
-  const persisted = await findPaymentRowById(bookingId);
-  if (booking.payment_status === "paid") {
-    if (!persisted || !matchesReceipt(persisted)) {
-      return fail(409, "Đơn này đã có giao dịch thanh toán khác.");
-    }
-    await projectBookingPayment(writeFromRow(persisted));
-    await publishBookingChange(
-      "payment-recorded",
-      bookingId,
-      status,
-      customerId,
-      [booking.mechanic_id],
-    );
-    return { ok: true, data: toPayment(persisted) };
-  }
-
   const now = nextTransitionAt(booking);
+  const persisted = await findPaymentRowById(paymentId);
   if (persisted) {
-    if (!matchesReceipt(persisted)) {
+    if (!matchesAmount(persisted)) {
       return fail(409, "Đơn này đã có giao dịch thanh toán khác.");
     }
     return settleAndPublish(persisted, now);
   }
 
   const write: PaymentWrite = {
-    paymentId: bookingId,
+    paymentId,
     refType: "booking",
     refId: bookingId,
     customerId,
-    amount: total,
+    amount,
     method,
     status: "paid",
     paidAt: now,
@@ -218,8 +265,8 @@ export async function recordBookingPayment(
   };
   const claimed = await claimBookingPayment(write);
   if (!claimed) {
-    const reread = await findPaymentRowById(bookingId);
-    if (!reread || !matchesReceipt(reread)) {
+    const reread = await findPaymentRowById(paymentId);
+    if (!reread || !matchesAmount(reread)) {
       return fail(409, "Đơn này đã có giao dịch thanh toán khác.");
     }
     return settleAndPublish(reread, now);

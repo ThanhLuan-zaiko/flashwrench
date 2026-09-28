@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { FiDollarSign, FiLoader, FiTrendingUp } from "react-icons/fi";
-import { useMechanicIncome } from "@/hooks/mechanic";
+import { useToast } from "@/components/toast/useToast";
+import { useMechanicIncome, useRecordBookingPayment } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
+import { collectPaymentError } from "../collect-payment";
 import { FilterTabs } from "../FilterTabs";
 import {
   clampMechanicPage,
@@ -15,6 +17,8 @@ import {
   pageRangeLabel,
   paginateMechanicItems,
 } from "../mechanic-format";
+import { BookingDetailDialog } from "../schedule/BookingDetailDialog";
+import { CollectPaymentDialog } from "./CollectPaymentDialog";
 import { IncomeHistory } from "./IncomeHistory";
 import { INCOME_TABS, type IncomeTab } from "./income-tabs";
 
@@ -24,8 +28,14 @@ import { INCOME_TABS, type IncomeTab } from "./income-tabs";
 // shareable and the browser back button works.
 export function IncomeSection({ state }: { state: IncomeTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  const toast = useToast();
   const [page, setPage] = useState(0);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [collecting, setCollecting] = useState<MechanicIncomeEntry | null>(
+    null,
+  );
   const query = useMechanicIncome();
+  const collect = useRecordBookingPayment();
 
   const summary = query.data?.summary ?? null;
   const entries = useMemo<MechanicIncomeEntry[]>(
@@ -57,6 +67,15 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
     }
     return tally;
   }, [entries, query.data, query.isPending]);
+
+  const onToast = (
+    variant: "success" | "error",
+    title: string,
+    description?: string,
+  ) => {
+    if (variant === "success") toast.success(title, description);
+    else toast.error(title, description);
+  };
 
   const counters = [
     {
@@ -146,9 +165,44 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
             truncated={query.data?.truncated ?? false}
             onPage={setPage}
             onRetry={() => void query.refetch()}
+            onOpen={(entry) => setSelectedId(entry.bookingId)}
+            onCollect={setCollecting}
           />
         </BentoCard>
       </div>
+      {selectedId && (
+        <BookingDetailDialog
+          bookingId={selectedId}
+          onClose={() => setSelectedId(null)}
+          onToast={onToast}
+        />
+      )}
+      {collecting && (
+        <CollectPaymentDialog
+          entry={collecting}
+          pending={collect.isPending}
+          onClose={() => setCollecting(null)}
+          onConfirm={(input) => {
+            collect.mutate(
+              { bookingId: collecting.bookingId, input },
+              {
+                onSuccess: ({ payment }) => {
+                  setCollecting(null);
+                  toast.success(
+                    payment.paymentStatus === "paid"
+                      ? "Đã thu đủ tiền đơn hàng"
+                      : "Đã ghi nhận thu một phần",
+                    `${formatVnd(payment.amount)} · còn lại ${formatVnd(payment.outstanding)}`,
+                  );
+                },
+                onError: (error) => {
+                  toast.error("Thu tiền thất bại", collectPaymentError(error));
+                },
+              },
+            );
+          }}
+        />
+      )}
     </div>
   );
 }

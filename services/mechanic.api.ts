@@ -14,9 +14,15 @@ import type {
 } from "@/lib/mechanic/mechanic.types";
 import type { MechanicPresence } from "@/lib/mechanic/mechanic-profile.service";
 import type { MechanicBookingAction } from "@/lib/mechanic/mechanic-status";
+import type {
+  BookingPayment,
+  BookingPaymentMethod,
+} from "@/lib/payments/booking-payment.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
 export type {
+  BookingPayment,
+  BookingPaymentMethod,
   MechanicBookingAction,
   MechanicBookingDetail,
   MechanicPresence,
@@ -89,6 +95,35 @@ export function fetchMechanicIncome(limit?: number): Promise<{
     entries: MechanicIncomeEntry[];
     truncated: boolean;
   }>(`/api/mechanic/income${suffix}`);
+}
+
+export type RecordBookingPaymentInput = {
+  method: BookingPaymentMethod;
+  /** This installment's amount; omitted settles the remaining balance. */
+  amount?: number;
+  /** Idempotency key: retries of the same collection reuse it. */
+  paymentId: string;
+};
+
+// Records collection of a finished job — full or partial: the mechanic
+// confirms money reached them (cash on the spot or a bank transfer).
+// Server-side the write is idempotent and publishes `payment-recorded`.
+export function recordBookingPaymentRequest(
+  bookingId: string,
+  input: RecordBookingPaymentInput,
+): Promise<{ payment: BookingPayment }> {
+  return apiRequest<{ payment: BookingPayment }>(
+    `/api/mechanic/bookings/${encodeURIComponent(bookingId)}/payment`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        method: input.method,
+        amount: input.amount,
+        paymentId: input.paymentId,
+        confirmed: true,
+      }),
+    },
+  );
 }
 
 export function fetchMechanicStats(): Promise<{

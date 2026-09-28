@@ -55,7 +55,7 @@ import {
   getDispatchBooking,
   listDispatchBookings,
 } from "@/lib/dispatch/dispatch.service";
-import { getMechanicBookingDetail } from "@/lib/mechanic/mechanic-bookings.service";
+import { getMechanicBookingDetail } from "@/lib/mechanic/mechanic-booking-detail.service";
 
 const dispatcher = makePublicUser({
   id: "dddddddd-3333-4333-8333-dddddddddddd",

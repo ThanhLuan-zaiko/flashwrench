@@ -4,10 +4,8 @@ import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
-import {
-  applyMechanicBookingAction,
-  getMechanicBookingDetail,
-} from "@/lib/mechanic/mechanic-bookings.service";
+import { getMechanicBookingDetail } from "@/lib/mechanic/mechanic-booking-detail.service";
+import { applyMechanicBookingAction } from "@/lib/mechanic/mechanic-bookings.service";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 
 type RouteParams = { params: Promise<{ bookingId: string }> };

@@ -52,6 +52,15 @@ function hasPaymentWithStatus(
   return payments.some((payment) => payment.status === status);
 }
 
+// 'paid' receipt rows are installments: each one is money that moved.
+function paidReceipts(payments: MechanicPaymentRow[]): MechanicPaymentRow[] {
+  return payments.filter((payment) => payment.status === "paid");
+}
+
+function receivedTotal(receipts: MechanicPaymentRow[]): number {
+  return receipts.reduce((sum, row) => sum + toNumberOr(row.amount), 0);
+}
+
 function paidStamp(payments: MechanicPaymentRow[]): Date | null {
   const paid = payments.filter(
     (payment) => payment.status === "paid" && payment.paid_at,
@@ -69,20 +78,26 @@ function paymentMethod(payments: MechanicPaymentRow[]): string {
 }
 
 // A booking becomes a transaction only when money actually moved or is
-// still expected: completed jobs (paid or awaiting payment) and cancelled
-// jobs that were refunded. Cancelled jobs without a payment never show up.
+// still expected: completed jobs (paid, partially collected or awaiting
+// payment) and cancelled jobs that were refunded. Partial installments keep
+// the entry in "pending" until the receipts cover the total.
 function resolveEntry(
   booking: MechanicWorkloadRow,
   payments: MechanicPaymentRow[],
-): { entry: MechanicIncomeEntry; state: MechanicIncomeState } | null {
+): { entry: MechanicIncomeEntry; receipts: MechanicPaymentRow[] } | null {
   const bookingStatus = toBookingStatus(booking.status);
   if (!bookingStatus) return null;
   const refunded = hasPaymentWithStatus(payments, "refunded");
-  const paid = hasPaymentWithStatus(payments, "paid");
+  const receipts = paidReceipts(payments);
+  const received = receivedTotal(receipts);
+  const total = toNumberOr(booking.total);
+  const outstanding = Math.max(0, total - received);
 
   let state: MechanicIncomeState | null = null;
   if (refunded) state = "refunded";
-  else if (bookingStatus === "completed") state = paid ? "paid" : "pending";
+  else if (bookingStatus === "completed") {
+    state = received > 0 && outstanding === 0 ? "paid" : "pending";
+  }
   if (!state) return null;
 
   const stamp =
@@ -92,12 +107,14 @@ function resolveEntry(
       : null);
 
   return {
-    state,
+    receipts,
     entry: {
       bookingId: booking.booking_id,
       customerName: booking.customer_name ?? "",
       vehiclePlate: booking.vehicle_plate ?? "",
-      total: toNumberOr(booking.total),
+      total,
+      received,
+      outstanding,
       state,
       bookingStatus,
       method: paymentMethod(payments),
@@ -118,24 +135,33 @@ function emptySummary(): MechanicIncomeSummary {
   };
 }
 
+// Money buckets count each receipt on its own paid_at day/week/month, so a
+// partial installment already counts as collected revenue. Refunded
+// bookings contribute nothing — the money came back.
 function addToSummary(
   summary: MechanicIncomeSummary,
   entry: MechanicIncomeEntry,
+  receipts: MechanicPaymentRow[],
   reference: Date,
 ): void {
+  if (entry.state === "refunded") return;
   if (entry.state === "pending") {
-    summary.pendingTotal += entry.total;
+    summary.pendingTotal += entry.outstanding;
     summary.pendingCount += 1;
-    return;
   }
-  if (entry.state !== "paid") return;
-  const stamp = entry.stamp ? new Date(entry.stamp) : null;
-  summary.paidCount += 1;
-  summary.lifetime += entry.total;
-  if (!stamp) return;
-  if (isSameDay(stamp, reference)) summary.today += entry.total;
-  if (isSameWeek(stamp, reference)) summary.week += entry.total;
-  if (isSameMonth(stamp, reference)) summary.month += entry.total;
+  for (const receipt of receipts) {
+    const amount = toNumberOr(receipt.amount);
+    summary.paidCount += 1;
+    summary.lifetime += amount;
+    const stamp =
+      receipt.paid_at && !Number.isNaN(new Date(receipt.paid_at).getTime())
+        ? new Date(receipt.paid_at)
+        : null;
+    if (!stamp) continue;
+    if (isSameDay(stamp, reference)) summary.today += amount;
+    if (isSameWeek(stamp, reference)) summary.week += amount;
+    if (isSameMonth(stamp, reference)) summary.month += amount;
+  }
 }
 
 export async function getMechanicIncome(
@@ -164,7 +190,7 @@ export async function getMechanicIncome(
       paymentsByBooking.get(booking.booking_id) ?? [],
     );
     if (!resolved) continue;
-    addToSummary(summary, resolved.entry, reference);
+    addToSummary(summary, resolved.entry, resolved.receipts, reference);
     entries.push(resolved.entry);
   }
 

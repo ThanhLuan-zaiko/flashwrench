@@ -44,10 +44,8 @@ mock.module(
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/vehicles/vehicle.repository", () => vehicleRepoMocks);
 
-import {
-  getMechanicBookingDetail,
-  listMechanicBookings,
-} from "@/lib/mechanic/mechanic-bookings.service";
+import { getMechanicBookingDetail } from "@/lib/mechanic/mechanic-booking-detail.service";
+import { listMechanicBookings } from "@/lib/mechanic/mechanic-bookings.service";
 
 beforeEach(() => {
   resetMechanicMocks();

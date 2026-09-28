@@ -4,6 +4,7 @@ import { FiAlertCircle, FiLoader, FiX } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useBookingRealtime, useMechanicBooking } from "@/hooks/mechanic";
 import { BookingActions } from "./BookingActions";
+import { BookingCollectSection } from "./BookingCollectSection";
 import { BookingInfo } from "./BookingInfo";
 
 type BookingDetailDialogProps = {
@@ -91,6 +92,7 @@ export function BookingDetailDialog({
         {booking && (
           <div className="mt-3 flex flex-col gap-4">
             <BookingInfo booking={booking} />
+            <BookingCollectSection booking={booking} onToast={onToast} />
             <BookingActions
               booking={booking}
               onClose={onClose}

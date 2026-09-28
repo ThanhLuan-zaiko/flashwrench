@@ -106,8 +106,8 @@ describe("recordBookingPayment guards", () => {
     expect(paymentRepoMocks.claimBookingPayment.mock.calls.length).toBe(0);
   });
 
-  test("rejects mismatched and non-numeric supplied amounts", async () => {
-    for (const amount of [1, "450001", true, [], "abc"]) {
+  test("rejects non-numeric, non-positive and over-total amounts", async () => {
+    for (const amount of ["450001", true, [], "abc", 0, -50, 450001]) {
       const result = await recordBookingPayment(
         mechanic,
         BOOKING_ID,
@@ -115,6 +115,16 @@ describe("recordBookingPayment guards", () => {
       );
       expect(result).toMatchObject({ ok: false, status: 400 });
     }
+    expect(paymentRepoMocks.claimBookingPayment.mock.calls.length).toBe(0);
+  });
+
+  test("rejects a malformed paymentId", async () => {
+    const result = await recordBookingPayment(
+      mechanic,
+      BOOKING_ID,
+      paymentBody({ paymentId: "not-a-uuid" }),
+    );
+    expect(result).toMatchObject({ ok: false, status: 400 });
     expect(paymentRepoMocks.claimBookingPayment.mock.calls.length).toBe(0);
   });
 
@@ -267,10 +277,13 @@ describe("recordBookingPayment success and retries", () => {
 
   test("partial, refunded and cross-user ref rows deny without write", async () => {
     workspaceStubs.paymentRefIds = ["99999999-9999-4999-8999-999999999999"];
-    workspaceStubs.paymentById = makePaymentReceiptRow({
-      payment_id: "99999999-9999-4999-8999-999999999999",
-      status: "partial",
-    });
+    workspaceStubs.paymentRowsById.set(
+      "99999999-9999-4999-8999-999999999999",
+      makePaymentReceiptRow({
+        payment_id: "99999999-9999-4999-8999-999999999999",
+        status: "partial",
+      }),
+    );
     const partial = await recordBookingPayment(
       mechanic,
       BOOKING_ID,
@@ -278,11 +291,14 @@ describe("recordBookingPayment success and retries", () => {
     );
     expect(partial).toMatchObject({ ok: false, status: 409 });
 
-    workspaceStubs.paymentById = makePaymentReceiptRow({
-      payment_id: "99999999-9999-4999-8999-999999999999",
-      customer_id: MECHANIC_OTHER_ID,
-      status: "paid",
-    });
+    workspaceStubs.paymentRowsById.set(
+      "99999999-9999-4999-8999-999999999999",
+      makePaymentReceiptRow({
+        payment_id: "99999999-9999-4999-8999-999999999999",
+        customer_id: MECHANIC_OTHER_ID,
+        status: "paid",
+      }),
+    );
     const crossUser = await recordBookingPayment(
       mechanic,
       BOOKING_ID,

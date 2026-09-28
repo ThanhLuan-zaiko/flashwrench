@@ -125,6 +125,36 @@ describe("getMechanicIncome", () => {
     ]);
   });
 
+  test("a partially collected booking stays pending on the balance", async () => {
+    mechanicStubs.workloadRows = [
+      makeWorkloadRow({ status: "completed", total: 450000 }),
+    ];
+    mechanicStubs.paymentRows = [
+      makePaymentRow({
+        amount: 150000,
+        paid_at: new Date("2026-09-16T09:30:00.000Z"),
+        created_at: new Date("2026-09-16T09:30:00.000Z"),
+      }),
+    ];
+
+    const result = await getMechanicIncome(MECHANIC_ID, { now: REFERENCE });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.entries).toHaveLength(1);
+    expect(result.data.entries[0]).toMatchObject({
+      state: "pending",
+      received: 150000,
+      outstanding: 300000,
+    });
+    expect(result.data.summary).toMatchObject({
+      today: 150000,
+      lifetime: 150000,
+      pendingTotal: 300000,
+      paidCount: 1,
+      pendingCount: 1,
+    });
+  });
+
   test("returns an empty summary when nothing is billable", async () => {
     mechanicStubs.workloadRows = [makeWorkloadRow({ status: "pending" })];
     mechanicStubs.paymentRows = [];

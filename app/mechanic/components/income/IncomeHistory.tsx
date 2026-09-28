@@ -1,5 +1,6 @@
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
+import { isCollectableIncomeEntry } from "../collect-payment";
 import {
   formatShortDate,
   formatVnd,
@@ -17,6 +18,8 @@ type IncomeHistoryProps = {
   truncated: boolean;
   onPage: (page: number) => void;
   onRetry: () => void;
+  onOpen: (entry: MechanicIncomeEntry) => void;
+  onCollect: (entry: MechanicIncomeEntry) => void;
 };
 
 // Transaction list with skeleton, retry, empty hint, numbered pager and a
@@ -32,6 +35,8 @@ export function IncomeHistory({
   truncated,
   onPage,
   onRetry,
+  onOpen,
+  onCollect,
 }: IncomeHistoryProps) {
   if (isPending) {
     return (
@@ -86,7 +91,12 @@ export function IncomeHistory({
             key={entry.bookingId}
             className="flex flex-col gap-2 px-3 py-3 transition-colors duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900"
           >
-            <span className="min-w-0 flex-1">
+            <button
+              type="button"
+              onClick={() => onOpen(entry)}
+              aria-label={`Xem chi tiết đơn ${entry.bookingId.slice(0, 8)}`}
+              className="min-w-0 flex-1 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            >
               <span className="flex flex-wrap items-center gap-1.5">
                 <span className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                   {entry.customerName || "Khách hàng"} · {entry.vehiclePlate}
@@ -99,9 +109,30 @@ export function IncomeHistory({
                 {entry.method ? `${entry.method} · ` : ""}
                 {formatShortDate(entry.stamp)}
               </span>
-            </span>
-            <span className="shrink-0 text-sm font-bold text-zinc-900 dark:text-zinc-50">
-              {formatVnd(entry.total)}
+            </button>
+            <span className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <span className="flex flex-col items-end">
+                <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                  {entry.state === "pending"
+                    ? formatVnd(entry.outstanding)
+                    : formatVnd(entry.total)}
+                </span>
+                {entry.state === "pending" && entry.received > 0 && (
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                    Đã thu {formatVnd(entry.received)} /{" "}
+                    {formatVnd(entry.total)}
+                  </span>
+                )}
+              </span>
+              {isCollectableIncomeEntry(entry.state) && (
+                <button
+                  type="button"
+                  onClick={() => onCollect(entry)}
+                  className="flex min-h-[44px] items-center rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                >
+                  Thu tiền
+                </button>
+              )}
             </span>
           </li>
         ))}

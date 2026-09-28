@@ -9,7 +9,6 @@ import {
 import { redispatchAfterDecline } from "@/lib/dispatch/auto-dispatch.service";
 import { isUuid } from "@/lib/validation";
 import type {
-  MechanicBookingDetail,
   MechanicBookingItem,
   MechanicBookingStatus,
   MechanicBookingSummary,
@@ -29,7 +28,6 @@ import {
   findBookingRowById,
   listBookingItemRowsByBookingIds,
   listBookingRowsByIds,
-  listStatusHistoryRows,
   listWorkloadRows,
 } from "./mechanic-bookings.repository";
 import { syncMechanicDirectory } from "./mechanic-directory.service";
@@ -37,7 +35,7 @@ import {
   groupItemsByBooking,
   toBookingStatus,
   toBookingSummary,
-  toTimelineEntry,
+  workloadFromDetail,
 } from "./mechanic-mapper";
 import {
   ACTION_TARGET_STATUS,
@@ -54,7 +52,6 @@ import {
 
 export const MECHANIC_BOOKING_LIMIT = 25;
 export const MECHANIC_BOOKING_MAX_LIMIT = 60;
-const HISTORY_LIMIT = 20;
 const MAX_NOTE_LENGTH = 300;
 
 export type MechanicBookingListParams = {
@@ -127,64 +124,6 @@ export async function listMechanicBookings(
         status: entry.status,
       }),
     ),
-  };
-}
-
-// bookings_by_mechanic only carries the workload columns, so the row is
-// reshaped into a workload row before mapping (same shape the list uses).
-function workloadFromDetail(
-  mechanicId: string,
-  detail: Awaited<ReturnType<typeof findBookingRowById>>,
-): MechanicWorkloadRow {
-  return {
-    mechanic_id: mechanicId,
-    scheduled_at: detail?.scheduled_at ?? null,
-    booking_id: detail?.booking_id ?? "",
-    status: detail?.status ?? null,
-    total: detail?.total ?? null,
-    vehicle_plate: detail?.vehicle_plate ?? null,
-    customer_name: detail?.customer_name ?? null,
-  };
-}
-
-export async function getMechanicBookingDetail(
-  mechanicId: string,
-  bookingId: string,
-): Promise<MechanicResult<MechanicBookingDetail>> {
-  if (!isUuid(bookingId)) return formError(400, "Mã đơn hàng không hợp lệ.");
-
-  const detail = await findBookingRowById(bookingId);
-  if (!detail) return formError(404, "Không tìm thấy đơn hàng này.");
-  if (detail.mechanic_id !== mechanicId) {
-    return formError(403, "Đơn hàng này không thuộc về bạn.");
-  }
-  const status = toBookingStatus(detail.status);
-  if (!status) {
-    return formError(400, "Đơn hàng đang ở trạng thái không xác định.");
-  }
-
-  const [itemRows, historyRows] = await Promise.all([
-    listBookingItemRowsByBookingIds([bookingId]),
-    listStatusHistoryRows(bookingId, HISTORY_LIMIT),
-  ]);
-  const items = groupItemsByBooking(itemRows).get(bookingId) ?? [];
-  const summary = toBookingSummary({
-    workload: workloadFromDetail(mechanicId, detail),
-    detail,
-    items,
-    status,
-  });
-
-  return {
-    ok: true,
-    data: {
-      ...summary,
-      items,
-      timeline: historyRows
-        .map(toTimelineEntry)
-        .filter((entry) => entry !== null),
-      cancelReason: detail.cancel_reason ?? "",
-    },
   };
 }
 

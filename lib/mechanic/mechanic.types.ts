@@ -15,7 +15,7 @@ export type MechanicBookingStatus =
   | "no_show";
 
 /** Payment state shown on a booking card. */
-export type MechanicPaymentState = "paid" | "unpaid" | "refunded";
+export type MechanicPaymentState = "paid" | "partial" | "unpaid" | "refunded";
 
 /** Transaction state of one row in the income history. */
 export type MechanicIncomeState = "paid" | "pending" | "refunded";
@@ -166,6 +166,10 @@ export type MechanicBookingDetail = MechanicBookingSummary & {
   items: MechanicBookingItem[];
   timeline: MechanicBookingTimelineEntry[];
   cancelReason: string;
+  /** Money collected across payment receipts (VND). */
+  paymentReceived: number;
+  /** Remaining balance the mechanic can still collect (VND). */
+  paymentOutstanding: number;
 };
 
 export type MechanicIncomeEntry = {
@@ -173,6 +177,10 @@ export type MechanicIncomeEntry = {
   customerName: string;
   vehiclePlate: string;
   total: number;
+  /** Sum of 'paid' receipts so far — >0 on partially collected bookings. */
+  received: number;
+  /** Still owed: total - received, clamped at 0. */
+  outstanding: number;
   state: MechanicIncomeState;
   bookingStatus: MechanicBookingStatus;
   method: string;

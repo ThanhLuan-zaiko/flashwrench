@@ -13,6 +13,7 @@ import type {
   BookingListQuery,
   MechanicBookingAction,
   MechanicBookingSummary,
+  RecordBookingPaymentInput,
   UpdateLocationPayload,
   UpdatePresencePayload,
 } from "@/services/mechanic.api";
@@ -24,6 +25,7 @@ import {
   fetchMechanicPresence,
   fetchMechanicStats,
   fetchNavigationBoard,
+  recordBookingPaymentRequest,
   updateMechanicLocationRequest,
   updateMechanicPresenceRequest,
 } from "@/services/mechanic.api";
@@ -193,6 +195,26 @@ export function useBookingAction() {
       }
     },
     onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+    },
+  });
+}
+
+// Collecting payment flips the entry from "Chờ thu" to "Đã thu": income,
+// bookings, stats and the open booking dialog all derive from it, so one
+// invalidation refreshes the whole mechanic workspace. The server also
+// publishes `payment-recorded` on the booking topic.
+export function useRecordBookingPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      bookingId,
+      input,
+    }: {
+      bookingId: string;
+      input: RecordBookingPaymentInput;
+    }) => recordBookingPaymentRequest(bookingId, input),
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
     },
   });

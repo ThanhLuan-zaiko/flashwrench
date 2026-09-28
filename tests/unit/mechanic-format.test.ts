@@ -59,6 +59,7 @@ describe("distances and ETAs", () => {
 describe("state labels", () => {
   test("names payment and income states in Vietnamese", () => {
     expect(paymentStateLabel("paid")).toBe("Đã thanh toán");
+    expect(paymentStateLabel("partial")).toBe("Thu một phần");
     expect(paymentStateLabel("refunded")).toBe("Đã hoàn tiền");
     expect(paymentStateLabel("unpaid")).toBe("Chưa thanh toán");
     expect(incomeStateLabel("paid")).toBe("Đã thu");

@@ -18,6 +18,7 @@ import { parseBookingStatus } from "./mechanic-status";
 // payment_status vocabulary from schema.cql: unpaid | partial | paid | refunded.
 export function toPaymentState(raw: string | null): MechanicPaymentState {
   if (raw === "paid") return "paid";
+  if (raw === "partial") return "partial";
   if (raw === "refunded") return "refunded";
   return "unpaid";
 }
@@ -85,6 +86,24 @@ export function toBookingSummary(parts: SummaryParts): MechanicBookingSummary {
     notes: detail?.notes ?? "",
     createdAt: toIso(detail?.created_at ?? null),
     updatedAt: toIso(detail?.updated_at ?? null),
+  };
+}
+
+// bookings_by_mechanic only carries the workload columns, so a detail row
+// from bookings_by_id is reshaped into the same thin workload shape the
+// list path already feeds to toBookingSummary.
+export function workloadFromDetail(
+  mechanicId: string,
+  detail: MechanicBookingRow | null,
+): MechanicWorkloadRow {
+  return {
+    mechanic_id: mechanicId,
+    scheduled_at: detail?.scheduled_at ?? null,
+    booking_id: detail?.booking_id ?? "",
+    status: detail?.status ?? null,
+    total: detail?.total ?? null,
+    vehicle_plate: detail?.vehicle_plate ?? null,
+    customer_name: detail?.customer_name ?? null,
   };
 }
 
