@@ -29,6 +29,14 @@ export type RescueDetail = {
   assignedMechanicId: string | null;
   assignedMechanicName: string | null;
   etaMin: number | null;
+  priceEstimate: number | null;
+  finalPrice: number | null;
+  paymentStatus: string | null;
+  /**
+   * Cash confirmation code — populated for the requesting customer only.
+   * Staff and mechanic views keep it null by design.
+   */
+  paymentConfirmCode: string | null;
   offerExpiresAt: string | null;
   updatedAt: string | null;
 };
@@ -63,7 +71,11 @@ function isStaff(actor: PublicUser): boolean {
   );
 }
 
-function toDetail(row: RescueRow, offerTimeoutMs: number): RescueDetail {
+function toDetail(
+  row: RescueRow,
+  offerTimeoutMs: number,
+  exposeCode = false,
+): RescueDetail {
   return {
     requestId: row.request_id,
     status: row.status ?? "open",
@@ -78,6 +90,13 @@ function toDetail(row: RescueRow, offerTimeoutMs: number): RescueDetail {
     assignedMechanicId: row.assigned_mechanic_id,
     assignedMechanicName: row.assigned_mechanic_name,
     etaMin: row.eta_min,
+    priceEstimate: row.price_estimate,
+    finalPrice: row.final_price,
+    paymentStatus: row.payment_status,
+    paymentConfirmCode:
+      exposeCode && row.payment_status !== "paid"
+        ? row.payment_confirm_code
+        : null,
     offerExpiresAt:
       row.status === "dispatched" && row.updated_at
         ? new Date(row.updated_at.getTime() + offerTimeoutMs).toISOString()
@@ -115,7 +134,7 @@ export async function getRescueDetail(
   return {
     ok: true,
     data: {
-      rescue: toDetail(row, config.offerTimeoutMs),
+      rescue: toDetail(row, config.offerTimeoutMs, actor.role === "customer"),
       timeline: history.map((item) => ({
         changedAt: item.changed_at.toISOString(),
         oldStatus: item.old_status,
@@ -219,20 +238,26 @@ export async function listCustomerRescues(
   for (const ref of refs) {
     const row = await findRescueRowById(ref.request_id);
     if (row && row.customer_id === actor.id) {
-      items.push(toDetail(row, config.offerTimeoutMs));
+      items.push(toDetail(row, config.offerTimeoutMs, true));
     }
   }
   return { ok: true, data: { items } };
 }
 
 // Mechanic inbox: offers plus the live trip, so the card keeps the
-// depart/arrive/complete buttons until the rescue is closed.
+// depart/arrive/complete buttons until the rescue is closed. Completed
+// rescues stay while money is still owed so the mechanic can collect.
 const MECHANIC_ACTIVE_STATUSES = new Set([
   "dispatched",
   "accepted",
   "en_route",
   "arrived",
 ]);
+
+function isMechanicVisible(row: RescueRow): boolean {
+  if (MECHANIC_ACTIVE_STATUSES.has(row.status ?? "")) return true;
+  return row.status === "completed" && row.payment_status === "unpaid";
+}
 
 export async function listMechanicRescues(
   actor: PublicUser,
@@ -247,7 +272,7 @@ export async function listMechanicRescues(
     const row = await findRescueRowById(ref.request_id);
     if (
       row &&
-      MECHANIC_ACTIVE_STATUSES.has(row.status ?? "") &&
+      isMechanicVisible(row) &&
       row.assigned_mechanic_id === actor.id
     ) {
       items.push(toDetail(row, config.offerTimeoutMs));

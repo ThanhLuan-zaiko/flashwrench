@@ -18,6 +18,7 @@ function sectionIdForPath(pathname: string): DispatchSectionId {
   if (pathname.startsWith("/dispatch/rescue")) return "rescue";
   if (pathname.startsWith("/dispatch/orders")) return "orders";
   if (pathname.startsWith("/dispatch/stock")) return "stock";
+  if (pathname.startsWith("/dispatch/revenue")) return "revenue";
   return "board";
 }
 

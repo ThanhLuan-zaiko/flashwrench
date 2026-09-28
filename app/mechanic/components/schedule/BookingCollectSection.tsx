@@ -2,14 +2,20 @@
 
 import { useId, useState } from "react";
 import { FiLoader } from "react-icons/fi";
-import { useRecordBookingPayment } from "@/hooks/mechanic";
+import {
+  useIssueBookingPaymentCode,
+  useRecordBookingPayment,
+} from "@/hooks/mechanic";
 import type { BookingPaymentMethod } from "@/lib/payments/booking-payment.types";
 import type { MechanicBookingDetail } from "@/services/mechanic.api";
+import { ConfirmCodeField } from "../ConfirmCodeField";
 import {
   COLLECT_METHOD_LABELS,
   COLLECT_METHODS,
   canCollectBookingPayment,
   collectPaymentError,
+  isValidConfirmCode,
+  needsConfirmCode,
   parseCollectAmount,
 } from "../collect-payment";
 import { formatVnd, paymentStateLabel } from "../mechanic-format";
@@ -33,8 +39,10 @@ export function BookingCollectSection({
 }: BookingCollectSectionProps) {
   const uid = useId();
   const collect = useRecordBookingPayment();
+  const issueCode = useIssueBookingPaymentCode();
   const [method, setMethod] = useState<BookingPaymentMethod>("cod");
   const [amountText, setAmountText] = useState("");
+  const [confirmCode, setConfirmCode] = useState("");
   const [paymentId, setPaymentId] = useState("");
   const [error, setError] = useState("");
 
@@ -44,6 +52,8 @@ export function BookingCollectSection({
   const outstanding = booking.paymentOutstanding;
   const parsed = parseCollectAmount(amountText, outstanding);
   const invalidAmount = amountText.trim() !== "" && parsed === null;
+  const needsCode = needsConfirmCode(method);
+  const codeMissing = needsCode && !isValidConfirmCode(confirmCode);
 
   const submit = () => {
     setError("");
@@ -52,16 +62,26 @@ export function BookingCollectSection({
       setError(`Nhập số tiền hợp lệ, tối đa ${formatVnd(outstanding)}.`);
       return;
     }
+    if (codeMissing) {
+      setError("Nhập đủ mã 6 số khách đọc cho bạn.");
+      return;
+    }
     const id = paymentId || crypto.randomUUID();
     collect.mutate(
       {
         bookingId: booking.id,
-        input: { method, amount, paymentId: id },
+        input: {
+          method,
+          amount,
+          paymentId: id,
+          confirmCode: needsCode ? confirmCode.trim() : undefined,
+        },
       },
       {
         onSuccess: ({ payment }) => {
           setPaymentId("");
           setAmountText("");
+          setConfirmCode("");
           onToast(
             "success",
             payment.paymentStatus === "paid"
@@ -131,6 +151,27 @@ export function BookingCollectSection({
           </button>
         ))}
       </div>
+      {needsCode && (
+        <ConfirmCodeField
+          id={`${uid}-code`}
+          value={confirmCode}
+          disabled={collect.isPending}
+          issuePending={issueCode.isPending}
+          issued={issueCode.isSuccess}
+          onChange={setConfirmCode}
+          onIssue={() => {
+            issueCode.mutate(booking.id, {
+              onSuccess: () =>
+                onToast(
+                  "success",
+                  "Đã gửi mã xác nhận",
+                  "Khách sẽ thấy mã 6 số trong chi tiết đơn của họ.",
+                ),
+              onError: (err) => setError(collectPaymentError(err)),
+            });
+          }}
+        />
+      )}
       {error && (
         <p
           role="alert"
@@ -141,7 +182,7 @@ export function BookingCollectSection({
       )}
       <button
         type="button"
-        disabled={collect.isPending || invalidAmount}
+        disabled={collect.isPending || invalidAmount || codeMissing}
         onClick={submit}
         className="mt-2 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-900 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-white dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900"
       >

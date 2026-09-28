@@ -19,7 +19,10 @@ import {
   fetchDispatchRescueDetail,
   fetchDispatchRescues,
   fetchMechanicRescues,
+  issueRescuePaymentCodeRequest,
   type MechanicRescueAction,
+  type RescuePaymentInput,
+  recordRescuePaymentRequest,
   rescueActionRequest,
   rescueExpireRequest,
 } from "@/services/rescue-mechanic.api";
@@ -108,6 +111,30 @@ export function useRescueExpire() {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: rescueInboxKeys.all });
     },
+  });
+}
+
+// Collect payment on a completed rescue. The caller supplies a stable
+// paymentId so a retried submit replays instead of double-charging.
+export function useRecordRescuePayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      input,
+    }: {
+      requestId: string;
+      input: RescuePaymentInput;
+    }) => recordRescuePaymentRequest(requestId, input),
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: rescueInboxKeys.all });
+    },
+  });
+}
+
+export function useIssueRescuePaymentCode() {
+  return useMutation({
+    mutationFn: (requestId: string) => issueRescuePaymentCodeRequest(requestId),
   });
 }
 

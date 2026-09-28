@@ -6,6 +6,7 @@ import {
   type ResolvedCourier,
   resolveCourierConfig,
 } from "./order-courier.service";
+import { projectOrderReceipts, refundOrderReceipts } from "./order-revenue";
 import { toOrderDetail, toOrderSummary } from "./orders.mapper";
 import {
   findOrderRowById,
@@ -282,7 +283,13 @@ async function applyStatusChange(
       paidAt: paymentStatus === "paid" ? now : null,
       now,
       paymentRefs: await listOrderPaymentRefs(row.order_id),
+      recordedBy: changedBy,
     });
+    if (paymentStatus === "paid") {
+      await projectOrderReceipts(row.order_id, changedBy, now);
+    } else {
+      await refundOrderReceipts(row.order_id, changedBy);
+    }
   }
   // A mock-paid order can still be cancelled while pending: the money is
   // simulated, so cancelling flips its payment rows straight to refunded.
@@ -295,6 +302,7 @@ async function applyStatusChange(
       now,
       paymentRefs: await listOrderPaymentRefs(row.order_id),
     });
+    await refundOrderReceipts(row.order_id, changedBy);
   }
   // Leaving the review queue: approving means the money goes back, a
   // rejection puts the order back on the delivered shelf.

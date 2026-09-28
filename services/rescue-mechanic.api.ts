@@ -84,3 +84,51 @@ export function fetchDispatchRescueDetail(
     `/api/rescue/${encodeURIComponent(requestId)}`,
   );
 }
+
+export type RescuePaymentInput = {
+  method: "cod" | "bank_transfer";
+  amount?: number;
+  /** Idempotency key: retries of the same collection reuse it. */
+  paymentId: string;
+  /** Six-digit code the customer dictates for cash collections. */
+  confirmCode?: string;
+};
+
+export type RescuePayment = {
+  id: string;
+  requestId: string;
+  amount: number;
+  method: "cod" | "bank_transfer";
+  paidAt: string | null;
+  paymentStatus: "paid";
+};
+
+// Records collection on a completed rescue — same receipt/idempotency
+// contract as booking payments.
+export function recordRescuePaymentRequest(
+  requestId: string,
+  input: RescuePaymentInput,
+): Promise<{ payment: RescuePayment }> {
+  return apiRequest<{ payment: RescuePayment }>(
+    `/api/rescue/${encodeURIComponent(requestId)}/payment`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        method: input.method,
+        amount: input.amount,
+        paymentId: input.paymentId,
+        confirmCode: input.confirmCode,
+        confirmed: true,
+      }),
+    },
+  );
+}
+
+export function issueRescuePaymentCodeRequest(
+  requestId: string,
+): Promise<{ issued: boolean }> {
+  return apiRequest<{ issued: boolean }>(
+    `/api/rescue/${encodeURIComponent(requestId)}/payment-code`,
+    { method: "POST" },
+  );
+}

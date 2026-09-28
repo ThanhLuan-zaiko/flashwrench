@@ -9,6 +9,7 @@ import {
   FiUser,
   FiX,
 } from "react-icons/fi";
+import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyBooking } from "@/hooks/booking";
 import { formatDateTime } from "@/lib/datetime/format";
@@ -200,6 +201,10 @@ export function BookingDetailDialog({
                   {paymentStateLabel(booking.paymentState)}
                 </p>
               </section>
+
+              {booking.paymentConfirmCode && (
+                <PaymentCodeCard code={booking.paymentConfirmCode} />
+              )}
 
               {booking.cancelReason && (
                 <p className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">

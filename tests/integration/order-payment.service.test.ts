@@ -8,6 +8,7 @@ import {
   orderDeliveryRepoMocks,
   orderDeliveryStubs,
   orderRepoMocks,
+  orderRevenueMocks,
   orderStubs,
   orderWriteRepoMocks,
   partRepoMocks,
@@ -32,6 +33,7 @@ mock.module(
   "@/lib/payments/booking-payment.repository",
   () => paymentRepoMocks,
 );
+mock.module("@/lib/orders/order-revenue", () => orderRevenueMocks);
 
 import {
   collectCounterPayment,

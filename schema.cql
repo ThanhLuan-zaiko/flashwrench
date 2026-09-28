@@ -415,6 +415,7 @@ CREATE TABLE IF NOT EXISTS bookings_by_id (
   notes             TEXT,
   cancel_reason     TEXT,
   month_bucket      TEXT, -- 'YYYY-MM', for monthly queries
+  payment_confirm_code TEXT, -- 6-digit code the customer reads to the mechanic for cash collection
   created_at        TIMESTAMP,
   updated_at        TIMESTAMP
 );
@@ -531,6 +532,7 @@ CREATE TABLE IF NOT EXISTS emergency_by_id (
   price_estimate      BIGINT,
   final_price         BIGINT,
   payment_status      TEXT,
+  payment_confirm_code TEXT, -- same cash-collection guard as bookings
   cancel_reason       TEXT,
   created_at          TIMESTAMP,
   updated_at          TIMESTAMP
@@ -826,10 +828,13 @@ CREATE TABLE IF NOT EXISTS payments_by_id (
   ref_type    TEXT,
   ref_id      UUID, -- booking_id | request_id | order_id
   customer_id UUID,
+  mechanic_id UUID, -- whose collection this is (bookings/rescues); null on parts orders
   amount      BIGINT, -- VND
   method      TEXT,
   status      TEXT,
   provider_ref TEXT,  -- MoMo / VNPay / bank transaction reference
+  recorded_by UUID,   -- staff actor who confirmed the collection
+  customer_confirmed BOOLEAN, -- cod: customer dictated the confirm code
   paid_at     TIMESTAMP,
   created_at  TIMESTAMP
 );
@@ -856,6 +861,43 @@ CREATE TABLE IF NOT EXISTS payments_by_ref (
   status     TEXT,
   PRIMARY KEY ((ref_type, ref_id), created_at, payment_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, payment_id ASC);
+
+-- Query: revenue reports by calendar day (Asia/Ho_Chi_Minh bucket of paid_at).
+-- Day/week/month/year reports fan out over one partition key each, so
+-- dispatcher and admin revenue screens never scan the whole payments table.
+CREATE TABLE IF NOT EXISTS payments_by_period (
+  bucket             TEXT,
+  paid_at            TIMESTAMP,
+  payment_id         UUID,
+  ref_type           TEXT,
+  ref_id             UUID,
+  customer_id        UUID,
+  mechanic_id        UUID,
+  amount             BIGINT,
+  method             TEXT,
+  status             TEXT,
+  recorded_by        UUID,
+  customer_confirmed BOOLEAN,
+  PRIMARY KEY ((bucket), paid_at, payment_id)
+) WITH CLUSTERING ORDER BY (paid_at DESC, payment_id ASC);
+
+-- Query: anti-fraud audit feed for admins — every payment-related action,
+-- partitioned by home-zone day so the audit screen reads the same range the
+-- revenue report shows without scanning the cluster.
+CREATE TABLE IF NOT EXISTS payment_audit_by_day (
+  bucket     TEXT, -- 'YYYY-MM-DD' of event_at, Asia/Ho_Chi_Minh
+  event_at   TIMESTAMP,
+  event_id   UUID,
+  actor_id   UUID,
+  action     TEXT, -- recorded | confirm_code_issued | confirm_failed | refund_marked
+  ref_type   TEXT,
+  ref_id     UUID,
+  payment_id UUID,
+  amount     BIGINT,
+  method     TEXT,
+  detail     TEXT,
+  PRIMARY KEY ((bucket), event_at, event_id)
+) WITH CLUSTERING ORDER BY (event_at DESC, event_id ASC);
 
 -- ============================================================================
 -- 10. REVIEWS (mechanics / services / parts)

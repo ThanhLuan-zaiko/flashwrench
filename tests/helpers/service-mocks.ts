@@ -90,6 +90,27 @@ export const serviceStubs = {
   sessionRow: null as RefreshSessionRow | null,
   rotateApplied: true,
   userSessions: [] as UserSessionRow[],
+  orderReceiptProjections: [] as string[],
+  orderReceiptRefunds: [] as string[],
+};
+
+// order-revenue is the projection seam between order settlement and the
+// revenue module; tests assert on calls rather than the revenue writes.
+export const orderRevenueMocks = {
+  projectOrderReceipts: mock(
+    async (
+      orderId: string,
+      _recordedBy: string | null,
+      _paidAt: Date,
+    ): Promise<void> => {
+      serviceStubs.orderReceiptProjections.push(orderId);
+    },
+  ),
+  refundOrderReceipts: mock(
+    async (orderId: string, _actorId: string | null): Promise<void> => {
+      serviceStubs.orderReceiptRefunds.push(orderId);
+    },
+  ),
 };
 
 export const userRepoMocks = {
@@ -226,6 +247,8 @@ export function resetServiceMocks(): void {
   serviceStubs.sessionRow = null;
   serviceStubs.rotateApplied = true;
   serviceStubs.userSessions = [];
+  serviceStubs.orderReceiptProjections = [];
+  serviceStubs.orderReceiptRefunds = [];
   adminStubs.rolePages = [];
   resetCatalogMocks();
   resetMechanicMocks();
@@ -242,6 +265,7 @@ export function resetServiceMocks(): void {
   for (const fn of Object.values(refreshRepoMocks)) fn.mockClear();
   for (const fn of Object.values(passwordMocks)) fn.mockClear();
   for (const fn of Object.values(adminUsersRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(orderRevenueMocks)) fn.mockClear();
   for (const fn of Object.values(complaintRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicWorkspaceRepoMocks)) fn.mockClear();

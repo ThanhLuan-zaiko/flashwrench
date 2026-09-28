@@ -74,6 +74,7 @@ export type MechanicBookingRow = {
   vehicle_id: string | null;
   mechanic_name: string | null;
   month_bucket: string | null;
+  payment_confirm_code: string | null;
 };
 
 export type MechanicBookingItemRow = {

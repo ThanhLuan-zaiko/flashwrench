@@ -103,6 +103,8 @@ export type RecordBookingPaymentInput = {
   amount?: number;
   /** Idempotency key: retries of the same collection reuse it. */
   paymentId: string;
+  /** Six-digit code the customer dictates for cash collections. */
+  confirmCode?: string;
 };
 
 // Records collection of a finished job — full or partial: the mechanic
@@ -120,9 +122,21 @@ export function recordBookingPaymentRequest(
         method: input.method,
         amount: input.amount,
         paymentId: input.paymentId,
+        confirmCode: input.confirmCode,
         confirmed: true,
       }),
     },
+  );
+}
+
+// Rotates the customer-facing cash confirmation code. Returns only
+// { issued: true } — the code itself is delivered to the customer.
+export function issueBookingPaymentCodeRequest(
+  bookingId: string,
+): Promise<{ issued: boolean }> {
+  return apiRequest<{ issued: boolean }>(
+    `/api/mechanic/bookings/${encodeURIComponent(bookingId)}/payment-code`,
+    { method: "POST" },
   );
 }
 

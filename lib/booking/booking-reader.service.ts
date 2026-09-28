@@ -138,5 +138,7 @@ export async function readBookingDetail(
     cancelReason: row.cancel_reason ?? "",
     review: reviewRow ? toBookingReview(reviewRow) : null,
     location,
+    paymentConfirmCode:
+      row.payment_status === "paid" ? null : (row.payment_confirm_code ?? null),
   };
 }

@@ -2,9 +2,12 @@
 
 import { useId, useState } from "react";
 import { FiLoader, FiX } from "react-icons/fi";
+import { ConfirmCodeField } from "@/app/mechanic/components/ConfirmCodeField";
 import {
   COLLECT_METHOD_LABELS,
   COLLECT_METHODS,
+  isValidConfirmCode,
+  needsConfirmCode,
   parseCollectAmount,
 } from "@/app/mechanic/components/collect-payment";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
@@ -15,11 +18,15 @@ import { formatVnd } from "../mechanic-format";
 type Props = {
   entry: MechanicIncomeEntry | null;
   pending: boolean;
+  issuePending: boolean;
+  codeIssued: boolean;
+  onIssueCode(): void;
   onClose(): void;
   onConfirm(input: {
     method: BookingPaymentMethod;
     amount: number;
     paymentId: string;
+    confirmCode?: string;
   }): void;
 };
 
@@ -30,33 +37,45 @@ type Props = {
 export function CollectPaymentDialog({
   entry,
   pending,
+  issuePending,
+  codeIssued,
+  onIssueCode,
   onClose,
   onConfirm,
 }: Props) {
   const uid = useId();
   const [method, setMethod] = useState<BookingPaymentMethod>("cod");
   const [amountText, setAmountText] = useState("");
+  const [confirmCode, setConfirmCode] = useState("");
   const [paymentId, setPaymentId] = useState("");
 
   if (!entry) return null;
   const outstanding = entry.outstanding;
   const parsed = parseCollectAmount(amountText, outstanding);
   const invalidAmount = amountText.trim() !== "" && parsed === null;
+  const needsCode = needsConfirmCode(method);
+  const codeMissing = needsCode && !isValidConfirmCode(confirmCode);
 
   const close = () => {
     setMethod("cod");
     setAmountText("");
+    setConfirmCode("");
     setPaymentId("");
     onClose();
   };
   const confirm = () => {
     const amount = parseCollectAmount(amountText, outstanding);
-    if (amount === null) return;
+    if (amount === null || codeMissing) return;
     // crypto.randomUUID scopes one idempotency key per attempt; a retry
     // after a failed submit replays the same receipt instead of doubling.
     const id = paymentId || crypto.randomUUID();
     setPaymentId(id);
-    onConfirm({ method, amount, paymentId: id });
+    onConfirm({
+      method,
+      amount,
+      paymentId: id,
+      confirmCode: needsCode ? confirmCode.trim() : undefined,
+    });
   };
 
   return (
@@ -166,6 +185,26 @@ export function CollectPaymentDialog({
           </div>
         </fieldset>
 
+        {needsCode && (
+          <ConfirmCodeField
+            id={`${uid}-code`}
+            value={confirmCode}
+            disabled={pending}
+            issuePending={issuePending}
+            issued={codeIssued}
+            onChange={setConfirmCode}
+            onIssue={onIssueCode}
+          />
+        )}
+        {needsCode && confirmCode.trim() !== "" && codeMissing && (
+          <p
+            role="alert"
+            className="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400"
+          >
+            Mã xác nhận gồm đúng 6 chữ số.
+          </p>
+        )}
+
         <div className="mt-4 flex gap-2">
           <button
             type="button"
@@ -177,7 +216,7 @@ export function CollectPaymentDialog({
           <button
             type="button"
             onClick={confirm}
-            disabled={pending || invalidAmount}
+            disabled={pending || invalidAmount || codeMissing}
             className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             {pending && (

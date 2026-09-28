@@ -14,7 +14,8 @@ export type AdminSectionId =
   | "services"
   | "products"
   | "orders"
-  | "rescue";
+  | "rescue"
+  | "revenue";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -67,6 +68,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/dispatch/orders/pending",
     icon: FiFileText,
   },
+  {
+    id: "revenue",
+    label: "Doanh thu",
+    description: "Báo cáo toàn hệ thống, theo thợ và giám sát gian lận.",
+    href: "/admin/revenue/day",
+    icon: FiBarChart2,
+  },
 ];
 
 export function getAdminSection(id: AdminSectionId): AdminSection {
@@ -80,5 +88,6 @@ export function sectionIdForPath(pathname: string): AdminSectionId {
   if (pathname.startsWith("/admin/services")) return "services";
   if (pathname.startsWith("/admin/products")) return "products";
   if (pathname.startsWith("/admin/rescue")) return "rescue";
+  if (pathname.startsWith("/admin/revenue")) return "revenue";
   return "dashboard";
 }

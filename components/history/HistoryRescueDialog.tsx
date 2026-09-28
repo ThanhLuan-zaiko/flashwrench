@@ -9,6 +9,7 @@ import {
   rescueStatusBadgeClass,
   rescueStatusLabel,
 } from "@/components/rescue/rescue-format";
+import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyRescueDetail } from "@/hooks/rescue";
 import { formatDateTime } from "@/lib/datetime/format";
@@ -121,6 +122,21 @@ export function HistoryRescueDialog({
                 </dd>
               </div>
             </dl>
+
+            {rescue.paymentConfirmCode && (
+              <PaymentCodeCard code={rescue.paymentConfirmCode} />
+            )}
+
+            {rescue.paymentStatus !== "paid" && rescue.finalPrice !== null && (
+              <p className="flex items-center justify-between rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-800">
+                <span className="text-zinc-600 dark:text-zinc-300">
+                  Số tiền cần thanh toán
+                </span>
+                <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+                  {new Intl.NumberFormat("vi-VN").format(rescue.finalPrice)}đ
+                </span>
+              </p>
+            )}
 
             <a
               href={`tel:${RESCUE_HOTLINE.replace(/\s/g, "")}`}

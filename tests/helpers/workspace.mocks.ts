@@ -18,13 +18,23 @@ import type {
   PaymentWrite,
 } from "@/lib/payments/booking-payment.repository";
 import type {
+  AuditEventWrite,
+  ReceiptProjectionWrite,
+} from "@/lib/revenue/revenue.types";
+import type {
   MaintenanceInsertParams,
   MaintenancePageResult,
   VehicleInsertParams,
   VehiclePageResult,
   VehicleRow,
 } from "@/lib/vehicles/vehicle.repository";
+import { resetPaymentMocks } from "./payment.mocks";
 
+export {
+  paymentRepoMocks,
+  rescuePaymentRepoMocks,
+  revenueServiceMocks,
+} from "./payment.mocks";
 export {
   makeMaintenanceRow,
   makePaymentReceiptRow,
@@ -58,6 +68,11 @@ export const workspaceStubs = {
   paymentStatusClaimed: true,
   paymentWrites: [] as PaymentWrite[],
   paymentStatusClaims: 0,
+  paymentCodeSets: [] as { bookingId: string; code: string | null }[],
+  rescuePaymentClaimed: true,
+  rescuePaymentCodeSets: [] as { requestId: string; code: string | null }[],
+  receiptProjections: [] as ReceiptProjectionWrite[],
+  auditEvents: [] as AuditEventWrite[],
   customerBookingPage: { rows: [], pageState: null } as CustomerBookingPage,
   customerBookingPages: [] as CustomerBookingPage[],
   bookingTravelPoints: [] as BookingTravelPointRow[],
@@ -173,37 +188,6 @@ export const reviewRepoMocks = {
   ),
 };
 
-export const paymentRepoMocks = {
-  findPaymentRowById: mock(
-    async (paymentId: string): Promise<PaymentRow | null> =>
-      workspaceStubs.paymentRowsById.get(paymentId) ??
-      workspaceStubs.paymentById,
-  ),
-  listPaymentRefPaymentIds: mock(
-    async (_refType: string, _refId: string): Promise<string[]> =>
-      workspaceStubs.paymentRefIds,
-  ),
-  claimBookingPayment: mock(
-    async (_write: PaymentWrite): Promise<boolean> =>
-      workspaceStubs.paymentClaimed,
-  ),
-  projectBookingPayment: mock(async (write: PaymentWrite): Promise<void> => {
-    workspaceStubs.paymentWrites.push(write);
-  }),
-  claimBookingPaymentStatus: mock(
-    async (
-      _bookingId: string,
-      _next: string,
-      _expectedStatus: string,
-      _expectedPaymentStatus: string,
-      _updatedAt: Date,
-    ): Promise<boolean> => {
-      workspaceStubs.paymentStatusClaims += 1;
-      return workspaceStubs.paymentStatusClaimed;
-    },
-  ),
-};
-
 export const customerBookingsRepoMocks = {
   listCustomerBookingRefs: mock(
     async (
@@ -301,13 +285,7 @@ export function resetWorkspaceMocks(): void {
   workspaceStubs.reviewReadQueue = [];
   workspaceStubs.reviewClaimed = true;
   workspaceStubs.reviewWrites = [];
-  workspaceStubs.paymentById = null;
-  workspaceStubs.paymentRowsById.clear();
-  workspaceStubs.paymentRefIds = [];
-  workspaceStubs.paymentClaimed = true;
-  workspaceStubs.paymentStatusClaimed = true;
-  workspaceStubs.paymentWrites = [];
-  workspaceStubs.paymentStatusClaims = 0;
+  resetPaymentMocks();
   workspaceStubs.customerBookingPage = { rows: [], pageState: null };
   workspaceStubs.customerBookingPages = [];
   workspaceStubs.bookingTravelPoints = [];
@@ -320,7 +298,6 @@ export function resetWorkspaceMocks(): void {
   for (const fn of Object.values(vehicleRepoMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicProfileRepoMocks)) fn.mockClear();
   for (const fn of Object.values(reviewRepoMocks)) fn.mockClear();
-  for (const fn of Object.values(paymentRepoMocks)) fn.mockClear();
   for (const fn of Object.values(customerBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(bookingTravelRepoMocks)) fn.mockClear();
   for (const fn of Object.values(dispatchRepoMocks)) fn.mockClear();

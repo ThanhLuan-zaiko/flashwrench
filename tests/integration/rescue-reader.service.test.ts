@@ -161,7 +161,9 @@ describe("listMechanicRescues", () => {
     expect(result.data.items[0]?.etaMin).toBe(7);
   });
 
-  test("drops closed rescues from the inbox", async () => {
+  test("drops closed rescues but keeps unpaid ones collectable", async () => {
+    // A completed-and-paid rescue leaves the inbox; a completed-but-unpaid
+    // rescue stays so the mechanic can collect the outstanding amount.
     rescueWorkflowRepoMocks.listRescueRefsByMechanic.mockImplementationOnce(
       async () => [
         {
@@ -173,14 +175,34 @@ describe("listMechanicRescues", () => {
     );
     rescueStubs.rowById = makeRescueRow({
       status: "completed",
+      payment_status: "paid",
       assigned_mechanic_id: MECHANIC_ID,
     });
 
-    const result = await listMechanicRescues(mechanic());
+    const paid = await listMechanicRescues(mechanic());
+    expect(paid.ok).toBe(true);
+    if (!paid.ok) return;
+    expect(paid.data.items).toHaveLength(0);
 
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.data.items).toHaveLength(0);
+    rescueWorkflowRepoMocks.listRescueRefsByMechanic.mockImplementationOnce(
+      async () => [
+        {
+          status: "completed",
+          created_at: new Date(),
+          request_id: REQUEST_ID,
+        },
+      ],
+    );
+    rescueStubs.rowById = makeRescueRow({
+      status: "completed",
+      payment_status: "unpaid",
+      assigned_mechanic_id: MECHANIC_ID,
+    });
+
+    const unpaid = await listMechanicRescues(mechanic());
+    expect(unpaid.ok).toBe(true);
+    if (!unpaid.ok) return;
+    expect(unpaid.data.items).toHaveLength(1);
   });
 });
 

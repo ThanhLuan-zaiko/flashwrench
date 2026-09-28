@@ -5,10 +5,13 @@ export type PaymentRow = {
   ref_type: string | null;
   ref_id: string | null;
   customer_id: string | null;
+  mechanic_id: string | null;
   amount: number | null;
   method: string | null;
   status: string | null;
   provider_ref: string | null;
+  recorded_by: string | null;
+  customer_confirmed: boolean | null;
   paid_at: Date | null;
   created_at: Date | null;
 };
@@ -18,9 +21,12 @@ export type PaymentWrite = {
   refType: string;
   refId: string;
   customerId: string;
+  mechanicId: string | null;
   amount: number;
   method: string;
   status: string;
+  recordedBy: string | null;
+  customerConfirmed: boolean | null;
   paidAt: Date;
   createdAt: Date;
 };
@@ -50,10 +56,16 @@ function toPaymentRow(raw: RawRow): PaymentRow {
     ref_type: toStringOrNull(raw.ref_type),
     ref_id: toStringOrNull(raw.ref_id),
     customer_id: toStringOrNull(raw.customer_id),
+    mechanic_id: toStringOrNull(raw.mechanic_id),
     amount: toNumberOrNull(raw.amount),
     method: toStringOrNull(raw.method),
     status: toStringOrNull(raw.status),
     provider_ref: toStringOrNull(raw.provider_ref),
+    recorded_by: toStringOrNull(raw.recorded_by),
+    customer_confirmed:
+      typeof raw.customer_confirmed === "boolean"
+        ? raw.customer_confirmed
+        : null,
     paid_at: toDateOrNull(raw.paid_at),
     created_at: toDateOrNull(raw.created_at),
   };
@@ -63,7 +75,7 @@ export async function findPaymentRowById(
   paymentId: string,
 ): Promise<PaymentRow | null> {
   const result = await scylla.execute(
-    "SELECT payment_id, ref_type, ref_id, customer_id, amount, method, status, provider_ref, paid_at, created_at FROM payments_by_id WHERE payment_id = ?",
+    "SELECT payment_id, ref_type, ref_id, customer_id, mechanic_id, amount, method, status, provider_ref, recorded_by, customer_confirmed, paid_at, created_at FROM payments_by_id WHERE payment_id = ?",
     [paymentId],
     { prepare: true },
   );
@@ -89,15 +101,18 @@ export async function claimBookingPayment(
   write: PaymentWrite,
 ): Promise<boolean> {
   const result = await scylla.execute(
-    "INSERT INTO payments_by_id (payment_id, ref_type, ref_id, customer_id, amount, method, status, paid_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) IF NOT EXISTS",
+    "INSERT INTO payments_by_id (payment_id, ref_type, ref_id, customer_id, mechanic_id, amount, method, status, recorded_by, customer_confirmed, paid_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) IF NOT EXISTS",
     [
       write.paymentId,
       write.refType,
       write.refId,
       write.customerId,
+      write.mechanicId,
       write.amount,
       write.method,
       write.status,
+      write.recordedBy,
+      write.customerConfirmed,
       write.paidAt,
       write.createdAt,
     ],
@@ -105,6 +120,20 @@ export async function claimBookingPayment(
   );
   const row = result.first() as unknown as Record<string, unknown> | null;
   return row?.["[applied]"] === true;
+}
+
+// Rotate the customer-facing cash confirmation code. Plain UPDATE: the
+// latest code always wins and old codes are invalidated on purpose.
+export async function setBookingPaymentCode(
+  bookingId: string,
+  code: string | null,
+  updatedAt: Date,
+): Promise<void> {
+  await scylla.execute(
+    "UPDATE bookings_by_id SET payment_confirm_code = ?, updated_at = ? WHERE booking_id = ?",
+    [code, updatedAt, bookingId],
+    { prepare: true },
+  );
 }
 
 export async function projectBookingPayment(

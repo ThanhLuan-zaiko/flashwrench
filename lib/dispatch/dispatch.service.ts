@@ -164,7 +164,9 @@ export async function getDispatchBooking(
   if (!detail) {
     return fail(400, "Đơn hàng đang ở trạng thái không xác định.");
   }
-  return { ok: true, data: detail };
+  // The confirm code is the customer's proof of handover; staff dashboards
+  // never receive it.
+  return { ok: true, data: { ...detail, paymentConfirmCode: null } };
 }
 
 function isDispatchAction(value: unknown): value is DispatchAction {

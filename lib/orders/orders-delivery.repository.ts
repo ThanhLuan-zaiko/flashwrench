@@ -63,7 +63,9 @@ export async function updateOrderCourierStatus(params: {
 // Payment settlement: delivery is the collection point for cod/counter
 // orders, the mock gateway settles online payments early, and a refund
 // flips rows to refunded. providerRef stamps the simulated transaction
-// reference on payments_by_id when the caller has one.
+// reference on payments_by_id when the caller has one; recordedBy stamps
+// the staff member who collected so the audit trail knows whose hand the
+// money passed through.
 export async function markOrderPaymentStatus(params: {
   orderId: string;
   customerId: string | null;
@@ -72,6 +74,7 @@ export async function markOrderPaymentStatus(params: {
   now: Date;
   paymentRefs: { paymentId: string; createdAt: Date }[];
   providerRef?: string | null;
+  recordedBy?: string | null;
 }): Promise<void> {
   const statements: { query: string; params: unknown[] }[] = [
     {
@@ -81,23 +84,22 @@ export async function markOrderPaymentStatus(params: {
     },
   ];
   for (const ref of params.paymentRefs) {
+    const sets = ["status = ?", "paid_at = ?"];
+    const bind: unknown[] = [params.paymentStatus, params.paidAt];
+    if (params.providerRef !== undefined) {
+      sets.push("provider_ref = ?");
+      bind.push(params.providerRef);
+    }
+    if (params.recordedBy !== undefined) {
+      sets.push("recorded_by = ?");
+      bind.push(params.recordedBy);
+    }
+    bind.push(ref.paymentId);
     statements.push(
-      params.providerRef === undefined
-        ? {
-            query:
-              "UPDATE payments_by_id SET status = ?, paid_at = ? WHERE payment_id = ?",
-            params: [params.paymentStatus, params.paidAt, ref.paymentId],
-          }
-        : {
-            query:
-              "UPDATE payments_by_id SET status = ?, paid_at = ?, provider_ref = ? WHERE payment_id = ?",
-            params: [
-              params.paymentStatus,
-              params.paidAt,
-              params.providerRef,
-              ref.paymentId,
-            ],
-          },
+      {
+        query: `UPDATE payments_by_id SET ${sets.join(", ")} WHERE payment_id = ?`,
+        params: bind,
+      },
       {
         query:
           "UPDATE payments_by_ref SET status = ? WHERE ref_type = 'order' AND ref_id = ? AND created_at = ? AND payment_id = ?",

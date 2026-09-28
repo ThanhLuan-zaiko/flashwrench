@@ -5,6 +5,7 @@ import { toIso } from "@/lib/mechanic/mechanic.types";
 import { findBookingRowById } from "@/lib/mechanic/mechanic-bookings.repository";
 import { toBookingStatus } from "@/lib/mechanic/mechanic-mapper";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
+import { projectReceipt } from "@/lib/revenue/revenue.service";
 import { isRecord, isUuid, numericInput } from "@/lib/validation";
 import {
   claimBookingPayment,
@@ -20,6 +21,7 @@ import {
   type BookingPayment,
   type BookingPaymentMethod,
 } from "./booking-payment.types";
+import { verifyCashConfirmCode } from "./payment-code.service";
 
 type PaymentTotals = {
   received: number;
@@ -61,9 +63,12 @@ function writeFromRow(row: PaymentRow): PaymentWrite {
     refType: row.ref_type ?? "booking",
     refId: row.ref_id ?? "",
     customerId: row.customer_id ?? "",
+    mechanicId: row.mechanic_id,
     amount: row.amount ?? 0,
     method: row.method ?? "cod",
     status: row.status ?? "paid",
+    recordedBy: row.recorded_by,
+    customerConfirmed: row.customer_confirmed,
     paidAt: row.paid_at ?? new Date(0),
     createdAt: row.created_at ?? new Date(0),
   };
@@ -101,8 +106,17 @@ export async function recordBookingPayment(
   if (raw.paymentId !== undefined && !isUuid(raw.paymentId)) {
     return fieldFail(400, { paymentId: "Mã giao dịch không hợp lệ." });
   }
+  if (
+    raw.confirmCode !== undefined &&
+    (typeof raw.confirmCode !== "string" ||
+      !/^\d{6}$/.test(raw.confirmCode.trim()))
+  ) {
+    return fieldFail(400, { confirmCode: "Mã xác nhận gồm 6 chữ số." });
+  }
   const method = raw.method as BookingPaymentMethod;
   const paymentId = (raw.paymentId as string | undefined) ?? bookingId;
+  const confirmCode =
+    typeof raw.confirmCode === "string" ? raw.confirmCode.trim() : undefined;
 
   const booking = await findBookingRowById(bookingId);
   if (!booking) return fail(404, "Không tìm thấy đơn hàng này.");
@@ -127,6 +141,31 @@ export async function recordBookingPayment(
   if (!customerId || !isUuid(customerId)) {
     return fail(409, "Đơn hàng thiếu thông tin khách hàng.");
   }
+
+  // Cash is the bribery surface: the customer dictates a 6-digit code the
+  // mechanic must echo back. Transfers leave a bank trail, so they skip
+  // the code. Wrong codes are audited for the admin fraud screen.
+  if (method === "cod") {
+    const codeCheck = await verifyCashConfirmCode(
+      actor.id,
+      "booking",
+      bookingId,
+      booking.payment_confirm_code,
+      confirmCode,
+      method,
+    );
+    if (codeCheck === "missing") {
+      return fieldFail(400, {
+        confirmCode: "Chưa cấp mã xác nhận — hãy gửi mã cho khách trước.",
+      });
+    }
+    if (codeCheck === "mismatch") {
+      return fieldFail(400, {
+        confirmCode: "Mã xác nhận không đúng. Hãy hỏi lại khách.",
+      });
+    }
+  }
+  const customerConfirmed = method === "cod" ? true : null;
 
   const refPaymentIds = await listPaymentRefPaymentIds("booking", bookingId);
   const siblings = (
@@ -233,6 +272,18 @@ export async function recordBookingPayment(
     if (!(await settleStatus(at))) {
       return fail(409, "Trạng thái thanh toán vừa thay đổi. Vui lòng tải lại.");
     }
+    await projectReceipt({
+      paymentId: receipt.payment_id,
+      refType: "booking",
+      refId: bookingId,
+      customerId,
+      mechanicId: booking.mechanic_id,
+      recordedBy: actor.id,
+      customerConfirmed,
+      amount: receipt.amount ?? amount,
+      method: receipt.method ?? method,
+      paidAt: receipt.paid_at ?? at,
+    });
     await publishBookingChange(
       "payment-recorded",
       bookingId,
@@ -257,9 +308,12 @@ export async function recordBookingPayment(
     refType: "booking",
     refId: bookingId,
     customerId,
+    mechanicId: booking.mechanic_id,
     amount,
     method,
     status: "paid",
+    recordedBy: actor.id,
+    customerConfirmed,
     paidAt: now,
     createdAt: now,
   };
@@ -277,10 +331,13 @@ export async function recordBookingPayment(
       ref_type: write.refType,
       ref_id: write.refId,
       customer_id: write.customerId,
+      mechanic_id: write.mechanicId,
       amount: write.amount,
       method: write.method,
       status: write.status,
       provider_ref: null,
+      recorded_by: write.recordedBy,
+      customer_confirmed: write.customerConfirmed,
       paid_at: write.paidAt,
       created_at: write.createdAt,
     },

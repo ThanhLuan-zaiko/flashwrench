@@ -8,6 +8,7 @@ import {
 import {
   orderDeliveryRepoMocks,
   orderRepoMocks,
+  orderRevenueMocks,
   orderStubs,
   orderWriteRepoMocks,
   partInventoryRepoMocks,
@@ -32,6 +33,7 @@ mock.module(
   () => orderDeliveryRepoMocks,
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
+mock.module("@/lib/orders/order-revenue", () => orderRevenueMocks);
 
 import {
   cancelMyOrder,

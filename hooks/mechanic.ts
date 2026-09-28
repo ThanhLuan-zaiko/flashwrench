@@ -25,6 +25,7 @@ import {
   fetchMechanicPresence,
   fetchMechanicStats,
   fetchNavigationBoard,
+  issueBookingPaymentCodeRequest,
   recordBookingPaymentRequest,
   updateMechanicLocationRequest,
   updateMechanicPresenceRequest,
@@ -217,6 +218,15 @@ export function useRecordBookingPayment() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
     },
+  });
+}
+
+// Rotates the customer's cash confirmation code before collection. The
+// response never carries the code — the customer sees it on their side.
+export function useIssueBookingPaymentCode() {
+  return useMutation({
+    mutationFn: (bookingId: string) =>
+      issueBookingPaymentCodeRequest(bookingId),
   });
 }
 

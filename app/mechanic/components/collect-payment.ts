@@ -52,6 +52,16 @@ export function parseCollectAmount(
   return amount;
 }
 
+// Cash collections need the customer's six-digit confirmation code —
+// their signature that money changed hands. Transfers skip it entirely.
+export function needsConfirmCode(method: BookingPaymentMethod): boolean {
+  return method === "cod";
+}
+
+export function isValidConfirmCode(value: string): boolean {
+  return /^\d{6}$/.test(value.trim());
+}
+
 // Field errors from recordBookingPayment beat the generic form error;
 // foreign errors get a safe fallback message.
 export function collectPaymentError(error: unknown): string {
@@ -60,6 +70,7 @@ export function collectPaymentError(error: unknown): string {
     return (
       errors.method ??
       errors.amount ??
+      errors.confirmCode ??
       errors.confirmed ??
       errors.paymentId ??
       errors.form ??

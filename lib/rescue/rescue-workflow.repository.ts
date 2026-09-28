@@ -18,6 +18,10 @@ export type RescueRow = {
   priority: string | null;
   issue_type: string | null;
   eta_min: number | null;
+  price_estimate: number | null;
+  final_price: number | null;
+  payment_status: string | null;
+  payment_confirm_code: string | null;
   updated_at: Date | null;
   created_at: Date | null;
 };
@@ -43,7 +47,7 @@ export type RescueHistoryRow = {
 };
 
 const RESCUE_DETAIL_COLUMNS =
-  "request_id, customer_id, customer_name, customer_phone, zone_id, vehicle_plate, address, issue_type, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, created_at, updated_at";
+  "request_id, customer_id, customer_name, customer_phone, zone_id, vehicle_plate, address, issue_type, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, price_estimate, final_price, payment_status, payment_confirm_code, created_at, updated_at";
 
 function toNumberOrNull(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -103,6 +107,10 @@ function toRescueRow(raw: Record<string, unknown>): RescueRow {
     priority: toStringOrNull(raw.priority),
     issue_type: toStringOrNull(raw.issue_type),
     eta_min: toNumberOrNull(raw.eta_min),
+    price_estimate: toNumberOrNull(raw.price_estimate),
+    final_price: toNumberOrNull(raw.final_price),
+    payment_status: toStringOrNull(raw.payment_status),
+    payment_confirm_code: toStringOrNull(raw.payment_confirm_code),
     updated_at: toDateOrNull(raw.updated_at),
     created_at: toDateOrNull(raw.created_at),
   };

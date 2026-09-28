@@ -96,6 +96,14 @@ export function weekKey(
   )}`;
 }
 
+/** Hour-of-day key in the given zone, e.g. "07". Used for hourly series. */
+export function hourKey(
+  date: Date,
+  timeZone: string = MECHANIC_TIME_ZONE,
+): string {
+  return pad(zonedParts(date, timeZone).hour);
+}
+
 export function isSameDay(
   date: Date,
   reference: Date,

@@ -16,6 +16,7 @@ import {
   makePaymentReceiptRow,
   paymentRepoMocks,
   resetWorkspaceMocks,
+  revenueServiceMocks,
   workspaceStubs,
 } from "../helpers/workspace.mocks";
 
@@ -31,7 +32,14 @@ mock.module(
   "@/lib/payments/booking-payment.repository",
   () => paymentRepoMocks,
 );
+mock.module("@/lib/rescue/rescue-payment.repository", () => ({
+  setRescuePaymentCode: mock(async () => undefined),
+}));
+mock.module("@/lib/rescue/rescue-workflow.repository", () => ({
+  findRescueRowById: mock(async () => null),
+}));
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module("@/lib/revenue/revenue.service", () => revenueServiceMocks);
 
 import { recordBookingPayment } from "@/lib/payments/booking-payment.service";
 
@@ -40,12 +48,24 @@ const mechanic = makePublicUser({
   role: "mechanic",
 });
 
+const CONFIRM_CODE = "654321";
+
 function completedBooking(overrides?: Parameters<typeof makeBookingRow>[0]) {
-  return makeBookingRow({ status: "completed", ...overrides });
+  return makeBookingRow({
+    status: "completed",
+    payment_confirm_code: CONFIRM_CODE,
+    ...overrides,
+  });
 }
 
 function paymentBody(overrides?: Record<string, unknown>) {
-  return { method: "cod", confirmed: true, amount: 450000, ...overrides };
+  return {
+    method: "cod",
+    confirmed: true,
+    amount: 450000,
+    confirmCode: CONFIRM_CODE,
+    ...overrides,
+  };
 }
 
 const FIRST_RECEIPT = "11111111-1111-4111-8111-111111111111";
@@ -127,6 +147,7 @@ describe("recordBookingPayment installments", () => {
     const result = await recordBookingPayment(mechanic, BOOKING_ID, {
       method: "cod",
       confirmed: true,
+      confirmCode: CONFIRM_CODE,
       paymentId: SECOND_RECEIPT,
     });
     expect(result).toMatchObject({ ok: true });

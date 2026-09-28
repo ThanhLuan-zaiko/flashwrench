@@ -38,4 +38,9 @@ export type BookingDetail = BookingSummary & {
   cancelReason: string;
   review: BookingReview | null;
   location: { lat: number; lng: number; updatedAt: string } | null;
+  /**
+   * Cash confirmation code the customer dictates to the mechanic. Only
+   * populated while payment is outstanding; staff views must strip it.
+   */
+  paymentConfirmCode: string | null;
 };

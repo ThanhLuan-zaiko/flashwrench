@@ -25,6 +25,7 @@ import {
   domainPublishMocks,
   paymentRepoMocks,
   resetWorkspaceMocks,
+  revenueServiceMocks,
   reviewRepoMocks,
   vehicleRepoMocks,
   workspaceStubs,
@@ -96,6 +97,7 @@ mock.module(
   () => paymentRepoMocks,
 );
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module("@/lib/revenue/revenue.service", () => revenueServiceMocks);
 
 import { createBookingReview } from "@/lib/booking/review.service";
 import { applyDispatchAction } from "@/lib/dispatch/dispatch.service";
@@ -160,10 +162,13 @@ describe("full booking lifecycle", () => {
     }
     expect(state.activeJob).toBeNull();
 
+    // Cash collection needs the customer's confirm code: issue one first.
+    if (state.booking) state.booking.payment_confirm_code = "654321";
     const receipt = await recordBookingPayment(mechanic, BOOKING_ID, {
       method: "cod",
       confirmed: true,
       amount: 450000,
+      confirmCode: "654321",
     });
     expect(receipt.ok).toBe(true);
     expect(workspaceStubs.paymentWrites[0]?.paymentId).toBe(BOOKING_ID);

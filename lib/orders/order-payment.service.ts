@@ -8,6 +8,7 @@ import type {
   OrderPaymentReceipt,
 } from "@/lib/payments/order-payment.types";
 import { isUuid } from "@/lib/validation";
+import { projectOrderReceipts } from "./order-revenue";
 import { toOrderDetail } from "./orders.mapper";
 import {
   findOrderRowById,
@@ -78,7 +79,9 @@ async function settlePayment(
     now,
     paymentRefs: await listOrderPaymentRefs(row.order_id),
     providerRef,
+    recordedBy: changedBy,
   });
+  await projectOrderReceipts(row.order_id, changedBy, now);
   await insertOrderHistory({
     orderId: row.order_id,
     oldStatus: row.status ?? null,

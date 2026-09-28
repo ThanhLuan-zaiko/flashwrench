@@ -16,6 +16,7 @@ export const rescueStubs = {
   rowReadQueue: [] as (RescueRow | null)[],
   historyRows: [] as RescueHistoryRow[],
   transitionClaimed: true,
+  paymentClaimed: true,
   transitions: [] as RescueTransitionWrite[],
 };
 
@@ -36,6 +37,10 @@ export function makeRescueRow(overrides?: Partial<RescueRow>): RescueRow {
     priority: "normal",
     issue_type: "flat_tire",
     eta_min: null,
+    price_estimate: 350000,
+    final_price: null,
+    payment_status: "unpaid",
+    payment_confirm_code: null,
     updated_at: new Date(),
     created_at: new Date(),
     ...overrides,
@@ -87,6 +92,26 @@ export const rescueWorkflowRepoMocks = {
   ),
   listRescueRefsByCustomer: mock(
     async (_customerId: string): Promise<RescueStatusRef[]> => [],
+  ),
+};
+
+// rescue-payment.repository (split from the workflow repository): CAS on
+// payment_status plus the rotating customer confirmation code.
+export const rescuePaymentRepoMocks = {
+  claimRescuePaymentStatus: mock(
+    async (
+      _requestId: string,
+      _finalPrice: number,
+      _expectedPaymentStatus: string,
+      _updatedAt: Date,
+    ): Promise<boolean> => rescueStubs.paymentClaimed,
+  ),
+  setRescuePaymentCode: mock(
+    async (
+      _requestId: string,
+      _code: string | null,
+      _updatedAt: Date,
+    ): Promise<void> => undefined,
   ),
 };
 
@@ -152,6 +177,7 @@ export function resetRescueMocks(): void {
   rescueStubs.rowReadQueue = [];
   rescueStubs.historyRows = [];
   rescueStubs.transitionClaimed = true;
+  rescueStubs.paymentClaimed = true;
   rescueStubs.transitions = [];
   rescueDispatchStubs.autoDispatch = null;
   zoneStubs.zoneId = null;
@@ -164,6 +190,7 @@ export function resetRescueMocks(): void {
   };
   for (const fn of Object.values(rescueRepoMocks)) fn.mockClear();
   for (const fn of Object.values(rescueWorkflowRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(rescuePaymentRepoMocks)) fn.mockClear();
   for (const fn of Object.values(rescueDispatchMocks)) fn.mockClear();
   for (const fn of Object.values(zoneServiceMocks)) fn.mockClear();
   for (const fn of Object.values(rescueConfigMocks)) fn.mockClear();

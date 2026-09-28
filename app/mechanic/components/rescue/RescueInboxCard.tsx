@@ -17,6 +17,7 @@ import {
   useRescueExpire,
 } from "@/hooks/rescue-inbox";
 import type { MechanicRescueAction } from "@/services/rescue-mechanic.api";
+import { RescueCollectSection } from "./RescueCollectSection";
 
 function issueLabel(issueType: string | null): string {
   return (
@@ -177,6 +178,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
           {step.hint}
         </p>
       )}
+      <RescueCollectSection rescue={rescue} />
     </article>
   );
 }

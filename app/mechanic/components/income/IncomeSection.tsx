@@ -3,7 +3,11 @@
 import { useMemo, useState } from "react";
 import { FiDollarSign, FiLoader, FiTrendingUp } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
-import { useMechanicIncome, useRecordBookingPayment } from "@/hooks/mechanic";
+import {
+  useIssueBookingPaymentCode,
+  useMechanicIncome,
+  useRecordBookingPayment,
+} from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
@@ -36,6 +40,8 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
   );
   const query = useMechanicIncome();
   const collect = useRecordBookingPayment();
+  const issueCode = useIssueBookingPaymentCode();
+  const [codeIssuedFor, setCodeIssuedFor] = useState<string | null>(null);
 
   const summary = query.data?.summary ?? null;
   const entries = useMemo<MechanicIncomeEntry[]>(
@@ -181,7 +187,25 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
         <CollectPaymentDialog
           entry={collecting}
           pending={collect.isPending}
-          onClose={() => setCollecting(null)}
+          issuePending={issueCode.isPending}
+          codeIssued={codeIssuedFor === collecting.bookingId}
+          onIssueCode={() => {
+            issueCode.mutate(collecting.bookingId, {
+              onSuccess: () => {
+                setCodeIssuedFor(collecting.bookingId);
+                toast.success(
+                  "Đã gửi mã xác nhận",
+                  "Khách sẽ thấy mã 6 số trong chi tiết đơn của họ.",
+                );
+              },
+              onError: (error) =>
+                toast.error("Không gửi được mã", collectPaymentError(error)),
+            });
+          }}
+          onClose={() => {
+            setCollecting(null);
+            setCodeIssuedFor(null);
+          }}
           onConfirm={(input) => {
             collect.mutate(
               { bookingId: collecting.bookingId, input },
