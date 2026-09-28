@@ -1,17 +1,38 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import { FiMapPin } from "react-icons/fi";
-import { boundingBoxAround } from "@/lib/mechanic/mechanic-geo";
 import type {
   MechanicNavigationBoard,
   MechanicNavigationTarget,
 } from "@/services/mechanic.api";
+import { googleMapViewUrl } from "./navigation-directions";
+
+const TrackingMap = dynamic(
+  () =>
+    import("@/components/history/TrackingMap").then(
+      (module) => module.TrackingMap,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <output
+        aria-label="Đang tải bản đồ"
+        className="block h-72 w-full animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 sm:h-80 dark:border-zinc-800 dark:bg-zinc-900"
+      />
+    ),
+  },
+);
 
 type MapPanelProps = {
   origin: MechanicNavigationBoard["origin"];
   target: MechanicNavigationTarget | null;
 };
 
-// Live map without any map SDK: an OpenStreetMap embed centered between the
-// origin and the selected job. Links out to full maps for turn-by-turn.
+// Leaflet preview of the selected job: the dark pin is the job site, the
+// inverted pin is the mechanic's last saved position. "Mở bản đồ lớn"
+// links out to Google Maps so it works where *.openstreetmap.org is
+// blocked.
 export function MapPanel({ origin, target }: MapPanelProps) {
   if (!target) {
     return (
@@ -30,25 +51,16 @@ export function MapPanel({ origin, target }: MapPanelProps) {
     );
   }
 
-  const center = origin
-    ? { lat: (origin.lat + target.lat) / 2, lng: (origin.lng + target.lng) / 2 }
-    : { lat: target.lat, lng: target.lng };
-  const box = boundingBoxAround(center, 3);
-  const embedUrl =
-    `https://www.openstreetmap.org/export/embed.html` +
-    `?bbox=${box.minLng}%2C${box.minLat}%2C${box.maxLng}%2C${box.maxLat}` +
-    `&layer=mapnik&marker=${target.lat}%2C${target.lng}`;
-  const openUrl = `https://www.openstreetmap.org/?mlat=${target.lat}&mlon=${target.lng}#map=15/${target.lat}/${target.lng}`;
+  const openUrl = googleMapViewUrl(target.lat, target.lng);
 
   return (
-    <div className="mt-3 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
-      <iframe
-        title={`Bản đồ tới ${target.addressText}`}
-        src={embedUrl}
-        loading="lazy"
-        className="h-72 w-full border-0 sm:h-80"
+    <div className="mt-3 flex flex-col gap-2">
+      <TrackingMap
+        customer={{ lat: target.lat, lng: target.lng }}
+        mechanic={origin ? { lat: origin.lat, lng: origin.lng } : null}
+        mapClassName="h-72 w-full sm:h-80"
       />
-      <div className="flex items-center justify-between gap-2 border-t border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex items-center justify-between gap-2">
         <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
           {target.addressText}
         </p>

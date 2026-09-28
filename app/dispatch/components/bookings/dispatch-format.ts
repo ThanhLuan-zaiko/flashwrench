@@ -3,6 +3,7 @@
 // dispatcher reads the same vocabulary, plus dispatch-specific labels.
 import type { MechanicBookingStatus } from "@/lib/mechanic/mechanic.types";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
+import { googleMapViewUrl } from "../../../mechanic/components/navigation/navigation-directions";
 
 export {
   formatScheduleDateTime,
@@ -39,12 +40,14 @@ export function formatMonthKey(key: string): string {
   return `Tháng ${Number(month)}/${year}`;
 }
 
-export function openStreetMapUrl(
+// Outbound map link for an address pin. Google Maps stays reachable on
+// networks that block *.openstreetmap.org.
+export function mapViewUrl(
   lat: number | null,
   lng: number | null,
 ): string | null {
   if (lat === null || lng === null) return null;
-  return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
+  return googleMapViewUrl(lat, lng);
 }
 
 export function statusSortHint(_status: MechanicBookingStatus): string {

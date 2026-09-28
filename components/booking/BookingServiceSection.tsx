@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { useMemo } from "react";
-import { formatVnd } from "@/app/admin/components/services/catalog-format";
+import { SelectDropdown } from "@/app/admin/components/services/SelectDropdown";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
-import { BookingField, BookingServiceSelect } from "./BookingFormFields";
 import { BookingServiceSummary } from "./BookingServiceSummary";
+import { toServiceSelectOptions } from "./service-select-options";
 
 type BookingServiceSectionProps = {
   preselected: ServiceItem | null;
@@ -15,7 +15,8 @@ type BookingServiceSectionProps = {
 };
 
 // Service step: the preselected catalog service renders as a read-only
-// snapshot, otherwise the customer picks from the live price list.
+// snapshot, otherwise the customer picks from the shared dropdown used
+// across the repo with live search once the price list grows.
 export function BookingServiceSection({
   preselected,
   services,
@@ -24,14 +25,7 @@ export function BookingServiceSection({
   disabled,
   onServiceId,
 }: BookingServiceSectionProps) {
-  const options = useMemo(
-    () =>
-      services.map((service) => ({
-        id: service.id,
-        label: `${service.categoryName} — ${service.name} (${formatVnd(service.basePrice)})`,
-      })),
-    [services],
-  );
+  const options = useMemo(() => toServiceSelectOptions(services), [services]);
   if (preselected) {
     return (
       <div className="flex flex-col gap-2">
@@ -47,15 +41,31 @@ export function BookingServiceSection({
     );
   }
   return (
-    <BookingField id="serviceId" label="Dịch vụ" required error={error}>
-      <BookingServiceSelect
+    <div className="flex flex-col gap-1.5">
+      <SelectDropdown
         id="serviceId"
+        label="Dịch vụ"
+        required
         value={serviceId}
         options={options}
         onChange={onServiceId}
+        placeholder="Chọn dịch vụ…"
+        listLabel="Chọn dịch vụ"
+        searchPlaceholder="Tìm dịch vụ…"
+        unitName="dịch vụ"
+        emptyTitle="Không tìm thấy dịch vụ phù hợp"
+        emptyHint="Thử từ khóa khác"
         error={error}
         disabled={disabled}
       />
-    </BookingField>
+      {error && (
+        <p
+          role="alert"
+          className="text-[11px] font-medium text-red-600 dark:text-red-400"
+        >
+          {error}
+        </p>
+      )}
+    </div>
   );
 }

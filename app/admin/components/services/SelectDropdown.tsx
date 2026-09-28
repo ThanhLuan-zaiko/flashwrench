@@ -1,32 +1,16 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import type { IconType } from "react-icons";
 import { FiCheck, FiChevronDown, FiInbox, FiSearch } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
-import { filterSelectOptions, type SelectOption } from "./category-filter";
+import { filterSelectOptions } from "./category-filter";
+import type { SelectDropdownProps } from "./SelectDropdown.types";
 
-type SelectDropdownProps = {
-  label: string;
-  value: string;
-  options: SelectOption[];
-  onChange: (value: string) => void;
-  placeholder?: string;
-  allLabel?: string;
-  listLabel?: string;
-  searchPlaceholder?: string;
-  searchThreshold?: number;
-  unitName?: string;
-  emptyTitle?: string;
-  emptyHint?: string;
-  icon?: IconType;
-  className?: string;
-};
-
-// Reusable bento-styled dropdown replacing every native select in the
-// admin catalog: bordered trigger, floating panel with search once
-// options grow, scrollable list plus a count footer so long lists
-// stay scannable instead of overwhelming.
+// Reusable bento-styled dropdown replacing every native select: bordered
+// trigger, floating panel with search once options grow, scrollable list
+// plus a count footer. Public forms pass error/disabled/required so the
+// trigger matches the booking validation palette; callers render the
+// error text below like the admin catalog does.
 export function SelectDropdown({
   label,
   value,
@@ -42,6 +26,10 @@ export function SelectDropdown({
   emptyHint = "Thử từ khóa khác",
   icon: LeadingIcon,
   className = "relative w-full",
+  id,
+  error,
+  disabled = false,
+  required = false,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
@@ -61,6 +49,11 @@ export function SelectDropdown({
   const showSearch = options.length > searchThreshold;
   const showFooter = showSearch || allLabel !== undefined;
   const showBadge = allLabel !== undefined && value !== "";
+  const invalid = Boolean(error);
+  const triggerId = id ?? buttonId;
+  const triggerClasses = invalid
+    ? "border-red-500 focus-visible:ring-red-500 dark:border-red-400"
+    : "border-zinc-300 focus-visible:ring-zinc-500 dark:border-zinc-700";
 
   useEffect(() => {
     if (!open) return;
@@ -104,15 +97,22 @@ export function SelectDropdown({
         className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
       >
         {label}
+        {required && (
+          <span aria-hidden="true" className="ml-1">
+            *
+          </span>
+        )}
       </p>
       <button
-        id={buttonId}
+        id={triggerId}
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-labelledby={`${labelId} ${buttonId}`}
+        aria-labelledby={`${labelId} ${triggerId}`}
+        aria-invalid={invalid}
+        disabled={disabled}
         onClick={() => setOpen((v) => !v)}
-        className="mt-1.5 flex min-h-[44px] w-full items-center gap-2 rounded-xl border border-zinc-300 bg-white px-3 py-2 text-left text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900"
+        className={`mt-1.5 flex min-h-[44px] w-full items-center gap-2 rounded-xl border bg-white px-3 py-2 text-left text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 motion-safe:active:scale-[0.99] disabled:opacity-60 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900 ${triggerClasses}`}
       >
         {LeadingIcon && (
           <LeadingIcon

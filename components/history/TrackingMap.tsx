@@ -3,13 +3,8 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useEffect, useMemo } from "react";
-import {
-  MapContainer,
-  Marker,
-  Polyline,
-  TileLayer,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, Marker, Polyline, useMap } from "react-leaflet";
+import { MapTiles } from "@/components/map/MapTiles";
 import { defaultMapCenter } from "@/services/geocode.api";
 
 export type TrackPoint = { lat: number; lng: number };
@@ -18,6 +13,7 @@ type TrackingMapProps = {
   customer: TrackPoint | null;
   mechanic: TrackPoint | null;
   route?: TrackPoint[];
+  mapClassName?: string;
 };
 
 function destinationIcon(): L.DivIcon {
@@ -57,7 +53,12 @@ function FitBounds({ customer, mechanic, route }: TrackingMapProps) {
 
 // Read-only tracking map: the dark pin is the customer's address, the
 // inverted pin is the mechanic's live position.
-export function TrackingMap({ customer, mechanic, route }: TrackingMapProps) {
+export function TrackingMap({
+  customer,
+  mechanic,
+  route,
+  mapClassName = "h-56 w-full sm:h-64",
+}: TrackingMapProps) {
   const icons = useMemo(
     () => ({ destination: destinationIcon(), mechanic: mechanicIcon() }),
     [],
@@ -85,12 +86,9 @@ export function TrackingMap({ customer, mechanic, route }: TrackingMapProps) {
         center={center}
         zoom={14}
         scrollWheelZoom={false}
-        className="h-56 w-full sm:h-64"
+        className={mapClassName}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <MapTiles />
         <FitBounds customer={customer} mechanic={mechanic} route={route} />
         {customer && (
           <Marker

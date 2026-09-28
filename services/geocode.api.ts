@@ -1,5 +1,6 @@
-// OpenStreetMap Nominatim geocoding for the booking map picker.
-// No API key needed; browsers may call it directly (CORS open).
+// Photon geocoding (Komoot's hosted OSM geocoder) for the booking map
+// picker. The public endpoint needs no API key, allows browser CORS,
+// and stays reachable where *.openstreetmap.org is blocked.
 // Address mapping below is pure and unit-tested.
 
 export type GeocodeResult = {
@@ -9,20 +10,17 @@ export type GeocodeResult = {
   lng: number;
 };
 
-export type NominatimAddress = {
-  house_number?: string;
-  road?: string;
-  suburb?: string;
-  quarter?: string;
-  neighbourhood?: string;
-  village?: string;
-  city_district?: string;
+export type PhotonAddress = {
+  name?: string;
+  housenumber?: string;
+  street?: string;
+  locality?: string;
   district?: string;
-  county?: string;
   city?: string;
-  town?: string;
+  county?: string;
   state?: string;
-  province?: string;
+  country?: string;
+  postcode?: string;
 };
 
 export type MapAddressValues = {
@@ -33,16 +31,23 @@ export type MapAddressValues = {
   province: string;
 };
 
-type NominatimItem = {
-  place_id: number;
-  display_name: string;
-  lat: string;
-  lon: string;
-  address?: NominatimAddress;
+type PhotonProperties = PhotonAddress & {
+  osm_type?: string;
+  osm_id?: number;
 };
 
-const NOMINATIM_BASE = "https://nominatim.openstreetmap.org";
+type PhotonFeature = {
+  properties: PhotonProperties;
+  geometry: { coordinates: [number, number] };
+};
+
+type PhotonResponse = { features: PhotonFeature[] };
+
+const PHOTON_BASE = "https://photon.komoot.io";
 const VIETNAM_CENTER = { lat: 10.7769, lng: 106.7009 };
+// Rough mainland bounds so the picker only offers Vietnamese places,
+// matching the old Nominatim countrycodes=vn filter.
+const VIETNAM_BBOX = "102.14,8.18,109.47,23.39";
 
 // Fallback when the customer has not picked a point yet.
 export function defaultMapCenter(): { lat: number; lng: number } {
@@ -57,40 +62,49 @@ function pickFirst(...values: (string | undefined)[]): string {
   return "";
 }
 
-// Nominatim admin levels vary by country; map the Vietnamese ones the
-// picker fills into the booking address fields.
+function streetLine(address: PhotonAddress): string {
+  return pickFirst(
+    address.housenumber && address.street
+      ? `${address.housenumber} ${address.street}`
+      : undefined,
+    address.street,
+  );
+}
+
+// Suggestion label: POI name first, then the street line and the admin
+// chain. Exact repeats collapse so a city repeated at two admin levels
+// never shows twice.
+export function toPhotonLabel(address: PhotonAddress): string {
+  const street = streetLine(address);
+  const parts = [
+    pickFirst(address.name, street),
+    address.name && street ? street : undefined,
+    pickFirst(address.district, address.locality),
+    pickFirst(address.city, address.county),
+    address.state,
+  ];
+  return [...new Set(parts.filter(Boolean))].join(", ");
+}
+
+// Photon's admin levels differ from Nominatim's: for Vietnam the ward
+// (phường/xã) usually lands on `district`, the quận/huyện on `county`
+// when present, otherwise the province-level `city`.
 export function toMapAddressValues(
-  displayName: string,
-  address: NominatimAddress | undefined,
+  label: string,
+  address: PhotonAddress | undefined,
 ): MapAddressValues {
   const street = pickFirst(
-    address?.house_number && address?.road
-      ? `${address.house_number} ${address.road}`
-      : undefined,
-    address?.road,
+    address ? streetLine(address) : undefined,
+    address?.name,
   );
-  const ward = pickFirst(
-    address?.suburb,
-    address?.quarter,
-    address?.neighbourhood,
-    address?.village,
-  );
-  const district = pickFirst(
-    address?.city_district,
-    address?.district,
-    address?.county,
-  );
-  const province = pickFirst(
-    address?.city,
-    address?.town,
-    address?.state,
-    address?.province,
-  );
-  const composed = [street, ward, district, province]
-    .filter(Boolean)
-    .join(", ");
+  const ward = pickFirst(address?.district, address?.locality);
+  const district = pickFirst(address?.county, address?.city);
+  const province = pickFirst(address?.state, address?.city);
+  const composed = [
+    ...new Set([street, ward, district, province].filter(Boolean)),
+  ].join(", ");
   return {
-    address: composed || displayName,
+    address: composed || label,
     street,
     ward,
     district,
@@ -98,12 +112,12 @@ export function toMapAddressValues(
   };
 }
 
-async function nominatim<T>(path: string): Promise<T> {
-  const response = await fetch(`${NOMINATIM_BASE}${path}`, {
+async function photon(path: string): Promise<PhotonResponse> {
+  const response = await fetch(`${PHOTON_BASE}${path}`, {
     headers: { Accept: "application/json" },
   });
-  if (!response.ok) throw new Error(`Nominatim failed: ${response.status}`);
-  return (await response.json()) as T;
+  if (!response.ok) throw new Error(`Photon failed: ${response.status}`);
+  return (await response.json()) as PhotonResponse;
 }
 
 // Biased to Vietnam so "Nguyen Trai" resolves to the HCMC street first.
@@ -112,20 +126,25 @@ export async function searchAddresses(query: string): Promise<GeocodeResult[]> {
   if (trimmed.length < 3) return [];
   const params = new URLSearchParams({
     q: trimmed,
-    format: "jsonv2",
-    addressdetails: "1",
-    countrycodes: "vn",
+    lat: String(VIETNAM_CENTER.lat),
+    lon: String(VIETNAM_CENTER.lng),
+    bbox: VIETNAM_BBOX,
     limit: "6",
   });
-  const items = await nominatim<NominatimItem[]>(`/search?${params}`);
-  return items
-    .map((item) => ({
-      id: String(item.place_id),
-      label: item.display_name,
-      lat: Number(item.lat),
-      lng: Number(item.lon),
+  const data = await photon(`/api/?${params}`);
+  return data.features
+    .map((feature, index) => ({
+      id: `${feature.properties.osm_type ?? "F"}${feature.properties.osm_id ?? index}`,
+      label: toPhotonLabel(feature.properties),
+      lat: feature.geometry.coordinates[1],
+      lng: feature.geometry.coordinates[0],
     }))
-    .filter((item) => Number.isFinite(item.lat) && Number.isFinite(item.lng));
+    .filter(
+      (item) =>
+        item.label.length > 0 &&
+        Number.isFinite(item.lat) &&
+        Number.isFinite(item.lng),
+    );
 }
 
 export async function reverseGeocode(
@@ -135,10 +154,10 @@ export async function reverseGeocode(
   const params = new URLSearchParams({
     lat: String(lat),
     lon: String(lng),
-    format: "jsonv2",
-    addressdetails: "1",
-    "accept-language": "vi",
+    limit: "1",
   });
-  const item = await nominatim<NominatimItem>(`/reverse?${params}`);
-  return toMapAddressValues(item.display_name ?? "", item.address);
+  const data = await photon(`/reverse?${params}`);
+  const properties = data.features[0]?.properties;
+  const label = properties ? toPhotonLabel(properties) : "";
+  return toMapAddressValues(label, properties);
 }

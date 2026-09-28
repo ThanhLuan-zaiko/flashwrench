@@ -3,13 +3,8 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useEffect, useMemo, useRef } from "react";
-import {
-  MapContainer,
-  Marker,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
+import { MapContainer, Marker, useMap, useMapEvents } from "react-leaflet";
+import { MapTiles } from "@/components/map/MapTiles";
 
 export type MapPoint = { lat: number; lng: number };
 
@@ -80,10 +75,7 @@ export function MapPicker({
         scrollWheelZoom
         className="h-72 w-full lg:h-96"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <MapTiles />
         <ClickCatcher onPick={onPick} />
         <FlyTo center={center} focusKey={focusKey} />
         {marker && (

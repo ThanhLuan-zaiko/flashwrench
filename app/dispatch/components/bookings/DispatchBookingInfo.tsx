@@ -7,8 +7,8 @@ import {
   formatScheduleDateTime,
   formatShortDate,
   formatVnd,
+  mapViewUrl,
   mechanicLabel,
-  openStreetMapUrl,
   paymentStateLabel,
   statusTone,
 } from "./dispatch-format";
@@ -16,7 +16,7 @@ import {
 // Read-only facts for the dispatcher: customer, vehicle, schedule, assigned
 // mechanic, line items, cancel reason and the tracking timeline.
 export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
-  const mapUrl = openStreetMapUrl(booking.addressLat, booking.addressLng);
+  const mapUrl = mapViewUrl(booking.addressLat, booking.addressLng);
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
