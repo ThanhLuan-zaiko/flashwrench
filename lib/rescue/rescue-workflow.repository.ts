@@ -200,6 +200,21 @@ export async function projectRescueTransition(
     });
   }
 
+  // Customer history keeps one row per request forever, so a transition
+  // only moves its status label forward in place.
+  if (write.before.customer_id) {
+    queries.push({
+      query:
+        "UPDATE emergency_by_customer SET status = ? WHERE customer_id = ? AND created_at = ? AND request_id = ?",
+      params: [
+        write.status,
+        write.before.customer_id,
+        createdAt,
+        write.before.request_id,
+      ],
+    });
+  }
+
   await scylla.batch(queries, { prepare: true });
 }
 
@@ -230,6 +245,26 @@ export async function listRescueRefsByStatus(
     }),
     pageState: result.pageState ?? null,
   };
+}
+
+// Customer history: every request the account filed, newest first. Rows
+// are never deleted on transitions — the list is a history, not a queue.
+export async function listRescueRefsByCustomer(
+  customerId: string,
+): Promise<RescueStatusRef[]> {
+  const result = await scylla.execute(
+    "SELECT status, created_at, request_id FROM emergency_by_customer WHERE customer_id = ? LIMIT 50",
+    [customerId],
+    { prepare: true },
+  );
+  return result.rows.map((raw) => {
+    const row = raw as unknown as Record<string, unknown>;
+    return {
+      status: String(row.status),
+      created_at: toDateOrNull(row.created_at) ?? new Date(0),
+      request_id: String(row.request_id),
+    };
+  });
 }
 
 export async function listRescueRefsByMechanic(

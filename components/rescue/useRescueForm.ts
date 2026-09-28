@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
 import { useMe } from "@/hooks/auth";
@@ -35,6 +36,7 @@ const EMPTY_ERRORS: RescueFieldErrors = {};
 // in-app Link click while dirty still asks via the branded confirm.
 export function useRescueForm() {
   const toast = useToast();
+  const router = useRouter();
   const me = useMe();
   const createRescue = useCreateRescue();
   const [fullName, setFullName] = useState("");
@@ -165,6 +167,11 @@ export function useRescueForm() {
           "Đã gửi yêu cầu cứu hộ",
           "Thợ trực sẽ gọi lại ngay cho bạn.",
         );
+        // Signed-in customers track the request on their history tab;
+        // guests keep the confirmation panel since /history needs auth.
+        if (account?.role === "customer") {
+          router.push("/history/rescue");
+        }
       },
       onError: (error) => {
         if (error instanceof RescueApiError) {

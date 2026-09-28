@@ -20,11 +20,13 @@ mock.module("@/lib/rescue/rescue-config.service", () => rescueConfigMocks);
 
 import {
   getRescueDetail,
+  listCustomerRescues,
   listDispatchRescues,
   listMechanicRescues,
 } from "@/lib/rescue/rescue-reader.service";
 
 const REQUEST_ID = "11111111-1111-1111-1111-111111111111";
+const CUSTOMER_ID = "22222222-2222-4222-8222-222222222222";
 
 function dispatcher() {
   return makePublicUser({ role: "dispatcher" });
@@ -32,6 +34,10 @@ function dispatcher() {
 
 function mechanic() {
   return makePublicUser({ id: MECHANIC_ID, role: "mechanic" });
+}
+
+function customer() {
+  return makePublicUser({ id: CUSTOMER_ID, role: "customer" });
 }
 
 beforeEach(() => {
@@ -124,6 +130,49 @@ describe("listMechanicRescues", () => {
   });
 });
 
+describe("listCustomerRescues", () => {
+  test("returns the customer's own rescues hydrated live", async () => {
+    rescueWorkflowRepoMocks.listRescueRefsByCustomer.mockImplementationOnce(
+      async () => [
+        { status: "open", created_at: new Date(), request_id: REQUEST_ID },
+      ],
+    );
+    rescueStubs.rowById = makeRescueRow({
+      status: "dispatched",
+      customer_id: CUSTOMER_ID,
+    });
+
+    const result = await listCustomerRescues(customer());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items).toHaveLength(1);
+    expect(result.data.items[0]?.status).toBe("dispatched");
+  });
+
+  test("drops refs that no longer belong to the caller", async () => {
+    rescueWorkflowRepoMocks.listRescueRefsByCustomer.mockImplementationOnce(
+      async () => [
+        { status: "open", created_at: new Date(), request_id: REQUEST_ID },
+      ],
+    );
+    rescueStubs.rowById = makeRescueRow({
+      customer_id: "99999999-9999-4999-8999-999999999999",
+    });
+
+    const result = await listCustomerRescues(customer());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items).toHaveLength(0);
+  });
+
+  test("forbids non-customer readers", async () => {
+    const result = await listCustomerRescues(mechanic());
+    expect(result.ok).toBe(false);
+  });
+});
+
 describe("getRescueDetail", () => {
   test("mechanics cannot open another mechanic offer", async () => {
     rescueStubs.rowById = makeRescueRow({
@@ -132,6 +181,38 @@ describe("getRescueDetail", () => {
     });
 
     const result = await getRescueDetail(mechanic(), REQUEST_ID);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(403);
+  });
+
+  test("customers can open the request they filed", async () => {
+    rescueStubs.rowById = makeRescueRow({ customer_id: CUSTOMER_ID });
+
+    const result = await getRescueDetail(customer(), REQUEST_ID);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.rescue.requestId).toBe(REQUEST_ID);
+  });
+
+  test("customers cannot open another customer's request", async () => {
+    rescueStubs.rowById = makeRescueRow({
+      customer_id: "99999999-9999-4999-8999-999999999999",
+    });
+
+    const result = await getRescueDetail(customer(), REQUEST_ID);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(403);
+  });
+
+  test("guest-filed requests stay staff-only", async () => {
+    rescueStubs.rowById = makeRescueRow({ customer_id: null });
+
+    const result = await getRescueDetail(customer(), REQUEST_ID);
 
     expect(result.ok).toBe(false);
     if (result.ok) return;

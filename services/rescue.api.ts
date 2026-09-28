@@ -3,8 +3,16 @@ import type {
   CreateRescueInput,
   RescueFieldErrors,
 } from "@/lib/rescue/rescue.types";
+import type { RescueDetail } from "@/lib/rescue/rescue-reader.service";
+import { apiRequest } from "./auth.api";
+import type { RescueDetailPayload } from "./rescue-mechanic.api";
 
-export type { CreatedRescue, CreateRescueInput, RescueFieldErrors };
+export type {
+  CreatedRescue,
+  CreateRescueInput,
+  RescueDetail,
+  RescueFieldErrors,
+};
 
 export class RescueApiError extends Error {
   status: number;
@@ -53,4 +61,18 @@ export async function createRescueRequest(
     throw new RescueApiError(response.status, toFieldErrors(body));
   }
   return body as { request: CreatedRescue };
+}
+
+// Signed-in customer history: same /api/rescue resource, GET side.
+// apiRequest carries the session cookie and refreshes on expiry.
+export function fetchMyRescues(): Promise<{ items: RescueDetail[] }> {
+  return apiRequest<{ items: RescueDetail[] }>("/api/rescue");
+}
+
+export function fetchMyRescueDetail(
+  requestId: string,
+): Promise<RescueDetailPayload> {
+  return apiRequest<RescueDetailPayload>(
+    `/api/rescue/${encodeURIComponent(requestId)}`,
+  );
 }

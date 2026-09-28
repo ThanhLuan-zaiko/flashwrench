@@ -30,10 +30,10 @@ export type InsertRescueParams = {
   updatedAt: Date;
 };
 
-// One batch keeps the request row and its tracking timeline in sync.
-// Guests have no customer partition, so only the primary row plus the
-// status history are written here; dispatchers read the newest rows
-// through the status bucket once a zone is assigned.
+// One batch keeps the request row, its tracking timeline and the
+// customer history partition in sync. Guests have no customer partition,
+// so they only get the primary row plus status buckets; dispatchers read
+// the newest rows through the status bucket once a zone is assigned.
 export async function insertRescueRequest(
   params: InsertRescueParams,
 ): Promise<void> {
@@ -93,6 +93,21 @@ export async function insertRescueRequest(
       ],
     },
   ];
+
+  if (params.customerId) {
+    queries.push({
+      query:
+        "INSERT INTO emergency_by_customer (customer_id, created_at, request_id, status, issue_type, vehicle_plate) VALUES (?, ?, ?, ?, ?, ?)",
+      params: [
+        params.customerId,
+        params.createdAt,
+        params.requestId,
+        params.status,
+        params.issueType,
+        params.vehiclePlate,
+      ],
+    });
+  }
 
   await scylla.batch(queries, { prepare: true });
 }

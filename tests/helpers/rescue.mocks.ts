@@ -84,6 +84,9 @@ export const rescueWorkflowRepoMocks = {
   listRescueRefsByMechanic: mock(
     async (_mechanicId: string): Promise<RescueStatusRef[]> => [],
   ),
+  listRescueRefsByCustomer: mock(
+    async (_customerId: string): Promise<RescueStatusRef[]> => [],
+  ),
 };
 
 export const rescueDispatchStubs = {

@@ -9,10 +9,12 @@ import { getRescueDetail } from "@/lib/rescue/rescue-reader.service";
 
 type RouteParams = { params: Promise<{ requestId: string }> };
 
-// Staff detail for parallel monitoring: dispatcher/admin see every
-// rescue, mechanics only see offers assigned to them.
+// Staff detail for parallel monitoring plus the filing customer's own
+// view: dispatcher/admin see every rescue, mechanics only assigned
+// offers, and customers only requests their account filed.
 export async function GET(_request: Request, { params }: RouteParams) {
   const { response, user } = await requireRole(
+    "customer",
     "mechanic",
     "dispatcher",
     "admin",

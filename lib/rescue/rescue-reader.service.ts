@@ -9,6 +9,7 @@ import { getDispatchConfig } from "./rescue-config.service";
 import {
   findRescueRowById,
   listRescueHistoryRows,
+  listRescueRefsByCustomer,
   listRescueRefsByMechanic,
   listRescueRefsByStatus,
   type RescueRow,
@@ -78,7 +79,7 @@ export async function getRescueDetail(
 ): Promise<
   RescueResult<{ rescue: RescueDetail; timeline: RescueTimelineItem[] }>
 > {
-  if (!isStaff(actor)) {
+  if (!isStaff(actor) && actor.role !== "customer") {
     return fail(403, "Bạn không có quyền thực hiện thao tác này.");
   }
   if (!isUuid(requestId)) {
@@ -86,6 +87,9 @@ export async function getRescueDetail(
   }
   const row = await findRescueRowById(requestId);
   if (!row) return fail(404, "Không tìm thấy yêu cầu cứu hộ này.");
+  if (actor.role === "customer" && row.customer_id !== actor.id) {
+    return fail(403, "Yêu cầu này không thuộc về bạn.");
+  }
   if (
     actor.role === "mechanic" &&
     row.assigned_mechanic_id !== null &&
@@ -157,6 +161,26 @@ export async function listDispatchRescues(
     ok: true,
     data: { items, nextCursor: encodeCursor(page.pageState, scope) },
   };
+}
+
+// Customer history: every rescue the account filed, newest first. Rows
+// hydrate through the live row so stale ref statuses never leak out.
+export async function listCustomerRescues(
+  actor: PublicUser,
+): Promise<RescueResult<{ items: RescueDetail[] }>> {
+  if (actor.role !== "customer") {
+    return fail(403, "Bạn không có quyền thực hiện thao tác này.");
+  }
+  const refs = await listRescueRefsByCustomer(actor.id);
+  const config = await getDispatchConfig();
+  const items: RescueDetail[] = [];
+  for (const ref of refs) {
+    const row = await findRescueRowById(ref.request_id);
+    if (row && row.customer_id === actor.id) {
+      items.push(toDetail(row, config.offerTimeoutMs));
+    }
+  }
+  return { ok: true, data: { items } };
 }
 
 // Mechanic inbox: rescues currently offered to or accepted by me.
