@@ -4,7 +4,7 @@ import {
   BookingTextArea,
   BookingTextInput,
 } from "../booking/BookingFormFields";
-import type { RescueAddressValues } from "./useRescueForm";
+import type { RescueAddressValues } from "./rescue-form-state";
 
 type RescueLocationSectionProps = {
   values: RescueAddressValues;

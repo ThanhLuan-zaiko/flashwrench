@@ -1,6 +1,6 @@
 import type { RescueFieldErrors } from "@/services/rescue.api";
 import { BookingField, BookingTextInput } from "../booking/BookingFormFields";
-import type { RescueVehicleValues } from "./useRescueForm";
+import type { RescueVehicleValues } from "./rescue-form-state";
 
 type RescueVehicleSectionProps = {
   values: RescueVehicleValues;

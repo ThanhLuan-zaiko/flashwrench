@@ -33,6 +33,9 @@ export function RescueForm({ form }: RescueFormProps) {
     vehicle,
     setVehicle,
     errors,
+    contact,
+    contactLoading,
+    loggedIn,
     pending,
     clearError,
     handleMapAddress,
@@ -56,6 +59,8 @@ export function RescueForm({ form }: RescueFormProps) {
         <RescueContactSection
           fullName={fullName}
           phone={phone}
+          contact={contact}
+          loading={contactLoading}
           errors={errors}
           disabled={pending}
           onFullName={(v) => {
@@ -142,7 +147,9 @@ export function RescueForm({ form }: RescueFormProps) {
           {pending ? "Đang gửi yêu cầu…" : "Gửi yêu cầu cứu hộ ngay"}
         </button>
         <p className="mt-2 text-center text-[11px] text-zinc-500 dark:text-zinc-400">
-          Không cần đăng nhập. Thợ trực gọi lại ngay sau khi bạn gửi.
+          {loggedIn
+            ? "Đã đăng nhập — yêu cầu sẽ gắn với tài khoản của bạn."
+            : "Không cần đăng nhập. Thợ trực gọi lại ngay sau khi bạn gửi."}
         </p>
       </div>
     </form>

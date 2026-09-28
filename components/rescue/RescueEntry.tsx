@@ -2,6 +2,7 @@
 
 import { FiClock, FiPhone, FiShield } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { RescueForm } from "./RescueForm";
 import { RescueSuccess } from "./RescueSuccess";
@@ -39,7 +40,11 @@ export function RescueEntry() {
         level={1}
         eyebrow="Cứu hộ khẩn cấp"
         title="Xe dừng giữa đường? Thợ tới ngay."
-        subtitle="Không cần đăng nhập. Điền tên, số điện thoại, vị trí xe và sự cố — thợ trực gọi lại trong vài phút."
+        subtitle={
+          form.loggedIn
+            ? "Đã đăng nhập — chỉ cần chọn sự cố và vị trí xe, thợ trực gọi lại trong vài phút."
+            : "Không cần đăng nhập. Điền tên, số điện thoại, vị trí xe và sự cố — thợ trực gọi lại trong vài phút."
+        }
       />
 
       {form.created ? (
@@ -50,6 +55,16 @@ export function RescueEntry() {
       ) : (
         <RescueForm form={form} />
       )}
+
+      <ConfirmDiscardDialog
+        open={form.leaveConfirm.confirmOpen}
+        title="Rời trang và xóa thông tin đã nhập?"
+        body="Nội dung yêu cầu cứu hộ chưa gửi sẽ bị xóa."
+        stayLabel="Ở lại nhập tiếp"
+        discardLabel="Rời trang"
+        onStay={form.leaveConfirm.stay}
+        onDiscard={form.leaveConfirm.leave}
+      />
 
       <section
         aria-label="Cách cứu hộ hoạt động"
