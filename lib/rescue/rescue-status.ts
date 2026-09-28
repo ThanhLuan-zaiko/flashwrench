@@ -8,18 +8,40 @@ export const RESCUE_STATUSES = [
   "open",
   "dispatched",
   "accepted",
+  "en_route",
+  "arrived",
   "cancelled",
   "completed",
 ] as const;
 
 export type RescueStatus = (typeof RESCUE_STATUSES)[number];
 
-export type RescueMechanicAction = "accept" | "decline" | "expire";
+export type RescueMechanicAction =
+  | "accept"
+  | "decline"
+  | "expire"
+  | "depart"
+  | "arrive"
+  | "complete";
 
 const ACTION_ALLOWED_FROM: Record<RescueMechanicAction, RescueStatus[]> = {
   accept: ["dispatched"],
   decline: ["dispatched"],
   expire: ["dispatched"],
+  depart: ["accepted"],
+  arrive: ["en_route"],
+  // Arrived is the honest path; en_route stays completable so a mechanic
+  // who forgot the arrive tap can still close the rescue.
+  complete: ["en_route", "arrived"],
+};
+
+const ACTION_TARGET_STATUS: Record<RescueMechanicAction, RescueStatus> = {
+  accept: "accepted",
+  decline: "open",
+  expire: "open",
+  depart: "en_route",
+  arrive: "arrived",
+  complete: "completed",
 };
 
 export function isRescueStatus(value: unknown): value is RescueStatus {
@@ -39,7 +61,51 @@ export function canApplyRescueAction(
 export function isRescueMechanicAction(
   value: unknown,
 ): value is RescueMechanicAction {
-  return value === "accept" || value === "decline" || value === "expire";
+  return (
+    value === "accept" ||
+    value === "decline" ||
+    value === "expire" ||
+    value === "depart" ||
+    value === "arrive" ||
+    value === "complete"
+  );
+}
+
+export function rescueActionTarget(action: RescueMechanicAction): RescueStatus {
+  return ACTION_TARGET_STATUS[action];
+}
+
+// Customer-facing progress ladder for trackers and status steppers.
+// open/dispatched collapse into "finding a mechanic"; accepted means the
+// offer was taken but the mechanic has not departed yet.
+export const RESCUE_PROGRESS_STEPS = [
+  "received",
+  "finding",
+  "en_route",
+  "arrived",
+  "completed",
+] as const;
+
+export type RescueProgressStep = (typeof RESCUE_PROGRESS_STEPS)[number];
+
+export function rescueProgressStep(
+  status: string | null,
+): RescueProgressStep | "cancelled" {
+  switch (status) {
+    case "accepted":
+    case "dispatched":
+      return "finding";
+    case "en_route":
+      return "en_route";
+    case "arrived":
+      return "arrived";
+    case "completed":
+      return "completed";
+    case "cancelled":
+      return "cancelled";
+    default:
+      return "received";
+  }
 }
 
 // An offer starts at the row updated_at (the dispatch write). Past the

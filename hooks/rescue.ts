@@ -7,6 +7,7 @@ import {
   createRescueRequest,
   fetchMyRescueDetail,
   fetchMyRescues,
+  fetchRescueTracking,
 } from "@/services/rescue.api";
 import { useMe } from "./auth";
 import { useRealtimeTopic } from "./useRealtimeTopic";
@@ -17,6 +18,7 @@ export const rescueKeys = {
   mine: ["rescue", "mine"] as const,
   mineDetail: (requestId: string) =>
     ["rescue", "mine", "detail", { requestId }] as const,
+  track: (requestId: string) => ["rescue", "track", { requestId }] as const,
 };
 
 // Public rescue creation. No optimistic update: dispatch needs the
@@ -54,6 +56,26 @@ export function useMyRescueDetail(requestId: string | null) {
     gcTime: 5 * 60 * 1000,
     retry: false,
     refetchInterval: 15 * 1000,
+    refetchOnWindowFocus: true,
+  });
+}
+
+// Guest tracking on the success panel: polls the public endpoint until
+// the rescue reaches a terminal state, then stops.
+export function useRescueTracking(requestId: string | null) {
+  return useQuery({
+    queryKey: rescueKeys.track(requestId ?? ""),
+    queryFn: () => fetchRescueTracking(requestId as string),
+    enabled: Boolean(requestId),
+    staleTime: 10 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: false,
+    refetchInterval: (query) => {
+      const status = query.state.data?.tracking.status;
+      return status === "completed" || status === "cancelled"
+        ? false
+        : 15 * 1000;
+    },
     refetchOnWindowFocus: true,
   });
 }

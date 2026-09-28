@@ -2,6 +2,7 @@
 
 import { FiLoader, FiX } from "react-icons/fi";
 import { RESCUE_ISSUE_OPTIONS } from "@/components/rescue/rescue-constants";
+import { rescueStatusLabel } from "@/components/rescue/rescue-format";
 import { useToast } from "@/components/toast/useToast";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useDispatchRescueDetail } from "@/hooks/rescue-inbox";
@@ -66,7 +67,8 @@ export function RescueDetailDialog({
               {rescue ? issueLabel(rescue.issueType) : "Chi tiết cứu hộ"}
             </h2>
             <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-              Mã {requestId.slice(0, 8)}… · Trạng thái: {rescue?.status ?? "…"}
+              Mã {requestId.slice(0, 8)}… · Trạng thái:{" "}
+              {rescue ? rescueStatusLabel(rescue.status) : "…"}
             </p>
           </div>
           <button
@@ -118,6 +120,16 @@ export function RescueDetailDialog({
                   {rescue.assignedMechanicName ?? "Chưa có"}
                 </dd>
               </div>
+              {rescue.status === "en_route" && rescue.etaMin !== null && (
+                <div className="sm:col-span-2">
+                  <dt className="text-[11px] text-zinc-500">
+                    Thời gian tới dự kiến
+                  </dt>
+                  <dd className="font-medium text-zinc-900 dark:text-zinc-50">
+                    ~{rescue.etaMin} phút
+                  </dd>
+                </div>
+              )}
             </dl>
 
             <RescueAssignSection
@@ -143,7 +155,8 @@ export function RescueDetailDialog({
                     key={`${item.changedAt}-${item.newStatus}`}
                     className="text-[11px] text-zinc-500 dark:text-zinc-400"
                   >
-                    {item.oldStatus ?? "—"} → {item.newStatus}
+                    {item.oldStatus ? rescueStatusLabel(item.oldStatus) : "—"} →{" "}
+                    {rescueStatusLabel(item.newStatus)}
                     {item.note ? ` · ${item.note}` : ""}
                   </li>
                 ))}

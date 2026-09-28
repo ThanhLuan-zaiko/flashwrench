@@ -3,7 +3,10 @@ import type {
   CreateRescueInput,
   RescueFieldErrors,
 } from "@/lib/rescue/rescue.types";
-import type { RescueDetail } from "@/lib/rescue/rescue-reader.service";
+import type {
+  RescueDetail,
+  RescueTracking,
+} from "@/lib/rescue/rescue-reader.service";
 import { apiRequest } from "./auth.api";
 import type { RescueDetailPayload } from "./rescue-mechanic.api";
 
@@ -12,6 +15,7 @@ export type {
   CreateRescueInput,
   RescueDetail,
   RescueFieldErrors,
+  RescueTracking,
 };
 
 export class RescueApiError extends Error {
@@ -75,4 +79,22 @@ export function fetchMyRescueDetail(
   return apiRequest<RescueDetailPayload>(
     `/api/rescue/${encodeURIComponent(requestId)}`,
   );
+}
+
+// Guest-facing journey tracking: no session, the unguessable request id
+// is the capability. Plain fetch like createRescueRequest.
+export async function fetchRescueTracking(
+  requestId: string,
+): Promise<{ tracking: RescueTracking }> {
+  const response = await fetch(
+    `/api/rescue/${encodeURIComponent(requestId)}/track`,
+  );
+  const body = (await response.json().catch(() => ({}))) as Record<
+    string,
+    unknown
+  >;
+  if (!response.ok) {
+    throw new RescueApiError(response.status, toFieldErrors(body));
+  }
+  return body as { tracking: RescueTracking };
 }

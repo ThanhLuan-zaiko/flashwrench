@@ -4,6 +4,8 @@ export const RESCUE_STATUS_LABELS: Record<string, string> = {
   open: "Chờ điều phối",
   dispatched: "Đang gọi thợ",
   accepted: "Thợ đã nhận",
+  en_route: "Đang di chuyển",
+  arrived: "Đã đến nơi",
   completed: "Hoàn tất",
   cancelled: "Đã hủy",
 };

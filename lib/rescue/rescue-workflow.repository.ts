@@ -17,6 +17,7 @@ export type RescueRow = {
   assigned_mechanic_name: string | null;
   priority: string | null;
   issue_type: string | null;
+  eta_min: number | null;
   updated_at: Date | null;
   created_at: Date | null;
 };
@@ -26,6 +27,7 @@ export type RescueTransitionWrite = {
   status: string;
   mechanicId: string | null;
   mechanicName: string | null;
+  etaMin: number | null;
   actorId: string | null;
   note: string | null;
   at: Date;
@@ -41,7 +43,16 @@ export type RescueHistoryRow = {
 };
 
 const RESCUE_DETAIL_COLUMNS =
-  "request_id, customer_id, customer_name, customer_phone, zone_id, vehicle_plate, address, issue_type, priority, status, assigned_mechanic_id, assigned_mechanic_name, created_at, updated_at";
+  "request_id, customer_id, customer_name, customer_phone, zone_id, vehicle_plate, address, issue_type, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, created_at, updated_at";
+
+function toNumberOrNull(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
 
 function toStringOrNull(value: unknown): string | null {
   if (value === null || value === undefined) return null;
@@ -91,6 +102,7 @@ function toRescueRow(raw: Record<string, unknown>): RescueRow {
     assigned_mechanic_name: toStringOrNull(raw.assigned_mechanic_name),
     priority: toStringOrNull(raw.priority),
     issue_type: toStringOrNull(raw.issue_type),
+    eta_min: toNumberOrNull(raw.eta_min),
     updated_at: toDateOrNull(raw.updated_at),
     created_at: toDateOrNull(raw.created_at),
   };
@@ -115,11 +127,12 @@ export async function claimRescueTransition(
   write: RescueTransitionWrite,
 ): Promise<boolean> {
   const result = await scylla.execute(
-    "UPDATE emergency_by_id SET status = ?, assigned_mechanic_id = ?, assigned_mechanic_name = ?, updated_at = ? WHERE request_id = ? IF status = ? AND assigned_mechanic_id = ? AND updated_at = ?",
+    "UPDATE emergency_by_id SET status = ?, assigned_mechanic_id = ?, assigned_mechanic_name = ?, eta_min = ?, updated_at = ? WHERE request_id = ? IF status = ? AND assigned_mechanic_id = ? AND updated_at = ?",
     [
       write.status,
       write.mechanicId,
       write.mechanicName,
+      write.etaMin,
       write.at,
       write.before.request_id,
       write.before.status,

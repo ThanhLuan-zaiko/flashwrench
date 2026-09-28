@@ -1,9 +1,20 @@
 // One URL per rescue status tab so links stay shareable and the browser
 // back button works. Mirrors the booking dispatch tabs.
 import type { IconType } from "react-icons";
-import { FiClock, FiNavigation, FiUserCheck } from "react-icons/fi";
+import {
+  FiClock,
+  FiMapPin,
+  FiNavigation,
+  FiTruck,
+  FiUserCheck,
+} from "react-icons/fi";
 
-export type RescueBoardTab = "open" | "dispatched" | "accepted";
+export type RescueBoardTab =
+  | "open"
+  | "dispatched"
+  | "accepted"
+  | "en_route"
+  | "arrived";
 
 export type RescueBoardTabDef = {
   id: RescueBoardTab;
@@ -31,6 +42,18 @@ export const RESCUE_BOARD_TABS: RescueBoardTabDef[] = [
     label: "Thợ đã nhận",
     href: tabHref("accepted"),
     icon: FiUserCheck,
+  },
+  {
+    id: "en_route",
+    label: "Đang di chuyển",
+    href: tabHref("en_route"),
+    icon: FiTruck,
+  },
+  {
+    id: "arrived",
+    label: "Đã đến nơi",
+    href: tabHref("arrived"),
+    icon: FiMapPin,
   },
 ];
 

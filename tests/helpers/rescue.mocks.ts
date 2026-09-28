@@ -35,6 +35,7 @@ export function makeRescueRow(overrides?: Partial<RescueRow>): RescueRow {
     assigned_mechanic_name: null,
     priority: "normal",
     issue_type: "flat_tire",
+    eta_min: null,
     updated_at: new Date(),
     created_at: new Date(),
     ...overrides,

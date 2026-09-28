@@ -146,6 +146,9 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
                     {rescue.assignedMechanicName
                       ? `Thợ: ${rescue.assignedMechanicName}`
                       : (rescue.address ?? "Chưa rõ vị trí")}
+                    {rescue.status === "en_route" && rescue.etaMin !== null
+                      ? ` · ~${rescue.etaMin} phút nữa tới nơi`
+                      : ""}
                   </span>
                 </button>
               </li>

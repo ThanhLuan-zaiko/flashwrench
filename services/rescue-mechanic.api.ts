@@ -4,7 +4,12 @@ import { AuthApiError, apiRequest } from "./auth.api";
 export type { RescueDetail };
 export { AuthApiError };
 
-export type MechanicRescueAction = "accept" | "decline";
+export type MechanicRescueAction =
+  | "accept"
+  | "decline"
+  | "depart"
+  | "arrive"
+  | "complete";
 
 // Mechanic inbox: offers currently assigned to me. Plain fetch with the
 // session cookie; the shell invalidates it on every inbox realtime event.

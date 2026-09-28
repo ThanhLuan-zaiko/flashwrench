@@ -28,7 +28,19 @@ export type RescueDetail = {
   customerPhone: string | null;
   assignedMechanicId: string | null;
   assignedMechanicName: string | null;
+  etaMin: number | null;
   offerExpiresAt: string | null;
+  updatedAt: string | null;
+};
+
+// Public tracking payload: the minimum a requester needs to follow the
+// mechanic's approach. No customer PII — the requestId is the capability.
+export type RescueTracking = {
+  requestId: string;
+  status: string;
+  issueType: string | null;
+  mechanicName: string | null;
+  etaMin: number | null;
   updatedAt: string | null;
 };
 
@@ -65,6 +77,7 @@ function toDetail(row: RescueRow, offerTimeoutMs: number): RescueDetail {
     customerPhone: row.customer_phone,
     assignedMechanicId: row.assigned_mechanic_id,
     assignedMechanicName: row.assigned_mechanic_name,
+    etaMin: row.eta_min,
     offerExpiresAt:
       row.status === "dispatched" && row.updated_at
         ? new Date(row.updated_at.getTime() + offerTimeoutMs).toISOString()
@@ -113,7 +126,36 @@ export async function getRescueDetail(
   };
 }
 
-const RESCUE_BOARD_STATUSES = ["open", "dispatched", "accepted"] as const;
+// Guest tracking link: anyone holding the unguessable request id can
+// follow status + ETA, but nothing that identifies the customer.
+export async function getPublicRescueTracking(
+  requestId: string,
+): Promise<RescueResult<RescueTracking>> {
+  if (!isUuid(requestId)) {
+    return fail(400, "Mã yêu cầu cứu hộ không hợp lệ.");
+  }
+  const row = await findRescueRowById(requestId);
+  if (!row) return fail(404, "Không tìm thấy yêu cầu cứu hộ này.");
+  return {
+    ok: true,
+    data: {
+      requestId: row.request_id,
+      status: row.status ?? "open",
+      issueType: row.issue_type,
+      mechanicName: row.assigned_mechanic_name,
+      etaMin: row.eta_min,
+      updatedAt: row.updated_at?.toISOString() ?? null,
+    },
+  };
+}
+
+const RESCUE_BOARD_STATUSES = [
+  "open",
+  "dispatched",
+  "accepted",
+  "en_route",
+  "arrived",
+] as const;
 const RESCUE_BOARD_PAGE_SIZE = 8;
 
 // Dispatcher board: newest rescues per status with cursor paging. The
@@ -183,7 +225,15 @@ export async function listCustomerRescues(
   return { ok: true, data: { items } };
 }
 
-// Mechanic inbox: rescues currently offered to or accepted by me.
+// Mechanic inbox: offers plus the live trip, so the card keeps the
+// depart/arrive/complete buttons until the rescue is closed.
+const MECHANIC_ACTIVE_STATUSES = new Set([
+  "dispatched",
+  "accepted",
+  "en_route",
+  "arrived",
+]);
+
 export async function listMechanicRescues(
   actor: PublicUser,
 ): Promise<RescueResult<{ items: RescueDetail[] }>> {
@@ -197,7 +247,7 @@ export async function listMechanicRescues(
     const row = await findRescueRowById(ref.request_id);
     if (
       row &&
-      (row.status === "dispatched" || row.status === "accepted") &&
+      MECHANIC_ACTIVE_STATUSES.has(row.status ?? "") &&
       row.assigned_mechanic_id === actor.id
     ) {
       items.push(toDetail(row, config.offerTimeoutMs));

@@ -25,8 +25,18 @@ export type DispatchRescueOutcome = {
   assignedMechanicName: string | null;
 };
 
-const ASSIGNABLE_STATUSES = new Set(["open", "dispatched", "accepted"]);
-const CANCELLABLE_STATUSES = new Set(["open", "dispatched", "accepted"]);
+// Reassignment covers mid-trip handoffs too (a stranded en_route mechanic
+// can be swapped for the next candidate); cancellation stays available
+// until the rescue is closed.
+const ACTIVE_RESCUE_STATUSES = new Set([
+  "open",
+  "dispatched",
+  "accepted",
+  "en_route",
+  "arrived",
+]);
+const ASSIGNABLE_STATUSES = ACTIVE_RESCUE_STATUSES;
+const CANCELLABLE_STATUSES = ACTIVE_RESCUE_STATUSES;
 const MAX_NOTE = 300;
 
 function fail<T>(status: number, form: string): RescueActionResult<T> {
@@ -168,6 +178,7 @@ export async function applyDispatchRescueAction(
       status: "dispatched",
       mechanicId,
       mechanicName,
+      etaMin: null,
       actorId: actor.id,
       note: note.length > 0 ? note : "Điều phối viên giao thợ.",
       at,
@@ -183,6 +194,7 @@ export async function applyDispatchRescueAction(
       status: "dispatched",
       mechanicId,
       mechanicName,
+      etaMin: null,
       actorId: actor.id,
       note: note.length > 0 ? note : "Điều phối viên giao thợ.",
       at,
@@ -219,6 +231,7 @@ export async function applyDispatchRescueAction(
     status: "cancelled",
     mechanicId: null,
     mechanicName: null,
+    etaMin: null,
     actorId: actor.id,
     note,
     at,
@@ -234,6 +247,7 @@ export async function applyDispatchRescueAction(
     status: "cancelled",
     mechanicId: null,
     mechanicName: null,
+    etaMin: null,
     actorId: actor.id,
     note,
     at,

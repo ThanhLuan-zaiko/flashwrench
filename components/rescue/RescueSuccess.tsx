@@ -2,6 +2,7 @@
 
 import { FiCheckCircle, FiPhone, FiRefreshCw } from "react-icons/fi";
 import type { CreatedRescue } from "@/services/rescue.api";
+import { RescueTracker } from "./RescueTracker";
 import { RESCUE_HOTLINE, RESCUE_ISSUE_OPTIONS } from "./rescue-constants";
 
 type RescueSuccessProps = {
@@ -9,8 +10,9 @@ type RescueSuccessProps = {
   onNewRequest: () => void;
 };
 
-// Confirmation after 201: reassure the guest, repeat the hotline and
-// the key facts dispatch will call back about. No tracking link yet.
+// Confirmation after 201: reassure the requester, show live journey
+// progress (public tracking endpoint), repeat the hotline and the key
+// facts dispatch will call back about.
 export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
   const issueLabel =
     RESCUE_ISSUE_OPTIONS.find((o) => o.value === created.issueType)?.label ??
@@ -26,9 +28,13 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
         Đã gửi yêu cầu cứu hộ
       </p>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Thợ trực sẽ gọi lại số {created.customerPhone} trong vài phút để xác
-        nhận vị trí và báo giá. Giữ điện thoại bên mình và bật đèn cảnh báo.
+        Giữ trang này mở để theo dõi thợ tới nơi. Thợ trực cũng sẽ gọi lại số{" "}
+        {created.customerPhone} để xác nhận vị trí và báo giá.
       </p>
+
+      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+        <RescueTracker requestId={created.requestId} />
+      </div>
       <dl className="grid grid-cols-1 gap-2 rounded-xl bg-zinc-100 p-3 text-sm sm:grid-cols-2 dark:bg-zinc-900">
         <div>
           <dt className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">

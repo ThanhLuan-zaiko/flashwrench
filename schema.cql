@@ -501,8 +501,9 @@ CREATE TABLE IF NOT EXISTS booking_messages (
 
 -- ============================================================================
 -- 6. EMERGENCY ROADSIDE RESCUE
--- status = open | dispatching | assigned | en_route | on_site |
---          completed | cancelled | expired
+-- status = open | dispatched | accepted | en_route | arrived |
+--          completed | cancelled
+-- eta_min is written when the mechanic departs (en_route) for tracking.
 -- priority = low | normal | high | critical
 -- issue_type = flat_tire | dead_battery | engine_failure | accident |
 --              out_of_fuel | overheating | locked_out | other

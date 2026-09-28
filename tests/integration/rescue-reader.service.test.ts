@@ -19,6 +19,7 @@ mock.module(
 mock.module("@/lib/rescue/rescue-config.service", () => rescueConfigMocks);
 
 import {
+  getPublicRescueTracking,
   getRescueDetail,
   listCustomerRescues,
   listDispatchRescues,
@@ -82,6 +83,13 @@ describe("listDispatchRescues", () => {
     const result = await listDispatchRescues(customer, { status: "open" });
     expect(result.ok).toBe(false);
   });
+
+  test("journey statuses are boardable tabs", async () => {
+    for (const status of ["en_route", "arrived"] as const) {
+      const result = await listDispatchRescues(dispatcher(), { status });
+      expect(result.ok).toBe(true);
+    }
+  });
 });
 
 describe("listMechanicRescues", () => {
@@ -120,6 +128,52 @@ describe("listMechanicRescues", () => {
     rescueStubs.rowById = makeRescueRow({
       status: "dispatched",
       assigned_mechanic_id: "99999999-9999-4999-8999-999999999999",
+    });
+
+    const result = await listMechanicRescues(mechanic());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items).toHaveLength(0);
+  });
+
+  test("keeps the live trip visible until completion", async () => {
+    rescueWorkflowRepoMocks.listRescueRefsByMechanic.mockImplementationOnce(
+      async () => [
+        {
+          status: "en_route",
+          created_at: new Date(),
+          request_id: REQUEST_ID,
+        },
+      ],
+    );
+    rescueStubs.rowById = makeRescueRow({
+      status: "en_route",
+      assigned_mechanic_id: MECHANIC_ID,
+      eta_min: 7,
+    });
+
+    const result = await listMechanicRescues(mechanic());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items).toHaveLength(1);
+    expect(result.data.items[0]?.etaMin).toBe(7);
+  });
+
+  test("drops closed rescues from the inbox", async () => {
+    rescueWorkflowRepoMocks.listRescueRefsByMechanic.mockImplementationOnce(
+      async () => [
+        {
+          status: "completed",
+          created_at: new Date(),
+          request_id: REQUEST_ID,
+        },
+      ],
+    );
+    rescueStubs.rowById = makeRescueRow({
+      status: "completed",
+      assigned_mechanic_id: MECHANIC_ID,
     });
 
     const result = await listMechanicRescues(mechanic());
@@ -217,5 +271,41 @@ describe("getRescueDetail", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.status).toBe(403);
+  });
+});
+
+describe("getPublicRescueTracking", () => {
+  test("returns journey progress without customer PII", async () => {
+    rescueStubs.rowById = makeRescueRow({
+      status: "en_route",
+      eta_min: 9,
+      assigned_mechanic_name: "Nguyen Van A",
+    });
+
+    const result = await getPublicRescueTracking(REQUEST_ID);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data).toMatchObject({
+      requestId: REQUEST_ID,
+      status: "en_route",
+      etaMin: 9,
+      mechanicName: "Nguyen Van A",
+    });
+    expect(result.data).not.toHaveProperty("customerPhone");
+    expect(result.data).not.toHaveProperty("customerName");
+  });
+
+  test("rejects bad ids and missing requests", async () => {
+    const badId = await getPublicRescueTracking("not-a-uuid");
+    expect(badId.ok).toBe(false);
+    if (badId.ok) return;
+    expect(badId.status).toBe(400);
+
+    rescueStubs.rowById = null;
+    const missing = await getPublicRescueTracking(REQUEST_ID);
+    expect(missing.ok).toBe(false);
+    if (missing.ok) return;
+    expect(missing.status).toBe(404);
   });
 });

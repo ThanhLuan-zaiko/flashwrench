@@ -135,6 +135,52 @@ describe("applyDispatchRescueAction", () => {
     });
   });
 
+  test("cancel still works while the mechanic is en_route", async () => {
+    rescueStubs.rowById = makeRescueRow({
+      status: "en_route",
+      assigned_mechanic_id: MECHANIC_ID,
+      eta_min: 8,
+      updated_at: UPDATED,
+    });
+
+    const result = await applyDispatchRescueAction(
+      dispatcher(),
+      REQUEST_ID,
+      versionBody({ action: "cancel", note: "Khach tu xu ly" }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.status).toBe("cancelled");
+    expect(rescueStubs.transitions[0]).toMatchObject({
+      status: "cancelled",
+      etaMin: null,
+    });
+  });
+
+  test("assign can swap a stranded en_route mechanic", async () => {
+    rescueStubs.rowById = makeRescueRow({
+      status: "en_route",
+      assigned_mechanic_id: MECHANIC_ID,
+      updated_at: UPDATED,
+    });
+    mechanicStubs.profile = makeProfileRow();
+
+    const result = await applyDispatchRescueAction(
+      dispatcher(),
+      REQUEST_ID,
+      versionBody({ action: "assign", mechanicId: MECHANIC_ID }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.status).toBe("dispatched");
+    expect(rescueStubs.transitions[0]).toMatchObject({
+      status: "dispatched",
+      etaMin: null,
+    });
+  });
+
   test("expire-now re-offers a stuck dispatched rescue", async () => {
     rescueStubs.rowReadQueue = [
       makeRescueRow({

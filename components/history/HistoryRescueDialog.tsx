@@ -98,6 +98,16 @@ export function HistoryRescueDialog({
                   {rescue.assignedMechanicName ?? "Đang tìm thợ…"}
                 </dd>
               </div>
+              {rescue.status === "en_route" && rescue.etaMin !== null && (
+                <div>
+                  <dt className="text-[11px] text-zinc-500">
+                    Thời gian tới dự kiến
+                  </dt>
+                  <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
+                    ~{rescue.etaMin} phút
+                  </dd>
+                </div>
+              )}
               <div className="sm:col-span-2">
                 <dt className="text-[11px] text-zinc-500">Vị trí xe</dt>
                 <dd className="font-medium text-zinc-900 dark:text-zinc-50">
