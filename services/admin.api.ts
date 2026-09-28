@@ -124,3 +124,30 @@ export function resetStaffPasswordRequest(
     { method: "POST" },
   );
 }
+
+export type AdminDashboard = {
+  todayBookings: number;
+  openRescues: number;
+  pendingRescues: number;
+  onlineMechanics: number;
+  monthRevenue: number;
+  monthReceipts: number;
+  todayReceipts: number;
+  failedConfirmations: number;
+  events: Array<{
+    eventId: string;
+    at: string | null;
+    actorId: string | null;
+    action: string | null;
+    refType: string | null;
+    refId: string | null;
+    paymentId: string | null;
+    amount: number | null;
+    method: string | null;
+    detail: string | null;
+  }>;
+};
+
+export function fetchAdminDashboard(): Promise<AdminDashboard> {
+  return apiRequest<AdminDashboard>("/api/admin/dashboard");
+}

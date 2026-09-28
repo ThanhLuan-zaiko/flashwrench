@@ -82,13 +82,19 @@ export function normalizeRevenueAnchor(
       if (raw === undefined || raw === null || raw === "") {
         return monthKey(now, timeZone);
       }
-      return typeof raw === "string" && MONTH_KEY.test(raw) ? raw : null;
+      if (typeof raw !== "string") return null;
+      // The toolbar always sends a full day key; snap it to its month.
+      if (DAY_KEY.test(raw)) return raw.slice(0, 7);
+      return MONTH_KEY.test(raw) ? raw : null;
     }
     case "year": {
       if (raw === undefined || raw === null || raw === "") {
         return fallback.slice(0, 4);
       }
-      return typeof raw === "string" && YEAR_KEY.test(raw) ? raw : null;
+      if (typeof raw !== "string") return null;
+      if (YEAR_KEY.test(raw)) return raw;
+      if (DAY_KEY.test(raw) || MONTH_KEY.test(raw)) return raw.slice(0, 4);
+      return null;
     }
   }
 }

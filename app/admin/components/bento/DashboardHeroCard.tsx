@@ -2,9 +2,19 @@ import Link from "next/link";
 import { FiArrowRight, FiZap } from "react-icons/fi";
 import { BentoCard } from "./BentoCard";
 
+type DashboardHeroCardProps = {
+  todayBookings?: number;
+  openRescues?: number;
+  onlineMechanics?: number;
+};
+
 // Hero 2x2 card: operational summary plus primary admin shortcuts.
 // Lives top-left on lg, first in DOM on mobile.
-export function DashboardHeroCard() {
+export function DashboardHeroCard({
+  todayBookings,
+  openRescues,
+  onlineMechanics,
+}: DashboardHeroCardProps) {
   return (
     <BentoCard
       label="Tổng quan vận hành"
@@ -25,20 +35,20 @@ export function DashboardHeroCard() {
         </h2>
         <p className="mt-1.5 max-w-md text-sm text-zinc-600 dark:text-zinc-400">
           Theo dõi lịch đặt, cứu hộ, thợ trực tuyến và doanh thu tại một nơi. Số
-          liệu chi tiết sẽ hiện khi API thống kê được kết nối.
+          liệu tự làm mới theo thời gian thực.
         </p>
       </div>
 
       <div>
         <dl className="mt-4 grid grid-cols-3 divide-x divide-zinc-200 rounded-xl bg-zinc-100 py-3 dark:divide-zinc-800 dark:bg-zinc-900">
           {[
-            { value: "—", label: "Lịch hôm nay" },
-            { value: "—", label: "Cứu hộ mở" },
-            { value: "—", label: "Thợ trực tuyến" },
+            { value: todayBookings, label: "Lịch hôm nay" },
+            { value: openRescues, label: "Cứu hộ mở" },
+            { value: onlineMechanics, label: "Thợ trực tuyến" },
           ].map((item) => (
             <div key={item.label} className="flex flex-col px-3 text-center">
               <dd className="order-1 text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                {item.value}
+                {item.value ?? "—"}
               </dd>
               <dt className="order-2 mt-1 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
                 {item.label}

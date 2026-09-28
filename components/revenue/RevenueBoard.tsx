@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
 import { BentoCard } from "@/app/admin/components/bento/BentoCard";
 import { StockPager } from "@/app/dispatch/components/stock/StockPager";
@@ -51,12 +51,19 @@ export function RevenueBoard({
   const [prevRange, setPrevRange] = useState(range);
   const [page, setPage] = useState(1);
   if (prevRange !== range) {
-    // Reset-on-prop-change: switching ranges re-anchors to today (via the
-    // shell's onAnchorChange) and the transactions pager lands on page 1.
+    // Reset-on-prop-change for our own state only: the transactions pager
+    // lands on page 1 when the range switches.
     setPrevRange(range);
-    onAnchorChange(todayAnchor());
     setPage(1);
   }
+
+  // The parent's anchor lives in the shell, so re-anchoring to today on a
+  // range switch must happen in an effect — calling it during render is a
+  // cross-component setState violation.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: todayAnchor is a pure formatter, not reactive state
+  useEffect(() => {
+    onAnchorChange(todayAnchor());
+  }, [range, onAnchorChange]);
 
   const txns = report?.transactions ?? [];
   const view = pageSlice(txns, page);

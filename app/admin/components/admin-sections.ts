@@ -65,7 +65,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     id: "orders",
     label: "Đơn hàng & hóa đơn",
     description: "Theo dõi đơn linh kiện và xem hóa đơn thu tiền.",
-    href: "/dispatch/orders/pending",
+    href: "/admin/orders/pending",
     icon: FiFileText,
   },
   {
@@ -88,6 +88,7 @@ export function sectionIdForPath(pathname: string): AdminSectionId {
   if (pathname.startsWith("/admin/services")) return "services";
   if (pathname.startsWith("/admin/products")) return "products";
   if (pathname.startsWith("/admin/rescue")) return "rescue";
+  if (pathname.startsWith("/admin/orders")) return "orders";
   if (pathname.startsWith("/admin/revenue")) return "revenue";
   return "dashboard";
 }

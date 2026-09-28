@@ -24,6 +24,7 @@ import { DispatchOrderCard } from "./DispatchOrderCard";
 import {
   DISPATCH_ORDER_TABS,
   type DispatchOrderTab,
+  type DispatchOrderTabDef,
   ORDER_TAB_LABELS,
 } from "./order-tabs";
 
@@ -36,6 +37,8 @@ type OrdersQueueCardProps = {
   stack: CursorStack;
   onStack: (stack: CursorStack) => void;
   onOpen: (orderId: string) => void;
+  /** Tab defs with role-specific hrefs; defaults to the dispatch URLs. */
+  tabs?: DispatchOrderTabDef[];
 };
 
 // The paged order queue card: status tabs, the month's order list and the
@@ -51,6 +54,7 @@ export function OrdersQueueCard({
   stack,
   onStack,
   onOpen,
+  tabs = DISPATCH_ORDER_TABS,
 }: OrdersQueueCardProps) {
   const queryClient = useQueryClient();
   const prefetchTab = (tabId: string) => {
@@ -84,7 +88,7 @@ export function OrdersQueueCard({
           </p>
         </div>
         <FilterTabs
-          tabs={DISPATCH_ORDER_TABS}
+          tabs={tabs}
           activeId={status}
           ariaLabel="Lọc đơn theo trạng thái"
           onTabPrefetch={prefetchTab}

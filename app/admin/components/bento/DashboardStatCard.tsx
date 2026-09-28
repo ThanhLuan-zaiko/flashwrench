@@ -8,8 +8,18 @@ export type DashboardStat = {
   icon: IconType;
 };
 
-// Single 1x1 stat cell. Value stays placeholder until stats API lands.
-export function DashboardStatCard({ stat }: { stat: DashboardStat }) {
+type DashboardStatCardProps = {
+  stat: DashboardStat;
+  value?: string;
+  isPending?: boolean;
+};
+
+// Single 1x1 stat cell fed by the admin dashboard endpoint.
+export function DashboardStatCard({
+  stat,
+  value,
+  isPending,
+}: DashboardStatCardProps) {
   const Icon = stat.icon;
   return (
     <BentoCard label={stat.label}>
@@ -21,8 +31,15 @@ export function DashboardStatCard({ stat }: { stat: DashboardStat }) {
           {stat.label}
         </span>
       </p>
-      <p className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        —
+      <p
+        aria-busy={isPending ?? false}
+        className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
+      >
+        {isPending ? (
+          <span className="motion-safe:animate-pulse">…</span>
+        ) : (
+          (value ?? "—")
+        )}
       </p>
       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
         {stat.hint}

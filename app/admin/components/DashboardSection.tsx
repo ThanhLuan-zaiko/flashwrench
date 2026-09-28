@@ -1,6 +1,11 @@
 "use client";
 
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { formatVnd } from "@/components/revenue/revenue-format";
+import {
+  useAdminDashboard,
+  useAdminDashboardRealtime,
+} from "@/hooks/admin-dashboard";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { DashboardActivityCard } from "./bento/DashboardActivityCard";
 import { DashboardAlertCard } from "./bento/DashboardAlertCard";
@@ -8,10 +13,22 @@ import { DashboardHeroCard } from "./bento/DashboardHeroCard";
 import { DashboardStatCard } from "./bento/DashboardStatCard";
 import { DASHBOARD_STATS } from "./bento/dashboard-stats";
 
-// Grid root only: big type statement plus layout and reveal scope.
-// Each card owns its content.
+// Grid root: big type statement plus layout and reveal scope. Stats come
+// from the dashboard endpoint; each stat id maps to one counter.
 export function DashboardSection() {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  const dashboard = useAdminDashboard();
+  useAdminDashboardRealtime();
+  const data = dashboard.data;
+
+  const statValues: Record<string, string> = data
+    ? {
+        "bookings-today": String(data.todayBookings),
+        "rescue-open": String(data.openRescues),
+        "mechanics-online": String(data.onlineMechanics),
+        "revenue-month": formatVnd(data.monthRevenue),
+      }
+    : {};
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
@@ -21,16 +38,35 @@ export function DashboardSection() {
         subtitle="Mọi lịch đặt, cứu hộ và thợ xe gói gọn trong một dashboard duy nhất."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        <DashboardHeroCard />
+        <DashboardHeroCard
+          todayBookings={data?.todayBookings}
+          openRescues={data?.openRescues}
+          onlineMechanics={data?.onlineMechanics}
+        />
         {DASHBOARD_STATS.map((stat) => (
-          <DashboardStatCard key={stat.id} stat={stat} />
+          <DashboardStatCard
+            key={stat.id}
+            stat={stat}
+            value={statValues[stat.id]}
+            isPending={dashboard.isPending}
+          />
         ))}
-        <DashboardActivityCard />
-        <DashboardAlertCard />
+        <DashboardActivityCard
+          events={data?.events}
+          isPending={dashboard.isPending}
+          isError={dashboard.isError}
+        />
+        <DashboardAlertCard
+          failedConfirmations={data?.failedConfirmations}
+          pendingRescues={data?.pendingRescues}
+          todayReceipts={data?.todayReceipts}
+        />
       </div>
-      <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
-        Số liệu sẽ hiển thị khi API thống kê vận hành được kết nối.
-      </p>
+      {dashboard.isError && (
+        <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
+          Không tải được số liệu tổng quan. Vui lòng thử lại sau.
+        </p>
+      )}
     </div>
   );
 }
