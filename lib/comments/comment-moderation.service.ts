@@ -11,13 +11,12 @@ import type {
 } from "./comment.types";
 import { canModerateComments, targetOwnerId } from "./comment-access";
 import {
+  bumpReplyCount,
   findCommentLookup,
   findTopLevelLocation,
   indexCommentLookup,
   readCommentHidden,
-  readReplyCount,
   setCommentHidden,
-  updateReplyCount,
 } from "./comments.repository";
 import { publishComment } from "./comments.service";
 
@@ -68,25 +67,9 @@ export async function moderateComment(
   const current = await readCommentHidden(lookup);
   if (current !== hidden) {
     await setCommentHidden({ lookup, hidden, staffId: actor.id });
-    // Keep the parent's visible reply count in sync.
+    // Atomic counter delta keeps the parent's visible reply count in sync.
     if (lookup.parent_id) {
-      const parent = await findCommentLookup(lookup.parent_id);
-      if (parent?.created_at) {
-        const count =
-          (await readReplyCount(
-            parent.target_type,
-            parent.target_id,
-            parent.created_at,
-            parent.comment_id,
-          )) ?? 0;
-        await updateReplyCount(
-          parent.target_type,
-          parent.target_id,
-          parent.created_at,
-          parent.comment_id,
-          Math.max(0, count + (hidden ? -1 : 1)),
-        );
-      }
+      await bumpReplyCount(lookup.parent_id, hidden ? -1 : 1);
     }
   }
 

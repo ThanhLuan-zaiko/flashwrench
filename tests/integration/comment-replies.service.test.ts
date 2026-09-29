@@ -117,8 +117,11 @@ describe("comment replies", () => {
     expect(result.ok).toBe(true);
     expect(commentRepoMocks.insertReply.mock.calls.length).toBe(1);
     expect(commentRepoMocks.insertComment.mock.calls.length).toBe(0);
-    expect(commentRepoMocks.updateReplyCount.mock.calls.length).toBe(1);
-    expect(commentRepoMocks.indexCommentLookup.mock.calls.length).toBe(1);
+    // Atomic counter bump, no read-modify-write.
+    expect(commentRepoMocks.bumpReplyCount.mock.calls[0]).toEqual([
+      PARENT_ID,
+      1,
+    ]);
     const write = commentRepoMocks.insertReply.mock.calls[0]?.[0] as {
       parentId: string;
     };

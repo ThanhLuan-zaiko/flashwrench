@@ -8,7 +8,7 @@ import type { CommentLookupRow, CommentRow } from "./comment.types";
 type RawRow = Record<string, unknown>;
 
 const COMMENT_COLUMNS =
-  "target_type, target_id, created_at, comment_id, user_id, user_name, user_role, body, reply_count, is_hidden";
+  "target_type, target_id, created_at, comment_id, user_id, user_name, user_role, body, is_hidden";
 
 function toStringOrNull(value: unknown): string | null {
   return value === null || value === undefined ? null : String(value);
@@ -42,7 +42,6 @@ function toCommentRow(raw: RawRow): CommentRow {
     user_name: toStringOrNull(raw.user_name),
     user_role: toStringOrNull(raw.user_role),
     body: toStringOrNull(raw.body),
-    reply_count: toNumberOrNull(raw.reply_count),
     is_hidden: toBoolOrNull(raw.is_hidden),
   };
 }
@@ -64,7 +63,7 @@ export async function insertComment(write: CommentWrite): Promise<void> {
     [
       {
         query:
-          "INSERT INTO comments_by_target (target_type, target_id, created_at, comment_id, user_id, user_name, user_role, body, reply_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)",
+          "INSERT INTO comments_by_target (target_type, target_id, created_at, comment_id, user_id, user_name, user_role, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         params: [
           write.targetType,
           write.targetId,
@@ -91,8 +90,8 @@ export async function insertComment(write: CommentWrite): Promise<void> {
   );
 }
 
-// Reply write: the reply row plus the id lookup; the parent's reply_count
-// is bumped separately by the service (read-modify-write).
+// Reply write: the reply row plus the id lookup; the parent's counter is
+// bumped separately by the service (atomic COUNTER delta).
 export async function insertReply(
   write: CommentWrite & { parentId: string },
 ): Promise<void> {
@@ -231,32 +230,26 @@ export async function indexCommentLookup(row: CommentLookupRow): Promise<void> {
   );
 }
 
-// Reply count of a top-level comment (read-modify-write on reply/hide).
-export async function readReplyCount(
-  targetType: string,
-  targetId: string,
-  createdAt: Date,
-  commentId: string,
-): Promise<number | null> {
+// Visible reply count of a top-level comment. Backed by a real COUNTER
+// column so reply writes and moderation hides stay atomic — callers
+// never read-modify-write.
+export async function readReplyCount(commentId: string): Promise<number> {
   const result = await scylla.execute(
-    "SELECT reply_count FROM comments_by_target WHERE target_type = ? AND target_id = ? AND created_at = ? AND comment_id = ?",
-    [targetType, targetId, createdAt, commentId],
+    "SELECT reply_count FROM comment_reply_counters WHERE comment_id = ?",
+    [commentId],
     { prepare: true },
   );
   const row = result.first() as unknown as RawRow | null;
-  return row ? toNumberOrNull(row.reply_count) : null;
+  return row ? (toNumberOrNull(row.reply_count) ?? 0) : 0;
 }
 
-export async function updateReplyCount(
-  targetType: string,
-  targetId: string,
-  createdAt: Date,
+export async function bumpReplyCount(
   commentId: string,
-  count: number,
+  delta: number,
 ): Promise<void> {
   await scylla.execute(
-    "UPDATE comments_by_target SET reply_count = ? WHERE target_type = ? AND target_id = ? AND created_at = ? AND comment_id = ?",
-    [count, targetType, targetId, createdAt, commentId],
+    "UPDATE comment_reply_counters SET reply_count = reply_count + ? WHERE comment_id = ?",
+    [delta, commentId],
     { prepare: true },
   );
 }

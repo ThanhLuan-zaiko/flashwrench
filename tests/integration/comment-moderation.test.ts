@@ -162,18 +162,23 @@ describe("moderateComment behavior", () => {
       comment_id: COMMENT_ID,
       parent_id: PARENT_ID,
     });
-    feedbackStubs.replyCount = 2;
     const result = await moderateComment(dispatcher, COMMENT_ID, {
       action: "hide",
     });
     expect(result).toMatchObject({ ok: true });
-    expect(commentRepoMocks.updateReplyCount.mock.calls.length).toBe(1);
-    const countCall = commentRepoMocks.updateReplyCount.mock.calls[0];
-    expect(countCall?.[4]).toBe(1);
-    // The parent was located through the lookup table, then back-filled.
-    expect(commentRepoMocks.findCommentLookup.mock.calls.at(-1)?.[0]).toBe(
+    // Atomic counter delta straight off the lookup's parent_id — no
+    // second lookup or read-modify-write needed.
+    expect(commentRepoMocks.bumpReplyCount.mock.calls[0]).toEqual([
       PARENT_ID,
-    );
+      -1,
+    ]);
+    commentRepoMocks.bumpReplyCount.mockClear();
+    feedbackStubs.commentHidden = true;
+    await moderateComment(dispatcher, COMMENT_ID, { action: "unhide" });
+    expect(commentRepoMocks.bumpReplyCount.mock.calls[0]).toEqual([
+      PARENT_ID,
+      1,
+    ]);
   });
 
   test("repeating the same action is a no-op", async () => {

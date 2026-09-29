@@ -1,7 +1,8 @@
 // Shared row/response shapes for per-entity comment threads. Top-level
 // comments live in comments_by_target; one level of replies lives in
-// comments_by_parent, and comments_by_id maps a comment id back to its
-// thread for reply validation and staff moderation.
+// comments_by_parent, comments_by_id maps a comment id back to its
+// thread, and comment_reply_counters holds the atomic visible reply
+// count per top-level comment.
 
 export type CommentTargetType =
   | "booking"
@@ -19,7 +20,6 @@ export type CommentRow = {
   user_name: string | null;
   user_role: string | null;
   body: string | null;
-  reply_count: number | null;
   is_hidden: boolean | null;
 };
 

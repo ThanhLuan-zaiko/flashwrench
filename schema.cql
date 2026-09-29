@@ -997,12 +997,19 @@ CREATE TABLE IF NOT EXISTS comments_by_target (
   user_name   TEXT,
   user_role   TEXT, -- customer | mechanic | dispatcher | admin
   body        TEXT,
-  reply_count INT,    -- visible replies; kept in sync on reply write/hide
   is_hidden   BOOLEAN, -- staff moderation: hidden rows leave the public feed
   hidden_by   UUID,
   hidden_at   TIMESTAMP,
   PRIMARY KEY ((target_type, target_id), created_at, comment_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, comment_id ASC);
+
+-- Query: visible reply count of a top-level comment. A real COUNTER so
+-- concurrent replies and reply hide/unhide stay atomic (no read-modify-
+-- write); negative values are clamped to 0 on read.
+CREATE TABLE IF NOT EXISTS comment_reply_counters (
+  comment_id  UUID PRIMARY KEY,
+  reply_count COUNTER
+);
 
 -- Query: replies under one comment, oldest first. Two levels only —
 -- replies cannot be replied to (service enforced).

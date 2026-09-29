@@ -34,6 +34,7 @@ import {
   validateParentId,
 } from "./comment-validation";
 import {
+  bumpReplyCount,
   findCommentLookup,
   findTopLevelLocation,
   indexCommentLookup,
@@ -41,7 +42,6 @@ import {
   insertReply,
   listCommentRows,
   readReplyCount,
-  updateReplyCount,
 } from "./comments.repository";
 
 const COMMENT_PAGE = 10;
@@ -80,11 +80,16 @@ export async function listComments(
     return fail(400, "Con trỏ phân trang không hợp lệ.");
   }
   const page = await listCommentRows(type, id, COMMENT_PAGE, pageState);
+  const visible = visibleCommentRows(page.rows, actor);
+  // Reply counts live in the counter table — one lookup per row.
+  const counts = await Promise.all(
+    visible.map((row) => readReplyCount(row.comment_id)),
+  );
   return {
     ok: true,
     data: {
-      items: visibleCommentRows(page.rows, actor).map((row) =>
-        toCommentItem(row, actor?.id ?? null),
+      items: visible.map((row, index) =>
+        toCommentItem(row, actor?.id ?? null, counts[index] ?? 0),
       ),
       nextCursor: encodeCursor(page.pageState, scope),
     },
@@ -194,37 +199,14 @@ export async function addComment(
     body: bodyError.body,
     createdAt: new Date(),
   };
-  // Every new row is indexed so moderation and reply listing can locate
-  // it by comment_id alone, without the caller's thread hint.
-  const lookup: CommentLookupRow = {
-    comment_id: write.commentId,
-    target_type: type,
-    target_id: id,
-    parent_id: parent?.comment_id ?? null,
-    created_at: write.createdAt,
-  };
+  // The id lookup is written inside the repository batch, so moderation
+  // and reply listing can always locate the row by comment_id alone.
   if (parent) {
     await insertReply({ ...write, parentId: parent.comment_id });
-    void indexCommentLookup(lookup);
-    // reply_count tracks visible replies; hide/unhide re-adjusts it.
-    const current = parent.created_at
-      ? ((await readReplyCount(
-          type,
-          id,
-          parent.created_at,
-          parent.comment_id,
-        )) ?? 0)
-      : 0;
-    await updateReplyCount(
-      type,
-      id,
-      parent.created_at as Date,
-      parent.comment_id,
-      current + 1,
-    );
+    // Atomic counter delta; hide/unhide applies the matching negative.
+    await bumpReplyCount(parent.comment_id, 1);
   } else {
     await insertComment(write);
-    void indexCommentLookup(lookup);
   }
 
   const owner = type === "part" ? null : await targetOwnerId(type, id);

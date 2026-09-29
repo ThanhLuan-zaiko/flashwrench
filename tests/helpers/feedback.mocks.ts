@@ -105,7 +105,6 @@ export function makeCommentRow(overrides?: Partial<CommentRow>): CommentRow {
     user_name: "Nguyen Van A",
     user_role: "customer",
     body: "Binh luan thu nhat.",
-    reply_count: null,
     is_hidden: null,
     ...overrides,
   };
@@ -254,21 +253,10 @@ export const commentRepoMocks = {
       feedbackStubs.commentHidden,
   ),
   readReplyCount: mock(
-    async (
-      _targetType: string,
-      _targetId: string,
-      _createdAt: Date,
-      _commentId: string,
-    ): Promise<number | null> => feedbackStubs.replyCount,
+    async (_commentId: string): Promise<number> => feedbackStubs.replyCount,
   ),
-  updateReplyCount: mock(
-    async (
-      _targetType: string,
-      _targetId: string,
-      _createdAt: Date,
-      _commentId: string,
-      _count: number,
-    ): Promise<void> => undefined,
+  bumpReplyCount: mock(
+    async (_commentId: string, _delta: number): Promise<void> => undefined,
   ),
   setCommentHidden: mock(async (_params: unknown): Promise<void> => undefined),
 };
