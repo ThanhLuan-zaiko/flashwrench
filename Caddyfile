@@ -1,0 +1,50 @@
+# FlashWrench edge — one public domain, two app processes:
+#   Next.js      -> 127.0.0.1:3000  (pages + API, `bun run start`)
+#   realtime WS  -> 127.0.0.1:3001  (Bun, `bun run realtime`, realtime/server.ts)
+#
+# Caddy terminates TLS automatically (ACME). For a local smoke test:
+#   SITE_DOMAIN=localhost caddy run --config Caddyfile
+# Production:
+#   SITE_DOMAIN=flashwrench.vn caddy run --config Caddyfile
+#
+# Topology assumption: Cloudflare sits in front (first DDoS wall), so the
+# true visitor IP arrives in CF-Connecting-IP. The in-app shield
+# (proxy.ts) reads x-forwarded-for first, then x-real-ip — the mappings
+# below keep both honest: behind CF, XFF carries the real client; on a
+# direct hit the XFF override is empty and the app falls back to the real
+# peer via X-Real-IP.
+#
+# IMPORTANT: lock the origin down so only Cloudflare IPs can reach 443
+# (firewall or Cloudflare Tunnel) — otherwise anyone hitting the box
+# directly can spoof CF-Connecting-IP and dodge the per-IP shield.
+
+{$SITE_DOMAIN:localhost} {
+	# WebSocket: same domain, separate process. Only /ws is proxied —
+	# /publish (server-to-server, shared-secret header) and /health
+	# never leave the box.
+	@websocket path /ws
+	handle @websocket {
+		reverse_proxy 127.0.0.1:3001 {
+			# Public host, not the upstream dial address: the realtime
+			# Origin allowlist (realtime/security.ts) compares against
+			# the request host. Requires REALTIME_ALLOWED_ORIGINS=
+			# https://<domain> since TLS ends here and the upstream
+			# sees plain http.
+			header_up Host {host}
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			header_up X-Real-IP {http.request.remote.host}
+		}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:3000 {
+			# Same reason: isTrustedOrigin() (lib/auth/guards.ts) rejects
+			# any mutation whose Origin host differs from Host.
+			header_up Host {host}
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			header_up X-Real-IP {http.request.remote.host}
+		}
+	}
+
+	encode zstd gzip
+}
