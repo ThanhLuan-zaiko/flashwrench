@@ -1,11 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CommentTargetType } from "@/services/comments.api";
-import { addCommentRequest, fetchComments } from "@/services/comments.api";
+import {
+  addCommentRequest,
+  fetchComments,
+  fetchReplies,
+  moderateCommentRequest,
+} from "@/services/comments.api";
 
 export const commentKeys = {
   all: ["comments"] as const,
   thread: (targetType: CommentTargetType, targetId: string) =>
     ["comments", targetType, targetId] as const,
+  replies: (parentId: string) => ["comments", "replies", parentId] as const,
 };
 
 // One thread per entity; the cursor stack lives in the caller so page
@@ -28,15 +34,42 @@ export function useComments(
   });
 }
 
+// Replies under one top-level comment; only fetched once expanded.
+export function useReplies(
+  parentId: string,
+  cursor?: string | null,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: [...commentKeys.replies(parentId), cursor ?? null],
+    queryFn: () => fetchReplies(parentId, cursor),
+    enabled,
+    staleTime: 15 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
 export function useAddComment(targetType: CommentTargetType, targetId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: string) =>
-      addCommentRequest({ targetType, targetId, body }),
+    mutationFn: (input: { body: string; parentId?: string }) =>
+      addCommentRequest({ targetType, targetId, ...input }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: commentKeys.thread(targetType, targetId),
-      });
+      // Covers the thread page and any expanded reply lists.
+      void queryClient.invalidateQueries({ queryKey: commentKeys.all });
+    },
+  });
+}
+
+// Staff hide/unhide; thread and reply pages refetch so the row flips
+// to its moderated state (or disappears for non-moderators).
+export function useModerateComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: moderateCommentRequest,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: commentKeys.all });
     },
   });
 }

@@ -37,6 +37,8 @@ export function makeReviewBookingRow(
     rating: 5,
     body: "Tho den dung gio.",
     created_at: new Date("2026-09-16T10:00:00.000Z"),
+    service_rating: null,
+    service_body: null,
     ...overrides,
   };
 }

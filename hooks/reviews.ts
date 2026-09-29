@@ -1,12 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { productsKeys } from "@/hooks/products";
 import {
   createOrderPartReviewRequest,
   createOrderReviewRequest,
   createRescueReviewRequest,
   fetchMechanicReviews,
   fetchOrderReviews,
+  fetchPartReviewEligibility,
   fetchProductReviews,
   fetchRescueReview,
+  fetchServiceReviews,
+  moderateReviewRequest,
 } from "@/services/reviews.api";
 
 export const reviewKeys = {
@@ -14,8 +18,10 @@ export const reviewKeys = {
   order: (orderId: string) => ["reviews", "order", orderId] as const,
   rescue: (requestId: string) => ["reviews", "rescue", requestId] as const,
   product: (slug: string) => ["reviews", "product", slug] as const,
+  eligibility: (slug: string) => ["reviews", "eligibility", slug] as const,
   mechanic: (mechanicId: string) =>
     ["reviews", "mechanic", mechanicId] as const,
+  service: (serviceId: string) => ["reviews", "service", serviceId] as const,
 };
 
 // Owner-side order review state: overall review + per-part map.
@@ -111,6 +117,49 @@ export function useMechanicReviews(
     queryFn: () => fetchMechanicReviews(mechanicId as string, cursor),
     enabled: Boolean(mechanicId),
     staleTime: 30 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+// Public service review feed shown on the booking page for the picked
+// service. Same cursor contract as the product and mechanic feeds.
+export function useServiceReviews(
+  serviceId: string | null,
+  cursor?: string | null,
+) {
+  return useQuery({
+    queryKey: [...reviewKeys.service(serviceId ?? "none"), cursor ?? null],
+    queryFn: () => fetchServiceReviews(serviceId as string, cursor),
+    enabled: Boolean(serviceId),
+    staleTime: 30 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+// Staff hide/unhide on a public feed row. Refreshes every review list
+// plus the product rating summary so hidden reviews stop counting.
+export function useModerateReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: moderateReviewRequest,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: reviewKeys.all });
+      void queryClient.invalidateQueries({ queryKey: productsKeys.all });
+    },
+  });
+}
+
+// Whether the signed-in customer can rate this product from its page. Only
+// runs for signed-in visitors; a submitted review invalidates it via
+// `reviewKeys.all` so the form flips to the "reviewed" state.
+export function usePartReviewEligibility(slug: string, enabled: boolean) {
+  return useQuery({
+    queryKey: reviewKeys.eligibility(slug),
+    queryFn: () => fetchPartReviewEligibility(slug),
+    enabled,
+    staleTime: 60 * 1000,
     retry: false,
     refetchOnWindowFocus: false,
   });

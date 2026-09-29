@@ -2,6 +2,8 @@
 // Services own every rule; the repository only runs raw CQL.
 
 import { findUserById } from "@/lib/auth/user.repository";
+import { scanRatingSummary } from "@/lib/reviews/rating-scan.service";
+import type { RatingSummary } from "@/lib/reviews/rating-summary";
 import { type MechanicResult, toDecimalOr, toNumberOr } from "./mechanic.types";
 import {
   deleteAvailableMechanic,
@@ -36,6 +38,9 @@ export type ListMechanicsParams = {
   lat?: number;
   lng?: number;
   limit?: number;
+  // Customer-facing lists show the live review average. Dispatch callers
+  // leave it off: they never rank on rating and skip one read per mechanic.
+  liveRatings?: boolean;
 };
 
 function resolveLimit(limit?: number): number {
@@ -57,6 +62,20 @@ function formError<T>(status: number, form: string): MechanicResult<T> {
 async function activeMechanicUser(mechanicId: string): Promise<boolean> {
   const user = await findUserById(mechanicId);
   return user?.role === "mechanic" && user.status === "active";
+}
+
+// The cached profile rating has no writer after the profile is created, so
+// the picker shows the live average of the public reviews instead. Null
+// (no reviews yet, or a failed read) falls back to the cached values.
+async function liveRatingSummary(
+  mechanicId: string,
+): Promise<RatingSummary | null> {
+  try {
+    const summary = await scanRatingSummary("mechanic", mechanicId);
+    return summary.ratingCount > 0 ? summary : null;
+  } catch {
+    return null;
+  }
 }
 
 // One bounded partition read, then filter and enrich in memory: the
@@ -81,9 +100,10 @@ export async function listAvailableMechanics(
     seen.add(row.mechanic_id);
     if (row.is_verified !== true) continue;
     if (row.is_online !== true) continue;
-    const [accountOk, profile] = await Promise.all([
+    const [accountOk, profile, live] = await Promise.all([
       activeMechanicUser(row.mechanic_id),
       findMechanicProfileRow(row.mechanic_id),
+      params.liveRatings ? liveRatingSummary(row.mechanic_id) : null,
     ]);
     if (!accountOk || !profile) {
       await deleteAvailableMechanic(
@@ -117,8 +137,11 @@ export async function listAvailableMechanics(
       skills: (profile.skills ?? row.skills ?? [])
         .map((skill) => skill.trim())
         .filter(Boolean),
-      ratingAvg: toDecimalOr(profile.rating_avg ?? row.rating_avg),
-      ratingCount: toNumberOr(profile.rating_count ?? row.rating_count),
+      ratingAvg:
+        live?.ratingAvg ?? toDecimalOr(profile.rating_avg ?? row.rating_avg),
+      ratingCount:
+        live?.ratingCount ??
+        toNumberOr(profile.rating_count ?? row.rating_count),
       completedJobs: toNumberOr(profile.completed_jobs ?? row.completed_jobs),
       isOnline: true,
       lat: base?.lat ?? null,

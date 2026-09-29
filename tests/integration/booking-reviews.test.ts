@@ -114,11 +114,22 @@ describe("createBookingReview claims and retries", () => {
       mechanicId: MECHANIC_ID,
       rating: 5,
       body: "Tho den dung gio.",
+      serviceRating: null,
+      serviceBody: "",
     });
     expect(reviewRepoMocks.projectBookingReview.mock.calls.length).toBe(1);
     expect(domainPublishMocks.publishBookingChange.mock.calls[0]?.[0]).toBe(
       "review-created",
     );
+    // A mechanic-only review never reads booking items nor rates a service.
+    expect(
+      mechanicBookingsRepoMocks.listBookingItemRowsByBookingIds.mock.calls
+        .length,
+    ).toBe(0);
+    expect(workspaceStubs.reviewWrites[0]).toMatchObject({
+      serviceRating: null,
+      serviceIds: [],
+    });
   });
 
   test("same retry repairs projections and publishes with persisted fields", async () => {

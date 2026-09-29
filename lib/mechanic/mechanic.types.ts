@@ -124,6 +124,7 @@ export type MechanicReviewRow = {
   title: string | null;
   body: string | null;
   created_at: Date | null;
+  is_hidden: boolean | null;
 };
 
 /** Items returned by the mechanic API. */

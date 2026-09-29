@@ -8,8 +8,19 @@ import type {
   OrderReviewRow,
   RatingCounterRow,
   RescueReviewRow,
-  TargetReviewRow,
 } from "./review.types";
+
+// Public-feed reads and moderation live in the sibling repository so this
+// file stays the write-side aggregate; re-export keeps existing imports
+// (and test module mocks) working unchanged.
+export {
+  findReviewProjection,
+  findTargetReviewRowById,
+  indexReviewProjection,
+  listTargetReviewRows,
+  readReviewHidden,
+  setTargetReviewHidden,
+} from "./target-reviews.repository";
 
 type RawRow = Record<string, unknown>;
 
@@ -56,23 +67,6 @@ function toRescueReviewRow(raw: RawRow): RescueReviewRow {
     rating: toNumberOrNull(raw.rating),
     body: toStringOrNull(raw.body),
     created_at: toDateOrNull(raw.created_at),
-  };
-}
-
-function toTargetReviewRow(raw: RawRow): TargetReviewRow {
-  return {
-    target_type: String(raw.target_type),
-    target_id: String(raw.target_id),
-    created_at: toDateOrNull(raw.created_at),
-    review_id: String(raw.review_id),
-    customer_id: toStringOrNull(raw.customer_id),
-    customer_name: toStringOrNull(raw.customer_name),
-    booking_id: toStringOrNull(raw.booking_id),
-    order_id: toStringOrNull(raw.order_id),
-    rescue_id: toStringOrNull(raw.rescue_id),
-    rating: toNumberOrNull(raw.rating),
-    title: toStringOrNull(raw.title),
-    body: toStringOrNull(raw.body),
   };
 }
 
@@ -245,21 +239,35 @@ export async function projectTargetReview(write: {
           write.rating,
         ],
       },
+      {
+        // Lookup so staff can hide this projection by review id alone.
+        query:
+          "INSERT INTO reviews_by_id (review_id, target_type, target_id, created_at, rating) VALUES (?, ?, ?, ?, ?)",
+        params: [
+          write.reviewId,
+          write.targetType,
+          write.targetId,
+          write.createdAt,
+          write.rating,
+        ],
+      },
     ],
     { prepare: true },
   );
 }
 
 // Counters live in their own batch: counter writes cannot mix with
-// regular statements in one logged batch.
+// regular statements in one logged batch. Negative deltas un-count a
+// hidden review on the same path.
 export async function bumpRatingCounter(
   targetType: string,
   targetId: string,
   score: number,
+  countDelta = 1,
 ): Promise<void> {
   await scylla.execute(
-    "UPDATE rating_counters SET total_score = total_score + ?, total_count = total_count + 1 WHERE target_type = ? AND target_id = ?",
-    [score, targetType, targetId],
+    "UPDATE rating_counters SET total_score = total_score + ?, total_count = total_count + ? WHERE target_type = ? AND target_id = ?",
+    [score, countDelta, targetType, targetId],
     { prepare: true },
   );
 }
@@ -310,24 +318,6 @@ export async function updatePartRating(params: {
   }
 }
 
-// Public per-target review list, newest first with driver pageState.
-export async function listTargetReviewRows(
-  targetType: string,
-  targetId: string,
-  limit: number,
-  pageState: string | null,
-): Promise<{ rows: TargetReviewRow[]; pageState: string | null }> {
-  const result = await scylla.execute(
-    "SELECT target_type, target_id, created_at, review_id, customer_id, customer_name, booking_id, order_id, rescue_id, rating, title, body FROM reviews_by_target WHERE target_type = ? AND target_id = ?",
-    [targetType, targetId],
-    {
-      prepare: true,
-      fetchSize: limit,
-      pageState: pageState ?? undefined,
-    },
-  );
-  return {
-    rows: result.rows.map((r) => toTargetReviewRow(r as unknown as RawRow)),
-    pageState: result.pageState ?? null,
-  };
-}
+// Public per-target review list, the reviews_by_id lookup and the hidden
+// flag writes live in target-reviews.repository.ts and are re-exported at
+// the top of this file for existing importers.

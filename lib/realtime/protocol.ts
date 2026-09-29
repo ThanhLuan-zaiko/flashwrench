@@ -23,6 +23,10 @@ export function userTopic(userId: string): string {
   return `user:${userId}`;
 }
 
+export function partTopic(partId: string): string {
+  return `part:${partId}`;
+}
+
 export function bookingTopic(bookingId: string): string {
   return `booking:${bookingId}`;
 }
@@ -75,91 +79,10 @@ export function parseBookingInboxEvent(
   return { kind, bookingId, status };
 }
 
-export type DomainEvent = {
-  kind:
-    | "booking-created"
-    | "booking-assigned"
-    | "booking-updated"
-    | "payment-recorded"
-    | "review-created"
-    | "vehicle-updated"
-    | "mechanic-updated"
-    | "user-updated"
-    | "complaint-updated"
-    | "orders-updated"
-    | "order-updated"
-    | "rescue-created"
-    | "rescue-assigned"
-    | "rescue-updated";
-  bookingId?: string;
-  orderId?: string;
-  userId?: string;
-  rescueId?: string;
-  status?: string;
-};
-
-const DOMAIN_EVENT_KINDS = new Set<DomainEvent["kind"]>([
-  "booking-created",
-  "booking-assigned",
-  "booking-updated",
-  "payment-recorded",
-  "review-created",
-  "vehicle-updated",
-  "mechanic-updated",
-  "user-updated",
-  "complaint-updated",
-  "orders-updated",
-  "order-updated",
-  "rescue-created",
-  "rescue-assigned",
-  "rescue-updated",
-]);
-
-const LEGACY_BOOKING_STATUS_TYPE = "booking-status";
-
-function optionalField(value: unknown): string | undefined | null {
-  if (value === undefined) return undefined;
-  return typeof value === "string" && value.length > 0 ? value : null;
-}
-
-export function parseDomainEvent(payload: unknown): DomainEvent | null {
-  if (
-    typeof payload !== "object" ||
-    payload === null ||
-    Array.isArray(payload)
-  ) {
-    return null;
-  }
-  const body = payload as Record<string, unknown>;
-  let kind: DomainEvent["kind"];
-  if (DOMAIN_EVENT_KINDS.has(body.kind as DomainEvent["kind"])) {
-    kind = body.kind as DomainEvent["kind"];
-  } else if (body.type === LEGACY_BOOKING_STATUS_TYPE) {
-    kind = "booking-updated";
-  } else {
-    return null;
-  }
-  const bookingId = optionalField(body.bookingId);
-  const orderId = optionalField(body.orderId);
-  const userId = optionalField(body.userId);
-  const rescueId = optionalField(body.rescueId);
-  const status = optionalField(body.status);
-  if (
-    bookingId === null ||
-    orderId === null ||
-    userId === null ||
-    rescueId === null ||
-    status === null
-  )
-    return null;
-  const event: DomainEvent = { kind };
-  if (bookingId !== undefined) event.bookingId = bookingId;
-  if (orderId !== undefined) event.orderId = orderId;
-  if (userId !== undefined) event.userId = userId;
-  if (rescueId !== undefined) event.rescueId = rescueId;
-  if (status !== undefined) event.status = status;
-  return event;
-}
+export type { DomainEvent } from "./domain-events";
+// DomainEvent/parseDomainEvent live in domain-events.ts (file-size split);
+// re-exported here so existing imports keep working.
+export { parseDomainEvent } from "./domain-events";
 
 const TOPIC_PATTERN = /^[a-z0-9:_-]{1,120}$/;
 
@@ -261,12 +184,14 @@ type TopicKind =
   | "complaints"
   | "mechanic-directory"
   | "user"
+  | "part"
   | "booking"
   | "booking-chat"
   | "emergency-zone"
   | "unknown";
 
 const USER_TOPIC_PATTERN = /^user:[a-z0-9_-]+$/;
+const PART_TOPIC_PATTERN = /^part:[a-z0-9_-]+$/;
 const BOOKING_TOPIC_PATTERN = /^booking:[a-z0-9_-]+$/;
 const BOOKING_CHAT_TOPIC_PATTERN = /^booking:[a-z0-9_-]+:chat$/;
 const EMERGENCY_ZONE_TOPIC_PATTERN = /^emergency:zone:[a-z0-9_-]+$/;
@@ -280,6 +205,7 @@ function topicKind(topic: string): TopicKind {
   if (topic === COMPLAINTS_TOPIC) return "complaints";
   if (topic === MECHANIC_DIRECTORY_TOPIC) return "mechanic-directory";
   if (USER_TOPIC_PATTERN.test(topic)) return "user";
+  if (PART_TOPIC_PATTERN.test(topic)) return "part";
   if (BOOKING_CHAT_TOPIC_PATTERN.test(topic)) return "booking-chat";
   if (BOOKING_TOPIC_PATTERN.test(topic)) return "booking";
   if (EMERGENCY_ZONE_TOPIC_PATTERN.test(topic)) return "emergency-zone";
@@ -299,7 +225,8 @@ export function canSubscribe(
   if (
     kind === "service-catalog" ||
     kind === "parts-catalog" ||
-    kind === "mechanic-directory"
+    kind === "mechanic-directory" ||
+    kind === "part"
   )
     return true;
   if (!user) return false;

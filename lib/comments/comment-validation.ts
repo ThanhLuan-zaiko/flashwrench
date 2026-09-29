@@ -34,6 +34,22 @@ export function validateCommentTarget(
   return Object.keys(errors).length > 0 ? { errors } : null;
 }
 
+export function validateParentId(raw: unknown): {
+  parentId: string | null;
+  errors: CommentFieldErrors | null;
+} {
+  if (raw === undefined || raw === null || raw === "") {
+    return { parentId: null, errors: null };
+  }
+  if (!isUuid(raw)) {
+    return {
+      parentId: null,
+      errors: { parentId: "Bình luận gốc không hợp lệ." },
+    };
+  }
+  return { parentId: String(raw), errors: null };
+}
+
 export function validateCommentBody(raw: unknown): {
   body: string;
   errors: CommentFieldErrors | null;

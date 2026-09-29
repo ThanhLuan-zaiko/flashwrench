@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { makeUserRow } from "../helpers/auth.fixtures";
 import {
+  feedbackStubs,
+  makeTargetReviewRow,
+  resetFeedbackMocks,
+  reviewRepoMocks,
+} from "../helpers/feedback.mocks";
+import {
   MECHANIC_ID,
   MECHANIC_OTHER_ID,
   makeAvailableMechanicRow,
@@ -27,6 +33,7 @@ mock.module(
   () => mechanicWorkspaceRepoMocks,
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
+mock.module("@/lib/reviews/reviews.repository", () => reviewRepoMocks);
 
 import {
   listAvailableMechanics,
@@ -35,6 +42,7 @@ import {
 
 beforeEach(() => {
   resetMechanicMocks();
+  resetFeedbackMocks();
   serviceStubs.userById = makeUserRow({ role: "mechanic", status: "active" });
   mechanicStubs.profile = makeProfileRow();
 });
@@ -101,6 +109,79 @@ describe("listAvailableMechanics", () => {
       MECHANIC_ID,
     ]);
     expect(result.data[0]?.distanceKm).not.toBeNull();
+  });
+
+  test("shows the live review average instead of the cached profile rating", async () => {
+    mechanicDirectoryStubs.rows = [makeAvailableMechanicRow()];
+    feedbackStubs.targetReviewPage = {
+      rows: [
+        makeTargetReviewRow({ target_type: "mechanic", rating: 5 }),
+        makeTargetReviewRow({ target_type: "mechanic", rating: 4 }),
+        makeTargetReviewRow({ target_type: "mechanic", rating: 0 }),
+      ],
+      pageState: null,
+    };
+
+    const result = await listAvailableMechanics({ liveRatings: true });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // Cached profile says 4.8; the two valid reviews average 4.5.
+    expect(result.data[0]).toMatchObject({ ratingAvg: 4.5, ratingCount: 2 });
+    const scan = reviewRepoMocks.listTargetReviewRows.mock.calls[0];
+    expect(scan?.[0]).toBe("mechanic");
+    expect(scan?.[1]).toBe(MECHANIC_ID);
+  });
+
+  test("falls back to the cached rating when there are no reviews yet", async () => {
+    mechanicDirectoryStubs.rows = [makeAvailableMechanicRow()];
+    mechanicStubs.profile = makeProfileRow({
+      rating_avg: 4.8,
+      rating_count: 7,
+    });
+
+    const result = await listAvailableMechanics({ liveRatings: true });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data[0]).toMatchObject({ ratingAvg: 4.8, ratingCount: 7 });
+  });
+
+  test("a failed review read never hides the mechanic", async () => {
+    mechanicDirectoryStubs.rows = [makeAvailableMechanicRow()];
+    reviewRepoMocks.listTargetReviewRows.mockImplementationOnce(async () => {
+      throw new Error("timeout");
+    });
+
+    const result = await listAvailableMechanics({ liveRatings: true });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.map((item) => item.id)).toEqual([MECHANIC_ID]);
+    expect(result.data[0]?.ratingAvg).toBe(4.8);
+  });
+
+  test("live ratings are opt-in so dispatch callers skip the review reads", async () => {
+    mechanicDirectoryStubs.rows = [makeAvailableMechanicRow()];
+    feedbackStubs.targetReviewPage = {
+      rows: [makeTargetReviewRow({ target_type: "mechanic", rating: 1 })],
+      pageState: null,
+    };
+
+    const result = await listAvailableMechanics();
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data[0]?.ratingAvg).toBe(4.8);
+    expect(reviewRepoMocks.listTargetReviewRows.mock.calls.length).toBe(0);
+  });
+
+  test("offline and unverified rows never trigger a review read", async () => {
+    mechanicDirectoryStubs.rows = [
+      makeAvailableMechanicRow({ is_verified: false }),
+      makeAvailableMechanicRow({
+        mechanic_id: MECHANIC_OTHER_ID,
+        is_online: false,
+      }),
+    ];
+    await listAvailableMechanics({ liveRatings: true });
+    expect(reviewRepoMocks.listTargetReviewRows.mock.calls.length).toBe(0);
   });
 
   test("rejects half or wild coordinates with 400", async () => {

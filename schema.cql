@@ -904,9 +904,12 @@ CREATE TABLE IF NOT EXISTS payment_audit_by_day (
 -- target_type = mechanic | service | part
 -- ============================================================================
 
+-- rating/body rate the mechanic; service_rating/service_body rate the booked
+-- service(s) and stay NULL for reviews written without a service part.
 CREATE TABLE IF NOT EXISTS reviews_by_booking (
   booking_id UUID PRIMARY KEY, review_id UUID, customer_id UUID,
-  mechanic_id UUID, customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP
+  mechanic_id UUID, customer_name TEXT, rating INT, body TEXT, created_at TIMESTAMP,
+  service_rating INT, service_body TEXT
 );
 
 -- Query: one overall experience review per delivered parts order
@@ -942,8 +945,22 @@ CREATE TABLE IF NOT EXISTS reviews_by_target (
   title       TEXT,
   body        TEXT,
   images      LIST<TEXT>,
+  is_hidden   BOOLEAN, -- staff moderation: hidden rows stay excluded from feeds
+  hidden_by   UUID,
+  hidden_at   TIMESTAMP,
   PRIMARY KEY ((target_type, target_id), created_at, review_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, review_id ASC);
+
+-- Query: locate every public projection row of a review (one review can
+-- project to mechanic + several service targets) so staff can hide it.
+CREATE TABLE IF NOT EXISTS reviews_by_id (
+  review_id   UUID,
+  target_type TEXT,
+  target_id   UUID,
+  created_at  TIMESTAMP,
+  rating      INT,
+  PRIMARY KEY ((review_id), target_type, target_id)
+);
 
 -- Query: reviews written by one customer
 CREATE TABLE IF NOT EXISTS reviews_by_customer (
@@ -980,8 +997,40 @@ CREATE TABLE IF NOT EXISTS comments_by_target (
   user_name   TEXT,
   user_role   TEXT, -- customer | mechanic | dispatcher | admin
   body        TEXT,
+  reply_count INT,    -- visible replies; kept in sync on reply write/hide
+  is_hidden   BOOLEAN, -- staff moderation: hidden rows leave the public feed
+  hidden_by   UUID,
+  hidden_at   TIMESTAMP,
   PRIMARY KEY ((target_type, target_id), created_at, comment_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, comment_id ASC);
+
+-- Query: replies under one comment, oldest first. Two levels only —
+-- replies cannot be replied to (service enforced).
+CREATE TABLE IF NOT EXISTS comments_by_parent (
+  parent_id   UUID,
+  created_at  TIMESTAMP,
+  comment_id  UUID,
+  target_type TEXT,
+  target_id   UUID,
+  user_id     UUID,
+  user_name   TEXT,
+  user_role   TEXT,
+  body        TEXT,
+  is_hidden   BOOLEAN,
+  hidden_by   UUID,
+  hidden_at   TIMESTAMP,
+  PRIMARY KEY ((parent_id), created_at, comment_id)
+) WITH CLUSTERING ORDER BY (created_at ASC, comment_id ASC);
+
+-- Query: locate a comment's thread + parent from its id alone so replies
+-- can validate their parent and staff can hide a comment by id.
+CREATE TABLE IF NOT EXISTS comments_by_id (
+  comment_id  UUID PRIMARY KEY,
+  target_type TEXT,
+  target_id   UUID,
+  parent_id   UUID, -- NULL for top-level comments
+  created_at  TIMESTAMP
+);
 
 -- ============================================================================
 -- 11. PROMOTIONS / COUPONS

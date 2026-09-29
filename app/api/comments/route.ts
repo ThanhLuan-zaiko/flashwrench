@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest, requireAuth } from "@/lib/auth/authorization";
+import { listReplies } from "@/lib/comments/comment-replies.service";
 import { addComment, listComments } from "@/lib/comments/comments.service";
 import {
   mutationOriginError,
@@ -10,16 +11,20 @@ import {
 
 // Comment threads: GET is public for part targets and auth-checked for
 // private ones inside the service; POST always requires a session.
+// ?parent=<id> pages the replies under one top-level comment instead.
 export async function GET(request: Request) {
   const user = await authenticateRequest();
   const params = new URL(request.url).searchParams;
   try {
-    const result = await listComments(
-      user,
-      params.get("targetType"),
-      params.get("targetId"),
-      params.get("cursor"),
-    );
+    const parent = params.get("parent");
+    const result = parent
+      ? await listReplies(user, parent, params.get("cursor"))
+      : await listComments(
+          user,
+          params.get("targetType"),
+          params.get("targetId"),
+          params.get("cursor"),
+        );
     return resultResponse(result, (comments) => ({ comments }));
   } catch {
     return routeFailure("Không tải được bình luận. Vui lòng thử lại sau.");

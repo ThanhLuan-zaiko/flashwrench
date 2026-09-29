@@ -1,11 +1,14 @@
 // Public review listings: newest-first pages over reviews_by_target for
-// product pages (part) and mechanic profiles (mechanic), plus a rating
-// summary. Part summaries read the counter row maintained on each write;
-// mechanic summaries scan the partition like the mechanic stats page so
-// booking-written reviews (which never touch counters) still count.
+// product pages (part), mechanic profiles (mechanic) and the booking page
+// (service), plus a rating summary. Part summaries read the counter row
+// maintained on each write; mechanic and service summaries scan the
+// partition (see rating-scan.service.ts) so booking-written reviews, which
+// never touch counters, still count.
+import type { PublicUser, UserRole } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { findPartIdBySlug } from "@/lib/parts/parts.repository";
 import { isUuid } from "@/lib/validation";
+import { scanRatingSummary } from "./rating-scan.service";
 import type {
   ReviewPage,
   ReviewResult,
@@ -15,8 +18,14 @@ import { toIso } from "./review.types";
 import { listTargetReviewRows, readRatingCounter } from "./reviews.repository";
 
 export const TARGET_REVIEW_PAGE = 8;
-const MECHANIC_SUMMARY_SCAN = 200;
-const MAX_STARS = 5;
+
+const MODERATOR_ROLES: UserRole[] = ["admin", "dispatcher"];
+
+// Hidden reviews stay visible to moderators (dimmed in the UI) and drop
+// out of public feeds for everyone else.
+export function canModerateReviews(actor: PublicUser | null): boolean {
+  return actor !== null && MODERATOR_ROLES.includes(actor.role);
+}
 
 export type TargetReviewsPayload = {
   items: ReviewPage["items"];
@@ -46,31 +55,14 @@ async function ratingSummary(
       ratingCount: count,
     };
   }
-  const page = await listTargetReviewRows(
-    targetType,
-    targetId,
-    MECHANIC_SUMMARY_SCAN,
-    null,
-  );
-  const ratings = page.rows
-    .map((row) => row.rating ?? 0)
-    .filter((rating) => rating >= 1 && rating <= MAX_STARS);
-  const count = ratings.length;
-  return {
-    ratingAvg:
-      count > 0
-        ? Math.round(
-            (ratings.reduce((total, rating) => total + rating, 0) / count) * 10,
-          ) / 10
-        : 0,
-    ratingCount: count,
-  };
+  return scanRatingSummary(targetType, targetId);
 }
 
 async function listReviews(
   targetType: ReviewTargetType,
   targetId: string,
   cursor: string | null | undefined,
+  actor: PublicUser | null,
 ): Promise<ReviewResult<TargetReviewsPayload>> {
   let pageState: string | null = null;
   try {
@@ -82,10 +74,13 @@ async function listReviews(
     listTargetReviewRows(targetType, targetId, TARGET_REVIEW_PAGE, pageState),
     ratingSummary(targetType, targetId),
   ]);
+  const rows = canModerateReviews(actor)
+    ? page.rows
+    : page.rows.filter((row) => row.is_hidden !== true);
   return {
     ok: true,
     data: {
-      items: page.rows.map((row) => ({
+      items: rows.map((row) => ({
         id: row.review_id,
         rating: row.rating ?? 0,
         body: [row.title ?? "", row.body ?? ""]
@@ -93,6 +88,7 @@ async function listReviews(
           .join(" — "),
         customerName: row.customer_name ?? "Khách hàng",
         createdAt: toIso(row.created_at),
+        hidden: row.is_hidden === true,
       })),
       nextCursor: encodeCursor(
         page.pageState,
@@ -107,19 +103,32 @@ async function listReviews(
 export async function listPartReviews(
   slug: string,
   cursor: string | null | undefined,
+  actor: PublicUser | null,
 ): Promise<ReviewResult<TargetReviewsPayload>> {
   const decoded = decodeURIComponent(slug).trim();
   if (!decoded) return fail(400, "Sản phẩm không hợp lệ.");
   const partId = await findPartIdBySlug(decoded);
   if (!partId || !isUuid(partId)) return fail(404, "Không tìm thấy sản phẩm.");
-  return listReviews("part", partId, cursor);
+  return listReviews("part", partId, cursor, actor);
 }
 
 // Public mechanic profile reviews feed the picker/profile surfaces.
 export async function listMechanicReviews(
   mechanicId: string,
   cursor: string | null | undefined,
+  actor: PublicUser | null,
 ): Promise<ReviewResult<TargetReviewsPayload>> {
   if (!isUuid(mechanicId)) return fail(400, "Mã thợ không hợp lệ.");
-  return listReviews("mechanic", mechanicId, cursor);
+  return listReviews("mechanic", mechanicId, cursor, actor);
+}
+
+// Public service reviews for the booking page: the service part of each
+// completed booking's review, newest first.
+export async function listServiceReviews(
+  serviceId: string,
+  cursor: string | null | undefined,
+  actor: PublicUser | null,
+): Promise<ReviewResult<TargetReviewsPayload>> {
+  if (!isUuid(serviceId)) return fail(400, "Mã dịch vụ không hợp lệ.");
+  return listReviews("service", serviceId, cursor, actor);
 }

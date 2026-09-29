@@ -160,6 +160,7 @@ export async function captureMechanicRatings(
       const rating = row.rating;
       if (
         seen.has(key) ||
+        row.is_hidden === true ||
         row.target_type !== "mechanic" ||
         row.target_id !== mechanicId ||
         rating === null ||

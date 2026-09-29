@@ -1,17 +1,10 @@
 "use client";
 
-import { useId, useState } from "react";
-import { FiLoader, FiStar } from "react-icons/fi";
+import { useState } from "react";
+import { FiLoader } from "react-icons/fi";
+import { StarPicker } from "./StarPicker";
 
 export type ReviewSubmit = { rating: number; body: string };
-
-const RATING_LABELS = [
-  "Rất tệ",
-  "Tệ",
-  "Bình thường",
-  "Tốt",
-  "Rất tốt",
-] as const;
 
 // Shared review composer: a 1-5 star radio group plus an optional note.
 // Used by booking, rescue, order-level and per-part review surfaces.
@@ -30,7 +23,6 @@ export function ReviewForm({
 }) {
   const [rating, setRating] = useState(0);
   const [body, setBody] = useState("");
-  const groupName = useId();
 
   return (
     <form
@@ -44,38 +36,7 @@ export function ReviewForm({
         {title}
       </p>
 
-      <fieldset>
-        <legend className="sr-only">Chọn số sao đánh giá</legend>
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <label
-              key={star}
-              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-300 transition-colors duration-150 hover:text-zinc-500 motion-safe:active:scale-95 dark:text-zinc-600 dark:hover:text-zinc-300 has-focus-visible:ring-2 has-focus-visible:ring-zinc-500"
-            >
-              <input
-                type="radio"
-                name={groupName}
-                value={star}
-                checked={rating === star}
-                onChange={() => setRating(star)}
-                aria-label={`${star} sao - ${RATING_LABELS[star - 1]}`}
-                className="sr-only"
-              />
-              <FiStar
-                aria-hidden="true"
-                className={`h-6 w-6 ${
-                  star <= rating
-                    ? "fill-zinc-900 text-zinc-900 dark:fill-zinc-50 dark:text-zinc-50"
-                    : ""
-                }`}
-              />
-            </label>
-          ))}
-          <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-400">
-            {rating > 0 ? RATING_LABELS[rating - 1] : "Chạm để chọn số sao"}
-          </span>
-        </div>
-      </fieldset>
+      <StarPicker value={rating} onChange={setRating} />
       {errors?.rating && (
         <p
           role="alert"

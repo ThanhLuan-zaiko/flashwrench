@@ -92,10 +92,18 @@ export async function fetchMyBooking(
   return data.booking ?? null;
 }
 
-// One review per completed booking; targets the assigned mechanic.
+// One review per completed booking: `rating`/`body` rate the assigned
+// mechanic, the optional `serviceRating`/`serviceBody` rate the service.
+export type BookingReviewPayload = {
+  rating: number;
+  body?: string;
+  serviceRating?: number;
+  serviceBody?: string;
+};
+
 export async function createBookingReviewRequest(
   bookingId: string,
-  payload: { rating: number; body?: string },
+  payload: BookingReviewPayload,
 ): Promise<{ review: BookingDetail["review"] }> {
   return apiRequest<{ review: BookingDetail["review"] }>(
     `/api/bookings/${encodeURIComponent(bookingId)}/review`,

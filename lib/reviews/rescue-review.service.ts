@@ -32,6 +32,7 @@ function toReviewItem(row: {
     body: row.body ?? "",
     customerName: row.customer_name ?? "",
     createdAt: toIso(row.created_at),
+    hidden: false,
   };
 }
 
@@ -105,6 +106,7 @@ export async function createRescueReview(
       body: write.body,
       customerName: write.customerName,
       createdAt: write.createdAt.toISOString(),
+      hidden: false,
     },
   };
 }

@@ -6,7 +6,10 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { CreateBookingInput } from "@/services/booking.api";
+import type {
+  BookingReviewPayload,
+  CreateBookingInput,
+} from "@/services/booking.api";
 import {
   createBookingRequest,
   createBookingReviewRequest,
@@ -17,6 +20,7 @@ import {
 } from "@/services/booking.api";
 import type { MechanicsQuery } from "@/services/mechanics.api";
 import { fetchAvailableMechanics } from "@/services/mechanics.api";
+import { reviewKeys } from "./reviews";
 
 export const bookingKeys = {
   all: ["bookings"] as const,
@@ -26,6 +30,7 @@ export const bookingKeys = {
   detail: (bookingId: string) => ["bookings", "detail", bookingId] as const,
   travelTrack: (bookingId: string) =>
     ["bookings", "travel-track", bookingId] as const,
+  mechanicsAll: ["bookings", "mechanics"] as const,
   mechanics: (query: MechanicsQuery) =>
     ["bookings", "mechanics", query] as const,
 };
@@ -92,7 +97,7 @@ export function useMyBooking(bookingId: string | null, live = false) {
 export function useCreateBookingReview(bookingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { rating: number; body?: string }) =>
+    mutationFn: (payload: BookingReviewPayload) =>
       createBookingReviewRequest(bookingId, payload),
     retry: false,
     onSuccess: () => {
@@ -100,6 +105,11 @@ export function useCreateBookingReview(bookingId: string) {
         queryKey: bookingKeys.detail(bookingId),
       });
       void queryClient.invalidateQueries({ queryKey: bookingKeys.mine });
+      // Public mechanic/service feeds and ratings pick up the new review.
+      void queryClient.invalidateQueries({ queryKey: reviewKeys.all });
+      void queryClient.invalidateQueries({
+        queryKey: bookingKeys.mechanicsAll,
+      });
     },
   });
 }

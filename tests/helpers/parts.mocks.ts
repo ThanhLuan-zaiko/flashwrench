@@ -191,7 +191,7 @@ export const orderRepoMocks = {
     async (_orderId: string): Promise<OrderRow | null> => orderStubs.orderById,
   ),
   listOrderRowsByCustomer: mock(
-    async (_customerId: string): Promise<OrderRow[]> =>
+    async (_customerId: string, _limit?: number): Promise<OrderRow[]> =>
       orderStubs.ordersByCustomer,
   ),
   listOrderRowsByStatus: mock(

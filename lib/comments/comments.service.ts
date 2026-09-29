@@ -1,113 +1,53 @@
 // Comment threads: one discussion area per entity. Part threads are
 // public (read without login, write requires an account). Booking,
 // order, rescue and complaint threads stay between the owner and staff.
+// Replies and staff moderation live in comment-replies.service.ts and
+// comment-moderation.service.ts; shared access rules sit in
+// comment-access.ts.
 import { randomUUID } from "node:crypto";
-import type { PublicUser, UserRole } from "@/lib/auth/user.types";
-import { findComplaintRowById } from "@/lib/complaints/complaints.repository";
+import type { PublicUser } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
-import { findBookingRowById } from "@/lib/mechanic/mechanic-bookings.repository";
-import { findOrderRowById } from "@/lib/orders/orders.repository";
-import { findPartRowById } from "@/lib/parts/parts.repository";
 import {
   COMPLAINTS_TOPIC,
   OPERATIONS_TOPIC,
+  partTopic,
   userTopic,
 } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
-import { findRescueRowById } from "@/lib/rescue/rescue-workflow.repository";
 import type {
   CommentItem,
+  CommentLookupRow,
   CommentPage,
   CommentResult,
-  CommentRow,
   CommentTargetType,
 } from "./comment.types";
 import {
+  canReadCommentThread,
+  canWriteComment,
+  targetOwnerId,
+  visibleCommentRows,
+} from "./comment-access";
+import { toCommentItem } from "./comment-items";
+import {
   validateCommentBody,
   validateCommentTarget,
+  validateParentId,
 } from "./comment-validation";
-import { insertComment, listCommentRows } from "./comments.repository";
+import {
+  findCommentLookup,
+  findTopLevelLocation,
+  indexCommentLookup,
+  insertComment,
+  insertReply,
+  listCommentRows,
+  readReplyCount,
+  updateReplyCount,
+} from "./comments.repository";
 
 const COMMENT_PAGE = 10;
-const STAFF_ROLES: UserRole[] = ["admin", "dispatcher", "mechanic"];
 
 function fail<T>(status: number, form: string): CommentResult<T> {
   return { ok: false, status, errors: { form } };
-}
-
-function isStaff(actor: PublicUser): boolean {
-  return STAFF_ROLES.includes(actor.role);
-}
-
-// Ownership probe per private target type. Returns null when the target
-// does not exist; callers translate that into a generic 404.
-async function targetOwnerId(
-  targetType: CommentTargetType,
-  targetId: string,
-): Promise<string | null | undefined> {
-  if (targetType === "booking") {
-    const row = await findBookingRowById(targetId);
-    return row === null ? null : (row.customer_id ?? undefined);
-  }
-  if (targetType === "order") {
-    const row = await findOrderRowById(targetId);
-    return row === null ? null : (row.customer_id ?? undefined);
-  }
-  if (targetType === "rescue") {
-    const row = await findRescueRowById(targetId);
-    return row === null ? null : (row.customer_id ?? undefined);
-  }
-  if (targetType === "complaint") {
-    const row = await findComplaintRowById(targetId);
-    return row === null ? null : (row.reporter_user_id ?? undefined);
-  }
-  return undefined;
-}
-
-// Read access: part threads are public; private threads need the owner
-// or a staff member. Complaint threads limit staff to admins only.
-async function canRead(
-  actor: PublicUser | null,
-  targetType: CommentTargetType,
-  targetId: string,
-): Promise<"ok" | "not-found" | "forbidden"> {
-  if (targetType === "part") {
-    const part = await findPartRowById(targetId);
-    return part && !part.is_deleted ? "ok" : "not-found";
-  }
-  const owner = await targetOwnerId(targetType, targetId);
-  if (owner === null) return "not-found";
-  if (!actor) return "forbidden";
-  if (owner === actor.id) return "ok";
-  if (targetType === "complaint")
-    return actor.role === "admin" ? "ok" : "forbidden";
-  return isStaff(actor) ? "ok" : "forbidden";
-}
-
-// Write access mirrors read access, but never anonymous.
-async function canWrite(
-  actor: PublicUser,
-  targetType: CommentTargetType,
-  targetId: string,
-): Promise<"ok" | "not-found" | "forbidden"> {
-  if (targetType === "part") {
-    const part = await findPartRowById(targetId);
-    return part?.is_active && !part.is_deleted ? "ok" : "not-found";
-  }
-  return canRead(actor, targetType, targetId);
-}
-
-function toItem(row: CommentRow, actorId: string | null): CommentItem {
-  const role = row.user_role ?? "customer";
-  return {
-    id: row.comment_id,
-    userName: row.user_name ?? "Người dùng",
-    userRole: role,
-    body: row.body ?? "",
-    createdAt: row.created_at ? row.created_at.toISOString() : null,
-    mine: actorId !== null && row.user_id === actorId,
-    staff: role !== "customer",
-  };
 }
 
 function commentCursorScope(targetType: string, targetId: string): string {
@@ -126,7 +66,7 @@ export async function listComments(
   const type = targetType as CommentTargetType;
   const id = targetId as string;
 
-  const access = await canRead(actor, type, id);
+  const access = await canReadCommentThread(actor, type, id);
   if (access === "not-found") return fail(404, "Không tìm thấy mục này.");
   if (access === "forbidden") {
     return fail(403, "Bạn không có quyền xem bình luận này.");
@@ -143,19 +83,30 @@ export async function listComments(
   return {
     ok: true,
     data: {
-      items: page.rows.map((row) => toItem(row, actor?.id ?? null)),
+      items: visibleCommentRows(page.rows, actor).map((row) =>
+        toCommentItem(row, actor?.id ?? null),
+      ),
       nextCursor: encodeCursor(page.pageState, scope),
     },
   };
 }
 
 // Notify the counterpart so threads refresh live: customer posts reach
-// the staff board, staff replies reach the owner's user topic.
-async function publishComment(
+// the staff board, staff replies reach the owner's user topic. Part
+// threads are public Q&A, so they fan out to the part topic instead and
+// leave the staff board quiet.
+export async function publishComment(
   targetType: CommentTargetType,
   targetId: string,
   ownerId: string | null,
 ): Promise<void> {
+  if (targetType === "part") {
+    await publishRealtimeEvent(partTopic(targetId), {
+      kind: "part-updated",
+      partId: targetId,
+    });
+    return;
+  }
   const kind =
     targetType === "complaint"
       ? "complaint-updated"
@@ -191,17 +142,43 @@ export async function addComment(
   const type = targetType as CommentTargetType;
   const id = targetId as string;
 
-  const bodyError =
+  const rawRecord =
     typeof raw === "object" && raw !== null && !Array.isArray(raw)
-      ? validateCommentBody((raw as Record<string, unknown>).body)
-      : {
-          body: "",
-          errors: { body: "Nội dung bình luận không được để trống." },
-        };
+      ? (raw as Record<string, unknown>)
+      : null;
+  const bodyError = rawRecord
+    ? validateCommentBody(rawRecord.body)
+    : {
+        body: "",
+        errors: { body: "Nội dung bình luận không được để trống." },
+      };
   if (bodyError.errors)
     return { ok: false, status: 400, errors: bodyError.errors };
 
-  const access = await canWrite(actor, type, id);
+  // Replies attach to a top-level comment in the same thread; two levels
+  // max, so a reply (parent_id set) cannot be replied to.
+  let parent: CommentLookupRow | null = null;
+  if (rawRecord) {
+    const parsed = validateParentId(rawRecord.parentId);
+    if (parsed.errors) return { ok: false, status: 400, errors: parsed.errors };
+    if (parsed.parentId) {
+      parent = await findCommentLookup(parsed.parentId);
+      // Legacy rows predate comments_by_id: a bounded partition scan
+      // finds them, then backfills the lookup for next time.
+      if (!parent) {
+        parent = await findTopLevelLocation(type, id, parsed.parentId);
+        if (parent) void indexCommentLookup(parent);
+      }
+      if (!parent || parent.target_type !== type || parent.target_id !== id) {
+        return fail(404, "Không tìm thấy bình luận gốc.");
+      }
+      if (parent.parent_id) {
+        return fail(400, "Chỉ được phản hồi bình luận gốc.");
+      }
+    }
+  }
+
+  const access = await canWriteComment(actor, type, id);
   if (access === "not-found") return fail(404, "Không tìm thấy mục này.");
   if (access === "forbidden") {
     return fail(403, "Bạn không có quyền bình luận ở đây.");
@@ -217,12 +194,41 @@ export async function addComment(
     body: bodyError.body,
     createdAt: new Date(),
   };
-  await insertComment(write);
-
-  if (type !== "part") {
-    const owner = await targetOwnerId(type, id);
-    void publishComment(type, id, owner ?? null);
+  // Every new row is indexed so moderation and reply listing can locate
+  // it by comment_id alone, without the caller's thread hint.
+  const lookup: CommentLookupRow = {
+    comment_id: write.commentId,
+    target_type: type,
+    target_id: id,
+    parent_id: parent?.comment_id ?? null,
+    created_at: write.createdAt,
+  };
+  if (parent) {
+    await insertReply({ ...write, parentId: parent.comment_id });
+    void indexCommentLookup(lookup);
+    // reply_count tracks visible replies; hide/unhide re-adjusts it.
+    const current = parent.created_at
+      ? ((await readReplyCount(
+          type,
+          id,
+          parent.created_at,
+          parent.comment_id,
+        )) ?? 0)
+      : 0;
+    await updateReplyCount(
+      type,
+      id,
+      parent.created_at as Date,
+      parent.comment_id,
+      current + 1,
+    );
+  } else {
+    await insertComment(write);
+    void indexCommentLookup(lookup);
   }
+
+  const owner = type === "part" ? null : await targetOwnerId(type, id);
+  void publishComment(type, id, owner ?? null);
 
   return {
     ok: true,
@@ -234,6 +240,8 @@ export async function addComment(
       createdAt: write.createdAt.toISOString(),
       mine: true,
       staff: write.userRole !== "customer",
+      replyCount: 0,
+      hidden: false,
     },
   };
 }

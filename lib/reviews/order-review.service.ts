@@ -8,6 +8,8 @@ import {
   listOrderItemRows,
 } from "@/lib/orders/orders.repository";
 import { findPartRowById } from "@/lib/parts/parts.repository";
+import { partTopic } from "@/lib/realtime/protocol";
+import { publishRealtimeEvent } from "@/lib/realtime/publish";
 import { isUuid } from "@/lib/validation";
 import type {
   OrderReviewRow,
@@ -15,7 +17,7 @@ import type {
   ReviewItem,
   ReviewResult,
 } from "./review.types";
-import { toIso } from "./review.types";
+import { toReviewItem } from "./review.types";
 import { validateReviewInput } from "./review-validation";
 import {
   bumpRatingCounter,
@@ -30,22 +32,6 @@ import {
 
 function fail<T>(status: number, form: string): ReviewResult<T> {
   return { ok: false, status, errors: { form } };
-}
-
-function toReviewItem(row: {
-  review_id: string;
-  rating: number | null;
-  body: string | null;
-  customer_name: string | null;
-  created_at: Date | null;
-}): ReviewItem {
-  return {
-    id: row.review_id,
-    rating: row.rating ?? 0,
-    body: row.body ?? "",
-    customerName: row.customer_name ?? "",
-    createdAt: toIso(row.created_at),
-  };
 }
 
 // The order must belong to the caller and be delivered before reviews open.
@@ -76,17 +62,19 @@ async function reviewableOrder(
 }
 
 // Refresh the denormalized rating on the part card/detail rows right
-// after the counter bump so product pages show the new score.
-async function refreshPartRating(partId: string): Promise<void> {
-  const counter = await readRatingCounter("part", partId);
-  const count = counter?.total_count ?? 0;
-  if (count <= 0) return;
-  const avg = Math.round(((counter?.total_score ?? 0) / count) * 10) / 10;
+// after the counter bump so product pages show the new score. A count of
+// zero clears the rating (e.g. staff hid the last visible review).
+export async function refreshPartRating(partId: string): Promise<void> {
   const part = await findPartRowById(partId);
+  if (!part) return;
+  const counter = await readRatingCounter("part", partId);
+  const count = Math.max(0, counter?.total_count ?? 0);
+  const avg =
+    count > 0 ? Math.round(((counter?.total_score ?? 0) / count) * 10) / 10 : 0;
   await updatePartRating({
     partId,
-    categoryId: part?.category_id ?? null,
-    categoryCreatedAt: part?.created_at ?? null,
+    categoryId: part.category_id ?? null,
+    categoryCreatedAt: part.created_at ?? null,
     ratingAvg: avg,
     ratingCount: count,
   });
@@ -141,6 +129,7 @@ export async function createOrderReview(
       body: write.body,
       customerName: write.customerName,
       createdAt: write.createdAt.toISOString(),
+      hidden: false,
     },
   };
 }
@@ -199,6 +188,12 @@ export async function createOrderPartReview(
   });
   await bumpRatingCounter("part", partId, write.rating);
   await refreshPartRating(partId);
+  // Tell everyone watching the product page that a new review landed;
+  // best-effort, a down gateway never fails the write.
+  void publishRealtimeEvent(partTopic(partId), {
+    kind: "review-created",
+    partId,
+  });
   return {
     ok: true,
     data: {
@@ -207,6 +202,7 @@ export async function createOrderPartReview(
       body: write.body,
       customerName: write.customerName,
       createdAt: write.createdAt.toISOString(),
+      hidden: false,
     },
   };
 }

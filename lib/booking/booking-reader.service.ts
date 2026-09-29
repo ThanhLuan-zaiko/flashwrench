@@ -84,6 +84,8 @@ function toBookingReview(row: BookingReviewRow): BookingReview {
     mechanicId: row.mechanic_id ?? "",
     rating: row.rating ?? 0,
     body: row.body ?? "",
+    serviceRating: row.service_rating,
+    serviceBody: row.service_body ?? "",
     createdAt: toIso(row.created_at) ?? "",
   };
 }

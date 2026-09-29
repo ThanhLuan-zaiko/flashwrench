@@ -17,12 +17,16 @@ export type BookingSummary = MechanicBookingSummary & {
   vehicleId: string | null;
 };
 
+// `rating`/`body` rate the mechanic; `serviceRating`/`serviceBody` rate the
+// booked service(s) and are null/empty on reviews written without that part.
 export type BookingReview = {
   id: string;
   bookingId: string;
   mechanicId: string;
   rating: number;
   body: string;
+  serviceRating: number | null;
+  serviceBody: string;
   createdAt: string;
 };
 

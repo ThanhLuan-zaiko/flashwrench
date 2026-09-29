@@ -95,6 +95,12 @@ function toReviewRow(raw: RawRow): MechanicReviewRow {
     title: toStringOrNull(raw.title),
     body: toStringOrNull(raw.body),
     created_at: toDateOrNull(raw.created_at),
+    is_hidden:
+      raw.is_hidden === true || raw.is_hidden === "true"
+        ? true
+        : raw.is_hidden === false
+          ? false
+          : null,
   };
 }
 
@@ -227,7 +233,7 @@ export async function listReviewRowsByTarget(
   limit: number,
 ): Promise<MechanicReviewRow[]> {
   const rows = await selectRows(
-    "SELECT target_type, target_id, review_id, customer_name, booking_id, rating, title, body, created_at FROM reviews_by_target WHERE target_type = ? AND target_id = ? LIMIT ?",
+    "SELECT target_type, target_id, review_id, customer_name, booking_id, rating, title, body, created_at, is_hidden FROM reviews_by_target WHERE target_type = ? AND target_id = ? LIMIT ?",
     [targetType, targetId, limit],
   );
   return rows.map(toReviewRow);

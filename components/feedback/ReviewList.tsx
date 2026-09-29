@@ -1,12 +1,17 @@
 "use client";
 
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiEye, FiEyeOff } from "react-icons/fi";
+import { useAccountSession } from "@/hooks/auth";
+import { useModerateReview } from "@/hooks/reviews";
 import { formatDateTime } from "@/lib/datetime/format";
 import type { ReviewItem } from "@/services/reviews.api";
 import { Stars } from "./Stars";
 
 // Public review feed: rating summary plus a newest-first list with
-// Trước/Sau cursor paging. Used on product pages and mechanic profiles.
+// Trước/Sau cursor paging. Used on product pages, mechanic profiles and
+// the booking page. When `moderation` carries the feed's target,
+// admin/dispatcher sessions get an inline hide/unhide per review and see
+// hidden rows dimmed.
 export function ReviewList({
   items,
   ratingAvg,
@@ -16,6 +21,7 @@ export function ReviewList({
   canPrev,
   canNext,
   emptyLabel = "Chưa có đánh giá nào.",
+  moderation,
 }: {
   items: ReviewItem[];
   ratingAvg: number;
@@ -25,7 +31,18 @@ export function ReviewList({
   canPrev?: boolean;
   canNext?: boolean;
   emptyLabel?: string;
+  moderation?: {
+    targetType: "mechanic" | "part" | "service";
+    targetId: string;
+  };
 }) {
+  const session = useAccountSession();
+  const moderate = useModerateReview();
+  const role = session.data?.user?.role;
+  const canModerate = Boolean(
+    moderation && role && ["admin", "dispatcher"].includes(role),
+  );
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -45,16 +62,48 @@ export function ReviewList({
       ) : (
         <ul className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
           {items.map((item) => (
-            <li key={item.id} className="flex flex-col gap-1 py-3 first:pt-0">
+            <li
+              key={item.id}
+              className={`flex flex-col gap-1 py-3 first:pt-0 ${
+                item.hidden ? "opacity-60" : ""
+              }`}
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <Stars rating={item.rating} size="h-3.5 w-3.5" />
                 <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-50">
                   {item.customerName}
                 </span>
+                {item.hidden && (
+                  <span className="rounded-full border border-red-300 px-1.5 py-px text-[11px] font-medium text-red-600 dark:border-red-800 dark:text-red-400">
+                    Đã ẩn
+                  </span>
+                )}
                 {item.createdAt && (
                   <time className="text-[11px] text-zinc-400 dark:text-zinc-500">
                     {formatDateTime(item.createdAt)}
                   </time>
+                )}
+                {canModerate && moderation && (
+                  <button
+                    type="button"
+                    disabled={moderate.isPending}
+                    onClick={() =>
+                      moderate.mutate({
+                        reviewId: item.id,
+                        targetType: moderation.targetType,
+                        targetId: moderation.targetId,
+                        action: item.hidden ? "unhide" : "hide",
+                      })
+                    }
+                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                  >
+                    {item.hidden ? (
+                      <FiEye aria-hidden="true" className="h-3.5 w-3.5" />
+                    ) : (
+                      <FiEyeOff aria-hidden="true" className="h-3.5 w-3.5" />
+                    )}
+                    {item.hidden ? "Hiện lại" : "Ẩn"}
+                  </button>
                 )}
               </div>
               {item.body && (

@@ -2,7 +2,7 @@
 // per source (booking/order/part-in-order/rescue) and projected onto
 // reviews_by_target so mechanic and part pages can list them publicly.
 
-export type ReviewTargetType = "mechanic" | "part";
+export type ReviewTargetType = "mechanic" | "part" | "service";
 
 export type TargetReviewRow = {
   target_type: string;
@@ -17,6 +17,17 @@ export type TargetReviewRow = {
   rating: number | null;
   title: string | null;
   body: string | null;
+  is_hidden: boolean | null;
+};
+
+// reviews_by_id lookup: where a review's public projection row lives so
+// staff can hide it without knowing the partition keys.
+export type ReviewProjectionRow = {
+  review_id: string;
+  target_type: string;
+  target_id: string;
+  created_at: Date | null;
+  rating: number | null;
 };
 
 // Claim rows: one review per source entity.
@@ -50,12 +61,20 @@ export type ReviewItem = {
   body: string;
   customerName: string;
   createdAt: string | null;
+  hidden: boolean;
 };
 
 export type OrderReviewState = {
   orderReview: ReviewItem | null;
   partReviews: Record<string, ReviewItem>;
 };
+
+// Whether the signed-in customer may rate a part from its product page:
+// only through a delivered order that contains it and has no part review yet.
+export type PartReviewEligibility =
+  | { status: "eligible"; orderId: string; partId: string }
+  | { status: "reviewed"; review: ReviewItem }
+  | { status: "not_purchased" };
 
 export type RatingCounterRow = {
   total_score: number | null;
@@ -77,4 +96,21 @@ export type ReviewPage = {
 
 export function toIso(value: Date | null): string | null {
   return value ? new Date(value).toISOString() : null;
+}
+
+export function toReviewItem(row: {
+  review_id: string;
+  rating: number | null;
+  body: string | null;
+  customer_name: string | null;
+  created_at: Date | null;
+}): ReviewItem {
+  return {
+    id: row.review_id,
+    rating: row.rating ?? 0,
+    body: row.body ?? "",
+    customerName: row.customer_name ?? "",
+    createdAt: toIso(row.created_at),
+    hidden: false,
+  };
 }

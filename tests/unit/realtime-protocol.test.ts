@@ -16,6 +16,7 @@ import {
   parseClientMessage,
   parseDomainEvent,
   parseServerMessage,
+  partTopic,
   SERVICE_CATALOG_TOPIC,
   STAFF_PASSWORDS_TOPIC,
   userTopic,
@@ -93,6 +94,16 @@ describe("realtime protocol", () => {
     expect(canPublish(ADMIN, SERVICE_CATALOG_TOPIC)).toBe(false);
     expect(canPublish(CUSTOMER, SERVICE_CATALOG_TOPIC)).toBe(false);
     expect(canPublish(null, SERVICE_CATALOG_TOPIC)).toBe(false);
+  });
+
+  test("opens part feedback topics to guests but never to publishers", () => {
+    const topic = partTopic("dddddddd-dddd-4ddd-8ddd-dddddddddddd");
+    expect(canSubscribe(null, topic)).toBe(true);
+    expect(canSubscribe(CUSTOMER, topic)).toBe(true);
+    expect(canPublish(ADMIN, topic)).toBe(false);
+    expect(canPublish(CUSTOMER, topic)).toBe(false);
+    expect(canSubscribe(null, "part:")).toBe(false);
+    expect(canSubscribe(ADMIN, "part:p1:extra")).toBe(false);
   });
 
   test("parses mechanic inbox booking notices and ignores the rest", () => {
@@ -246,6 +257,14 @@ describe("realtime protocol", () => {
     expect(parseDomainEvent({ kind: "vehicle-updated" })).toEqual({
       kind: "vehicle-updated",
     });
+    expect(parseDomainEvent({ kind: "part-updated", partId: "p1" })).toEqual({
+      kind: "part-updated",
+      partId: "p1",
+    });
+    expect(parseDomainEvent({ kind: "review-created", partId: "p1" })).toEqual({
+      kind: "review-created",
+      partId: "p1",
+    });
   });
 
   test("rejects malformed domain events", () => {
@@ -264,6 +283,7 @@ describe("realtime protocol", () => {
       parseDomainEvent({ kind: "booking-updated", bookingId: "" }),
     ).toBeNull();
     expect(parseDomainEvent({ kind: "user-updated", userId: null })).toBeNull();
+    expect(parseDomainEvent({ kind: "part-updated", partId: "" })).toBeNull();
     expect(
       parseDomainEvent({ kind: "booking-updated", status: {} }),
     ).toBeNull();

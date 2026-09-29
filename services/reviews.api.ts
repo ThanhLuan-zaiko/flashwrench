@@ -1,7 +1,11 @@
-import type { OrderReviewState, ReviewItem } from "@/lib/reviews/review.types";
+import type {
+  OrderReviewState,
+  PartReviewEligibility,
+  ReviewItem,
+} from "@/lib/reviews/review.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
-export type { OrderReviewState, ReviewItem };
+export type { OrderReviewState, PartReviewEligibility, ReviewItem };
 export { AuthApiError };
 
 export type ReviewPagePayload = {
@@ -78,5 +82,38 @@ export function fetchMechanicReviews(
   const suffix = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
   return apiRequest<{ reviews: ReviewPagePayload }>(
     `/api/mechanics/${encodeURIComponent(mechanicId)}/reviews${suffix}`,
+  );
+}
+
+export function fetchServiceReviews(
+  serviceId: string,
+  cursor?: string | null,
+): Promise<{ reviews: ReviewPagePayload }> {
+  const suffix = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
+  return apiRequest<{ reviews: ReviewPagePayload }>(
+    `/api/services/${encodeURIComponent(serviceId)}/reviews${suffix}`,
+  );
+}
+
+// Signed-in only: whether this customer may rate the product from its page.
+export function fetchPartReviewEligibility(
+  slug: string,
+): Promise<{ eligibility: PartReviewEligibility }> {
+  return apiRequest<{ eligibility: PartReviewEligibility }>(
+    `/api/products/${encodeURIComponent(slug)}/reviews/eligibility`,
+  );
+}
+
+// Staff moderation: hide/unhide a public review row in one feed
+// (admin + dispatcher). targetType/targetId identify the projection row.
+export function moderateReviewRequest(payload: {
+  reviewId: string;
+  targetType: "mechanic" | "part" | "service";
+  targetId: string;
+  action: "hide" | "unhide";
+}): Promise<{ review: { id: string; hidden: boolean } }> {
+  return apiRequest<{ review: { id: string; hidden: boolean } }>(
+    `/api/reviews/${encodeURIComponent(payload.reviewId)}`,
+    { method: "PATCH", body: JSON.stringify(payload) },
   );
 }

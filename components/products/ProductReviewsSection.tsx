@@ -1,24 +1,40 @@
 "use client";
 
-import { useState } from "react";
 import { FiLoader, FiRefreshCw } from "react-icons/fi";
 import { CommentSection } from "@/components/feedback/CommentSection";
 import { ReviewList } from "@/components/feedback/ReviewList";
-import { useProductReviews } from "@/hooks/reviews";
+import { commentKeys } from "@/hooks/comments";
+import { productsKeys } from "@/hooks/products";
+import { reviewKeys, useProductReviews } from "@/hooks/reviews";
+import { useCursorPager } from "@/hooks/useCursorPager";
+import { useDomainRealtime } from "@/hooks/useDomainRealtime";
+import { partTopic } from "@/lib/realtime/protocol";
+import { ProductReviewComposer } from "./ProductReviewComposer";
 
 // Public product feedback: the review feed (cursor-paged, with the
-// rating summary) plus the public comment thread for the part.
+// rating summary), the buyer-only star rating entry and the public comment
+// thread for the part.
 export function ProductReviewsSection({
   slug,
   partId,
+  partName,
 }: {
   slug: string;
   partId: string;
+  partName?: string;
 }) {
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [cursorStack, setCursorStack] = useState<(string | null)[]>([]);
-  const query = useProductReviews(slug, cursor);
+  const pager = useCursorPager();
+  const query = useProductReviews(slug, pager.cursor);
   const reviews = query.data?.reviews;
+
+  // Live updates for everyone watching this product: a new comment or
+  // review on the part refreshes the thread (including expanded reply
+  // lists), the review feed and the rating summary in the header.
+  useDomainRealtime(
+    partId ? partTopic(partId) : "",
+    [commentKeys.all, reviewKeys.product(slug), productsKeys.detail(slug)],
+    Boolean(partId),
+  );
 
   return (
     <section
@@ -64,26 +80,22 @@ export function ProductReviewsSection({
           items={reviews.items}
           ratingAvg={reviews.ratingAvg}
           ratingCount={reviews.ratingCount}
-          canPrev={cursorStack.length > 0}
+          canPrev={pager.canPrev}
           canNext={Boolean(reviews.nextCursor)}
-          onPrev={() => {
-            const stack = [...cursorStack];
-            stack.pop();
-            setCursorStack(stack);
-            setCursor(stack[stack.length - 1] ?? null);
-          }}
-          onNext={() => {
-            setCursorStack((stack) => [...stack, cursor]);
-            setCursor(reviews.nextCursor);
-          }}
+          onPrev={pager.prev}
+          onNext={() => pager.next(reviews.nextCursor)}
+          moderation={{ targetType: "part", targetId: partId }}
         />
       )}
 
-      <CommentSection
-        targetType="part"
-        targetId={partId}
-        title="Hỏi đáp & bình luận"
-      />
+      <div className="flex flex-col gap-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+        <ProductReviewComposer slug={slug} partName={partName} />
+        <CommentSection
+          targetType="part"
+          targetId={partId}
+          title="Hỏi đáp & bình luận"
+        />
+      </div>
     </section>
   );
 }

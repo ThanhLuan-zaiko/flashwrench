@@ -126,6 +126,7 @@ export async function getMechanicStats(
   }
 
   const validRatings = reviewRows
+    .filter((row) => row.is_hidden !== true)
     .map((row) => row.rating ?? 0)
     .filter((rating) => rating >= 1 && rating <= MAX_STARS);
   const { sum, count } = rateSum(validRatings);

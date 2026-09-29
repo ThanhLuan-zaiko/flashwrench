@@ -18,10 +18,12 @@ import {
   partStubs,
   resetPartsMocks,
 } from "../helpers/parts.mocks";
+import { realtimePublishMocks, resetRouteMocks } from "../helpers/route-mocks";
 
 mock.module("@/lib/orders/orders.repository", () => orderRepoMocks);
 mock.module("@/lib/parts/parts.repository", () => partRepoMocks);
 mock.module("@/lib/reviews/reviews.repository", () => reviewRepoMocks);
+mock.module("@/lib/realtime/publish", () => realtimePublishMocks);
 
 import {
   createOrderPartReview,
@@ -52,6 +54,7 @@ function reviewBody(overrides?: Record<string, unknown>) {
 beforeEach(() => {
   resetPartsMocks();
   resetFeedbackMocks();
+  resetRouteMocks();
   orderStubs.orderById = deliveredOrder();
   orderStubs.itemRows = [makeOrderItemRow({ part_id: PART_ID })];
   partStubs.partById = makePartRow({ part_id: PART_ID });
@@ -183,6 +186,10 @@ describe("createOrderPartReview", () => {
       ratingAvg: 4.7,
       ratingCount: 3,
     });
+    // Product-page viewers get a live refresh hint on the part topic.
+    expect(realtimePublishMocks.publishRealtimeEvent.mock.calls).toEqual([
+      [`part:${PART_ID}`, { kind: "review-created", partId: PART_ID }],
+    ]);
   });
 
   test("a lost part claim returns 409 without touching counters", async () => {
@@ -196,6 +203,7 @@ describe("createOrderPartReview", () => {
     expect(result).toMatchObject({ ok: false, status: 409 });
     expect(reviewRepoMocks.projectTargetReview.mock.calls.length).toBe(0);
     expect(reviewRepoMocks.bumpRatingCounter.mock.calls.length).toBe(0);
+    expect(realtimePublishMocks.publishRealtimeEvent.mock.calls.length).toBe(0);
   });
 });
 

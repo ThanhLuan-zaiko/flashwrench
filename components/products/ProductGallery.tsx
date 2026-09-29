@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiPackage } from "react-icons/fi";
-import { galleryStep, normalizeGalleryImages } from "./products-utils";
+import { withLoopClone } from "./carousel-utils";
+import { normalizeGalleryImages } from "./products-utils";
+import { useLoopingCarousel } from "./useLoopingCarousel";
 
 type ProductGalleryProps = {
   images: string[];
@@ -11,16 +12,14 @@ type ProductGalleryProps = {
 
 const STEP_BUTTON_CLASSES =
   "flex h-11 w-11 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-800";
+const HIDE_SCROLLBAR = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
-// Interactive image gallery for /products/[slug]: a large viewer with
-// wrap-around prev/next plus a selectable thumbnail strip so every stored
-// image can be inspected, not just the cover.
+// Interactive image gallery for /products/[slug]: snap-aligned slides that
+// auto-advance right-to-left in a seamless loop, wrap-around prev/next and a
+// selectable thumbnail strip so every stored image can be inspected, not
+// just the cover. The viewer remounts when the image set changes.
 export function ProductGallery({ images, name }: ProductGalleryProps) {
   const gallery = normalizeGalleryImages(images);
-  const [selected, setSelected] = useState(0);
-  const last = Math.max(gallery.length - 1, 0);
-  const active = Math.min(Math.max(selected, 0), last);
-  const many = gallery.length > 1;
 
   if (gallery.length === 0) {
     return (
@@ -31,22 +30,59 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
   }
 
   return (
-    <div>
+    <GalleryViewer key={gallery.join("|")} gallery={gallery} name={name} />
+  );
+}
+
+function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
+  const total = gallery.length;
+  const many = total > 1;
+  const {
+    rootRef,
+    trackRef,
+    index,
+    onScroll,
+    goTo,
+    next,
+    prev,
+    interactionProps,
+  } = useLoopingCarousel(total);
+  const slides = withLoopClone(gallery);
+
+  return (
+    <div ref={rootRef} {...interactionProps}>
       <div className="relative">
-        {/* biome-ignore lint/performance/noImgElement: dynamic catalog media served immutable; next/image optimizer hop needs sharp for zero benefit. */}
-        <img
-          src={gallery[active]}
-          alt={name}
-          className="h-64 w-full rounded-2xl border border-zinc-200 object-cover md:h-80 dark:border-zinc-800"
-        />
+        <ul
+          ref={trackRef}
+          onScroll={onScroll}
+          aria-label={`Ảnh sản phẩm ${name}`}
+          className={`flex snap-x snap-mandatory overflow-x-auto rounded-2xl motion-safe:scroll-smooth ${HIDE_SCROLLBAR}`}
+        >
+          {slides.map((src, position) => {
+            const isClone = position >= total;
+            return (
+              <li
+                key={isClone ? `${src}#loop` : src}
+                aria-hidden={isClone}
+                className="w-full shrink-0 snap-center"
+              >
+                {/* biome-ignore lint/performance/noImgElement: dynamic catalog media served immutable; next/image optimizer hop needs sharp for zero benefit. */}
+                <img
+                  src={src}
+                  alt={isClone ? "" : name}
+                  draggable={false}
+                  className="h-64 w-full rounded-2xl border border-zinc-200 object-cover md:h-80 dark:border-zinc-800"
+                />
+              </li>
+            );
+          })}
+        </ul>
         {many && (
           <>
             <button
               type="button"
               aria-label="Ảnh trước"
-              onClick={() =>
-                setSelected(galleryStep(active, -1, gallery.length))
-              }
+              onClick={prev}
               className={`${STEP_BUTTON_CLASSES} absolute top-1/2 left-3 -translate-y-1/2`}
             >
               <FiChevronLeft aria-hidden="true" className="h-5 w-5" />
@@ -54,15 +90,13 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
             <button
               type="button"
               aria-label="Ảnh sau"
-              onClick={() =>
-                setSelected(galleryStep(active, 1, gallery.length))
-              }
+              onClick={next}
               className={`${STEP_BUTTON_CLASSES} absolute top-1/2 right-3 -translate-y-1/2`}
             >
               <FiChevronRight aria-hidden="true" className="h-5 w-5" />
             </button>
             <p className="absolute right-3 bottom-3 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
-              {active + 1}/{gallery.length}
+              {index + 1}/{total}
             </p>
           </>
         )}
@@ -73,15 +107,15 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
           aria-label="Thư viện ảnh sản phẩm"
           className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-5"
         >
-          {gallery.map((image, index) => (
+          {gallery.map((image, position) => (
             <li key={image}>
               <button
                 type="button"
-                aria-label={`Xem ảnh ${index + 1}`}
-                aria-current={index === active}
-                onClick={() => setSelected(index)}
+                aria-label={`Xem ảnh ${position + 1}`}
+                aria-current={position === index}
+                onClick={() => goTo(position)}
                 className={`w-full overflow-hidden rounded-xl border transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
-                  index === active
+                  position === index
                     ? "border-zinc-900 ring-1 ring-zinc-900 dark:border-zinc-100 dark:ring-zinc-100"
                     : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
                 }`}

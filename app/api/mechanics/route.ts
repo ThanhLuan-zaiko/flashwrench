@@ -20,6 +20,7 @@ export async function GET(request: Request) {
       lat: toNumberParam(params.get("lat")),
       lng: toNumberParam(params.get("lng")),
       limit: toNumberParam(params.get("limit")),
+      liveRatings: true,
     });
     if (!result.ok) {
       return NextResponse.json(

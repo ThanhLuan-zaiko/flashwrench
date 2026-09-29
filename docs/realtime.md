@@ -43,6 +43,7 @@ Server trả về `event` (`topic`, `payload`, `from`), `subscribed`,
 | `user:{userId}`          | chính chủ hoặc admin       | server-only                 |
 | `booking:{id}`           | đã đăng nhập (v1, sẽ siết theo participant) | server-only |
 | `booking:{id}:chat`      | đã đăng nhập (v1, như trên) | đã đăng nhập               |
+| `part:{partId}`          | công khai (trang sản phẩm mở cho khách) | server-only (route publish) |
 | `emergency:zone:{zoneId}`| thợ / điều phối / admin    | thợ / điều phối / admin     |
 | topic lạ                 | từ chối                    | từ chối                     |
 

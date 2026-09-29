@@ -52,7 +52,7 @@ describe("GET /api/mechanics", () => {
     });
     expect(
       mechanicDirectoryServiceMocks.listAvailableMechanics.mock.calls[0],
-    ).toEqual([{ lat: 10.7769, lng: 106.7009, limit: 5 }]);
+    ).toEqual([{ lat: 10.7769, lng: 106.7009, limit: 5, liveRatings: true }]);
   });
 
   test("passes service errors through with their status", async () => {

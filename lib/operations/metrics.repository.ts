@@ -81,7 +81,7 @@ export async function metricReviewPage(
   pageState: string | null,
 ): Promise<MetricPage<MechanicReviewRow>> {
   const result = await scylla.execute(
-    "SELECT target_type, target_id, review_id, customer_name, booking_id, rating, title, body, created_at FROM reviews_by_target WHERE target_type = ? AND target_id = ?",
+    "SELECT target_type, target_id, review_id, customer_name, booking_id, rating, title, body, created_at, is_hidden FROM reviews_by_target WHERE target_type = ? AND target_id = ?",
     ["mechanic", mechanicId],
     { prepare: true, fetchSize: 100, pageState: pageState ?? undefined },
   );
@@ -96,6 +96,8 @@ export async function metricReviewPage(
       title: text(row.title),
       body: text(row.body),
       created_at: date(row.created_at),
+      is_hidden:
+        row.is_hidden === true || row.is_hidden === "true" ? true : null,
     })),
     pageState: result.pageState ?? null,
   };

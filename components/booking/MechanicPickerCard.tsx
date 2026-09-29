@@ -3,15 +3,13 @@
 import { useState } from "react";
 import {
   FiChevronDown,
-  FiLoader,
   FiMessageSquare,
   FiStar,
   FiUser,
   FiWifi,
 } from "react-icons/fi";
-import { ReviewList } from "@/components/feedback/ReviewList";
-import { useMechanicReviews } from "@/hooks/reviews";
 import type { MechanicDirectoryItem } from "@/lib/mechanic/mechanic-directory.service";
+import { MechanicReviewsPanel } from "./MechanicReviewsPanel";
 
 function formatDistance(distanceKm: number | null): string {
   if (distanceKm === null) return "";
@@ -40,10 +38,6 @@ export function MechanicPickerCard({
   onSelect: (mechanicId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [cursorStack, setCursorStack] = useState<(string | null)[]>([]);
-  const reviews = useMechanicReviews(open ? item.id : null, cursor);
-  const page = reviews.data?.reviews;
 
   return (
     <div className="flex flex-col gap-1">
@@ -66,7 +60,10 @@ export function MechanicPickerCard({
           <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
             <span className="flex items-center gap-1">
               <FiStar aria-hidden="true" className="h-3 w-3" />
-              {item.ratingAvg.toFixed(1)} · {item.completedJobs} đơn
+              {item.ratingCount > 0
+                ? `${item.ratingAvg.toFixed(1)} (${item.ratingCount} đánh giá)`
+                : "Chưa có đánh giá"}{" "}
+              · {item.completedJobs} đơn
             </span>
             {item.distanceKm !== null && (
               <span>{formatDistance(item.distanceKm)}</span>
@@ -99,46 +96,7 @@ export function MechanicPickerCard({
         </button>
       </label>
 
-      {open && (
-        <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
-          {reviews.isPending && (
-            <p
-              aria-busy="true"
-              className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
-            >
-              <FiLoader
-                aria-hidden="true"
-                className="h-3.5 w-3.5 motion-safe:animate-spin"
-              />
-              Đang tải đánh giá…
-            </p>
-          )}
-          {reviews.isError && (
-            <p role="alert" className="text-xs text-red-600 dark:text-red-400">
-              Không tải được đánh giá.
-            </p>
-          )}
-          {page && (
-            <ReviewList
-              items={page.items}
-              ratingAvg={page.ratingAvg}
-              ratingCount={page.ratingCount}
-              canPrev={cursorStack.length > 0}
-              canNext={Boolean(page.nextCursor)}
-              onPrev={() => {
-                const stack = [...cursorStack];
-                stack.pop();
-                setCursorStack(stack);
-                setCursor(stack[stack.length - 1] ?? null);
-              }}
-              onNext={() => {
-                setCursorStack((stack) => [...stack, cursor]);
-                setCursor(page.nextCursor);
-              }}
-            />
-          )}
-        </div>
-      )}
+      {open && <MechanicReviewsPanel mechanicId={item.id} />}
     </div>
   );
 }

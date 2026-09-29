@@ -169,6 +169,19 @@ describe("addComment", () => {
     expect(topics).toContain(`user:${CUSTOMER_ID}`);
   });
 
+  test("part comments fan out to the public part topic only", async () => {
+    partStubs.partById = makePartRow({ part_id: PART_ID });
+    const result = await addComment(customer, "part", PART_ID, {
+      body: "Phu tung nay co bao hanh khong shop?",
+    });
+    expect(result.ok).toBe(true);
+    const calls = realtimePublishMocks.publishRealtimeEvent.mock.calls;
+    // Public Q&A refreshes every viewer of the product page; the staff
+    // board and user topics stay quiet.
+    expect(calls.map((call) => call[0])).toEqual([`part:${PART_ID}`]);
+    expect(calls[0]?.[1]).toEqual({ kind: "part-updated", partId: PART_ID });
+  });
+
   test("anonymous actors are denied on private threads", async () => {
     mechanicStubs.bookingById = makeBookingRow({ customer_id: CUSTOMER_ID });
     const result = await addComment(null as never, "booking", BOOKING_ID, {

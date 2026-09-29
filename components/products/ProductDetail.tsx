@@ -183,7 +183,11 @@ export function ProductDetail({ slug }: { slug: string }) {
             </div>
           )}
 
-          <ProductReviewsSection slug={slug} partId={part.id} />
+          <ProductReviewsSection
+            slug={slug}
+            partId={part.id}
+            partName={part.name}
+          />
         </>
       )}
     </div>

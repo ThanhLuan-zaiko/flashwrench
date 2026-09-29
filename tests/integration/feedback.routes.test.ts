@@ -18,19 +18,6 @@ const complaintServiceMocks = {
   listMyComplaints: mock(async () => ({ ok: true as const, data: [] })),
 };
 
-const commentServiceMocks = {
-  listComments: mock(
-    async (_actor: unknown, _targetType: string, _targetId: string) => ({
-      ok: true as const,
-      data: { items: [], nextCursor: null },
-    }),
-  ),
-  addComment: mock(async () => ({
-    ok: true as const,
-    data: { id: "78787878-7878-4787-8787-787878787878" },
-  })),
-};
-
 const orderReviewServiceMocks = {
   createOrderReview: mock(async () => ({
     ok: true as const,
@@ -88,7 +75,6 @@ const targetReviewServiceMocks = {
 
 mock.module("@/lib/auth/authorization", () => authorizationMocks);
 mock.module("@/lib/complaints/complaints.service", () => complaintServiceMocks);
-mock.module("@/lib/comments/comments.service", () => commentServiceMocks);
 mock.module(
   "@/lib/reviews/order-review.service",
   () => orderReviewServiceMocks,
@@ -103,7 +89,6 @@ mock.module(
 );
 mock.module("@/lib/realtime/publish", () => realtimePublishMocks);
 
-import * as commentRoute from "@/app/api/comments/route";
 import * as complaintRoute from "@/app/api/complaints/route";
 import * as mechanicReviewsRoute from "@/app/api/mechanics/[mechanicId]/reviews/route";
 import * as orderPartReviewRoute from "@/app/api/orders/[orderId]/reviews/[partId]/route";
@@ -131,7 +116,6 @@ beforeEach(() => {
   resetRouteMocks();
   for (const mocks of [
     complaintServiceMocks,
-    commentServiceMocks,
     orderReviewServiceMocks,
     rescueReviewServiceMocks,
     targetReviewServiceMocks,
@@ -186,42 +170,6 @@ describe("GET/POST /api/complaints", () => {
       (call) => call[0],
     );
     expect(topics).toContain("complaints");
-  });
-});
-
-describe("GET/POST /api/comments", () => {
-  test("GET accepts anonymous callers and forwards query params", async () => {
-    const res = await commentRoute.GET(
-      new Request(
-        `http://localhost/api/comments?targetType=part&targetId=${"dddddddd-dddd-4ddd-8ddd-dddddddddddd"}`,
-      ),
-    );
-    expect(res.status).toBe(200);
-    expect(commentServiceMocks.listComments.mock.calls[0]?.[1]).toBe("part");
-  });
-
-  test("POST requires a session", async () => {
-    const res = await commentRoute.POST(
-      postJsonRequest("/api/comments", {
-        targetType: "part",
-        targetId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
-        body: "hi",
-      }),
-    );
-    expect(res.status).toBe(401);
-    expect(commentServiceMocks.addComment.mock.calls.length).toBe(0);
-  });
-
-  test("POST creates a comment for the signed-in user", async () => {
-    routeStubs.bookingUser = customer;
-    const res = await commentRoute.POST(
-      postJsonRequest("/api/comments", {
-        targetType: "part",
-        targetId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
-        body: "Binh luan",
-      }),
-    );
-    expect(res.status).toBe(201);
   });
 });
 
