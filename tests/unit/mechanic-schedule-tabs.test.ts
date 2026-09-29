@@ -3,7 +3,6 @@ import {
   isScheduleTab,
   SCHEDULE_TABS,
   scheduleTabHref,
-  shouldResetSchedulePager,
 } from "@/app/mechanic/components/schedule/schedule-tabs";
 
 describe("schedule tabs", () => {
@@ -37,11 +36,6 @@ describe("schedule tabs", () => {
     expect(isScheduleTab("no_show")).toBe(false);
     expect(isScheduleTab("unknown")).toBe(false);
     expect(isScheduleTab(undefined)).toBe(false);
-  });
-
-  test("resets only the pager when the URL tab changes", () => {
-    expect(shouldResetSchedulePager("en_route", "in_progress")).toBe(true);
-    expect(shouldResetSchedulePager("en_route", "en_route")).toBe(false);
   });
 
   test("builds hrefs matching the tab list", () => {

@@ -1,15 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import {
+  FiChevronLeft,
+  FiChevronRight,
   FiEye,
   FiInbox,
   FiLifeBuoy,
   FiPhone,
   FiRefreshCw,
 } from "react-icons/fi";
+import { PageBounce } from "@/components/pagination/PageBounce";
 import { RESCUE_ISSUE_OPTIONS } from "@/components/rescue/rescue-constants";
 import { useDispatchRescues, useRescueOperations } from "@/hooks/rescue-inbox";
+import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
 import { RescueDetailDialog } from "./RescueDetailDialog";
 import { RESCUE_BOARD_TABS, type RescueBoardTab } from "./rescue-tabs";
@@ -25,19 +30,32 @@ function issueLabel(issueType: string | null): string {
 // paging. Realtime operations events invalidate the board, so new
 // rescues and 30s re-offers appear with no reload.
 export function RescueBoard({ status }: { status: RescueBoardTab }) {
-  const board = useDispatchRescues(status);
+  // The page index lives on the URL (/page/N); the pageState chain lives
+  // in an in-memory map keyed by that index. Cold loads on N>1 bounce to
+  // the tab root because mid-chain cursors cannot be reconstructed.
+  const { page, cursor, known, recordNext, reset, hrefFor } =
+    useCursorRoutePage();
+  const board = useDispatchRescues(status, cursor);
   const [appliedStatus, setAppliedStatus] = useState(status);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   useRescueOperations();
 
-  // Reset cursors on tab switch during render, never in an effect.
+  // Reset cursors on tab switch during render, never in an effect — the
+  // new tab's URL already carries no page segment.
   if (status !== appliedStatus) {
     setAppliedStatus(status);
     setSelectedId(null);
-    board.reset();
+    reset();
   }
 
   const items = board.data?.items ?? [];
+  const nextCursor = board.data?.nextCursor ?? null;
+  const hasPrev = page > 1;
+  const hasNext = nextCursor !== null;
+
+  if (!known) {
+    return <PageBounce />;
+  }
 
   return (
     <div className="flex flex-col gap-4 md:gap-5">
@@ -132,27 +150,57 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
         />
       )}
 
-      {(board.hasPrev || board.hasNext) && (
-        <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            disabled={!board.hasPrev}
-            onClick={board.prev}
-            aria-label="Trang trước"
-            className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
-          >
-            Trước
-          </button>
-          <button
-            type="button"
-            disabled={!board.hasNext || board.isFetching}
-            onClick={board.next}
-            aria-label="Trang sau"
-            className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
-          >
-            {board.isFetching ? "Đang tải…" : "Sau"}
-          </button>
-        </div>
+      {(hasPrev || hasNext) && (
+        <nav
+          aria-label="Phân trang cứu hộ"
+          className="flex items-center justify-between gap-2"
+        >
+          {hasPrev && !board.isFetching ? (
+            <Link
+              href={hrefFor(page - 1)}
+              scroll={false}
+              aria-label="Trang trước"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Trước
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-label="Trang trước"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Trước
+            </button>
+          )}
+          {hasNext && !board.isFetching ? (
+            <Link
+              href={hrefFor(page + 1)}
+              scroll={false}
+              onClick={() => {
+                if (nextCursor) recordNext(nextCursor);
+              }}
+              aria-label="Trang sau"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-label="Trang sau"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
+            >
+              {board.isFetching ? "Đang tải…" : "Sau"}
+              <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            </button>
+          )}
+        </nav>
       )}
     </div>
   );

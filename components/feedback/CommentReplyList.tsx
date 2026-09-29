@@ -1,14 +1,17 @@
 "use client";
 
+import Link from "next/link";
+import { Suspense } from "react";
 import { FiChevronLeft, FiChevronRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { useModerateComment, useReplies } from "@/hooks/comments";
-import { useCursorPager } from "@/hooks/useCursorPager";
+import { useEmbeddedPage } from "@/hooks/useEmbeddedPage";
 import type { CommentTargetType } from "@/services/comments.api";
 import { CommentCard } from "./CommentCard";
 
-// Replies under one comment, oldest first with Trước/Sau paging.
+// Replies under one comment, oldest first with Trước/Sau paging on a
+// per-comment ?rp_<id>=N param so sibling reply lists never collide.
 // Moderators get an inline hide/unhide toggle on each reply.
-export function CommentReplyList({
+function CommentReplyListInner({
   parentId,
   targetType,
   targetId,
@@ -19,7 +22,7 @@ export function CommentReplyList({
   targetId: string;
   canModerate: boolean;
 }) {
-  const pager = useCursorPager();
+  const pager = useEmbeddedPage(`rp_${parentId}`);
   const query = useReplies(parentId, pager.cursor);
   const moderate = useModerateComment();
   const items = query.data?.comments.items ?? [];
@@ -78,28 +81,68 @@ export function CommentReplyList({
 
       {(pager.canPrev || nextCursor) && (
         <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            aria-label="Trang phản hồi trước"
-            disabled={!pager.canPrev}
-            onClick={pager.prev}
-            className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
-            Trước
-          </button>
-          <button
-            type="button"
-            aria-label="Trang phản hồi sau"
-            disabled={!nextCursor}
-            onClick={() => pager.next(nextCursor)}
-            className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Sau
-            <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
-          </button>
+          {pager.canPrev ? (
+            <Link
+              href={pager.prevHref}
+              scroll={false}
+              prefetch
+              aria-label="Trang phản hồi trước"
+              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
+              Trước
+            </Link>
+          ) : (
+            <button
+              type="button"
+              aria-label="Trang phản hồi trước"
+              disabled
+              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
+              Trước
+            </button>
+          )}
+          {nextCursor ? (
+            <Link
+              href={pager.nextHref}
+              scroll={false}
+              prefetch
+              onClick={() => pager.recordNext(nextCursor)}
+              aria-label="Trang phản hồi sau"
+              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              aria-label="Trang phản hồi sau"
+              disabled
+              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+// Suspense wrapper: useEmbeddedPage reads useSearchParams, which needs a
+// boundary when the host page gets prerendered.
+export function CommentReplyList(props: {
+  parentId: string;
+  targetType: CommentTargetType;
+  targetId: string;
+  canModerate: boolean;
+}) {
+  return (
+    <Suspense fallback={null}>
+      <CommentReplyListInner {...props} />
+    </Suspense>
   );
 }

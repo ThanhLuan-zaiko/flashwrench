@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
 import { isCollectableIncomeEntry } from "../collect-payment";
@@ -16,7 +17,7 @@ type IncomeHistoryProps = {
   range: { start: number; end: number };
   total: number;
   truncated: boolean;
-  onPage: (page: number) => void;
+  hrefFor: (page: number) => string;
   onRetry: () => void;
   onOpen: (entry: MechanicIncomeEntry) => void;
   onCollect: (entry: MechanicIncomeEntry) => void;
@@ -33,7 +34,7 @@ export function IncomeHistory({
   range,
   total,
   truncated,
-  onPage,
+  hrefFor,
   onRetry,
   onOpen,
   onCollect,
@@ -147,23 +148,30 @@ export function IncomeHistory({
           </p>
           <div className="flex flex-wrap items-center gap-1.5">
             {Array.from({ length: pageCount }, (_, index) => index).map(
-              (index) => (
-                <button
-                  key={index}
-                  type="button"
-                  disabled={index === page}
-                  onClick={() => onPage(index)}
-                  aria-label={`Trang ${index + 1}`}
-                  aria-current={index === page ? "page" : undefined}
-                  className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] ${
-                    index === page
-                      ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
-                      : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ),
+              (index) =>
+                index === page ? (
+                  <button
+                    key={index}
+                    type="button"
+                    disabled
+                    aria-label={`Trang ${index + 1}`}
+                    aria-current="page"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-900 bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-white dark:bg-white dark:text-zinc-900"
+                  >
+                    {index + 1}
+                  </button>
+                ) : (
+                  <Link
+                    key={index}
+                    href={hrefFor(index)}
+                    scroll={false}
+                    prefetch
+                    aria-label={`Trang ${index + 1}`}
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    {index + 1}
+                  </Link>
+                ),
             )}
           </div>
         </nav>

@@ -81,14 +81,25 @@ Rules:
 11. Paginate every list that can grow (admin tables, histories,
     search results). Never render an unbounded list. Default to
     8 rows per page for dense admin rows.
+    - Every page owns a URL: the 1-based page is a trailing
+      `/page/N` segment and pager controls are real `Link`s with
+      `scroll={false}` + `prefetch` built via `hrefFor` from
+      `useRoutePage` (cursor lists) — page 1 canonicalizes to the
+      bare base path. Pagers embedded inside another screen use a
+      namespaced `?*_page=`/`?*_<id>=` query param instead
+      (`useEmbeddedPage`) so the parent path stays untouched.
     - Pager sits below the list: previous/next buttons plus a
       "Trang X trên Y" label and an "Hiển thị A–B trên N mục"
       line (`aria-live="polite"`). Buttons keep the 44px minimum,
       with Vietnamese labels (`aria-label="Trang trước"` /
       `"Trang sau"`), and hide the whole pager on a single page.
     - Reset to the first page when filters, search text, or tabs
-      change. Clamp the current page after deletes so the view
-      never lands on an empty page.
+      change — a `router.replace` to the list root drops the
+      segment. Clamp the current page after deletes so the view
+      never lands on an empty page; typed `/page/N` beyond the
+      last page canonicalizes via `useCanonicalizePage`. Cursor
+      lists cannot jump to page N: a cold `/page/N` deep link
+      bounces to the list root (`PageBounce`).
     - Data: include page and filters in the TanStack Query key and
       keep previous-page data visible while the next page loads
       (`placeholderData: keepPreviousData`). Large tables paginate

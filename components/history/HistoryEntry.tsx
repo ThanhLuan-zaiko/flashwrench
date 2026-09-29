@@ -1,9 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PageBounce } from "@/components/pagination/PageBounce";
 import { bookingKeys, useMyBookings } from "@/hooks/booking";
 import { useDomainRealtime } from "@/hooks/useDomainRealtime";
+import { useRoutePage } from "@/hooks/useRoutePage";
 import { userTopic } from "@/lib/realtime/protocol";
 import { BookingDetailDialog } from "./BookingDetailDialog";
 import { HistoryBookingList } from "./HistoryBookingList";
@@ -13,33 +16,78 @@ type HistoryEntryProps = {
   customerId: string;
 };
 
+// Booking history pager over an infinite query: the URL owns the page
+// index (/history/page/N), the query cache owns the fetched page chain.
+// Page N+1 resolves by walking fetchNextPage once — anything deeper cold
+// bounces to the list root.
 export function HistoryEntry({ customerId }: HistoryEntryProps) {
+  const router = useRouter();
+  const { page, firstPageHref, hrefFor } = useRoutePage();
+  const index = page - 1;
   const [search, setSearch] = useState("");
   const [querySearch, setQuerySearch] = useState("");
-  const [pageIndex, setPageIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
-  const querySearchRef = useRef(querySearch);
-  querySearchRef.current = querySearch;
   const query = useMyBookings(querySearch);
   const pages = query.data?.pages ?? [];
-  const page = pages[pageIndex];
-  const bookings = page?.items ?? [];
+  const result = index < pages.length ? pages[index] : undefined;
+  const bookings = result?.items ?? [];
   const selectedBooking =
     pages
-      .flatMap((result) => result.items)
+      .flatMap((page) => page.items)
       .find((booking) => booking.id === selectedId) ?? null;
+
+  // A page is resolvable when it is already fetched or sits exactly one
+  // fetchNextPage ahead — deeper cold links cannot be walked.
+  const resolvable =
+    index < pages.length ||
+    (index === pages.length && Boolean(query.hasNextPage));
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setQuerySearch(search.trim()), 250);
     return () => window.clearTimeout(timeout);
   }, [search]);
 
+  // A new applied search drops the /page/N segment and the selection —
+  // the cached chain belongs to the previous filter.
+  const lastSearchRef = useRef(querySearch);
   useEffect(() => {
-    if (pages.length > 0 && pageIndex >= pages.length) {
-      setPageIndex(pages.length - 1);
+    if (lastSearchRef.current === querySearch) return;
+    lastSearchRef.current = querySearch;
+    setSelectedId(null);
+    setDetailId(null);
+    if (page > 1) router.replace(firstPageHref, { scroll: false });
+  }, [querySearch, page, firstPageHref, router]);
+
+  // Resolve the URL page: one step past the fetched chain walks
+  // fetchNextPage; past the real end lands on the last known page; deeper
+  // cold links bounce to the root.
+  useEffect(() => {
+    if (!query.isSuccess) return;
+    if (index === pages.length) {
+      if (query.hasNextPage) {
+        if (!query.isFetchingNextPage) void query.fetchNextPage();
+      } else {
+        router.replace(hrefFor(Math.max(1, pages.length)), {
+          scroll: false,
+        });
+      }
+      return;
     }
-  }, [pageIndex, pages.length]);
+    if (index > pages.length) {
+      router.replace(firstPageHref, { scroll: false });
+    }
+  }, [
+    query.isSuccess,
+    query.hasNextPage,
+    query.isFetchingNextPage,
+    query.fetchNextPage,
+    index,
+    pages.length,
+    hrefFor,
+    firstPageHref,
+    router,
+  ]);
 
   useDomainRealtime(
     userTopic(customerId),
@@ -53,30 +101,11 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
 
   function handleSearch(value: string) {
     setSearch(value);
-    setPageIndex(0);
-    setSelectedId(null);
-    setDetailId(null);
   }
 
-  async function nextPage() {
-    if (pageIndex < pages.length - 1) {
-      setPageIndex((current) => current + 1);
-      return;
-    }
-    if (!query.hasNextPage || query.isFetchingNextPage) return;
-    const expectedSearch = querySearch;
-    const nextIndex = pageIndex + 1;
-    const result = await query.fetchNextPage();
-    if (
-      !result.isError &&
-      querySearchRef.current === expectedSearch &&
-      result.data?.pages[nextIndex]
-    ) {
-      setPageIndex(nextIndex);
-    }
+  if (query.isSuccess && !resolvable) {
+    return <PageBounce />;
   }
-
-  const hasNext = pageIndex < pages.length - 1 || Boolean(query.hasNextPage);
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
@@ -93,17 +122,20 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
           bookings={bookings}
           selectedId={selectedId}
           search={search}
-          pageNumber={pageIndex + 1}
-          loading={query.isPending}
+          pageNumber={page}
+          loading={
+            query.isPending ||
+            (index >= pages.length && query.isFetchingNextPage)
+          }
           error={query.isError}
           loadingNext={query.isFetchingNextPage}
-          hasPrevious={pageIndex > 0}
-          hasNext={hasNext}
+          hasPrevious={page > 1}
+          hasNext={index < pages.length - 1 || Boolean(query.hasNextPage)}
+          backHref={hrefFor(page - 1)}
+          nextHref={hrefFor(page + 1)}
           onSearch={handleSearch}
           onSelect={setSelectedId}
           onOpen={setDetailId}
-          onPrevious={() => setPageIndex((current) => Math.max(0, current - 1))}
-          onNext={() => void nextPage()}
           onRetry={() => void query.refetch()}
         />
       </div>

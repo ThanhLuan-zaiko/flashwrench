@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiAlertCircle, FiLoader, FiRefreshCw } from "react-icons/fi";
 import { useDispatchParts } from "@/hooks/dispatch-orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { StockPager } from "./StockPager";
 import { StockPanel } from "./StockPanel";
@@ -22,20 +24,25 @@ import { clampPage, pageSlice, stockPageCount } from "./stock-pager";
 // instant flips, and one fetch shared with the POS part picker cache.
 export function StockBoard() {
   const rootRef = useBentoReveal<HTMLDivElement>();
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const { page, firstPageHref, hrefFor } = useRoutePage();
   const [filter, setFilter] = useState<StockFilter>(EMPTY_STOCK_FILTER);
   const query = useDispatchParts();
   const items = (query.data?.parts ?? []).filter((p) => !p.isDeleted);
   // Any filter change goes back to page 1 so the list never sits on a page
-  // that no longer exists under the narrowed result set.
+  // that no longer exists under the narrowed result set — the hop back is
+  // a URL replace so the dropped page segment stays consistent.
   const applyFilter = (next: StockFilter) => {
     setFilter(next);
-    setPage(1);
+    if (page > 1) router.replace(firstPageHref, { scroll: false });
   };
   const filtered = filterStockParts(items, filter);
   const slice = pageSlice(filtered, page);
   const totalPages = stockPageCount(filtered.length);
   const filtering = isStockFilterActive(filter);
+  // A typed /page/N beyond the last page rewrites itself once the
+  // (filtered) list length is known.
+  useCanonicalizePage(totalPages, query.isSuccess);
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
@@ -124,7 +131,7 @@ export function StockBoard() {
             from={slice.from}
             to={slice.to}
             total={filtered.length}
-            onPage={setPage}
+            hrefFor={hrefFor}
           />
           {filtering && filtered.length > 0 && (
             <p className="pt-1 text-[11px] text-zinc-500 dark:text-zinc-400">

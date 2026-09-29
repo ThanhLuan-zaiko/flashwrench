@@ -1,19 +1,17 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiRefreshCw, FiShoppingBag } from "react-icons/fi";
+import { PageBounce } from "@/components/pagination/PageBounce";
 import { useToast } from "@/components/toast/useToast";
 import {
   useDispatchOrders,
   useDispatchOrdersRealtime,
 } from "@/hooks/dispatch-orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
-import {
-  type CursorStack,
-  currentCursor,
-  FIRST_PAGE_STACK,
-} from "../bookings/dispatch-cursor";
 import {
   DISPATCH_PAGE_SIZE,
   formatMonthKey,
@@ -33,32 +31,41 @@ import { PosSaleDialog } from "./PosSaleDialog";
 export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const toast = useToast();
+  const router = useRouter();
+  // The page index lives on the URL (/page/N); the pageState chain lives
+  // in an in-memory map keyed by that index. Cold loads on N>1 bounce to
+  // the tab root because mid-chain cursors cannot be reconstructed.
+  const { page, cursor, known, recordNext, reset, firstPageHref, hrefFor } =
+    useCursorRoutePage();
   const [month, setMonth] = useState(monthKeyNow());
   const [appliedMonth, setAppliedMonth] = useState(month);
   const [appliedStatus, setAppliedStatus] = useState(status);
-  const [stack, setStack] = useState<CursorStack>(FIRST_PAGE_STACK);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
   const [posOpen, setPosOpen] = useState(false);
 
-  // Reset-on-prop-change pattern: switching month or status tab restarts
-  // the cursor walk synchronously — a pageState only belongs to its own
-  // status partition, so reusing it across tabs would page the wrong set.
+  // A pageState only belongs to its own status/month partition, so a tab
+  // or month switch restarts the walk during render; the URL page segment
+  // is already gone on a tab link and dropped by the month handler.
   if (month !== appliedMonth || status !== appliedStatus) {
     setAppliedMonth(month);
     setAppliedStatus(status);
-    setStack(FIRST_PAGE_STACK);
+    reset();
   }
 
   const query = useDispatchOrders({
     status,
     month: appliedMonth,
-    cursor: currentCursor(stack),
+    cursor,
     limit: DISPATCH_PAGE_SIZE,
   });
   useDispatchOrdersRealtime(true);
   const items = query.data?.items ?? [];
   const nextCursor = query.data?.nextCursor ?? null;
+
+  if (!known) {
+    return <PageBounce />;
+  }
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
@@ -107,7 +114,10 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
                 value={month}
                 onChange={(event) => {
                   const next = event.target.value;
-                  if (isMonthKey(next)) setMonth(next);
+                  if (isMonthKey(next)) {
+                    setMonth(next);
+                    router.replace(firstPageHref, { scroll: false });
+                  }
                 }}
                 className="mt-2 flex min-h-[44px] w-full items-center rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:max-w-56 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               />
@@ -135,9 +145,14 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
           appliedMonth={appliedMonth}
           query={query}
           items={items}
-          nextCursor={nextCursor}
-          stack={stack}
-          onStack={setStack}
+          page={page}
+          canBack={page > 1}
+          canNext={nextCursor !== null}
+          backHref={hrefFor(page - 1)}
+          nextHref={hrefFor(page + 1)}
+          onNextClick={() => {
+            if (nextCursor) recordNext(nextCursor);
+          }}
           onOpen={setSelectedId}
         />
       </div>

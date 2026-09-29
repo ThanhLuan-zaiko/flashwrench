@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { IncomeSection } from "../../components/income/IncomeSection";
-import { INCOME_TABS, isIncomeTab } from "../../components/income/income-tabs";
+import { INCOME_TABS } from "../../components/income/income-tabs";
 
 type StateParams = { params: Promise<{ state: string }> };
 
@@ -18,8 +16,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function MechanicIncomeStatePage({ params }: StateParams) {
-  const { state } = await params;
-  if (!isIncomeTab(state)) notFound();
-  return <IncomeSection key={state} state={state} />;
+// Metadata-only leaf: the /mechanic/income layout shell renders the
+// section and reads the [state] segment itself.
+export default function MechanicIncomeStatePage() {
+  return null;
 }

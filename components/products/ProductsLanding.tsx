@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useId, useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
@@ -9,6 +9,7 @@ import { useMe } from "@/hooks/auth";
 import { usePartsCatalogRealtime, usePublicParts } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
+import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import { ProductCard } from "./ProductCard";
 import { ProductFilter } from "./ProductFilter";
 import { ProductsCartCta } from "./ProductsCartCta";
@@ -44,8 +45,9 @@ const SKELETON_IDS = [
 export function ProductsLanding() {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const searchId = useId();
+  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(0);
+  const { page, firstPageHref, hrefFor } = useRoutePage();
   const catalog = usePublicParts();
   usePartsCatalogRealtime(true);
   const realtime = useRealtimeStatus();
@@ -74,23 +76,23 @@ export function ProductsLanding() {
     [parts, categoryId, query],
   );
   const view = useMemo(
-    () => paginateParts(filtered, page, PRODUCTS_PAGE_SIZE),
+    () => paginateParts(filtered, page - 1, PRODUCTS_PAGE_SIZE),
     [filtered, page],
   );
 
-  // Reset the pager whenever the URL tab changes. Adjusted during render
-  // (the documented reset-on-prop-change pattern) so no effect re-runs and
-  // no animation replays for a mere tab switch.
-  const [tabKey, setTabKey] = useState(activeSlug);
-  if (tabKey !== activeSlug) {
-    setTabKey(activeSlug);
-    setPage(0);
-  }
-
+  // Switching the ?cat= tab rewrites the URL without /page/N, so only a
+  // new search typed while deep-paged needs an explicit hop to the root —
+  // firstPageHref keeps the active ?cat= on the way back.
   const typeQuery = (next: string) => {
     setQuery(next);
-    setPage(0);
+    if (page > 1) router.replace(firstPageHref, { scroll: false });
   };
+  // view.safePage is 0-based; the URL segment is 1-based.
+  const pageHref = (zeroBased: number) => hrefFor(zeroBased + 1);
+
+  // Canonicalize: a typed /page/N beyond the last page rewrites itself to
+  // the real last page once the catalog has loaded.
+  useCanonicalizePage(view.pageCount, catalog.isSuccess);
 
   const showCartCta = me.isSuccess && me.data?.role === "customer";
 
@@ -218,7 +220,7 @@ export function ProductsLanding() {
             start={view.start}
             end={view.end}
             total={view.total}
-            onChange={setPage}
+            hrefFor={pageHref}
           />
         </div>
       )}

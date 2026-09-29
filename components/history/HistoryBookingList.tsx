@@ -16,11 +16,11 @@ type HistoryBookingListProps = {
   loadingNext: boolean;
   hasPrevious: boolean;
   hasNext: boolean;
+  backHref: string;
+  nextHref: string;
   onSearch: (value: string) => void;
   onSelect: (bookingId: string) => void;
   onOpen: (bookingId: string) => void;
-  onPrevious: () => void;
-  onNext: () => void;
   onRetry: () => void;
 };
 
@@ -68,11 +68,11 @@ export function HistoryBookingList({
   loadingNext,
   hasPrevious,
   hasNext,
+  backHref,
+  nextHref,
   onSearch,
   onSelect,
   onOpen,
-  onPrevious,
-  onNext,
   onRetry,
 }: HistoryBookingListProps) {
   const buckets = splitBookings(bookings);
@@ -170,30 +170,52 @@ export function HistoryBookingList({
             </p>
             {(hasPrevious || hasNext) && (
               <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={onPrevious}
-                  disabled={!hasPrevious || loadingNext}
-                  aria-label="Trang trước"
-                  className="min-h-[44px] rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
-                >
-                  Trang trước
-                </button>
-                <button
-                  type="button"
-                  onClick={onNext}
-                  disabled={!hasNext || loadingNext}
-                  aria-label="Trang sau"
-                  className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
-                >
-                  {loadingNext && (
-                    <FiLoader
-                      aria-hidden="true"
-                      className="h-4 w-4 motion-safe:animate-spin"
-                    />
-                  )}
-                  Trang sau
-                </button>
+                {hasPrevious ? (
+                  <Link
+                    href={backHref}
+                    scroll={false}
+                    prefetch
+                    aria-label="Trang trước"
+                    className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                  >
+                    Trang trước
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    aria-label="Trang trước"
+                    className="min-h-[44px] rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100"
+                  >
+                    Trang trước
+                  </button>
+                )}
+                {hasNext && !loadingNext ? (
+                  <Link
+                    href={nextHref}
+                    scroll={false}
+                    prefetch
+                    aria-label="Trang sau"
+                    className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                  >
+                    Trang sau
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    aria-label="Trang sau"
+                    className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100"
+                  >
+                    {loadingNext && (
+                      <FiLoader
+                        aria-hidden="true"
+                        className="h-4 w-4 motion-safe:animate-spin"
+                      />
+                    )}
+                    Trang sau
+                  </button>
+                )}
               </div>
             )}
           </div>

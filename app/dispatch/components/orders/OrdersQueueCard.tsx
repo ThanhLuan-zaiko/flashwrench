@@ -9,14 +9,6 @@ import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
 import { DispatchPager } from "../bookings/DispatchPager";
 import {
-  type CursorStack,
-  canGoBack,
-  canGoNext,
-  pageNumber,
-  popCursor,
-  pushCursor,
-} from "../bookings/dispatch-cursor";
-import {
   DISPATCH_PAGE_SIZE,
   formatMonthKey,
 } from "../bookings/dispatch-format";
@@ -33,9 +25,14 @@ type OrdersQueueCardProps = {
   appliedMonth: string;
   query: UseQueryResult<{ items: OrderSummary[]; nextCursor: string | null }>;
   items: OrderSummary[];
-  nextCursor: string | null;
-  stack: CursorStack;
-  onStack: (stack: CursorStack) => void;
+  // The cursor chain lives on the URL page index; these come from
+  // useCursorRoutePage in the parent board.
+  page: number;
+  canBack: boolean;
+  canNext: boolean;
+  backHref: string;
+  nextHref: string;
+  onNextClick: () => void;
   onOpen: (orderId: string) => void;
   /** Tab defs with role-specific hrefs; defaults to the dispatch URLs. */
   tabs?: DispatchOrderTabDef[];
@@ -50,9 +47,12 @@ export function OrdersQueueCard({
   appliedMonth,
   query,
   items,
-  nextCursor,
-  stack,
-  onStack,
+  page,
+  canBack,
+  canNext,
+  backHref,
+  nextHref,
+  onNextClick,
   onOpen,
   tabs = DISPATCH_ORDER_TABS,
 }: OrdersQueueCardProps) {
@@ -153,15 +153,14 @@ export function OrdersQueueCard({
         </ul>
       )}
       <DispatchPager
-        page={pageNumber(stack)}
+        page={page}
         count={items.length}
-        canBack={canGoBack(stack)}
-        canNext={canGoNext(nextCursor)}
+        canBack={canBack}
+        canNext={canNext}
         loading={query.isFetching}
-        onBack={() => onStack(popCursor(stack))}
-        onNext={() => {
-          if (nextCursor) onStack(pushCursor(stack, nextCursor));
-        }}
+        backHref={backHref}
+        nextHref={nextHref}
+        onNextClick={onNextClick}
       />
     </BentoCard>
   );

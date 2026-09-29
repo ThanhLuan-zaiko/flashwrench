@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 type ProductsPagerProps = {
@@ -8,20 +9,21 @@ type ProductsPagerProps = {
   start: number;
   end: number;
   total: number;
-  onChange: (page: number) => void;
+  hrefFor: (page: number) => string;
 };
 
 const BUTTON_CLASSES =
   "flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
 
-// Numeric summary + prev/next for the public products shelf.
+// Numeric summary + prev/next for the public products shelf. Pages are
+// real links so every /page/N URL stays shareable.
 export function ProductsPager({
   page,
   pageCount,
   start,
   end,
   total,
-  onChange,
+  hrefFor,
 }: ProductsPagerProps) {
   if (total === 0) return null;
   return (
@@ -38,27 +40,43 @@ export function ProductsPager({
         trong <span className="font-semibold">{total}</span> sản phẩm
       </p>
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          disabled={page <= 0}
-          onClick={() => onChange(page - 1)}
-          className={BUTTON_CLASSES}
-        >
-          <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-          Trước
-        </button>
+        {page <= 0 ? (
+          <button type="button" disabled className={BUTTON_CLASSES}>
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(page - 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang trước"
+            className={BUTTON_CLASSES}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
+          </Link>
+        )}
         <span className="px-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
           {page + 1}/{pageCount}
         </span>
-        <button
-          type="button"
-          disabled={page >= pageCount - 1}
-          onClick={() => onChange(page + 1)}
-          className={BUTTON_CLASSES}
-        >
-          Sau
-          <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-        </button>
+        {page >= pageCount - 1 ? (
+          <button type="button" disabled className={BUTTON_CLASSES}>
+            Sau
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(page + 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang sau"
+            className={BUTTON_CLASSES}
+          >
+            Sau
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        )}
       </div>
     </nav>
   );

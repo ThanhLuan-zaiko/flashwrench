@@ -12,6 +12,14 @@ import {
 // or volatile (booking, checkout, staff workspaces) stays a prefetch so a
 // speculation never spins up a document that immediately redirects, and
 // never runs live polling code the user may discard.
+//
+// Pagination coverage: `/page/N` links ride each scope's section pattern
+// (`/services/*` covers `/services/<slug>/page/2`, `/dispatch/*` covers
+// every board's page segment). Embedded pagers instead link back to the
+// SAME pathname with a namespaced param (`?srv_page=2`, `?cm_<id>=2`) —
+// scopes hosting those widgets must self-match the bare path (`/booking*`,
+// `/history*`), because a pattern like `/history/*` never fires on
+// `/history?cm_x=2`.
 
 export type SpeculationScope =
   | "home"
@@ -76,18 +84,25 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
     prefetch: ["/products*"],
   }),
   // History tabs plus the real exit links (rebook, rescue, reorder).
+  // `/history*` self-matches the bare tab too — comment/reply pagers link
+  // to `/history?cm_<id>=N`, which `/history/*` would never catch.
   history: buildSpeculationRules({
     prefetch: [
-      { match: "/history/*", eagerness: "moderate" },
+      { match: "/history*", eagerness: "moderate" },
       { match: "/orders/*", eagerness: "moderate" },
       "/rescue*",
       "/services*",
       "/products*",
     ],
   }),
-  // Post-booking destinations rendered by the success screen.
+  // Post-booking destinations rendered by the success screen — plus the
+  // page itself, whose review panels paginate via ?srv_page= / ?mrv_<id>=.
   booking: buildSpeculationRules({
-    prefetch: ["/services*", "/account*"],
+    prefetch: [
+      { match: "/booking*", eagerness: "moderate" },
+      "/services*",
+      "/account*",
+    ],
   }),
   // Public emergency page: next hops are home, the catalog or the auth
   // wall for account holders.

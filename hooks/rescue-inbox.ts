@@ -170,17 +170,11 @@ export function useDispatchRescueAction() {
   });
 }
 
-// Dispatcher board page per status tab with a cursor stack for Trước/Sau
-// paging. Switching tabs resets to page 1 during render, never in effect.
-export function useDispatchRescues(status: string) {
-  const [cursors, setCursors] = useState<(string | null)[]>([null]);
-  const [page, setPage] = useState(0);
-  if (cursors.length === 0) {
-    setCursors([null]);
-    setPage(0);
-  }
-  const cursor = cursors[page] ?? null;
-  const query = useQuery({
+// Dispatcher board page per status tab. The page index and cursor chain
+// live in useCursorRoutePage on the caller — this hook only fetches the
+// page the URL asks for, so back/forward stays consistent.
+export function useDispatchRescues(status: string, cursor: string | null) {
+  return useQuery({
     queryKey: rescueInboxKeys.dispatch(status, cursor),
     queryFn: () => fetchDispatchRescues(status, cursor),
     staleTime: 10 * 1000,
@@ -188,23 +182,6 @@ export function useDispatchRescues(status: string) {
     retry: false,
     refetchInterval: 30 * 1000,
   });
-  return {
-    ...query,
-    page,
-    hasNext: Boolean(query.data?.nextCursor),
-    hasPrev: page > 0,
-    next: () => {
-      const nextCursor = query.data?.nextCursor;
-      if (!nextCursor) return;
-      setCursors((prev) => [...prev.slice(0, page + 1), nextCursor]);
-      setPage((p) => p + 1);
-    },
-    prev: () => setPage((p) => Math.max(0, p - 1)),
-    reset: () => {
-      setCursors([null]);
-      setPage(0);
-    },
-  };
 }
 
 // Seconds left on a 30s offer, ticking every second. Hits zero once, so

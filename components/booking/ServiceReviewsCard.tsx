@@ -1,20 +1,18 @@
 "use client";
 
+import { Suspense } from "react";
 import { FiLoader, FiRefreshCw } from "react-icons/fi";
 import { ReviewList } from "@/components/feedback/ReviewList";
 import { useServiceReviews } from "@/hooks/reviews";
-import { useCursorPager } from "@/hooks/useCursorPager";
+import { useEmbeddedPage } from "@/hooks/useEmbeddedPage";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 
 // Public reviews of the service picked on the booking page: rating summary
-// plus the newest reviews, cursor-paged. Remount (key by service id) when the
-// picked service changes so a cursor is never reused across services.
-export function ServiceReviewsCard({
-  service,
-}: {
-  service: ServiceItem | null;
-}) {
-  const pager = useCursorPager();
+// plus the newest reviews, cursor-paged on ?srv_page=N. Remount (key by
+// service id) when the picked service changes so a cursor is never reused
+// across services.
+function ServiceReviewsCardInner({ service }: { service: ServiceItem | null }) {
+  const pager = useEmbeddedPage("srv_page");
   const query = useServiceReviews(service?.id ?? null, pager.cursor);
   const page = query.data?.reviews;
 
@@ -72,11 +70,24 @@ export function ServiceReviewsCard({
           emptyLabel="Dịch vụ này chưa có đánh giá. Đánh giá sẽ xuất hiện sau khi khách hoàn tất đơn."
           canPrev={pager.canPrev}
           canNext={Boolean(page.nextCursor)}
-          onPrev={pager.prev}
-          onNext={() => pager.next(page.nextCursor)}
+          prevHref={pager.prevHref}
+          nextHref={pager.nextHref}
+          onNextClick={() => {
+            if (page.nextCursor) pager.recordNext(page.nextCursor);
+          }}
           moderation={{ targetType: "service", targetId: service.id }}
         />
       )}
     </section>
+  );
+}
+
+// Suspense wrapper: useEmbeddedPage reads useSearchParams, which needs a
+// boundary when the host page gets prerendered.
+export function ServiceReviewsCard(props: { service: ServiceItem | null }) {
+  return (
+    <Suspense fallback={null}>
+      <ServiceReviewsCardInner {...props} />
+    </Suspense>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 type PublicCatalogPagerProps = {
@@ -8,22 +9,25 @@ type PublicCatalogPagerProps = {
   start: number;
   end: number;
   total: number;
-  onPage: (page: number) => void;
+  hrefFor: (page: number) => string;
 };
 
 // Minimal pager for the public landing: hidden on a single page, previous
-// and next buttons plus Vietnamese range labels. 44px touch targets.
+// and next links plus Vietnamese range labels. 44px touch targets. Pages
+// are real links so every /page/N URL stays shareable.
 export function PublicCatalogPager({
   page,
   pageCount,
   start,
   end,
   total,
-  onPage,
+  hrefFor,
 }: PublicCatalogPagerProps) {
   if (pageCount <= 1) return null;
   const prevDisabled = page <= 0;
   const nextDisabled = page >= pageCount - 1;
+  const navClass =
+    "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
   return (
     <nav
       aria-label="Phân trang dịch vụ"
@@ -36,27 +40,49 @@ export function PublicCatalogPager({
         Hiển thị {start}–{end} trên {total} dịch vụ
       </p>
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          disabled={prevDisabled}
-          onClick={() => onPage(page - 1)}
-          aria-label="Trang trước"
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-        >
-          <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-        </button>
+        {prevDisabled ? (
+          <button
+            type="button"
+            disabled
+            aria-label="Trang trước"
+            className={navClass}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(page - 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang trước"
+            className={navClass}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        )}
         <span className="px-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
           Trang {page + 1} trên {pageCount}
         </span>
-        <button
-          type="button"
-          disabled={nextDisabled}
-          onClick={() => onPage(page + 1)}
-          aria-label="Trang sau"
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-        >
-          <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-        </button>
+        {nextDisabled ? (
+          <button
+            type="button"
+            disabled
+            aria-label="Trang sau"
+            className={navClass}
+          >
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(page + 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang sau"
+            className={navClass}
+          >
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        )}
       </div>
     </nav>
   );

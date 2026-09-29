@@ -1,9 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useAccountSession } from "@/hooks/auth";
 import { useAddComment, useComments } from "@/hooks/comments";
-import { useCursorPager } from "@/hooks/useCursorPager";
+import { useEmbeddedPage } from "@/hooks/useEmbeddedPage";
 import type { CommentTargetType } from "@/services/comments.api";
 import { AuthApiError } from "@/services/comments.api";
 import { CommentComposer } from "./CommentComposer";
@@ -12,8 +15,9 @@ import { CommentItem } from "./CommentItem";
 // One comment thread per entity. The composer appears only for signed-in
 // users; private threads are enforced server-side per target type.
 // Admin/dispatcher sessions additionally see hidden rows and hide/unhide
-// controls; everyone gets one level of replies.
-export function CommentSection({
+// controls; everyone gets one level of replies. Paging lives in a
+// per-target ?cm_<id>=N param so several threads share one URL.
+function CommentSectionInner({
   targetType,
   targetId,
   title = "Bình luận",
@@ -22,8 +26,9 @@ export function CommentSection({
   targetId: string | null;
   title?: string;
 }) {
+  const router = useRouter();
   const session = useAccountSession();
-  const pager = useCursorPager();
+  const pager = useEmbeddedPage(`cm_${targetId ?? "none"}`);
   const query = useComments(targetType, targetId, pager.cursor);
   const add = useAddComment(targetType, targetId ?? "");
 
@@ -85,26 +90,53 @@ export function CommentSection({
 
       {(pager.canPrev || page?.nextCursor) && (
         <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            aria-label="Trang trước"
-            disabled={!pager.canPrev}
-            onClick={pager.prev}
-            className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-            Trước
-          </button>
-          <button
-            type="button"
-            aria-label="Trang sau"
-            disabled={!page?.nextCursor}
-            onClick={() => pager.next(page?.nextCursor ?? null)}
-            className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Sau
-            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-          </button>
+          {pager.canPrev ? (
+            <Link
+              href={pager.prevHref}
+              scroll={false}
+              prefetch
+              aria-label="Trang trước"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Trước
+            </Link>
+          ) : (
+            <button
+              type="button"
+              aria-label="Trang trước"
+              disabled
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Trước
+            </button>
+          )}
+          {page?.nextCursor ? (
+            <Link
+              href={pager.nextHref}
+              scroll={false}
+              prefetch
+              onClick={() => {
+                if (page.nextCursor) pager.recordNext(page.nextCursor);
+              }}
+              aria-label="Trang sau"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              aria-label="Trang sau"
+              disabled
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            </button>
+          )}
         </div>
       )}
 
@@ -114,7 +146,17 @@ export function CommentSection({
           pending={add.isPending}
           error={errorMessage}
           onSubmit={(body) =>
-            add.mutate({ body }, { onSuccess: () => pager.reset() })
+            add.mutate(
+              { body },
+              {
+                onSuccess: () => {
+                  pager.reset();
+                  if (pager.page > 1) {
+                    router.replace(pager.firstHref, { scroll: false });
+                  }
+                },
+              },
+            )
           }
         />
       ) : (
@@ -123,5 +165,19 @@ export function CommentSection({
         </p>
       )}
     </section>
+  );
+}
+
+// Suspense wrapper: useEmbeddedPage reads useSearchParams, which needs a
+// boundary when the host page gets prerendered.
+export function CommentSection(props: {
+  targetType: CommentTargetType;
+  targetId: string | null;
+  title?: string;
+}) {
+  return (
+    <Suspense fallback={null}>
+      <CommentSectionInner {...props} />
+    </Suspense>
   );
 }

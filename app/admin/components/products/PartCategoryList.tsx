@@ -144,7 +144,7 @@ export function PartCategoryList({
         start={pager.range.start}
         end={pager.range.end}
         total={items.length}
-        onPage={pager.goTo}
+        hrefFor={pager.hrefFor}
       />
     </div>
   );

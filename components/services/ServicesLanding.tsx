@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useId, useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
@@ -10,6 +11,7 @@ import {
 } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
+import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import { PublicCatalogFilter } from "./PublicCatalogFilter";
 import { PublicCatalogPager } from "./PublicCatalogPager";
 import { PublicServiceCard } from "./PublicServiceCard";
@@ -37,15 +39,17 @@ const SKELETON_IDS = [
 // /admin/services publish to the service-catalog topic; this screen
 // invalidates its query on each event and refetches over HTTPS.
 //
-// The active tab comes from the URL (/services plus /services/[slug]), but
-// the screen itself stays mounted inside the /services layout while tabs
-// switch. Tab switches therefore reuse the cached catalog and the search
-// text, reset only the pager, and never replay the enter animation.
+// The active tab comes from the URL (/services plus /services/[slug]) and
+// the page from the trailing /page/N segment, but the screen itself stays
+// mounted inside the /services layout while tabs or pages switch. Switches
+// therefore reuse the cached catalog and the search text, and never replay
+// the enter animation.
 export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const searchId = useId();
+  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(0);
+  const { page, firstPageHref, hrefFor } = useRoutePage();
   const catalog = usePublicCatalog();
   useServiceCatalogRealtime(true);
   const realtime = useRealtimeStatus();
@@ -70,23 +74,22 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
     [services, categoryId, query],
   );
   const view = useMemo(
-    () => paginatePublicServices(filtered, page, PUBLIC_CATALOG_PAGE_SIZE),
+    () => paginatePublicServices(filtered, page - 1, PUBLIC_CATALOG_PAGE_SIZE),
     [filtered, page],
   );
 
-  // Reset the pager whenever the URL tab changes. Adjusted during render
-  // (the documented reset-on-prop-change pattern) so no effect re-runs and
-  // no animation replays for a mere tab switch.
-  const [tabKey, setTabKey] = useState(activeSlug);
-  if (tabKey !== activeSlug) {
-    setTabKey(activeSlug);
-    setPage(0);
-  }
-
+  // A tab switch drops the /page/N segment by itself, so only typing a new
+  // search while deep-paged needs an explicit hop back to the list root.
   const typeQuery = (next: string) => {
     setQuery(next);
-    setPage(0);
+    if (page > 1) router.replace(firstPageHref, { scroll: false });
   };
+  // view.safePage is 0-based; the URL segment is 1-based.
+  const pageHref = (zeroBased: number) => hrefFor(zeroBased + 1);
+
+  // Canonicalize: a typed /page/N beyond the last page rewrites itself to
+  // the real last page once the catalog has loaded.
+  useCanonicalizePage(view.pageCount, catalog.isSuccess);
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
@@ -212,7 +215,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
             start={view.start}
             end={view.end}
             total={view.total}
-            onPage={setPage}
+            hrefFor={pageHref}
           />
         </div>
       )}

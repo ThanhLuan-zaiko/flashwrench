@@ -9,6 +9,7 @@ import {
   useRecordBookingPayment,
 } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { collectPaymentError } from "../collect-payment";
@@ -33,7 +34,9 @@ import { INCOME_TABS, type IncomeTab } from "./income-tabs";
 export function IncomeSection({ state }: { state: IncomeTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const toast = useToast();
-  const [page, setPage] = useState(0);
+  // The pager lives on the URL (/page/N); a tab switch changes the
+  // [state] segment and drops the page segment by itself.
+  const { page, hrefFor } = useRoutePage();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [collecting, setCollecting] = useState<MechanicIncomeEntry | null>(
     null,
@@ -55,7 +58,10 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
         : entries.filter((entry) => entry.state === state),
     [entries, state],
   );
-  const safePage = clampMechanicPage(page, filtered.length);
+  // The URL segment is 1-based; the slicing helpers take a 0-based index.
+  const safePage = clampMechanicPage(page - 1, filtered.length);
+  const pageCount = pageCountOf(filtered.length, MECHANIC_PAGE_SIZE);
+  useCanonicalizePage(pageCount, query.isSuccess);
   const visible = useMemo(
     () => paginateMechanicItems(filtered, safePage),
     [filtered, safePage],
@@ -165,11 +171,11 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
             isError={query.isError}
             visible={visible}
             page={safePage}
-            pageCount={pageCountOf(filtered.length, MECHANIC_PAGE_SIZE)}
+            pageCount={pageCount}
             range={pageRangeLabel(safePage, filtered.length)}
             total={filtered.length}
             truncated={query.data?.truncated ?? false}
-            onPage={setPage}
+            hrefFor={(index) => hrefFor(index + 1)}
             onRetry={() => void query.refetch()}
             onOpen={(entry) => setSelectedId(entry.bookingId)}
             onCollect={setCollecting}

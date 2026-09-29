@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { pageButtons } from "./stock-pager";
 
@@ -9,18 +10,19 @@ type StockPagerProps = {
   from: number;
   to: number;
   total: number;
-  onPage: (page: number) => void;
+  hrefFor: (page: number) => string;
 };
 
-// Numbered pager for the stock list: jump straight to any page instead of
-// walking cursors. Hidden entirely when everything fits on one page.
+// Numbered pager for full lists sliced client-side: jump straight to any
+// page instead of walking cursors. Hidden entirely when everything fits
+// on one page. Pages are real links so every /page/N URL is shareable.
 export function StockPager({
   page,
   totalPages,
   from,
   to,
   total,
-  onPage,
+  hrefFor,
 }: StockPagerProps) {
   if (totalPages <= 1) return null;
   const buttons = pageButtons(page, totalPages);
@@ -42,16 +44,28 @@ export function StockPager({
         Trang {page}/{totalPages} · Hiển thị {from}–{to} / {total} mục
       </p>
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          disabled={page <= 1}
-          onClick={() => onPage(page - 1)}
-          aria-label="Trang trước"
-          className={nav}
-        >
-          <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-          Trước
-        </button>
+        {page <= 1 ? (
+          <button
+            type="button"
+            disabled
+            aria-label="Trang trước"
+            className={nav}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(page - 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang trước"
+            className={nav}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
+          </Link>
+        )}
         {buttons.map((entry, index) =>
           entry === "ellipsis" ? (
             <span
@@ -61,29 +75,47 @@ export function StockPager({
             >
               …
             </span>
-          ) : (
+          ) : entry === page ? (
             <button
               key={entry}
               type="button"
-              onClick={() => onPage(entry)}
+              disabled
               aria-label={`Trang ${entry}`}
-              aria-current={entry === page ? "page" : undefined}
-              className={entry === page ? active : idle}
+              aria-current="page"
+              className={active}
             >
               {entry}
             </button>
+          ) : (
+            <Link
+              key={entry}
+              href={hrefFor(entry)}
+              scroll={false}
+              prefetch
+              aria-label={`Trang ${entry}`}
+              className={idle}
+            >
+              {entry}
+            </Link>
           ),
         )}
-        <button
-          type="button"
-          disabled={page >= totalPages}
-          onClick={() => onPage(page + 1)}
-          aria-label="Trang sau"
-          className={nav}
-        >
-          Sau
-          <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-        </button>
+        {page >= totalPages ? (
+          <button type="button" disabled aria-label="Trang sau" className={nav}>
+            Sau
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(page + 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang sau"
+            className={nav}
+          >
+            Sau
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        )}
       </div>
     </nav>
   );

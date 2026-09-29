@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FiChevronLeft, FiChevronRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { useAccountSession } from "@/hooks/auth";
 import { useModerateReview } from "@/hooks/reviews";
@@ -16,8 +17,9 @@ export function ReviewList({
   items,
   ratingAvg,
   ratingCount,
-  onPrev,
-  onNext,
+  prevHref,
+  nextHref,
+  onNextClick,
   canPrev,
   canNext,
   emptyLabel = "Chưa có đánh giá nào.",
@@ -26,8 +28,11 @@ export function ReviewList({
   items: ReviewItem[];
   ratingAvg: number;
   ratingCount: number;
-  onPrev?: () => void;
-  onNext?: () => void;
+  prevHref?: string;
+  nextHref?: string;
+  // Records the just-fetched pageState token before the "next" nav so the
+  // target page stays reachable inside this session.
+  onNextClick?: () => void;
   canPrev?: boolean;
   canNext?: boolean;
   emptyLabel?: string;
@@ -118,26 +123,51 @@ export function ReviewList({
 
       {(canPrev || canNext) && (
         <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={onPrev}
-            disabled={!canPrev}
-            aria-label="Trang trước"
-            className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-            Trước
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            disabled={!canNext}
-            aria-label="Trang sau"
-            className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Sau
-            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-          </button>
+          {canPrev && prevHref ? (
+            <Link
+              href={prevHref}
+              scroll={false}
+              prefetch
+              aria-label="Trang trước"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Trước
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-label="Trang trước"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Trước
+            </button>
+          )}
+          {canNext && nextHref ? (
+            <Link
+              href={nextHref}
+              scroll={false}
+              prefetch
+              onClick={onNextClick}
+              aria-label="Trang sau"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-label="Trang sau"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sau
+              <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            </button>
+          )}
         </div>
       )}
     </div>

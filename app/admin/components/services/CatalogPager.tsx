@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type FormEvent, useId, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { pageWindow, parsePageInput } from "./catalog-pagination";
@@ -10,21 +12,23 @@ type CatalogPagerProps = {
   start: number;
   end: number;
   total: number;
-  onPage: (page: number) => void;
+  hrefFor: (page: number) => string;
 };
 
 // Shared pager for admin lists. Always renders the range label plus
-// numbered buttons so short lists still show "Trang 1 / 1" for easy
+// numbered links so short lists still show "Trang 1 / 1" for easy
 // scanning. Long lists collapse into a window with ellipsis plus a
-// jump box. Buttons keep the 44px minimum touch target.
+// jump box. Buttons keep the 44px minimum touch target and every page
+// is a shareable /page/N link.
 export function CatalogPager({
   page,
   pageCount,
   start,
   end,
   total,
-  onPage,
+  hrefFor,
 }: CatalogPagerProps) {
+  const router = useRouter();
   const safeCount = Number.isInteger(pageCount) ? Math.max(1, pageCount) : 1;
   const current = Number.isInteger(page)
     ? Math.min(Math.max(0, page), safeCount - 1)
@@ -36,11 +40,18 @@ export function CatalogPager({
   const [jump, setJump] = useState("");
   let gapSeen = 0;
 
+  const navClass =
+    "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  const numClass =
+    "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98]";
+  const numIdle = `${numClass} border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800`;
+  const numActive = `${numClass} border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900`;
+
   const submitJump = (event: FormEvent) => {
     event.preventDefault();
     const target = parsePageInput(jump, safeCount);
     if (target === null || target === current) return;
-    onPage(target);
+    router.push(hrefFor(target));
     setJump("");
   };
 
@@ -56,15 +67,26 @@ export function CatalogPager({
         Hiển thị {start}–{end} trên {total} mục
       </p>
       <div className="flex flex-wrap items-center gap-1.5">
-        <button
-          type="button"
-          disabled={prevDisabled}
-          onClick={() => onPage(current - 1)}
-          aria-label="Trang trước"
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-        >
-          <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-        </button>
+        {prevDisabled ? (
+          <button
+            type="button"
+            disabled
+            aria-label="Trang trước"
+            className={navClass}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(current - 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang trước"
+            className={navClass}
+          >
+            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        )}
         {tokens.map((token) => {
           if (token === "ellipsis") {
             const key = gapSeen === 0 ? "gap-start" : "gap-end";
@@ -79,33 +101,53 @@ export function CatalogPager({
               </span>
             );
           }
+          if (token === current) {
+            return (
+              <button
+                key={token}
+                type="button"
+                disabled
+                aria-label={`Trang ${token + 1}`}
+                aria-current="page"
+                className={numActive}
+              >
+                {token + 1}
+              </button>
+            );
+          }
           return (
-            <button
+            <Link
               key={token}
-              type="button"
-              disabled={token === current}
-              onClick={() => onPage(token)}
+              href={hrefFor(token)}
+              scroll={false}
+              prefetch
               aria-label={`Trang ${token + 1}`}
-              aria-current={token === current ? "page" : undefined}
-              className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] ${
-                token === current
-                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
-                  : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-              }`}
+              className={numIdle}
             >
               {token + 1}
-            </button>
+            </Link>
           );
         })}
-        <button
-          type="button"
-          disabled={nextDisabled}
-          onClick={() => onPage(current + 1)}
-          aria-label="Trang sau"
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
-        >
-          <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-        </button>
+        {nextDisabled ? (
+          <button
+            type="button"
+            disabled
+            aria-label="Trang sau"
+            className={navClass}
+          >
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link
+            href={hrefFor(current + 1)}
+            scroll={false}
+            prefetch
+            aria-label="Trang sau"
+            className={navClass}
+          >
+            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        )}
       </div>
       <span className="w-full px-1 text-xs font-semibold text-zinc-700 sm:w-auto dark:text-zinc-300">
         Trang {current + 1} / {safeCount}

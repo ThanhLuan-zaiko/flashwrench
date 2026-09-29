@@ -1,14 +1,16 @@
 "use client";
 
+import { Suspense } from "react";
 import { FiLoader } from "react-icons/fi";
 import { ReviewList } from "@/components/feedback/ReviewList";
 import { useMechanicReviews } from "@/hooks/reviews";
-import { useCursorPager } from "@/hooks/useCursorPager";
+import { useEmbeddedPage } from "@/hooks/useEmbeddedPage";
 
 // Public review feed of one mechanic (booking + rescue reviews combined),
-// cursor-paged. Mount it only while it is visible: it fetches on mount.
-export function MechanicReviewsPanel({ mechanicId }: { mechanicId: string }) {
-  const pager = useCursorPager();
+// cursor-paged on ?mrv_<id>=N — several panels can be open on one screen,
+// so each keeps its own param. Mount it only while it is visible.
+function MechanicReviewsPanelInner({ mechanicId }: { mechanicId: string }) {
+  const pager = useEmbeddedPage(`mrv_${mechanicId}`);
   const reviews = useMechanicReviews(mechanicId, pager.cursor);
   const page = reviews.data?.reviews;
 
@@ -38,11 +40,24 @@ export function MechanicReviewsPanel({ mechanicId }: { mechanicId: string }) {
           ratingCount={page.ratingCount}
           canPrev={pager.canPrev}
           canNext={Boolean(page.nextCursor)}
-          onPrev={pager.prev}
-          onNext={() => pager.next(page.nextCursor)}
+          prevHref={pager.prevHref}
+          nextHref={pager.nextHref}
+          onNextClick={() => {
+            if (page.nextCursor) pager.recordNext(page.nextCursor);
+          }}
           moderation={{ targetType: "mechanic", targetId: mechanicId }}
         />
       )}
     </div>
+  );
+}
+
+// Suspense wrapper: useEmbeddedPage reads useSearchParams, which needs a
+// boundary when the host page gets prerendered.
+export function MechanicReviewsPanel({ mechanicId }: { mechanicId: string }) {
+  return (
+    <Suspense fallback={null}>
+      <MechanicReviewsPanelInner mechanicId={mechanicId} />
+    </Suspense>
   );
 }

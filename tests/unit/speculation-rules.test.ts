@@ -83,6 +83,51 @@ describe("speculationRulesForScope", () => {
       expect(speculationRulesForScope(scope).prerender).toEqual([]);
     }
   });
+
+  const BASE = "https://flashwrench.test";
+  const matchesAnyRule = (scope: string, url: string): boolean => {
+    const rules = speculationRulesForScope(
+      scope as Parameters<typeof speculationRulesForScope>[0],
+    );
+    return [...rules.prerender, ...rules.prefetch].some((rule) =>
+      new URLPattern({
+        pathname: rule.where.href_matches,
+        baseURL: BASE,
+      }).test(url),
+    );
+  };
+
+  test("every scope covers its own /page/N pager links", () => {
+    const pagedUrls: Array<[string, string]> = [
+      ["services", `${BASE}/services/page/2`],
+      ["services", `${BASE}/services/thay-nhot/page/3`],
+      ["products", `${BASE}/products/page/2`],
+      ["dispatch", `${BASE}/dispatch/orders/dang-cho/page/4`],
+      ["dispatch", `${BASE}/dispatch/stock/page/2`],
+      ["admin", `${BASE}/admin/users/staff/page/5`],
+      ["mechanic", `${BASE}/mechanic/income/all/page/2`],
+      ["history", `${BASE}/history/page/2`],
+    ];
+    for (const [scope, url] of pagedUrls) {
+      expect(matchesAnyRule(scope, url)).toBe(true);
+    }
+  });
+
+  test("scopes hosting embedded pagers self-match their own path + query", () => {
+    const embeddedUrls: Array<[string, string]> = [
+      // Booking renders review widgets paging via ?srv_page= / ?mrv_<id>=.
+      ["booking", `${BASE}/booking?srv_page=2`],
+      ["booking", `${BASE}/booking?service=x&mrv_mech-1=3`],
+      // /history comments live on the bare tab path — /history/* cannot
+      // match it, so the scope must carry a self-match pattern.
+      ["history", `${BASE}/history?cm_bk-1=2`],
+      ["products", `${BASE}/products/loc-nhot?rv_page=2`],
+      ["orders", `${BASE}/orders/ord-9?cm_ord-9=2`],
+    ];
+    for (const [scope, url] of embeddedUrls) {
+      expect(matchesAnyRule(scope, url)).toBe(true);
+    }
+  });
 });
 
 describe("serializeSpeculationRules", () => {

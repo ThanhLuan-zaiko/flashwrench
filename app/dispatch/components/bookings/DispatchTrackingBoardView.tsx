@@ -25,13 +25,14 @@ type DispatchTrackingBoardViewProps = {
   page: number;
   canBack: boolean;
   canNext: boolean;
+  backHref: string;
+  nextHref: string;
+  onNextClick: () => void;
   onMonthChange: (month: string) => void;
   onSearch: (value: string) => void;
   onSelect: (bookingId: string) => void;
   onOpen: (bookingId: string) => void;
   onRetry: () => void;
-  onBack: () => void;
-  onNext: () => void;
 };
 
 export function DispatchTrackingBoardView({
@@ -46,13 +47,14 @@ export function DispatchTrackingBoardView({
   page,
   canBack,
   canNext,
+  backHref,
+  nextHref,
+  onNextClick,
   onMonthChange,
   onSearch,
   onSelect,
   onOpen,
   onRetry,
-  onBack,
-  onNext,
 }: DispatchTrackingBoardViewProps) {
   const selected =
     bookings.find((booking) => booking.id === selectedId) ?? null;
@@ -129,8 +131,9 @@ export function DispatchTrackingBoardView({
             canBack={canBack}
             canNext={canNext}
             loading={isFetching}
-            onBack={onBack}
-            onNext={onNext}
+            backHref={backHref}
+            nextHref={nextHref}
+            onNextClick={onNextClick}
           />
         </section>
       </div>

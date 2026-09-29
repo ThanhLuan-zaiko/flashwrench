@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
 import { useMechanicBookings } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import type { MechanicBookingSummary } from "@/services/mechanic.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { FilterTabs } from "../FilterTabs";
@@ -18,11 +19,7 @@ import { BookingDetailDialog } from "./BookingDetailDialog";
 import { ScheduleBody } from "./ScheduleBody";
 import { SchedulePager } from "./SchedulePager";
 import { ScheduleStatCards } from "./ScheduleStatCards";
-import {
-  SCHEDULE_TABS,
-  type ScheduleTab,
-  shouldResetSchedulePager,
-} from "./schedule-tabs";
+import { SCHEDULE_TABS, type ScheduleTab } from "./schedule-tabs";
 
 // Bento root for the schedule: live counts, a filterable work queue with
 // paging, and a detail dialog for accepting, routing and closing jobs.
@@ -31,14 +28,10 @@ import {
 export function ScheduleSection({ status }: { status: ScheduleTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const toast = useToast();
-  const [page, setPage] = useState(0);
-  const [appliedStatus, setAppliedStatus] = useState(status);
+  // The pager lives on the URL (/page/N); a tab switch changes the
+  // [status] segment and drops the page segment by itself.
+  const { page, hrefFor } = useRoutePage();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  if (shouldResetSchedulePager(appliedStatus, status)) {
-    setAppliedStatus(status);
-    setPage(0);
-  }
 
   const query = useMechanicBookings({ status });
   // Unfiltered load for the per-tab counts. Shares the cache key with the
@@ -50,7 +43,9 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
     [query.data],
   );
   const pageCount = pageCountOf(bookings.length, MECHANIC_PAGE_SIZE);
-  const safePage = clampMechanicPage(page, bookings.length);
+  // The URL segment is 1-based; the slicing helpers take a 0-based index.
+  const safePage = clampMechanicPage(page - 1, bookings.length);
+  useCanonicalizePage(pageCount, query.isSuccess);
   const visible = useMemo(
     () => paginateMechanicItems(bookings, safePage),
     [bookings, safePage],
@@ -107,7 +102,7 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
               pageCount={pageCount}
               range={range}
               total={bookings.length}
-              onPage={setPage}
+              hrefFor={(index) => hrefFor(index + 1)}
             />
           )}
         </BentoCard>

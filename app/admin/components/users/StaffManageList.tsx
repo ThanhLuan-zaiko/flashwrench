@@ -185,7 +185,7 @@ export function StaffManageList({
             start={pager.range.start}
             end={pager.range.end}
             total={visible.length}
-            onPage={pager.goTo}
+            hrefFor={pager.hrefFor}
           />
         </div>
       )}

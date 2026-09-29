@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
 import { BentoCard } from "@/app/admin/components/bento/BentoCard";
 import { StockPager } from "@/app/dispatch/components/stock/StockPager";
@@ -10,6 +11,7 @@ import {
   stockPageCount,
 } from "@/app/dispatch/components/stock/stock-pager";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import type { RevenueReport } from "@/lib/revenue/revenue.types";
 import type { RevenueRange } from "@/lib/revenue/revenue-period";
 import { RevenueKpiGrid } from "./RevenueKpiGrid";
@@ -48,14 +50,10 @@ export function RevenueBoard({
   staffSlices = false,
 }: RevenueBoardProps) {
   const rootRef = useBentoReveal<HTMLDivElement>();
-  const [prevRange, setPrevRange] = useState(range);
-  const [page, setPage] = useState(1);
-  if (prevRange !== range) {
-    // Reset-on-prop-change for our own state only: the transactions pager
-    // lands on page 1 when the range switches.
-    setPrevRange(range);
-    setPage(1);
-  }
+  const router = useRouter();
+  // The transactions pager lives on the URL (/page/N); a range switch
+  // changes the [range] segment and drops the page segment by itself.
+  const { page, firstPageHref, hrefFor } = useRoutePage();
 
   // The parent's anchor lives in the shell, so re-anchoring to today on a
   // range switch must happen in an effect — calling it during render is a
@@ -68,6 +66,9 @@ export function RevenueBoard({
   const txns = report?.transactions ?? [];
   const view = pageSlice(txns, page);
   const pages = stockPageCount(txns.length);
+  // A typed /page/N beyond the last page rewrites itself once the report
+  // has loaded.
+  useCanonicalizePage(pages, report !== undefined && report !== null);
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
@@ -106,7 +107,9 @@ export function RevenueBoard({
             csvHref={csvHref(anchor)}
             onAnchorChange={(next) => {
               onAnchorChange(next);
-              setPage(1);
+              if (page > 1) {
+                router.replace(firstPageHref, { scroll: false });
+              }
             }}
           />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
@@ -177,7 +180,7 @@ export function RevenueBoard({
                 from={view.from}
                 to={view.to}
                 total={txns.length}
-                onPage={setPage}
+                hrefFor={hrefFor}
               />
             </BentoCard>
           </div>

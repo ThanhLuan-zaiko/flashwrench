@@ -1,26 +1,19 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import { PageBounce } from "@/components/pagination/PageBounce";
 import { useToast } from "@/components/toast/useToast";
 import { useDispatchBookings } from "@/hooks/dispatch";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
 import { DispatchDetailDialog } from "./DispatchDetailDialog";
 import { DispatchPager } from "./DispatchPager";
 import { DispatchQueue } from "./DispatchQueue";
 import { DispatchTrackingBoardView } from "./DispatchTrackingBoardView";
-import {
-  type CursorStack,
-  canGoBack,
-  canGoNext,
-  currentCursor,
-  FIRST_PAGE_STACK,
-  pageNumber,
-  popCursor,
-  pushCursor,
-} from "./dispatch-cursor";
 import {
   DISPATCH_PAGE_SIZE,
   DISPATCH_STATUS_LABELS,
@@ -37,28 +30,39 @@ import { DISPATCH_TABS, type DispatchTab } from "./dispatch-tabs";
 export function DispatchBoard({ status }: { status: DispatchTab }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const toast = useToast();
+  const router = useRouter();
+  // The page index lives on the URL (/page/N); the pageState chain lives
+  // in an in-memory map keyed by that index. Cold loads on N>1 bounce to
+  // the tab root because mid-chain cursors cannot be reconstructed.
+  const { page, cursor, known, recordNext, reset, firstPageHref, hrefFor } =
+    useCursorRoutePage();
   const [month, setMonth] = useState(monthKeyNow());
   const [appliedMonth, setAppliedMonth] = useState(month);
-  const [stack, setStack] = useState<CursorStack>(FIRST_PAGE_STACK);
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [appliedStatus, setAppliedStatus] = useState(status);
   const [selectedMapId, setSelectedMapId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Debounced search restarts the cursor walk and drops the /page/N
+  // segment so the narrowed result set always starts on page 1.
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setAppliedSearch(search.trim());
-      setStack(FIRST_PAGE_STACK);
+      reset();
       setSelectedMapId(null);
+      router.replace(firstPageHref, { scroll: false });
     }, 300);
     return () => window.clearTimeout(timer);
-  }, [search]);
+  }, [search, reset, firstPageHref, router]);
 
+  // A pageState only belongs to its own status/month partition, so a tab
+  // or month switch restarts the walk during render; the URL page segment
+  // is already gone on a tab link and dropped by the month handler.
   if (month !== appliedMonth || status !== appliedStatus) {
     setAppliedMonth(month);
     setAppliedStatus(status);
-    setStack(FIRST_PAGE_STACK);
+    reset();
     setSelectedMapId(null);
   }
 
@@ -66,7 +70,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
   const query = useDispatchBookings({
     status,
     month: appliedMonth,
-    cursor: currentCursor(stack),
+    cursor,
     limit: DISPATCH_PAGE_SIZE,
     search: trackingStatus ? appliedSearch : undefined,
   });
@@ -84,6 +88,10 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
     />
   );
 
+  if (!known) {
+    return <PageBounce />;
+  }
+
   if (trackingStatus) {
     return (
       <div ref={rootRef} className="flex flex-col gap-4 md:gap-5">
@@ -96,10 +104,15 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
           isPending={query.isPending}
           isError={query.isError}
           isFetching={query.isFetching}
-          page={pageNumber(stack)}
-          canBack={canGoBack(stack)}
-          canNext={canGoNext(nextCursor)}
-          onMonthChange={setMonth}
+          page={page}
+          canBack={page > 1}
+          canNext={nextCursor !== null}
+          backHref={hrefFor(page - 1)}
+          nextHref={hrefFor(page + 1)}
+          onMonthChange={(next) => {
+            setMonth(next);
+            router.replace(firstPageHref, { scroll: false });
+          }}
           onSearch={(value) => {
             setSearch(value);
             setSelectedMapId(null);
@@ -107,13 +120,8 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
           onSelect={setSelectedMapId}
           onOpen={setSelectedId}
           onRetry={() => void query.refetch()}
-          onBack={() => {
-            setStack(popCursor);
-            setSelectedMapId(null);
-          }}
-          onNext={() => {
-            if (!nextCursor) return;
-            setStack((prev) => pushCursor(prev, nextCursor));
+          onNextClick={() => {
+            if (nextCursor) recordNext(nextCursor);
             setSelectedMapId(null);
           }}
         />
@@ -161,7 +169,10 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
                 value={month}
                 onChange={(event) => {
                   const next = event.target.value;
-                  if (isMonthKey(next)) setMonth(next);
+                  if (isMonthKey(next)) {
+                    setMonth(next);
+                    router.replace(firstPageHref, { scroll: false });
+                  }
                 }}
                 className="mt-2 flex min-h-[44px] w-full items-center rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:max-w-56 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               />
@@ -213,14 +224,15 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
             onOpen={setSelectedId}
           />
           <DispatchPager
-            page={pageNumber(stack)}
+            page={page}
             count={items.length}
-            canBack={canGoBack(stack)}
-            canNext={canGoNext(nextCursor)}
+            canBack={page > 1}
+            canNext={nextCursor !== null}
             loading={query.isFetching}
-            onBack={() => setStack(popCursor)}
-            onNext={() => {
-              if (nextCursor) setStack((prev) => pushCursor(prev, nextCursor));
+            backHref={hrefFor(page - 1)}
+            nextHref={hrefFor(page + 1)}
+            onNextClick={() => {
+              if (nextCursor) recordNext(nextCursor);
             }}
           />
         </BentoCard>
