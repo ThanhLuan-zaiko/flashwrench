@@ -4,10 +4,14 @@ import { BookingEntry } from "@/components/booking/BookingEntry";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import { getServerAccountSession } from "@/lib/auth/server-session";
+import { pageOg } from "@/lib/seo/site";
+
+const DESCRIPTION = "Xác nhận thông tin đặt lịch sửa xe lưu động FlashWrench.";
 
 export const metadata: Metadata = {
   title: "Đặt lịch | FlashWrench",
-  description: "Xác nhận thông tin đặt lịch sửa xe lưu động FlashWrench.",
+  description: DESCRIPTION,
+  openGraph: pageOg("Đặt lịch | FlashWrench", DESCRIPTION),
 };
 
 // Separate booking entry for customers. Guests bounce to login with the

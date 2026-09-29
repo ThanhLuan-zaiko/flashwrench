@@ -1,0 +1,65 @@
+name: Deploy
+
+# TEMPORARILY PAUSED during dev phase: manual trigger only until the
+# Vercel secrets (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID) exist.
+# The Docker image path is owned by production.yml, which builds and
+# pushes ghcr.io/<repo> on every green master/main push.
+# To re-enable auto-deploy, restore:
+#   push:
+#     branches: ["main", "master"]
+#   pull_request:
+#     branches: ["main", "master"]
+on:
+  workflow_dispatch: # manual trigger only, from the Actions tab
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false # Do not cancel; allow the deployment process to the production environment to run until completion.
+
+permissions:
+  contents: read
+  pull-requests: write # needed to comment preview URL
+
+jobs:
+  # Preview URL for every PR + Production URL upon merge.
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    environment: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && 'Production' || 'Preview' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel environment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && 'production' || 'preview' }} --token=$VERCEL_TOKEN
+
+      - name: Build on Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel build ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && '--prod' || '' }} --token=$VERCEL_TOKEN
+
+      - name: Deploy to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          URL=$(vercel deploy --prebuilt ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && '--prod' || '' }} --token=$VERCEL_TOKEN)
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Comment preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Preview deployed:** ${{ steps.deploy.outputs.url }}`
+            })

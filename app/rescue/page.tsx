@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { RescueEntry } from "@/components/rescue/RescueEntry";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
+import { pageOg } from "@/lib/seo/site";
+
+const DESCRIPTION =
+  "Gửi yêu cầu cứu hộ xe 24/7 không cần đăng nhập. Điền tên, số điện thoại và vị trí xe, thợ trực gọi lại ngay.";
 
 export const metadata: Metadata = {
   title: "Cứu hộ khẩn cấp | FlashWrench",
-  description:
-    "Gửi yêu cầu cứu hộ xe 24/7 không cần đăng nhập. Điền tên, số điện thoại và vị trí xe, thợ trực gọi lại ngay.",
+  description: DESCRIPTION,
+  openGraph: pageOg("Cứu hộ khẩn cấp | FlashWrench", DESCRIPTION),
 };
 
 // Public rescue page: guests file without an account, so no session
