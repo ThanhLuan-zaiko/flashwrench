@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { FiCompass } from "react-icons/fi";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { authenticateRequest } from "@/lib/auth/authorization";
 import { DispatchShell } from "./components/DispatchShell";
 
@@ -39,5 +40,10 @@ export default async function DispatchLayout({
     );
   }
 
-  return <DispatchShell>{children}</DispatchShell>;
+  return (
+    <>
+      <DispatchShell>{children}</DispatchShell>
+      <SpeculationRules scope="dispatch" />
+    </>
+  );
 }

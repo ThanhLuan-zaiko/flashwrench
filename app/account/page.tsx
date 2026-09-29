@@ -4,6 +4,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { AccountPanel } from "@/components/auth/AccountPanel";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { AvatarSection } from "@/components/media/AvatarSection";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
 export const metadata: Metadata = {
   title: "Tài khoản | FlashWrench",
@@ -30,6 +31,7 @@ export default function AccountPage() {
         <AvatarSection />
         <AccountPanel />
       </div>
+      <SpeculationRules scope="account" />
     </main>
   );
 }

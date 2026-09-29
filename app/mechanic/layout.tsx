@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { FiTool } from "react-icons/fi";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { authenticateRequest } from "@/lib/auth/authorization";
 import { MechanicShell } from "./components/MechanicShell";
 
@@ -39,5 +40,10 @@ export default async function MechanicLayout({
     );
   }
 
-  return <MechanicShell>{children}</MechanicShell>;
+  return (
+    <>
+      <MechanicShell>{children}</MechanicShell>
+      <SpeculationRules scope="mechanic" />
+    </>
+  );
 }

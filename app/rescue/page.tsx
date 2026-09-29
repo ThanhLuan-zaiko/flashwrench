@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { RescueEntry } from "@/components/rescue/RescueEntry";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
 export const metadata: Metadata = {
   title: "Cứu hộ khẩn cấp | FlashWrench",
@@ -16,6 +17,7 @@ export default function RescuePage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14 xl:max-w-7xl">
         <RescueEntry />
       </div>
+      <SpeculationRules scope="rescue" />
     </main>
   );
 }

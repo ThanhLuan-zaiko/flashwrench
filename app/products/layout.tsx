@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { ProductsRouteShell } from "@/components/products/ProductsRouteShell";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
 // Shared shell for /products and /products/[slug]. Next.js keeps the
 // layout mounted while only the slug or query changes, so the landing
@@ -14,6 +15,7 @@ export default function ProductsLayout({ children }: { children: ReactNode }) {
           <ProductsRouteShell />
         </Suspense>
         {children}
+        <SpeculationRules scope="products" />
       </div>
     </main>
   );

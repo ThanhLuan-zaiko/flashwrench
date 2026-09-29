@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CheckoutPage } from "@/components/checkout/CheckoutPage";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
 export const metadata: Metadata = {
   title: "Đặt hàng | FlashWrench",
@@ -12,6 +13,7 @@ export default function Page() {
       <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 md:py-14">
         <CheckoutPage />
       </div>
+      <SpeculationRules scope="checkout" />
     </main>
   );
 }

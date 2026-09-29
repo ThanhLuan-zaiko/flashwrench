@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import {
   buildLoginHref,
   defaultPostAuthHref,
@@ -41,6 +42,7 @@ export default async function RegisterPage({
       footerLinkLabel="Đăng nhập"
     >
       <RegisterForm next={safeNext} />
+      <SpeculationRules scope="register" />
     </AuthCard>
   );
 }

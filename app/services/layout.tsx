@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ServicesRouteShell } from "@/components/services/ServicesRouteShell";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
 // Shared shell for /services and /services/[slug]. Next.js keeps the layout
 // mounted while only the slug segment changes, so switching tabs reuses the
@@ -11,6 +12,7 @@ export default function ServicesLayout({ children }: { children: ReactNode }) {
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14">
         <ServicesRouteShell />
         {children}
+        <SpeculationRules scope="services" />
       </div>
     </main>
   );

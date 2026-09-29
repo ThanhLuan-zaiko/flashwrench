@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import {
   accountBlockNotice,
   isAccountLockedParam,
@@ -56,6 +57,7 @@ export default async function LoginPage({
         ) : null}
         <LoginForm next={safeNext} />
       </div>
+      <SpeculationRules scope="login" />
     </AuthCard>
   );
 }

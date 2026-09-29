@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { FiShield } from "react-icons/fi";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { authenticateRequest } from "@/lib/auth/authorization";
 import { AdminShell } from "./components/AdminShell";
 
@@ -39,5 +40,10 @@ export default async function AdminLayout({
     );
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <>
+      <AdminShell>{children}</AdminShell>
+      <SpeculationRules scope="admin" />
+    </>
+  );
 }

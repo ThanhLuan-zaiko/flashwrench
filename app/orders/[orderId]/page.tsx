@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { OrderDetailPage } from "@/components/orders/OrderDetailPage";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
 export const metadata: Metadata = {
   title: "Chi tiết đơn hàng | FlashWrench",
@@ -17,6 +18,7 @@ export default async function Page({ params }: Params) {
           <OrderDetailPage orderId={orderId} />
         </Suspense>
       </div>
+      <SpeculationRules scope="orders" />
     </main>
   );
 }

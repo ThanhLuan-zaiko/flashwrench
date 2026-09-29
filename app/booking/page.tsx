@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { BookingEntry } from "@/components/booking/BookingEntry";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 
@@ -37,6 +38,7 @@ export default async function BookingPage({
           userContact={contact}
         />
       </div>
+      <SpeculationRules scope="booking" />
     </main>
   );
 }

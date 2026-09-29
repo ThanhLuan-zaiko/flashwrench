@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { HistoryTabs } from "@/components/history/HistoryTabs";
+import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { buildLoginHref } from "@/lib/auth/auth-redirect";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 
@@ -21,6 +22,7 @@ export default async function HistoryLayout({
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:gap-8 md:py-14 xl:max-w-7xl">
         <HistoryTabs />
         {children}
+        <SpeculationRules scope="history" />
       </div>
     </main>
   );
