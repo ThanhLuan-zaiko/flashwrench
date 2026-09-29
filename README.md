@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="asset/flashwrench.png" alt="FlashWrench mascot" width="240">
+
 # 🛠️ FlashWrench - Mobile Vehicle Repair Booking
 
 ### Nền tảng đặt lịch sửa xe lưu động thông minh
