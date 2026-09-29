@@ -167,6 +167,7 @@ export function makePaymentRow(
 export function makeReviewRow(
   overrides?: Partial<MechanicReviewRow>,
 ): MechanicReviewRow {
+  const { is_hidden = null, ...rest } = overrides ?? {};
   return {
     target_type: "mechanic",
     target_id: MECHANIC_ID,
@@ -177,6 +178,7 @@ export function makeReviewRow(
     title: "Lam rat tot",
     body: "Tho den dung gio, sua nhanh.",
     created_at: new Date("2026-09-16T10:00:00.000Z"),
-    ...overrides,
+    is_hidden,
+    ...rest,
   };
 }

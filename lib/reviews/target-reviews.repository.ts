@@ -69,6 +69,20 @@ export async function listTargetReviewRows(
   };
 }
 
+// Landing feed: bounded token scan across every target partition at once.
+// Ranking (visible/positive/newest) happens in the service; the table stays
+// small in dev and LIMIT stops the scan early, so no ALLOW FILTERING.
+export async function scanReviewRows(
+  limit: number,
+): Promise<TargetReviewRow[]> {
+  const result = await scylla.execute(
+    "SELECT target_type, target_id, created_at, review_id, customer_id, customer_name, booking_id, order_id, rescue_id, rating, title, body, is_hidden FROM reviews_by_target LIMIT ?",
+    [limit],
+    { prepare: true },
+  );
+  return (result.rows as unknown as RawRow[]).map(toTargetReviewRow);
+}
+
 function toReviewProjectionRow(raw: RawRow): ReviewProjectionRow {
   return {
     review_id: String(raw.review_id),
