@@ -7,6 +7,10 @@
 # Production:
 #   SITE_DOMAIN=flashwrench.vn caddy run --config Caddyfile
 #
+# SITE_DOMAIN=":80" makes a plain-HTTP catch-all (no ACME) for a local
+# Cloudflare quick tunnel, and APP_UPSTREAM relocates the app host —
+# e.g. APP_UPSTREAM=host.docker.internal when Caddy runs in Docker.
+#
 # Topology assumption: Cloudflare sits in front (first DDoS wall), so the
 # true visitor IP arrives in CF-Connecting-IP. The in-app shield
 # (proxy.ts) reads x-forwarded-for first, then x-real-ip — the mappings
@@ -24,7 +28,7 @@
 	# never leave the box.
 	@websocket path /ws
 	handle @websocket {
-		reverse_proxy 127.0.0.1:3001 {
+		reverse_proxy {$APP_UPSTREAM:127.0.0.1}:3001 {
 			# Public host, not the upstream dial address: the realtime
 			# Origin allowlist (realtime/security.ts) compares against
 			# the request host. Requires REALTIME_ALLOWED_ORIGINS=
@@ -37,7 +41,7 @@
 	}
 
 	handle {
-		reverse_proxy 127.0.0.1:3000 {
+		reverse_proxy {$APP_UPSTREAM:127.0.0.1}:3000 {
 			# Same reason: isTrustedOrigin() (lib/auth/guards.ts) rejects
 			# any mutation whose Origin host differs from Host.
 			header_up Host {host}
