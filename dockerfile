@@ -2,7 +2,7 @@
 FROM oven/bun:1-debian AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production=false
+RUN bun install --frozen-lockfile
 
 # Stage 2: Build Next.js
 FROM oven/bun:1-debian AS builder
@@ -26,20 +26,20 @@ WORKDIR /app
 ENV NODE_ENV="production"
 ENV NEXT_TELEMETRY_DISABLED="1"
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+# The base image ships a non-root `bun` user (uid/gid 1000); the slim
+# variant carries no addgroup/adduser, so reuse it instead of adding one.
 
 # Runtime upload directory (physical image files, see docs/media.md).
 # Mount a persistent volume here in production
 # (docker -v flashwrench-storage:/app/storage); without a mount the
 # directory is ephemeral to the container filesystem.
-RUN mkdir -p /app/storage/uploads && chown nextjs:nodejs /app/storage
+RUN mkdir -p /app/storage/uploads && chown bun:bun /app/storage
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=bun:bun /app/.next/standalone ./
+COPY --from=builder --chown=bun:bun /app/.next/static ./.next/static
+COPY --from=builder --chown=bun:bun /app/public ./public
 
-USER nextjs
+USER bun
 
 EXPOSE 3000
 
