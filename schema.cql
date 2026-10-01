@@ -1281,3 +1281,52 @@ CREATE TABLE IF NOT EXISTS voucher_wallets_by_campaign (
   status      TEXT,
   PRIMARY KEY ((campaign_id), granted_at, wallet_id)
 ) WITH CLUSTERING ORDER BY (granted_at DESC, wallet_id ASC);
+
+-- Chat: customer <-> mechanic direct messages (internal mini Telegram)
+-- Query: one thread by id (membership, peer ids, last activity snapshot)
+CREATE TABLE IF NOT EXISTS chat_threads_by_id (
+  thread_id            UUID PRIMARY KEY,
+  customer_id          UUID,
+  mechanic_id          UUID,
+  created_at           TIMESTAMP,
+  last_message_at      TIMESTAMP,
+  last_message_preview TEXT,
+  last_message_sender  UUID
+);
+
+-- Query: existing thread for a (customer, mechanic) pair — dedupe without
+-- scanning the inbox
+CREATE TABLE IF NOT EXISTS chat_threads_by_pair (
+  customer_id UUID,
+  mechanic_id UUID,
+  thread_id   UUID,
+  PRIMARY KEY ((customer_id), mechanic_id)
+);
+
+-- Query: one user's inbox row per thread — point-updatable so sending a
+-- message never needs to re-cluster a row (peer info + preview denormalized)
+CREATE TABLE IF NOT EXISTS chat_threads_by_user (
+  user_id              UUID,
+  thread_id            UUID,
+  peer_id              UUID,
+  peer_name            TEXT,
+  peer_role            TEXT,
+  peer_avatar_url      TEXT,
+  last_message_at      TIMESTAMP,
+  last_message_preview TEXT,
+  last_message_sender  UUID,
+  last_read_at         TIMESTAMP,
+  created_at           TIMESTAMP,
+  PRIMARY KEY ((user_id), thread_id)
+);
+
+-- Query: a thread's messages, newest first (pages walk back in time)
+CREATE TABLE IF NOT EXISTS chat_messages_by_thread (
+  thread_id  UUID,
+  created_at TIMESTAMP,
+  message_id UUID,
+  sender_id  UUID,
+  kind       TEXT,
+  body       TEXT,
+  PRIMARY KEY ((thread_id), created_at, message_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, message_id ASC);

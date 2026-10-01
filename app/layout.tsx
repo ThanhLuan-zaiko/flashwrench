@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import type { ReactNode } from "react";
 import { LazyAccountLockGuard } from "@/components/auth/LazyAccountLockGuard";
+import { LazyChatFab } from "@/components/chat/LazyChatFab";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
@@ -46,6 +47,7 @@ export default async function RootLayout({
         <QueryProvider initialSession={session}>
           <ToastProvider>
             <LazyAccountLockGuard />
+            <LazyChatFab />
             <SiteHeader />
             <div className="flex flex-1 flex-col">{children}</div>
           </ToastProvider>

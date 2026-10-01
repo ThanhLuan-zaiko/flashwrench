@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { FiAlertCircle, FiLoader, FiMapPin, FiUser, FiX } from "react-icons/fi";
+import { ChatWithPeerButton } from "@/components/chat/ChatWithPeerButton";
 import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyBooking } from "@/hooks/booking";
@@ -130,6 +131,13 @@ export function BookingDetailDialog({
                   <FiUser aria-hidden="true" className="h-3.5 w-3.5" />
                   {booking.mechanicName || "Đang tìm thợ phù hợp"}
                 </p>
+                {booking.mechanicId && (
+                  <ChatWithPeerButton
+                    bookingId={bookingId}
+                    label="Nhắn tin với thợ"
+                    className="mt-1 w-full"
+                  />
+                )}
               </section>
 
               {showLiveMap && booking.location && (

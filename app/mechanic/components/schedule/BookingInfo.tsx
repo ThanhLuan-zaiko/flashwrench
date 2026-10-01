@@ -1,6 +1,7 @@
 "use client";
 
 import { FiClock, FiMapPin, FiPhone, FiUser } from "react-icons/fi";
+import { ChatWithPeerButton } from "@/components/chat/ChatWithPeerButton";
 import type { MechanicBookingDetail } from "@/services/mechanic.api";
 import {
   formatScheduleDateTime,
@@ -66,6 +67,11 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
             Gọi {booking.customerPhone}
           </a>
         )}
+        <ChatWithPeerButton
+          bookingId={booking.id}
+          label="Nhắn tin với khách"
+          className="mt-2 w-full"
+        />
       </div>
 
       <div>

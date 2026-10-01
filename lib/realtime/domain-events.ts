@@ -23,12 +23,17 @@ export type DomainEvent = {
     | "voucher-revoked"
     | "rescue-created"
     | "rescue-assigned"
-    | "rescue-updated";
+    | "rescue-updated"
+    | "chat-message"
+    | "chat-read";
   bookingId?: string;
   orderId?: string;
   partId?: string;
   userId?: string;
   rescueId?: string;
+  threadId?: string;
+  senderId?: string;
+  messageId?: string;
   status?: string;
 };
 
@@ -52,6 +57,8 @@ const DOMAIN_EVENT_KINDS = new Set<DomainEvent["kind"]>([
   "rescue-created",
   "rescue-assigned",
   "rescue-updated",
+  "chat-message",
+  "chat-read",
 ]);
 
 const LEGACY_BOOKING_STATUS_TYPE = "booking-status";
@@ -83,6 +90,9 @@ export function parseDomainEvent(payload: unknown): DomainEvent | null {
   const partId = optionalField(body.partId);
   const userId = optionalField(body.userId);
   const rescueId = optionalField(body.rescueId);
+  const threadId = optionalField(body.threadId);
+  const senderId = optionalField(body.senderId);
+  const messageId = optionalField(body.messageId);
   const status = optionalField(body.status);
   if (
     bookingId === null ||
@@ -90,6 +100,9 @@ export function parseDomainEvent(payload: unknown): DomainEvent | null {
     partId === null ||
     userId === null ||
     rescueId === null ||
+    threadId === null ||
+    senderId === null ||
+    messageId === null ||
     status === null
   )
     return null;
@@ -99,6 +112,9 @@ export function parseDomainEvent(payload: unknown): DomainEvent | null {
   if (partId !== undefined) event.partId = partId;
   if (userId !== undefined) event.userId = userId;
   if (rescueId !== undefined) event.rescueId = rescueId;
+  if (threadId !== undefined) event.threadId = threadId;
+  if (senderId !== undefined) event.senderId = senderId;
+  if (messageId !== undefined) event.messageId = messageId;
   if (status !== undefined) event.status = status;
   return event;
 }
