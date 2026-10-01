@@ -8,6 +8,7 @@ export function makeRescueInput(
   return {
     fullName: "Nguyen Van An",
     phone: "0912345678",
+    email: "an@example.com",
     issueType: "flat_tire",
     description: "Xe xep lop truoc ben phai.",
     vehiclePlate: "51F-12345",

@@ -153,6 +153,19 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
         params.customerEmail,
       ],
     });
+    // Email-keyed twin for the OTP lookup path.
+    if (params.customerEmail) {
+      statements.push({
+        query:
+          "INSERT INTO guest_records_by_email (email, created_at, record_type, record_id, phone) VALUES (?, ?, 'order', ?, ?)",
+        params: [
+          params.customerEmail,
+          params.now,
+          params.orderId,
+          params.customerPhone,
+        ],
+      });
+    }
   }
   for (const line of params.lines) {
     statements.push({

@@ -6,28 +6,32 @@ import type { RescueContactResolution } from "./rescue-form-state";
 type RescueContactSectionProps = {
   fullName: string;
   phone: string;
+  email: string;
   contact: RescueContactResolution;
   loading: boolean;
   errors: RescueFieldErrors;
   disabled: boolean;
   onFullName: (value: string) => void;
   onPhone: (value: string) => void;
+  onEmail: (value: string) => void;
 };
 
-// Contact step: guests type name + phone; a signed-in account supplies
-// them instead and the fields collapse to a read-only summary. A
+// Contact step: guests type name + phone + email; a signed-in account
+// supplies them instead and the fields collapse to a read-only summary. A
 // missing account piece (blank name, no phone) still renders its input.
 // While the session resolves, a skeleton holds the row so the inputs
 // never flash for a signed-in customer.
 export function RescueContactSection({
   fullName,
   phone,
+  email,
   contact,
   loading,
   errors,
   disabled,
   onFullName,
   onPhone,
+  onEmail,
 }: RescueContactSectionProps) {
   if (loading) {
     return (
@@ -40,13 +44,17 @@ export function RescueContactSection({
   }
 
   const hasAccountContact =
-    contact.accountName !== "" || contact.accountPhone !== "";
-  const showInputs = contact.showNameInput || contact.showPhoneInput;
+    contact.accountName !== "" ||
+    contact.accountPhone !== "" ||
+    contact.accountEmail !== "";
+  const showInputs =
+    contact.showNameInput || contact.showPhoneInput || contact.showEmailInput;
   // Validation errors on hidden fields are account-sourced; surface the
   // first one under the summary card since no input can carry it.
   const hiddenFieldError =
     (contact.showNameInput ? undefined : errors.fullName) ??
-    (contact.showPhoneInput ? undefined : errors.phone);
+    (contact.showPhoneInput ? undefined : errors.phone) ??
+    (contact.showEmailInput ? undefined : errors.email);
 
   return (
     <div className="flex flex-col gap-4">
@@ -64,9 +72,10 @@ export function RescueContactSection({
                 {contact.accountName || contact.accountPhone}
               </p>
               <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                {contact.accountName !== "" && contact.accountPhone !== ""
-                  ? `${contact.accountPhone} · lấy từ tài khoản đã đăng nhập`
-                  : "Lấy từ tài khoản đã đăng nhập"}
+                {[contact.accountPhone, contact.accountEmail]
+                  .filter(Boolean)
+                  .join(" · ")}{" "}
+                lấy từ tài khoản đã đăng nhập
               </p>
             </div>
           </div>
@@ -121,6 +130,28 @@ export function RescueContactSection({
                 disabled={disabled}
               />
             </BookingField>
+          )}
+          {contact.showEmailInput && (
+            <div className="sm:col-span-2">
+              <BookingField
+                id="rescue-email"
+                label="Email"
+                required
+                error={errors.email}
+                hint="Dùng để tra cứu yêu cầu và hóa đơn khi cần."
+              >
+                <BookingTextInput
+                  id="rescue-email"
+                  value={email}
+                  onChange={onEmail}
+                  placeholder="ban@example.com"
+                  autoComplete="email"
+                  inputMode="text"
+                  error={errors.email}
+                  disabled={disabled}
+                />
+              </BookingField>
+            </div>
           )}
         </div>
       )}

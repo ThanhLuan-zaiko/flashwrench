@@ -150,6 +150,20 @@ export async function insertCustomerBooking(
         params.customerEmail,
       ],
     });
+    // Second index, keyed by email: the OTP lookup path verifies an address,
+    // and the phone partition above cannot answer that question.
+    if (params.customerEmail) {
+      queries.push({
+        query:
+          "INSERT INTO guest_records_by_email (email, created_at, record_type, record_id, phone) VALUES (?, ?, 'booking', ?, ?)",
+        params: [
+          params.customerEmail,
+          params.createdAt,
+          params.bookingId,
+          params.customerPhone,
+        ],
+      });
+    }
   }
 
   if (params.mechanicId) {

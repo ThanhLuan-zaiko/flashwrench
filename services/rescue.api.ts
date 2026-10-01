@@ -38,8 +38,9 @@ function toFieldErrors(body: Record<string, unknown>): RescueFieldErrors {
 }
 
 // Public rescue intake: no session required, so plain fetch with no
-// access-refresh retry. Guests file with name + phone; logged-in
-// customers reuse the same endpoint and get linked server-side.
+// access-refresh retry. Guests file with name + phone + email (the email
+// is the key the OTP lookup verifies later); logged-in customers reuse the
+// same endpoint and get linked server-side.
 export async function createRescueRequest(
   payload: CreateRescueInput,
 ): Promise<{ request: CreatedRescue }> {

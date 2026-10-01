@@ -8,12 +8,19 @@ import { makeRescueInput } from "../helpers/rescue.fixtures";
 describe("validateCreateRescueInput", () => {
   test("accepts a complete guest rescue and normalizes values", () => {
     const result = validateCreateRescueInput(
-      makeRescueInput({ vehiclePlate: "  51f-12345 ", phone: "+84912345678" }),
+      makeRescueInput({
+        vehiclePlate: "  51f-12345 ",
+        phone: "+84912345678",
+        email: "  An@Example.COM ",
+      }),
     );
     expect("value" in result).toBe(true);
     if (!("value" in result)) return;
     expect(result.value.fullName).toBe("Nguyen Van An");
     expect(result.value.phone).toBe("0912345678");
+    // The email is the key the OTP lookup verifies, so it is normalized to
+    // the same shape users_by_email stores.
+    expect(result.value.email).toBe("an@example.com");
     expect(result.value.vehiclePlate).toBe("51F-12345");
     expect(result.value.issueType).toBe("flat_tire");
     expect(result.value.lat).toBe(10.7769);
@@ -31,6 +38,15 @@ describe("validateCreateRescueInput", () => {
       "số điện thoại",
     );
     expect(result.errors.issueType).toContain("sự cố");
+  });
+
+  test("requires a reachable email so the request can be looked up later", () => {
+    const result = validateCreateRescueInput(
+      makeRescueInput({ email: "khong-phai-email" }),
+    );
+    expect("errors" in result).toBe(true);
+    if (!("errors" in result)) return;
+    expect(result.errors.email).toContain("email");
   });
 
   test("rejects bad phones and unknown issue types", () => {

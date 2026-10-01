@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { BookingTracker } from "@/components/track/BookingTracker";
 
@@ -29,6 +30,18 @@ export default async function TrackBookingPage({
           <div className="mt-4">
             <BookingTracker bookingId={bookingId} />
           </div>
+          {/* This link is the whole capability model, so the one moment a
+              guest realises they lost it belongs right here. */}
+          <p className="mt-4 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            Mất đường dẫn này?{" "}
+            <Link
+              href="/lookup"
+              className="font-medium underline underline-offset-4 transition-colors duration-200 hover:text-zinc-900 dark:hover:text-zinc-50"
+            >
+              Tra cứu bằng email
+            </Link>{" "}
+            để xem lại đơn và hóa đơn.
+          </p>
         </div>
       </div>
       <SpeculationRules scope="track" />

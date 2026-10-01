@@ -150,6 +150,34 @@ CREATE TABLE IF NOT EXISTS phone_otps (
   created_at TIMESTAMP
 );
 
+-- Email one-time codes for the guest-access flow (no account, read-only
+-- session). One row per (email, purpose): resending overwrites in place and
+-- the app writes INSERT ... USING TTL 300 so a code expires by itself.
+-- The stored value is a peppered hash, never the code itself.
+CREATE TABLE IF NOT EXISTS email_otps (
+  email       TEXT,
+  purpose     TEXT,
+  code_hash   TEXT,
+  attempts    INT,
+  expires_at  TIMESTAMP,
+  created_at  TIMESTAMP,
+  PRIMARY KEY ((email, purpose))
+);
+
+-- Email-keyed index of anonymous work so a visitor who proves control of an
+-- address can list what they filed without creating an account. The existing
+-- guest_*_by_phone tables cannot answer this: they are partitioned by phone.
+-- Rows are written only while the record still has customer_id = null, and are
+-- deleted once a register/login claims the record into an account.
+CREATE TABLE IF NOT EXISTS guest_records_by_email (
+  email       TEXT,
+  created_at  TIMESTAMP,
+  record_type TEXT, -- booking | rescue | order
+  record_id   UUID,
+  phone       TEXT,
+  PRIMARY KEY ((email), created_at, record_type, record_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, record_type ASC, record_id ASC);
+
 -- Auth sessions: rotating opaque refresh tokens. The (user_id, family_id)
 -- partition is derived from the refresh token itself: one single-partition read.
 CREATE TABLE IF NOT EXISTS refresh_sessions (
@@ -527,6 +555,7 @@ CREATE TABLE IF NOT EXISTS emergency_by_id (
   customer_id         UUID,
   customer_name       TEXT,
   customer_phone      TEXT,
+  customer_email      TEXT, -- OTP lookup key for guest rescue requests
   vehicle_id          UUID,
   vehicle_plate       TEXT,
   vehicle_brand       TEXT,

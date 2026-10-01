@@ -17,6 +17,7 @@ export type InsertRescueParams = {
   customerId: string | null;
   customerName: string;
   customerPhone: string;
+  customerEmail: string;
   vehiclePlate: string;
   vehicleBrand: string | null;
   vehicleModel: string | null;
@@ -40,12 +41,13 @@ export async function insertRescueRequest(
   const queries: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO emergency_by_id (request_id, customer_id, customer_name, customer_phone, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, zone_id, address, issue_type, description, photos, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, price_estimate, final_price, payment_status, cancel_reason, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO emergency_by_id (request_id, customer_id, customer_name, customer_phone, customer_email, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, zone_id, address, issue_type, description, photos, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, price_estimate, final_price, payment_status, cancel_reason, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       params: [
         params.requestId,
         params.customerId,
         params.customerName,
         params.customerPhone,
+        params.customerEmail,
         null,
         params.vehiclePlate,
         params.vehicleBrand,
@@ -105,6 +107,18 @@ export async function insertRescueRequest(
         params.status,
         params.issueType,
         params.vehiclePlate,
+      ],
+    });
+  } else if (params.customerEmail) {
+    // Anonymous rescue: index it by email so the OTP lookup can find it.
+    queries.push({
+      query:
+        "INSERT INTO guest_records_by_email (email, created_at, record_type, record_id, phone) VALUES (?, ?, 'rescue', ?, ?)",
+      params: [
+        params.customerEmail,
+        params.createdAt,
+        params.requestId,
+        params.customerPhone,
       ],
     });
   }

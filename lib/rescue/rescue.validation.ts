@@ -1,4 +1,9 @@
-import { normalizePhone, validatePhone } from "@/lib/auth/validation";
+import {
+  normalizeEmail,
+  normalizePhone,
+  validateEmail,
+  validatePhone,
+} from "@/lib/auth/validation";
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import type {
   CreateRescueInput,
@@ -82,6 +87,18 @@ export function validateCreateRescueInput(
     errors.phone = phoneError;
   }
   const phone = normalizePhone(rawPhone);
+
+  // Required for every caller: this is the address the OTP lookup verifies, so
+  // a rescue filed without one could never be found again.
+  const emailError = validateEmail(
+    typeof input.email === "string" ? input.email : "",
+  );
+  if (emailError) {
+    errors.email = emailError;
+  }
+  const email = normalizeEmail(
+    typeof input.email === "string" ? input.email : "",
+  );
 
   const issueType =
     typeof input.issueType === "string" ? input.issueType.trim() : "";
@@ -205,6 +222,7 @@ export function validateCreateRescueInput(
     value: {
       fullName,
       phone,
+      email,
       issueType,
       description,
       vehiclePlate,

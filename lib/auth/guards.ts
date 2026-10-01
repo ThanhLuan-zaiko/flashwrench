@@ -6,6 +6,10 @@ export const RATE_LIMITS = {
   register: { limit: 5, windowMs: 60 * 60 * 1000 },
   refresh: { limit: 30, windowMs: 60 * 1000 },
   password: { limit: 10, windowMs: 10 * 60 * 1000 },
+  // OTP send/verify is the most expensive auth path (it talks to SMTP), so it
+  // is capped harder than login. The per-address cooldown in the OTP service
+  // covers the second axis.
+  otp: { limit: 6, windowMs: 15 * 60 * 1000 },
 } as const;
 
 export const RATE_LIMIT_MESSAGE =

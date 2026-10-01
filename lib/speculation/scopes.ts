@@ -32,6 +32,7 @@ export type SpeculationScope =
   | "booking"
   | "rescue"
   | "track"
+  | "lookup"
   | "login"
   | "register"
   | "account"
@@ -113,6 +114,13 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
   // Public tracking pages: exits are the shop and the rescue intake.
   track: buildSpeculationRules({
     prefetch: ["/", "/products*", "/rescue*"],
+  }),
+  // OTP lookup: before verifying there are no record links, after verifying
+  // each row links into the public tracking page. Prefetch only — the list is
+  // cookie-gated, so prerendering it would fetch a document that cannot
+  // resolve anything signed out.
+  lookup: buildSpeculationRules({
+    prefetch: [{ match: "/track/*", eagerness: "moderate" }, "/rescue*", "/"],
   }),
   // The two auth forms point at each other; home is the fallback.
   login: buildSpeculationRules({

@@ -15,6 +15,7 @@ export const RESCUE_DRAFT_KEY = "flashwrench-rescue-draft";
 export type RescueDraft = {
   fullName: string;
   phone: string;
+  email: string;
   issueType: string;
   description: string;
   coords: MapPoint | null;
@@ -67,6 +68,7 @@ export function toRescueDraft(raw: unknown): RescueDraft | null {
   if (
     typeof draft.fullName !== "string" ||
     typeof draft.phone !== "string" ||
+    typeof draft.email !== "string" ||
     typeof draft.issueType !== "string" ||
     typeof draft.description !== "string" ||
     !isStringMap(draft.address, ADDRESS_KEYS) ||
@@ -81,6 +83,7 @@ export function toRescueDraft(raw: unknown): RescueDraft | null {
   return {
     fullName: draft.fullName,
     phone: draft.phone,
+    email: draft.email,
     issueType: draft.issueType,
     description: draft.description,
     coords,

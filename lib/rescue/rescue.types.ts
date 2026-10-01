@@ -4,6 +4,7 @@
 export type CreateRescueInput = {
   fullName: string;
   phone: string;
+  email: string;
   issueType: string;
   description?: string;
   vehiclePlate: string;
@@ -21,6 +22,7 @@ export type CreateRescueInput = {
 export type NormalizedRescueInput = {
   fullName: string;
   phone: string;
+  email: string;
   issueType: string;
   description: string | null;
   vehiclePlate: string;
@@ -39,6 +41,7 @@ export type RescueFieldErrors = Partial<
   Record<
     | "fullName"
     | "phone"
+    | "email"
     | "issueType"
     | "description"
     | "vehiclePlate"

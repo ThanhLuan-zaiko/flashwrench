@@ -56,6 +56,7 @@ export async function createRescueRequest(
     customerId: customer?.id ?? null,
     customerName: value.fullName,
     customerPhone: value.phone,
+    customerEmail: value.email,
     vehiclePlate: value.vehiclePlate,
     vehicleBrand: value.vehicleBrand,
     vehicleModel: value.vehicleModel,

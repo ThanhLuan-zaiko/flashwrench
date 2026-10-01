@@ -22,6 +22,8 @@ export function RescueForm({ form }: RescueFormProps) {
     setFullName,
     phone,
     setPhone,
+    email,
+    setEmail,
     issueType,
     setIssueType,
     description,
@@ -70,6 +72,11 @@ export function RescueForm({ form }: RescueFormProps) {
           onPhone={(v) => {
             setPhone(v);
             clearError("phone");
+          }}
+          email={email}
+          onEmail={(v) => {
+            setEmail(v);
+            clearError("email");
           }}
         />
       </div>

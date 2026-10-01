@@ -26,6 +26,7 @@ export function makeRescueRow(overrides?: Partial<RescueRow>): RescueRow {
     customer_id: null,
     customer_name: "Nguyen Van An",
     customer_phone: "0912345678",
+    customer_email: "an@example.com",
     zone_id: null,
     vehicle_plate: "51F-12345",
     address_lat: 10.7769,

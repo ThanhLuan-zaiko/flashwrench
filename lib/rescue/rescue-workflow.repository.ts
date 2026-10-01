@@ -7,6 +7,7 @@ export type RescueRow = {
   customer_id: string | null;
   customer_name: string | null;
   customer_phone: string | null;
+  customer_email: string | null;
   zone_id: string | null;
   vehicle_plate: string | null;
   address_lat: number | null;
@@ -47,7 +48,7 @@ export type RescueHistoryRow = {
 };
 
 const RESCUE_DETAIL_COLUMNS =
-  "request_id, customer_id, customer_name, customer_phone, zone_id, vehicle_plate, address, issue_type, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, price_estimate, final_price, payment_status, payment_confirm_code, created_at, updated_at";
+  "request_id, customer_id, customer_name, customer_phone, customer_email, zone_id, vehicle_plate, address, issue_type, priority, status, assigned_mechanic_id, assigned_mechanic_name, eta_min, price_estimate, final_price, payment_status, payment_confirm_code, created_at, updated_at";
 
 function toNumberOrNull(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -96,6 +97,7 @@ function toRescueRow(raw: Record<string, unknown>): RescueRow {
     customer_id: toStringOrNull(raw.customer_id),
     customer_name: toStringOrNull(raw.customer_name),
     customer_phone: toStringOrNull(raw.customer_phone),
+    customer_email: toStringOrNull(raw.customer_email),
     zone_id: toStringOrNull(raw.zone_id),
     vehicle_plate: toStringOrNull(raw.vehicle_plate),
     address_lat: address.lat,

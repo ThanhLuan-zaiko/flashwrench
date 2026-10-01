@@ -30,8 +30,8 @@ const EMPTY_ERRORS: RescueFieldErrors = {};
 
 // All rescue form state and submit logic. Client validation mirrors
 // POST /api/rescue for instant feedback; the API stays source of truth.
-// A signed-in account supplies name + phone so those inputs stay hidden;
-// guests type both. Unsent input is mirrored to a sessionStorage draft
+// A signed-in account supplies name + phone + email so those inputs stay
+// hidden; guests type all three. Unsent input is mirrored to a sessionStorage draft
 // (restored on mount), so refresh/tab-close/back lose nothing — only an
 // in-app Link click while dirty still asks via the branded confirm.
 export function useRescueForm() {
@@ -41,6 +41,7 @@ export function useRescueForm() {
   const createRescue = useCreateRescue();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
   const [coords, setCoords] = useState<MapPoint | null>(null);
@@ -52,10 +53,11 @@ export function useRescueForm() {
   const [created, setCreated] = useState<CreatedRescue | null>(null);
 
   const account = me.data;
-  const contact = resolveRescueContact(account, { fullName, phone });
+  const contact = resolveRescueContact(account, { fullName, phone, email });
   const dirty = isRescueFormDirty({
     fullName,
     phone,
+    email,
     issueType,
     description,
     coords,
@@ -76,6 +78,7 @@ export function useRescueForm() {
     if (!draft || !hasRescueDraftContent(draft)) return;
     setFullName(draft.fullName);
     setPhone(draft.phone);
+    setEmail(draft.email);
     setIssueType(draft.issueType);
     setDescription(draft.description);
     setCoords(draft.coords);
@@ -99,13 +102,23 @@ export function useRescueForm() {
     persistRescueDraft(window.sessionStorage, {
       fullName,
       phone,
+      email,
       issueType,
       description,
       coords,
       address,
       vehicle,
     });
-  }, [fullName, phone, issueType, description, coords, address, vehicle]);
+  }, [
+    fullName,
+    phone,
+    email,
+    issueType,
+    description,
+    coords,
+    address,
+    vehicle,
+  ]);
 
   // A confirmed in-app leave means "throw it away", so the draft dies
   // with the form; accidental exits keep it and restore on return.
@@ -138,6 +151,7 @@ export function useRescueForm() {
     const payload = {
       fullName: contact.fullName,
       phone: contact.phone,
+      email: contact.email,
       issueType,
       description,
       vehiclePlate: vehicle.vehiclePlate,
@@ -197,6 +211,8 @@ export function useRescueForm() {
     setFullName,
     phone,
     setPhone,
+    email,
+    setEmail,
     issueType,
     setIssueType,
     description,

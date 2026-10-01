@@ -3,6 +3,7 @@ import {
   FiCompass,
   FiHome,
   FiLifeBuoy,
+  FiMail,
   FiPackage,
   FiSettings,
   FiShield,
@@ -21,6 +22,10 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/services", label: "Dịch vụ", icon: FiSettings },
   { href: "/rescue", label: "Cứu hộ", icon: FiLifeBuoy },
   { href: "/history", label: "Lịch sử", icon: FiClock },
+  // For customers who booked without an account: the only way back to their
+  // history and invoices is an OTP-verified email, so it needs to be one click
+  // from anywhere rather than buried on a tracking page.
+  { href: "/lookup", label: "Tra cứu", icon: FiMail },
 ];
 
 export const LOGIN_HREF = "/login";

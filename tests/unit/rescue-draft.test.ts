@@ -33,6 +33,7 @@ function emptyDraft(): RescueDraft {
   return {
     fullName: "",
     phone: "",
+    email: "",
     issueType: "",
     description: "",
     coords: null,
@@ -46,6 +47,7 @@ function makeDraft(overrides?: Partial<RescueDraft>): RescueDraft {
     ...emptyDraft(),
     fullName: "Nguyen Van An",
     phone: "0912345678",
+    email: "an@example.com",
     issueType: "flat_tire",
     coords: { lat: 10.7769, lng: 106.7009 },
     address: { ...emptyRescueAddress(), address: "123 Nguyen Trai" },

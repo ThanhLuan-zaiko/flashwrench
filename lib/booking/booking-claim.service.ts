@@ -4,6 +4,8 @@
 // already-claimed rows clean themselves up instead of double-writing.
 // Best-effort per row: a failure leaves the ref in place so the next
 // sign-in retries it.
+
+import { deleteGuestRecordRef } from "@/lib/guest-access/guest-access.repository";
 import { findBookingRowById } from "@/lib/mechanic/mechanic-bookings.repository";
 import { attachRefPaymentsToCustomer } from "@/lib/payments/payment-claim.service";
 import {
@@ -46,6 +48,12 @@ export async function claimGuestBookings(params: {
         params.userId,
       );
       await deleteGuestBookingRef(params.phone, ref.booking_id);
+      // Drop the email-keyed twin too. The reader already skips claimed
+      // records, but leaving the row would grow the address partition for
+      // every booking the person ever filed anonymously.
+      await deleteGuestRecordRef(params.email, ref.booking_id).catch(
+        () => undefined,
+      );
       claimed += 1;
     } catch {
       // Keep claiming the remaining refs; this one retries next sign-in.

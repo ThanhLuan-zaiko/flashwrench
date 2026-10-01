@@ -1,6 +1,8 @@
 // Absorb guest orders into an account — mirrors booking-claim.service on
 // the orders tables. Same contact-pair match (phone partition + stored
 // email), same best-effort semantics per row.
+
+import { deleteGuestRecordRef } from "@/lib/guest-access/guest-access.repository";
 import { attachRefPaymentsToCustomer } from "@/lib/payments/payment-claim.service";
 import {
   claimGuestOrder,
@@ -35,6 +37,11 @@ export async function claimGuestOrders(params: {
       });
       await attachRefPaymentsToCustomer("order", ref.order_id, params.userId);
       await deleteGuestOrderRef(params.phone, ref.order_id);
+      // Drop the email-keyed twin so the lookup partition does not grow with
+      // every order the person ever filed anonymously.
+      await deleteGuestRecordRef(params.email, ref.order_id).catch(
+        () => undefined,
+      );
       claimed += 1;
     } catch {
       // Keep claiming the remaining refs; this one retries next sign-in.
