@@ -74,6 +74,7 @@ export function useBookingForm({
   );
   const [errors, setErrors] = useState<BookingFieldErrors>(EMPTY_ERRORS);
   const [prefilled, setPrefilled] = useState(prefill !== null);
+  const [walletId, setWalletId] = useState<string | null>(null);
 
   const minSlot = useMemo(() => minScheduled(), []);
 
@@ -129,6 +130,7 @@ export function useBookingForm({
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
       mechanicId: guest ? null : mechanicId,
+      walletId: guest ? undefined : (walletId ?? undefined),
       ...address,
       ...vehicle,
     };
@@ -189,6 +191,8 @@ export function useBookingForm({
     setCoords,
     mechanicId,
     setMechanicId,
+    walletId,
+    setWalletId,
     contact,
     setContact,
     signup,

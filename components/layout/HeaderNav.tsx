@@ -9,8 +9,8 @@ type HeaderNavProps = {
 
 export function HeaderNav({ items, currentPath = "/" }: HeaderNavProps) {
   return (
-    <nav aria-label="Điều hướng chính" className="hidden md:block">
-      <ul className="flex items-center gap-1">
+    <nav aria-label="Điều hướng chính" className="hidden lg:block">
+      <ul className="flex items-center gap-2 xl:gap-3">
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = isNavActive(currentPath, item.href);
@@ -21,8 +21,8 @@ export function HeaderNav({ items, currentPath = "/" }: HeaderNavProps) {
                 aria-current={isActive ? "page" : undefined}
                 className={
                   isActive
-                    ? "flex items-center gap-1.5 rounded-full bg-zinc-100 px-4 py-2 text-sm font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-white"
-                    : "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                    ? "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-zinc-100 px-5 py-2.5 text-sm font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-white"
+                    : "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
                 }
               >
                 <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />

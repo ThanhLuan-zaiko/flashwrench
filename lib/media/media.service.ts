@@ -51,13 +51,18 @@ function toAsset(params: InsertAssetParams): MediaAsset {
 }
 
 // Only admins attach images to shared catalog rows (services,
-// categories, parts). Avatars and flow photos (booking, emergency,
-// review, misc) belong to the uploader themselves.
+// categories, parts, promotions). Avatars and flow photos (booking,
+// emergency, review, misc) belong to the uploader themselves.
 export function canUploadScope(
   role: PublicUser["role"],
   scope: string,
 ): boolean {
-  if (scope === "service" || scope === "category" || scope === "part") {
+  if (
+    scope === "service" ||
+    scope === "category" ||
+    scope === "part" ||
+    scope === "promotion"
+  ) {
     return role === "admin";
   }
   return true;

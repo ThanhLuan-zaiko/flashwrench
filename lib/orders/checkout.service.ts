@@ -8,6 +8,12 @@ import {
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
 import { resolveOrderPaymentMethod } from "@/lib/payments/order-payment.types";
+import { isUuid } from "@/lib/validation";
+import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
+import {
+  redeemWallet,
+  releaseWalletReservation,
+} from "@/lib/vouchers/voucher-wallet.service";
 import { clearCartRows, listCartRows } from "./cart.repository";
 import { reserveOrderLines } from "./order-lines.service";
 import { orderShippingFee } from "./order-pricing";
@@ -92,6 +98,16 @@ export function validateCheckoutInput(
   if (input.note !== undefined && input.note.length > ORDER_NOTE_MAX) {
     errors.note = `Ghi chú tối đa ${ORDER_NOTE_MAX} ký tự.`;
   }
+  if (input.walletId !== undefined && input.walletId !== null) {
+    const walletId =
+      typeof input.walletId === "string" ? input.walletId.trim() : "";
+    if (walletId && !isUuid(walletId)) {
+      errors.walletId = "Voucher đã chọn không hợp lệ.";
+    } else if (walletId && options?.guest) {
+      errors.walletId =
+        "Khách vãng lai chưa dùng được voucher. Hãy tạo tài khoản để nhận ưu đãi.";
+    }
+  }
   return Object.keys(errors).length > 0 ? errors : null;
 }
 
@@ -145,44 +161,85 @@ async function runCheckout(
   const shippingFee = orderShippingFee(fulfillment, subtotal);
   const now = new Date();
   const orderId = randomUUID();
+  const walletId = typeof raw.walletId === "string" ? raw.walletId.trim() : "";
+  // Wallets are account-bound: guests are rejected before any write, and
+  // a failed spend never reaches the order insert below.
+  if (guest && walletId) {
+    return failFields(400, {
+      walletId:
+        "Khách vãng lai chưa dùng được voucher. Hãy tạo tài khoản để nhận ưu đãi.",
+    });
+  }
+  let discount = 0;
+  if (walletId && actor.customerId) {
+    const redeemed = await redeemWallet({
+      walletId,
+      userId: actor.customerId,
+      subtotal,
+      kind: "order",
+      orderId,
+    });
+    if (!redeemed.ok) {
+      return failFields(redeemed.status, {
+        walletId: redeemed.errors.form ?? "Không áp được voucher.",
+      });
+    }
+    discount = redeemed.data.discount;
+  }
   const customerEmail = guest
     ? normalizeEmail(raw.email ?? "")
     : actor.accountEmail || null;
 
-  await insertOrder({
-    orderId,
-    customerId: actor.customerId,
-    customerName: raw.recipientName.trim().replace(/\s+/g, " "),
-    customerPhone: normalizePhone(raw.phone),
-    customerEmail,
-    address:
-      fulfillment === "delivery"
-        ? {
-            province: raw.province.trim(),
-            district: raw.district.trim(),
-            ward: raw.ward.trim(),
-            street: raw.street.trim(),
-            fullText: raw.address.trim(),
-            lat: raw.addressLat,
-            lng: raw.addressLng,
-          }
-        : null,
-    status: "pending",
-    paymentStatus: "unpaid",
-    paidAt: null,
-    paymentMethod,
-    fulfillmentType: fulfillment,
-    historyNote: guest ? "Đặt hàng (khách vãng lai)" : "Đặt hàng",
-    createdBy: actor.customerId,
-    subtotal,
-    shippingFee,
-    total: subtotal + shippingFee,
-    note: (raw.note ?? "").trim(),
-    monthBucket: monthKey(now, MECHANIC_TIME_ZONE),
-    lines,
-    paymentId: randomUUID(),
-    now,
-  });
+  try {
+    await insertOrder({
+      orderId,
+      customerId: actor.customerId,
+      customerName: raw.recipientName.trim().replace(/\s+/g, " "),
+      customerPhone: normalizePhone(raw.phone),
+      customerEmail,
+      address:
+        fulfillment === "delivery"
+          ? {
+              province: raw.province.trim(),
+              district: raw.district.trim(),
+              ward: raw.ward.trim(),
+              street: raw.street.trim(),
+              fullText: raw.address.trim(),
+              lat: raw.addressLat,
+              lng: raw.addressLng,
+            }
+          : null,
+      status: "pending",
+      paymentStatus: "unpaid",
+      paidAt: null,
+      paymentMethod,
+      fulfillmentType: fulfillment,
+      historyNote: guest ? "Đặt hàng (khách vãng lai)" : "Đặt hàng",
+      createdBy: actor.customerId,
+      subtotal,
+      shippingFee,
+      discount,
+      couponCode: walletId || null,
+      total: subtotal + shippingFee - discount,
+      note: (raw.note ?? "").trim(),
+      monthBucket: monthKey(now, MECHANIC_TIME_ZONE),
+      lines,
+      paymentId: randomUUID(),
+      now,
+    });
+  } catch (error) {
+    // The simulated totals below stay untouched: the wallet reservation
+    // is released so the customer keeps the voucher.
+    if (walletId) await releaseWalletReservation(walletId);
+    throw error;
+  }
+  if (walletId && actor.customerId) {
+    void publishWalletChange({
+      kind: "voucher-used",
+      walletId,
+      userId: actor.customerId,
+    });
+  }
   await clearCartRows(actor.cartId);
 
   const row = await findOrderRowById(orderId);

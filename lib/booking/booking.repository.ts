@@ -27,6 +27,8 @@ export type InsertCustomerBookingParams = {
   status: string;
   paymentStatus: string;
   subtotal: number;
+  discount: number;
+  couponCode: string | null;
   total: number;
   notes: string | null;
   monthBucket: string;
@@ -73,9 +75,9 @@ export async function insertCustomerBooking(
         params.paymentStatus,
         params.subtotal,
         0,
-        0,
+        params.discount,
         params.total,
-        null,
+        params.couponCode,
         params.notes,
         null,
         params.monthBucket,

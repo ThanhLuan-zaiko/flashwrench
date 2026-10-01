@@ -8,6 +8,7 @@ export const MEDIA_SCOPES: MediaScope[] = [
   "service",
   "category",
   "part",
+  "promotion",
   "booking",
   "emergency",
   "review",

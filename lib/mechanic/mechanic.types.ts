@@ -75,6 +75,7 @@ export type MechanicBookingRow = {
   mechanic_name: string | null;
   month_bucket: string | null;
   payment_confirm_code: string | null;
+  coupon_code: string | null;
 };
 
 export type MechanicBookingItemRow = {

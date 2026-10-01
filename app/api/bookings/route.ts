@@ -158,6 +158,7 @@ export async function POST(request: Request) {
       vehicleBrand: input.vehicleBrand,
       vehicleModel: input.vehicleModel,
       notes: input.notes,
+      walletId: input.walletId,
     });
 
     if (!result.ok) {

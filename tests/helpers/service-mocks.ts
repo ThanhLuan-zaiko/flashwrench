@@ -26,6 +26,7 @@ import {
   mediaStorageMocks,
   resetMediaMocks,
 } from "./media.mocks";
+import { resetOrderLinesMocks } from "./order-lines.mocks";
 import { resetPartsMocks } from "./parts.mocks";
 import {
   staffPendingMocks,
@@ -34,6 +35,7 @@ import {
   staffTempRepoMocks,
   staffTempStubs,
 } from "./staff.mocks";
+import { resetVoucherMocks } from "./voucher.mocks";
 
 export { bookingRepoMocks, bookingStubs } from "./booking.mocks";
 export {
@@ -57,6 +59,7 @@ export {
   mechanicWorkspaceRepoMocks,
 } from "./mechanic.mocks";
 export { mediaRepoMocks, mediaStorageMocks, mediaStubs } from "./media.mocks";
+export { orderLinesServiceMocks, orderLinesStubs } from "./order-lines.mocks";
 export {
   cartRepoMocks,
   cartStubs,
@@ -77,6 +80,12 @@ export {
   staffTempRepoMocks,
   staffTempStubs,
 } from "./staff.mocks";
+export {
+  voucherCampaignRepoMocks,
+  voucherRealtimeMocks,
+  voucherStubs,
+  voucherWalletRepoMocks,
+} from "./voucher.mocks";
 export { staffRepoMocks };
 
 // Mutable stub state for service-level suites. Factories in the test files
@@ -265,6 +274,8 @@ export function resetServiceMocks(): void {
   resetGuestClaimMocks();
   resetMediaMocks();
   resetPartsMocks();
+  resetOrderLinesMocks();
+  resetVoucherMocks();
   staffTempStubs.rowByUser = {};
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(staffRepoMocks)) fn.mockClear();

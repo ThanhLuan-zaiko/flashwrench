@@ -16,6 +16,7 @@ type CheckoutSummaryProps = {
   cart: CartView;
   fulfillment: FulfillmentType;
   paymentMethod: OrderPaymentMethod;
+  discount: number;
   errors: OrderFieldErrors;
   submitting: boolean;
   onPaymentMethod: (value: OrderPaymentMethod) => void;
@@ -44,11 +45,13 @@ export function CheckoutSummary({
   cart,
   fulfillment,
   paymentMethod,
+  discount,
   errors,
   submitting,
   onPaymentMethod,
 }: CheckoutSummaryProps) {
   const fee = orderShippingFee(fulfillment, cart.subtotal);
+  const payable = Math.max(0, cart.subtotal + fee - discount);
   return (
     <aside
       data-reveal
@@ -89,12 +92,22 @@ export function CheckoutSummary({
               : formatVnd(fee)}
         </span>
       </div>
+      {discount > 0 && (
+        <div className="flex items-baseline justify-between text-xs">
+          <span className="text-zinc-600 dark:text-zinc-400">
+            Voucher tài khoản
+          </span>
+          <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+            −{formatVnd(discount)}
+          </span>
+        </div>
+      )}
       <div className="flex items-baseline justify-between">
         <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
           Tổng thanh toán
         </span>
         <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {formatVnd(cart.subtotal + fee)}
+          {formatVnd(payable)}
         </span>
       </div>
       <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">

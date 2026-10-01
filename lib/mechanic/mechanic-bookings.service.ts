@@ -8,6 +8,8 @@ import {
 } from "@/lib/booking/booking-workflow.service";
 import { redispatchAfterDecline } from "@/lib/dispatch/auto-dispatch.service";
 import { isUuid } from "@/lib/validation";
+import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
+import { restoreWalletForRef } from "@/lib/vouchers/voucher-wallet.service";
 import type {
   MechanicBookingItem,
   MechanicBookingStatus,
@@ -255,6 +257,24 @@ export async function applyMechanicBookingAction(
       now,
       nextMechanicName,
     );
+  }
+  // A mechanic-side cancel or no-show voids the visit, so the spent
+  // wallet comes back to the customer just like a customer cancel.
+  if (
+    (action === "cancel" || action === "mark-no-show") &&
+    detail.coupon_code &&
+    detail.customer_id
+  ) {
+    await restoreWalletForRef({
+      walletId: detail.coupon_code,
+      userId: detail.customer_id,
+      bookingId,
+    });
+    void publishWalletChange({
+      kind: "voucher-granted",
+      walletId: detail.coupon_code,
+      userId: detail.customer_id,
+    });
   }
   if (!endsInvolvement && availability !== null) {
     await setMechanicAvailability(mechanicId, availability, now);

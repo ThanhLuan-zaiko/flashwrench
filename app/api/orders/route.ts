@@ -53,6 +53,10 @@ function toCheckoutInput(body: Record<string, unknown>): CheckoutInput {
     note: body.note === undefined ? undefined : String(body.note),
     paymentMethod:
       body.paymentMethod === undefined ? undefined : String(body.paymentMethod),
+    walletId:
+      body.walletId === undefined || body.walletId === null
+        ? undefined
+        : String(body.walletId),
   };
 }
 

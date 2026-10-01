@@ -79,6 +79,8 @@ export async function createCounterSale(
     createdBy: staffId,
     subtotal,
     shippingFee: 0,
+    discount: 0,
+    couponCode: null,
     total: subtotal,
     note: (raw.note ?? "").trim(),
     monthBucket: monthKey(now, MECHANIC_TIME_ZONE),

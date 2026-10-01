@@ -66,6 +66,7 @@ export function makeBookingRow(
     mechanic_name: "Nguyen Van A",
     month_bucket: "2026-09",
     payment_confirm_code: null,
+    coupon_code: null,
     ...overrides,
   };
 }

@@ -276,6 +276,9 @@ export type CheckoutInput = {
   street: string;
   note?: string;
   paymentMethod?: string;
+  // Account-bound wallet to spend on this order. Guests have no wallet,
+  // so the service rejects any value when customerId is null.
+  walletId?: string;
 };
 
 // Delivery assignment picked by the dispatcher when an order ships.
@@ -313,6 +316,7 @@ export type OrderFieldErrors = Partial<
     | "carrierName"
     | "trackingCode"
     | "lines"
+    | "walletId"
     | "reason"
     | "images"
     | "form",

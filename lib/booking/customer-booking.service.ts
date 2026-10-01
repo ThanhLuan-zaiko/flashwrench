@@ -8,6 +8,8 @@ import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import { toBookingStatus } from "@/lib/mechanic/mechanic-mapper";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 import { isUuid } from "@/lib/validation";
+import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
+import { restoreWalletForRef } from "@/lib/vouchers/voucher-wallet.service";
 import {
   mapBookingSummaries,
   readBookingDetail,
@@ -200,6 +202,20 @@ export async function cancelCustomerBooking(
 
   if (row.mechanic_id) {
     await releaseMechanicIfIdle(row.mechanic_id, bookingId, at);
+  }
+  // The simulated booking total included the voucher discount; the
+  // cancel returns the wallet so the customer can spend it again.
+  if (row.coupon_code && row.customer_id) {
+    await restoreWalletForRef({
+      walletId: row.coupon_code,
+      userId: row.customer_id,
+      bookingId,
+    });
+    void publishWalletChange({
+      kind: "voucher-granted",
+      walletId: row.coupon_code,
+      userId: row.customer_id,
+    });
   }
   await publishBookingChange(
     "booking-updated",

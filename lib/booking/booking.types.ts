@@ -29,6 +29,9 @@ export type CreateBookingInput = {
   vehicleBrand?: string;
   vehicleModel?: string;
   notes?: string;
+  // Account-bound wallet to spend on this booking. Guests have no
+  // wallet, so the service rejects any value without a session.
+  walletId?: string;
 };
 
 export type NormalizedBookingInput = {
@@ -51,6 +54,7 @@ export type NormalizedBookingInput = {
   vehicleBrand: string | null;
   vehicleModel: string | null;
   notes: string | null;
+  walletId: string | null;
 };
 
 export type BookingFieldErrors = Partial<
@@ -75,6 +79,7 @@ export type BookingFieldErrors = Partial<
     | "vehicleBrand"
     | "vehicleModel"
     | "notes"
+    | "walletId"
     | "form",
     string
   >

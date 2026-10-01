@@ -7,6 +7,7 @@ export type MediaScope =
   | "service"
   | "category"
   | "part"
+  | "promotion"
   | "booking"
   | "emergency"
   | "review"

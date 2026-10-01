@@ -10,6 +10,7 @@ export type RealtimeUser = { id: string; role: UserRole };
 export const STAFF_PASSWORDS_TOPIC = "staff-passwords";
 export const SERVICE_CATALOG_TOPIC = "service-catalog";
 export const PARTS_CATALOG_TOPIC = "parts-catalog";
+export const PROMOTIONS_TOPIC = "promotions";
 export const OPERATIONS_TOPIC = "operations";
 export const ADMIN_USERS_TOPIC = "admin-users";
 export const COMPLAINTS_TOPIC = "complaints";
@@ -179,6 +180,7 @@ type TopicKind =
   | "staff-passwords"
   | "service-catalog"
   | "parts-catalog"
+  | "promotions"
   | "operations"
   | "admin-users"
   | "complaints"
@@ -200,6 +202,7 @@ function topicKind(topic: string): TopicKind {
   if (topic === STAFF_PASSWORDS_TOPIC) return "staff-passwords";
   if (topic === SERVICE_CATALOG_TOPIC) return "service-catalog";
   if (topic === PARTS_CATALOG_TOPIC) return "parts-catalog";
+  if (topic === PROMOTIONS_TOPIC) return "promotions";
   if (topic === OPERATIONS_TOPIC) return "operations";
   if (topic === ADMIN_USERS_TOPIC) return "admin-users";
   if (topic === COMPLAINTS_TOPIC) return "complaints";
@@ -225,6 +228,7 @@ export function canSubscribe(
   if (
     kind === "service-catalog" ||
     kind === "parts-catalog" ||
+    kind === "promotions" ||
     kind === "mechanic-directory" ||
     kind === "part"
   )

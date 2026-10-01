@@ -3,6 +3,7 @@ import {
   FiArchive,
   FiBarChart2,
   FiCompass,
+  FiGift,
   FiLifeBuoy,
   FiPackage,
 } from "react-icons/fi";
@@ -11,6 +12,7 @@ export type DispatchSectionId =
   | "board"
   | "rescue"
   | "orders"
+  | "vouchers"
   | "stock"
   | "revenue";
 
@@ -43,6 +45,13 @@ export const DISPATCH_SECTIONS: DispatchSection[] = [
     description: "Xác nhận, đóng gói và giao đơn mua linh kiện",
     href: "/dispatch/orders/pending",
     icon: FiPackage,
+  },
+  {
+    id: "vouchers",
+    label: "Phát voucher",
+    description: "Phát voucher gắn tài khoản trong hạn mức",
+    href: "/dispatch/vouchers",
+    icon: FiGift,
   },
   {
     id: "stock",

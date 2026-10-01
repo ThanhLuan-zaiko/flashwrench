@@ -17,6 +17,10 @@ export type DomainEvent = {
     | "orders-updated"
     | "order-updated"
     | "part-updated"
+    | "promotion-updated"
+    | "voucher-granted"
+    | "voucher-used"
+    | "voucher-revoked"
     | "rescue-created"
     | "rescue-assigned"
     | "rescue-updated";
@@ -41,6 +45,10 @@ const DOMAIN_EVENT_KINDS = new Set<DomainEvent["kind"]>([
   "orders-updated",
   "order-updated",
   "part-updated",
+  "promotion-updated",
+  "voucher-granted",
+  "voucher-used",
+  "voucher-revoked",
   "rescue-created",
   "rescue-assigned",
   "rescue-updated",

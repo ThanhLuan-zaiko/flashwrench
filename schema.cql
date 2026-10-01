@@ -1204,3 +1204,80 @@ CREATE TABLE IF NOT EXISTS complaints_by_user (
   ref_type      TEXT,
   PRIMARY KEY ((user_id), created_at, complaint_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, complaint_id ASC);
+
+-- ============================================================================
+-- 11b. VOUCHER WALLETS (account-bound promotions, no shared codes)
+-- discount_type = percent | fixed | free_service
+-- scope = order | booking | all
+-- wallet status = active | used | expired | revoked
+-- Each wallet belongs to exactly one user_id: codes are never shared.
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS voucher_campaigns_by_id (
+  campaign_id            UUID PRIMARY KEY,
+  code                   TEXT,
+  name                   TEXT,
+  description            TEXT,
+  image_url              TEXT,
+  discount_type          TEXT,
+  discount_value         BIGINT,
+  max_discount           BIGINT,
+  min_order              BIGINT,
+  scope                  TEXT,
+  start_at               TIMESTAMP,
+  end_at                 TIMESTAMP,
+  total_limit            INT,
+  granted_count          INT,
+  per_user_limit         INT,
+  allow_dispatcher_grant BOOLEAN,
+  dispatcher_max_value   BIGINT,
+  is_active              BOOLEAN,
+  created_by             UUID,
+  created_at             TIMESTAMP,
+  updated_at             TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS voucher_campaigns_by_code (
+  code        TEXT PRIMARY KEY,
+  campaign_id UUID
+);
+
+CREATE TABLE IF NOT EXISTS voucher_wallets_by_id (
+  wallet_id      UUID PRIMARY KEY,
+  user_id        UUID,
+  campaign_id    UUID,
+  campaign_code  TEXT,
+  campaign_name  TEXT,
+  image_url      TEXT,
+  discount_type  TEXT,
+  discount_value BIGINT,
+  max_discount   BIGINT,
+  status         TEXT,
+  granted_by     UUID,
+  grant_note     TEXT,
+  granted_at     TIMESTAMP,
+  expires_at     TIMESTAMP,
+  used_at        TIMESTAMP,
+  used_order_id  UUID,
+  used_booking_id UUID
+);
+
+-- Query: my vouchers, newest first
+CREATE TABLE IF NOT EXISTS voucher_wallets_by_user (
+  user_id    UUID,
+  granted_at TIMESTAMP,
+  wallet_id  UUID,
+  campaign_id UUID,
+  status     TEXT,
+  PRIMARY KEY ((user_id), granted_at, wallet_id)
+) WITH CLUSTERING ORDER BY (granted_at DESC, wallet_id ASC);
+
+-- Query: everyone who received one campaign (admin audit, dispatcher view)
+CREATE TABLE IF NOT EXISTS voucher_wallets_by_campaign (
+  campaign_id UUID,
+  granted_at  TIMESTAMP,
+  wallet_id   UUID,
+  user_id     UUID,
+  status      TEXT,
+  PRIMARY KEY ((campaign_id), granted_at, wallet_id)
+) WITH CLUSTERING ORDER BY (granted_at DESC, wallet_id ASC);

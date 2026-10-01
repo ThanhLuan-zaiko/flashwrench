@@ -5,7 +5,6 @@ import {
   validatePassword,
   validatePhone,
 } from "@/lib/auth/validation";
-import { normalizeTimeZone } from "@/lib/datetime/timezone";
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import { isUuid } from "@/lib/validation";
 import type {
@@ -13,6 +12,8 @@ import type {
   CreateBookingInput,
   NormalizedBookingInput,
 } from "./booking.types";
+import { normalizeBookingTimeZone } from "./booking-timezone.validation";
+import { normalizeWalletId } from "./booking-wallet.validation";
 
 // The slot is a customer wish — staff confirm the real time later — so
 // the only bound is enough lead time to arrange the visit (2 days).
@@ -294,23 +295,17 @@ export function validateCreateBookingInput(
     }
   }
 
-  // The zone where the work happens. Optional on the wire; the service
-  // falls back to the product default. Garbage zones fail loudly so a
-  // typo can never silently reschedule a booking.
-  let timeZone: string | null = null;
-  if (
-    input.timeZone !== undefined &&
-    input.timeZone !== null &&
-    String(input.timeZone).trim() !== ""
-  ) {
-    const normalized = normalizeTimeZone(input.timeZone);
-    if (!normalized) {
-      errors.timeZone =
-        "Múi giờ không hợp lệ. Vui lòng đặt lại từ trang đặt lịch.";
-    } else {
-      timeZone = normalized;
-    }
-  }
+  // Account-bound wallets travel as the wallet id; the shared helper
+  // rejects guests with the signup incentive and garbage with 400.
+  const walletId = normalizeWalletId(
+    input.walletId,
+    options?.guest ?? false,
+    errors,
+  );
+
+  // The zone travels separately so a typo can never silently
+  // reschedule a booking.
+  const timeZone = normalizeBookingTimeZone(input.timeZone, errors);
 
   if (Object.keys(errors).length > 0 || !scheduledAt) {
     return { errors };
@@ -336,6 +331,7 @@ export function validateCreateBookingInput(
       vehicleBrand,
       vehicleModel,
       notes,
+      walletId,
     },
   };
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { FormAlert } from "@/components/auth/FormAlert";
@@ -9,6 +8,7 @@ import { useMe } from "@/hooks/auth";
 import { useCart } from "@/hooks/cart";
 import { useCheckout } from "@/hooks/orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useMyWallets } from "@/hooks/useVouchers";
 import type {
   FulfillmentType,
   OrderFieldErrors,
@@ -18,10 +18,13 @@ import {
   type OrderPaymentMethod,
   paymentMethodsFor,
 } from "@/lib/payments/order-payment.types";
+import { clampVoucherDiscount } from "@/lib/vouchers/voucher-discount";
 import { AuthApiError } from "@/services/auth.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import { CheckoutContactFields } from "./CheckoutContactFields";
+import { CheckoutExtras } from "./CheckoutExtras";
 import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
+import { CheckoutNotices } from "./CheckoutNotices";
 import { CheckoutSummary } from "./CheckoutSummary";
 import { accountRecipient } from "./checkout-utils";
 
@@ -58,10 +61,23 @@ export function CheckoutPage() {
     street: "",
   });
   const [note, setNote] = useState("");
+  const [walletId, setWalletId] = useState<string | null>(null);
   const [errors, setErrors] = useState<OrderFieldErrors>({});
 
   const cartView = cart.data?.cart ?? null;
   const submitting = checkout.isPending;
+  const isAccount = me.isSuccess && me.data?.role === "customer";
+  const myWallets = useMyWallets(isAccount);
+  const selectedWallet =
+    myWallets.data?.find((wallet) => wallet.id === walletId) ?? null;
+  const walletDiscount = selectedWallet
+    ? clampVoucherDiscount({
+        discountType: selectedWallet.discountType,
+        discountValue: selectedWallet.discountValue,
+        maxDiscount: selectedWallet.maxDiscount,
+        subtotal: cartView?.subtotal ?? 0,
+      })
+    : 0;
 
   // Pickup drops cod from the method list, so a stale selection has to be
   // coerced back to a legal method for the new fulfillment type.
@@ -100,6 +116,7 @@ export function CheckoutPage() {
         street: addressParts.street,
         note: note.trim() || undefined,
         paymentMethod,
+        walletId: !guest && walletId ? walletId : undefined,
       },
       {
         onSuccess: (data) => {
@@ -131,42 +148,16 @@ export function CheckoutPage() {
         subtitle="Chọn giao tận nơi hoặc nhận tại xưởng — nhân viên sẽ xác nhận đơn trước khi đóng gói."
       />
 
-      {me.isSuccess && me.data && me.data.role !== "customer" && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Chỉ tài khoản khách hàng mới đặt được hàng
-          </p>
-          <Link
-            href="/products"
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-          >
-            Quay lại cửa hàng
-          </Link>
-        </div>
+      {me.isSuccess && (
+        <CheckoutNotices
+          isStaff={Boolean(me.data && me.data.role !== "customer")}
+          cartEmpty={Boolean(
+            (me.data === null || me.data.role === "customer") &&
+              cartView &&
+              cartView.items.length === 0,
+          )}
+        />
       )}
-
-      {me.isSuccess &&
-        (me.data === null || me.data.role === "customer") &&
-        cartView &&
-        cartView.items.length === 0 && (
-          <div
-            data-reveal
-            className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-          >
-            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              Giỏ hàng đang trống
-            </p>
-            <Link
-              href="/products"
-              className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              Xem sản phẩm
-            </Link>
-          </div>
-        )}
 
       {me.isSuccess &&
         (me.data === null || me.data.role === "customer") &&
@@ -209,29 +200,31 @@ export function CheckoutPage() {
                 }}
                 onGeocode={handleGeocode}
               />
-              <div>
-                <label
-                  htmlFor={`${fieldId}-note`}
-                  className="mb-1.5 block text-sm font-medium text-zinc-800 dark:text-zinc-200"
-                >
-                  Ghi chú (không bắt buộc)
-                </label>
-                <textarea
-                  id={`${fieldId}-note`}
-                  value={note}
-                  onChange={(event) => setNote(event.target.value)}
-                  placeholder="Ví dụ: giao giờ hành chính, gọi trước khi đến"
-                  rows={2}
-                  disabled={submitting}
-                  className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:hover:border-zinc-600 dark:focus-visible:ring-offset-zinc-950"
-                />
-              </div>
+              <CheckoutExtras
+                fieldId={fieldId}
+                guest={guest}
+                subtotal={cartView.subtotal}
+                walletId={walletId}
+                walletError={errors.walletId}
+                note={note}
+                disabled={submitting}
+                onWallet={(next) => {
+                  setWalletId(next);
+                  setErrors((prev) => ({
+                    ...prev,
+                    walletId: undefined,
+                    form: undefined,
+                  }));
+                }}
+                onNote={setNote}
+              />
             </div>
 
             <CheckoutSummary
               cart={cartView}
               fulfillment={fulfillment}
               paymentMethod={paymentMethod}
+              discount={walletDiscount}
               errors={errors}
               submitting={submitting}
               onPaymentMethod={setPaymentMethod}

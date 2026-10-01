@@ -27,7 +27,7 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
       <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <SiteLogo />
 
-        <div className="absolute left-1/2 hidden -translate-x-1/2 md:block">
+        <div className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
           <HeaderNav items={NAV_ITEMS} currentPath={activePath} />
         </div>
 
@@ -44,7 +44,7 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 md:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 lg:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             {menuOpen ? (
               <FiX aria-hidden="true" className="h-6 w-6" />

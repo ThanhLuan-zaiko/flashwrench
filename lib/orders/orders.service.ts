@@ -7,6 +7,7 @@ import {
   resolveCourierConfig,
 } from "./order-courier.service";
 import { projectOrderReceipts, refundOrderReceipts } from "./order-revenue";
+import { refundOrderWallet } from "./order-wallet-restore";
 import { toOrderDetail, toOrderSummary } from "./orders.mapper";
 import {
   findOrderRowById,
@@ -21,7 +22,6 @@ import {
   isFulfillmentType,
   isOrderStatus,
   type OrderDetail,
-  type OrderFieldErrors,
   type OrderRow,
   type OrderStatus,
   type OrderSummary,
@@ -35,6 +35,7 @@ import {
   markOrderPaymentStatus,
   updateOrderCourierStatus,
 } from "./orders-delivery.repository";
+import { fail, failFields } from "./orders-result";
 import {
   insertOrderHistory,
   saveOrderReturnDecision,
@@ -43,17 +44,6 @@ import {
 
 const ORDERS_CURSOR_SCOPE = "dispatch-orders";
 const ORDERS_PAGE_LIMIT = 20;
-
-function fail<T>(status: number, form: string): OrdersResult<T> {
-  return { ok: false, status, errors: { form } };
-}
-
-function failFields<T>(
-  status: number,
-  errors: OrderFieldErrors,
-): OrdersResult<T> {
-  return { ok: false, status, errors };
-}
 
 export async function listMyOrders(
   customerId: string,
@@ -115,6 +105,13 @@ export async function cancelMyOrder(
     );
   }
   await applyStatusChange(row, "cancelled", customerId, "Khách hàng hủy", null);
+  // Simulated money is refunded by the status move above; the spent
+  // wallet comes back to the owner so a cancel never eats the voucher.
+  await refundOrderWallet({
+    couponCode: row.coupon_code,
+    customerId: row.customer_id,
+    orderId,
+  });
   const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };
@@ -227,6 +224,15 @@ export async function updateOrderStatus(
     note ?? "",
     resolvedCourier,
   );
+  // Staff cancels and refunds return the spent wallet the same way the
+  // customer cancel above does; other moves leave the wallet consumed.
+  if (nextStatus === "cancelled" || nextStatus === "refunded") {
+    await refundOrderWallet({
+      couponCode: row.coupon_code,
+      customerId: row.customer_id,
+      orderId,
+    });
+  }
   const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };

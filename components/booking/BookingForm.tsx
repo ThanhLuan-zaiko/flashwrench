@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { FormAlert } from "@/components/auth/FormAlert";
+import { WalletPicker } from "@/components/vouchers/WalletPicker";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { BookingDetailsSection } from "./BookingDetailsSection";
 import { BookingGuestContact } from "./BookingGuestContact";
@@ -53,6 +54,8 @@ export function BookingForm({
     setAddress,
     vehicle,
     setVehicle,
+    walletId,
+    setWalletId,
     errors,
     prefilled,
     pending,
@@ -199,6 +202,22 @@ export function BookingForm({
               onChange={(v) => {
                 setMechanicId(v);
                 clearError("mechanicId");
+              }}
+            />
+          </div>
+        )}
+
+        {!guest && (
+          <div className="flex flex-col gap-4 lg:col-start-2">
+            <WalletPicker
+              kind="booking"
+              subtotal={activeService?.basePrice ?? 0}
+              value={walletId}
+              error={errors.walletId}
+              disabled={pending}
+              onChange={(next) => {
+                setWalletId(next);
+                clearError("walletId");
               }}
             />
           </div>
