@@ -39,7 +39,7 @@ export function ComplaintFormDialog({
         onClick={onClose}
         className="absolute inset-0 bg-zinc-950/50"
       />
-      <div className="relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="relative flex max-h-[90dvh] w-full max-w-md flex-col overflow-clip rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Gửi khiếu nại
@@ -116,7 +116,7 @@ function ComplaintFields({
 
   return (
     <form
-      className="flex flex-col gap-3 overflow-y-auto px-5 py-4"
+      className="flex min-h-0 flex-col gap-3 overflow-y-auto px-5 py-4"
       onSubmit={(event) => {
         event.preventDefault();
         submit();

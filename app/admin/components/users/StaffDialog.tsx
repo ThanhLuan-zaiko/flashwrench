@@ -132,7 +132,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
         onClick={onClose}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
             {isCreate ? "Thêm nhân viên" : "Sửa nhân viên"}

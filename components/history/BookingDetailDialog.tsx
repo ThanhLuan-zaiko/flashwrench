@@ -56,7 +56,7 @@ export function BookingDetailDialog({
         className="absolute inset-0 bg-zinc-950/50"
       />
       <div
-        className={`relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950`}
+        className={`relative flex max-h-[90dvh] w-full max-w-lg flex-col overflow-clip rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950`}
       >
         <div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
           <div className="flex min-w-0 items-center gap-2">
@@ -82,7 +82,7 @@ export function BookingDetailDialog({
         </div>
 
         <div
-          className={`flex-1 overflow-y-auto px-5 py-4 ${SCROLLBAR_CLASSES}`}
+          className={`min-h-0 flex-1 overflow-y-auto px-5 py-4 ${SCROLLBAR_CLASSES}`}
         >
           {query.isPending && (
             <div

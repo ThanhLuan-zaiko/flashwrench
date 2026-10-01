@@ -80,7 +80,7 @@ export function MockPaymentDialog({
         disabled={busy}
         className="fixed inset-0 bg-zinc-950/50"
       />
-      <div className="relative max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-5 sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-5 sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-2">
           <div>
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
