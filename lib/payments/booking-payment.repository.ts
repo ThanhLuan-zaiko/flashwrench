@@ -20,7 +20,7 @@ export type PaymentWrite = {
   paymentId: string;
   refType: string;
   refId: string;
-  customerId: string;
+  customerId: string | null;
   mechanicId: string | null;
   amount: number;
   method: string;
@@ -139,36 +139,38 @@ export async function setBookingPaymentCode(
 export async function projectBookingPayment(
   write: PaymentWrite,
 ): Promise<void> {
-  await scylla.batch(
-    [
-      {
-        query:
-          "INSERT INTO payments_by_ref (ref_type, ref_id, created_at, payment_id, amount, status) VALUES (?, ?, ?, ?, ?, ?)",
-        params: [
-          write.refType,
-          write.refId,
-          write.createdAt,
-          write.paymentId,
-          write.amount,
-          write.status,
-        ],
-      },
-      {
-        query:
-          "INSERT INTO payments_by_customer (customer_id, created_at, payment_id, ref_type, ref_id, amount, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        params: [
-          write.customerId,
-          write.createdAt,
-          write.paymentId,
-          write.refType,
-          write.refId,
-          write.amount,
-          write.status,
-        ],
-      },
-    ],
-    { prepare: true },
-  );
+  const statements: { query: string; params: unknown[] }[] = [
+    {
+      query:
+        "INSERT INTO payments_by_ref (ref_type, ref_id, created_at, payment_id, amount, status) VALUES (?, ?, ?, ?, ?, ?)",
+      params: [
+        write.refType,
+        write.refId,
+        write.createdAt,
+        write.paymentId,
+        write.amount,
+        write.status,
+      ],
+    },
+  ];
+  // Guest payments carry no account id: the by-customer partition key
+  // cannot be null, so that projection is skipped like walk-in orders.
+  if (write.customerId) {
+    statements.push({
+      query:
+        "INSERT INTO payments_by_customer (customer_id, created_at, payment_id, ref_type, ref_id, amount, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        write.customerId,
+        write.createdAt,
+        write.paymentId,
+        write.refType,
+        write.refId,
+        write.amount,
+        write.status,
+      ],
+    });
+  }
+  await scylla.batch(statements, { prepare: true });
 }
 
 export async function claimBookingPaymentStatus(

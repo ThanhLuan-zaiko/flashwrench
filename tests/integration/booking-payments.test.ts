@@ -164,16 +164,31 @@ describe("recordBookingPayment guards", () => {
     expect(paymentRepoMocks.claimBookingPayment.mock.calls.length).toBe(0);
   });
 
-  test("rejects non-completed bookings and missing customer ids", async () => {
+  test("rejects non-completed bookings", async () => {
     mechanicStubs.bookingById = completedBooking({ status: "in_progress" });
     expect(
       await recordBookingPayment(mechanic, BOOKING_ID, paymentBody()),
     ).toMatchObject({ ok: false, status: 400 });
-
-    mechanicStubs.bookingById = completedBooking({ customer_id: null });
-    expect(
-      await recordBookingPayment(mechanic, BOOKING_ID, paymentBody()),
-    ).toMatchObject({ ok: false, status: 409 });
     expect(paymentRepoMocks.claimBookingPayment.mock.calls.length).toBe(0);
+  });
+
+  test("settles guest bookings whose customer_id is null", async () => {
+    // Guest intake stores the contact snapshot with customer_id null: the
+    // receipt writes to by_id/_ref/_period and skips by_customer — the
+    // guest follows the order through the public tracking link instead.
+    mechanicStubs.bookingById = completedBooking({ customer_id: null });
+
+    const result = await recordBookingPayment(
+      mechanic,
+      BOOKING_ID,
+      paymentBody({ method: "bank_transfer" }),
+    );
+
+    expect(result.ok).toBe(true);
+    const write = paymentRepoMocks.claimBookingPayment.mock.calls[0]?.[0];
+    expect(write?.customerId).toBeNull();
+    expect(
+      revenueServiceMocks.projectReceipt.mock.calls[0]?.[0].customerId,
+    ).toBeNull();
   });
 });

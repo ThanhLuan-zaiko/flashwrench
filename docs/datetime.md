@@ -7,8 +7,9 @@ làm kim chỉ nam: **lưu instant, truyền zone, hiển thị tường minh**.
 
 - Mọi cột `TIMESTAMP` trong ScyllaDB là một thời điểm tuyệt đối, không
   gắn múi giờ. `new Date(iso).getTime()` và `Date.now()` so sánh trực
-  tiếp được ở mọi nơi — kiểm tra khung giờ (sớm nhất 1 tiếng, xa nhất
-  30 ngày) luôn đúng dù server chạy ở zone nào.
+  tiếp được ở mọi nơi — kiểm tra khung giờ (sớm nhất 2 ngày; không
+  chặn trần vì slot chỉ là mong muốn, shop chốt lại sau) luôn đúng dù
+  server chạy ở zone nào.
 - Riêng `bookings_by_id` có thêm cột `timezone` (IANA, ví dụ
   `Asia/Ho_Chi_Minh`): zone **nơi công việc diễn ra**, dùng để hiển thị
   và chia bucket lịch. Các hàng cũ (`timezone = null`) hiển thị theo

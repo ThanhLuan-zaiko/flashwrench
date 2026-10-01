@@ -12,11 +12,7 @@ import { BookingApiError } from "@/services/booking.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import type { AddressValues } from "./BookingAddressSection";
 import type { VehicleValues } from "./BookingVehicleSection";
-import {
-  defaultScheduled,
-  maxScheduled,
-  minScheduled,
-} from "./booking-datetime";
+import { defaultScheduled, minScheduled } from "./booking-datetime";
 import {
   type BookingPrefill,
   emptyAddressValues,
@@ -70,7 +66,6 @@ export function useBookingForm({
   const [prefilled, setPrefilled] = useState(prefill !== null);
 
   const minSlot = useMemo(() => minScheduled(), []);
-  const maxSlot = useMemo(() => maxScheduled(), []);
 
   function clearError(field: keyof BookingFieldErrors) {
     setErrors((prev) => ({ ...prev, [field]: undefined, form: undefined }));
@@ -179,7 +174,6 @@ export function useBookingForm({
     prefilled,
     pending: createBooking.isPending,
     minSlot,
-    maxSlot,
     clearError,
     handleMapAddress,
     resetDetails,

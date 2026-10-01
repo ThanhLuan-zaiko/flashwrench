@@ -28,15 +28,15 @@ beforeEach(() => {
 });
 
 describe("GET /api/mechanics", () => {
-  test("returns 401 for guests", async () => {
+  test("serves the directory to guests without a session", async () => {
     routeStubs.bookingUser = null;
 
     const res = await mechanicsGet(getRequest("/api/mechanics"));
 
-    expect(res.status).toBe(401);
-    expect(
-      mechanicDirectoryServiceMocks.listAvailableMechanics.mock.calls.length,
-    ).toBe(0);
+    expect(res.status).toBe(200);
+    expect(await readJsonBody(res)).toMatchObject({
+      mechanics: [{ id: okMechanicDirectoryItem().id }],
+    });
   });
 
   test("returns the directory page with coordinates forwarded", async () => {

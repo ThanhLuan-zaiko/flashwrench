@@ -54,7 +54,6 @@ export function BookingForm({
     prefilled,
     pending,
     minSlot,
-    maxSlot,
     clearError,
     handleMapAddress,
     resetDetails,
@@ -100,7 +99,10 @@ export function BookingForm({
           />
         </div>
 
-        <div className="lg:col-start-2 xl:col-start-3">
+        {/* Owns col 3 on xl and pins like the map: the row-span gives the
+        sticky element tracks to travel through while scrolling. At lg the
+        gallery shares col 2 with the fields, so it stays in normal flow. */}
+        <div className="lg:col-start-2 xl:col-start-3 xl:row-span-3 xl:self-start xl:sticky xl:top-20">
           <BookingServiceGallery
             key={activeService?.id ?? "none"}
             service={activeService}
@@ -138,7 +140,6 @@ export function BookingForm({
           <BookingDetailsSection
             scheduledAt={scheduledAt}
             min={minSlot}
-            max={maxSlot}
             address={address}
             vehicle={vehicle}
             errors={errors}
@@ -177,7 +178,11 @@ export function BookingForm({
           </div>
         )}
 
-        <div className="lg:col-start-2 xl:col-span-2">
+        {/* xl:col-end-4 (longhand) instead of xl:col-span-2: the span-2
+        shorthand resets grid-column-start set by lg:col-start-2, letting
+        dense packing drop the button into an empty col-1 cell under the
+        sticky map. start=2 + end=4 keeps it pinned to the right side. */}
+        <div className="lg:col-start-2 xl:col-end-4">
           <BookingSubmitButton pending={pending} />
         </div>
       </form>

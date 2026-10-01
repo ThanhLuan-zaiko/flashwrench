@@ -62,7 +62,7 @@ function writeFromRow(row: PaymentRow): PaymentWrite {
     paymentId: row.payment_id,
     refType: row.ref_type ?? "booking",
     refId: row.ref_id ?? "",
-    customerId: row.customer_id ?? "",
+    customerId: row.customer_id,
     mechanicId: row.mechanic_id,
     amount: row.amount ?? 0,
     method: row.method ?? "cod",
@@ -137,10 +137,9 @@ export async function recordBookingPayment(
   if (!Number.isSafeInteger(total) || total < 0) {
     return fail(400, "Tổng tiền đơn hàng không hợp lệ.");
   }
+  // Guest bookings carry customer_id = null; the receipt still writes to
+  // payments_by_id/_ref/_period and only skips the by-customer history.
   const customerId = booking.customer_id;
-  if (!customerId || !isUuid(customerId)) {
-    return fail(409, "Đơn hàng thiếu thông tin khách hàng.");
-  }
 
   // Cash is the bribery surface: the customer dictates a 6-digit code the
   // mechanic must echo back. Transfers leave a bank trail, so they skip

@@ -1,9 +1,19 @@
 "use client";
 
-import { TrackingMap } from "@/components/history/TrackingMap";
+import dynamic from "next/dynamic";
 import { useOrderTracking } from "@/hooks/track";
 import { TrackAborted, TrackError, TrackLoading } from "./TrackFeedback";
 import { type TrackStep, TrackStepper } from "./TrackStepper";
+
+// Leaflet touches window at module scope — it must never evaluate
+// during SSR, same rule as the history/dispatch map consumers.
+const TrackingMap = dynamic(
+  () =>
+    import("@/components/history/TrackingMap").then(
+      (module) => module.TrackingMap,
+    ),
+  { ssr: false },
+);
 
 const DELIVERY_STEPS: TrackStep[] = [
   { id: "pending", label: "Đã đặt hàng" },

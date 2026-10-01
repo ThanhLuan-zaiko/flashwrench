@@ -29,7 +29,7 @@ describe("validateCreateBookingInput", () => {
     expect(result.errors.scheduledAt).toContain("khung giờ");
   });
 
-  test("rejects past and too-soon schedules", () => {
+  test("rejects past and under-2-days schedules", () => {
     const past = validateCreateBookingInput(
       makeBookingInput({
         scheduledAt: new Date(Date.now() - 60 * 1000).toISOString(),
@@ -37,27 +37,27 @@ describe("validateCreateBookingInput", () => {
     );
     expect("errors" in past).toBe(true);
 
-    const tooSoon = validateCreateBookingInput(
-      makeBookingInput({
-        scheduledAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-      }),
-    );
-    expect("errors" in tooSoon).toBe(true);
-    if (!("errors" in tooSoon)) return;
-    expect(tooSoon.errors.scheduledAt).toContain("1 tiếng");
+    for (const ahead of [10 * 60 * 1000, 24 * 60 * 60 * 1000]) {
+      const tooSoon = validateCreateBookingInput(
+        makeBookingInput({
+          scheduledAt: new Date(Date.now() + ahead).toISOString(),
+        }),
+      );
+      expect("errors" in tooSoon).toBe(true);
+      if (!("errors" in tooSoon)) return;
+      expect(tooSoon.errors.scheduledAt).toContain("2 ngày");
+    }
   });
 
-  test("rejects schedules beyond the dispatch window", () => {
+  test("accepts schedules far ahead — staff confirm the slot later", () => {
     const result = validateCreateBookingInput(
       makeBookingInput({
         scheduledAt: new Date(
-          Date.now() + 60 * 24 * 60 * 60 * 1000,
+          Date.now() + 180 * 24 * 60 * 60 * 1000,
         ).toISOString(),
       }),
     );
-    expect("errors" in result).toBe(true);
-    if (!("errors" in result)) return;
-    expect(result.errors.scheduledAt).toContain("30 ngày");
+    expect("value" in result).toBe(true);
   });
 
   test("rejects short addresses and bad plates", () => {
@@ -121,8 +121,8 @@ describe("validateCreateBookingInput", () => {
     expect(wallClock.errors.scheduledAt).toContain("múi giờ");
 
     // Same wall time written two ways: bare (server-zone dependent,
-    // rejected) versus offset-pinned (unambiguous, window-checked).
-    const future = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    // rejected) versus offset-pinned (unambiguous, lead-time checked).
+    const future = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
     const pad = (n: number) => String(n).padStart(2, "0");
     const plusSeven = new Date(future.getTime() + 7 * 60 * 60 * 1000);
     const offsetForm = `${plusSeven.getUTCFullYear()}-${pad(plusSeven.getUTCMonth() + 1)}-${pad(plusSeven.getUTCDate())}T${pad(plusSeven.getUTCHours())}:${pad(plusSeven.getUTCMinutes())}:00+07:00`;

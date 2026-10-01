@@ -13,10 +13,9 @@ import type {
   NormalizedBookingInput,
 } from "./booking.types";
 
-// Booking must leave enough dispatch lead time but cannot be set
-// arbitrarily far ahead: the dispatcher bucket is monthly.
-export const BOOKING_MIN_LEAD_MINUTES = 60;
-export const BOOKING_MAX_AHEAD_DAYS = 30;
+// The slot is a customer wish — staff confirm the real time later — so
+// the only bound is enough lead time to arrange the visit (2 days).
+export const BOOKING_MIN_LEAD_DAYS = 2;
 export const BOOKING_NAME_MAX = 100;
 export const BOOKING_ADDRESS_MIN = 10;
 export const BOOKING_ADDRESS_MAX = 300;
@@ -125,15 +124,10 @@ export function validateCreateBookingInput(
     if (Number.isNaN(parsed.getTime())) {
       errors.scheduledAt = "Khung giờ không hợp lệ.";
     } else {
-      const now = Date.now();
-      const earliest = now + BOOKING_MIN_LEAD_MINUTES * 60 * 1000;
-      const latest = now + BOOKING_MAX_AHEAD_DAYS * 24 * 60 * 60 * 1000;
+      const earliest = Date.now() + BOOKING_MIN_LEAD_DAYS * 24 * 60 * 60 * 1000;
       if (parsed.getTime() < earliest) {
         errors.scheduledAt =
-          "Vui lòng chọn giờ sau hiện tại ít nhất 1 tiếng để thợ kịp chuẩn bị.";
-      } else if (parsed.getTime() > latest) {
-        errors.scheduledAt =
-          "Chỉ nhận lịch trong vòng 30 ngày tới. Vui lòng chọn giờ gần hơn.";
+          "Vui lòng đặt trước ít nhất 2 ngày để shop kịp liên hệ chốt lịch.";
       } else {
         scheduledAt = parsed;
       }

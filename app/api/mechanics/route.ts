@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth/authorization";
 import { listAvailableMechanics } from "@/lib/mechanic/mechanic-directory.service";
 
 function toNumberParam(value: string | null): number | undefined {
@@ -8,11 +7,12 @@ function toNumberParam(value: string | null): number | undefined {
   return Number.isFinite(parsed) ? parsed : Number.NaN;
 }
 
-// Bookable mechanics for the customer picker. ?lat=&lng= sorts
+// Bookable mechanics for the customer picker and the "top rated"
+// showcase. Public: guests shop without a session and the directory
+// only carries storefront-safe fields (name, rating, jobs done, base
+// coords — no contact or live position). ?lat=&lng= sorts
 // nearest-first, ?limit= caps the directory page. Thin handler.
 export async function GET(request: Request) {
-  const { response } = await requireAuth();
-  if (response) return response;
   const params = new URL(request.url).searchParams;
 
   try {

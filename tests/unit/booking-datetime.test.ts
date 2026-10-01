@@ -1,13 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import {
   defaultScheduled,
-  maxScheduled,
   minScheduled,
   toDatetimeLocal,
 } from "@/components/booking/booking-datetime";
 
 // Pure datetime-local helpers behind the schedule input. No React,
-// no mocks; bounds mirror the service validation window.
+// no mocks; the floor mirrors the service lead-time rule.
 
 describe("booking datetime helpers", () => {
   test("formats local datetime-local strings", () => {
@@ -15,17 +14,15 @@ describe("booking datetime helpers", () => {
     expect(toDatetimeLocal(date)).toBe("2026-09-16T09:05");
   });
 
-  test("defaults to tomorrow at 9:00", () => {
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const expected = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}T09:00`;
+  test("defaults to three days out at 9:00", () => {
+    const day = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    const expected = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}T09:00`;
     expect(defaultScheduled()).toBe(expected);
   });
 
-  test("bounds stay inside the service window", () => {
+  test("floor sits at the 2-day lead with no upper bound", () => {
     const min = new Date(minScheduled()).getTime();
-    const max = new Date(maxScheduled()).getTime();
-    expect(min).toBeGreaterThan(Date.now());
-    expect(max).toBeGreaterThan(min);
-    expect(max - Date.now()).toBeLessThanOrEqual(31 * 24 * 60 * 60 * 1000);
+    expect(min - Date.now()).toBeGreaterThan(47 * 60 * 60 * 1000);
+    expect(min - Date.now()).toBeLessThanOrEqual(49 * 60 * 60 * 1000);
   });
 });

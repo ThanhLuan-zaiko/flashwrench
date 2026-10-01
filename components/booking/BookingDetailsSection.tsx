@@ -12,7 +12,6 @@ import {
 type BookingDetailsSectionProps = {
   scheduledAt: string;
   min: string;
-  max: string;
   address: AddressValues;
   vehicle: VehicleValues;
   errors: BookingFieldErrors;
@@ -27,7 +26,6 @@ type BookingDetailsSectionProps = {
 export function BookingDetailsSection({
   scheduledAt,
   min,
-  max,
   address,
   vehicle,
   errors,
@@ -41,7 +39,6 @@ export function BookingDetailsSection({
       <BookingScheduleSection
         value={scheduledAt}
         min={min}
-        max={max}
         error={errors.scheduledAt}
         disabled={disabled}
         onChange={onScheduledAt}
