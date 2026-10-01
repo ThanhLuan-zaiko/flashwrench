@@ -195,13 +195,45 @@ export async function setCampaignActive(
   );
 }
 
-export async function bumpGrantedCount(
+export type GrantSlotOutcome = "ok" | "limit" | "error";
+
+// Grant a single slot with the ceiling enforced atomically: regular
+// columns cannot do `count = count + 1` in CQL, so the increment is a
+// read + CAS (`IF granted_count = ?`). A lost race retries; hitting the
+// limit or exhausting retries fails closed so grants never overshoot.
+export async function claimGrantSlot(
   campaignId: string,
-  delta: number,
-): Promise<void> {
-  await scylla.execute(
-    "UPDATE voucher_campaigns_by_id SET granted_count = granted_count + ? WHERE campaign_id = ?",
-    [delta, campaignId],
-    { prepare: true },
-  );
+  totalLimit: number,
+): Promise<GrantSlotOutcome> {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const row = await findCampaignRowById(campaignId);
+    if (!row || row.granted_count === null) return "error";
+    const current = row.granted_count;
+    if (totalLimit > 0 && current >= totalLimit) return "limit";
+    const result = await scylla.execute(
+      "UPDATE voucher_campaigns_by_id SET granted_count = ?, updated_at = ? WHERE campaign_id = ? IF granted_count = ?",
+      [current + 1, new Date(), campaignId, current],
+      { prepare: true },
+    );
+    if (result.wasApplied()) return "ok";
+  }
+  return "error";
+}
+
+// Undo a claimed slot when the wallet insert dies right after. Same CAS
+// shape as claimGrantSlot; best-effort — overshooting the ceiling is a
+// bug, undershooting by one orphaned slot is not.
+export async function releaseGrantSlot(campaignId: string): Promise<void> {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const row = await findCampaignRowById(campaignId);
+    if (!row || row.granted_count === null || row.granted_count <= 0) {
+      return;
+    }
+    const result = await scylla.execute(
+      "UPDATE voucher_campaigns_by_id SET granted_count = ?, updated_at = ? WHERE campaign_id = ? IF granted_count = ?",
+      [row.granted_count - 1, new Date(), campaignId, row.granted_count],
+      { prepare: true },
+    );
+    if (result.wasApplied()) return;
+  }
 }

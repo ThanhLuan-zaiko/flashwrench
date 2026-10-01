@@ -99,13 +99,24 @@ export async function revokeDispatchWallet(
   return body.wallet;
 }
 
-export async function fetchMyWallets(): Promise<VoucherWallet[]> {
-  const response = await fetch("/api/vouchers/mine", {
+export type MyWalletPage = {
+  items: VoucherWallet[];
+  nextCursor: string | null;
+};
+
+export async function fetchMyWallets(params: {
+  cursor?: string | null;
+  limit?: number;
+}): Promise<MyWalletPage> {
+  const search = new URLSearchParams();
+  if (params.cursor) search.set("cursor", params.cursor);
+  if (params.limit) search.set("limit", String(params.limit));
+  const suffix = search.size > 0 ? `?${search.toString()}` : "";
+  const response = await fetch(`/api/vouchers/mine${suffix}`, {
     credentials: "include",
   });
   if (!response.ok) throw new Error("Không tải được ví voucher.");
-  const body = (await response.json()) as { wallets: VoucherWallet[] };
-  return body.wallets;
+  return (await response.json()) as MyWalletPage;
 }
 
 export async function uploadPromotionImage(file: File): Promise<string> {

@@ -36,9 +36,11 @@ export function WalletPicker({
   disabled,
   onChange,
 }: WalletPickerProps) {
-  const wallets = useMyWallets(true);
+  // The picker needs every usable wallet, not just the newest page —
+  // ask for the bounded max so none is hidden behind pagination.
+  const wallets = useMyWallets(true, { limit: 100 });
   const usable = useMemo(() => {
-    const items = wallets.data ?? [];
+    const items = wallets.data?.items ?? [];
     return items.filter(
       (wallet) =>
         wallet.status === "active" &&

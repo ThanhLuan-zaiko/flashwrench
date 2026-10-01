@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/authorization";
-import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
-import { redeemWallet } from "@/lib/vouchers/voucher-wallet.service";
+import { isUuid } from "@/lib/validation";
+import { quoteWalletRedemption } from "@/lib/vouchers/voucher-spend.service";
 
+// Quote endpoint: reports what a wallet would shave off a given subtotal
+// without spending it. The wallet only turns "used" inside the real
+// checkout/booking write paths — a preview can never burn or rebind it,
+// and client-sent order/booking ids are never written to the wallet row.
 export async function POST(
   request: Request,
   context: { params: Promise<{ walletId: string }> },
@@ -10,6 +14,12 @@ export async function POST(
   const { user, response } = await requireAuth();
   if (response || !user) return response;
   const { walletId } = await context.params;
+  if (!isUuid(walletId)) {
+    return NextResponse.json(
+      { errors: { form: "Voucher không hợp lệ." } },
+      { status: 400 },
+    );
+  }
   let body: Record<string, unknown> = {};
   try {
     body = ((await request.json()) as Record<string, unknown>) ?? {};
@@ -20,22 +30,14 @@ export async function POST(
     );
   }
   try {
-    const orderId =
-      body.orderId === undefined || body.orderId === null
-        ? null
-        : String(body.orderId);
-    const bookingId =
-      body.bookingId === undefined || body.bookingId === null
-        ? null
-        : String(body.bookingId);
-    // Preview-only call (no ref yet) validates as an order-kind quote.
-    const result = await redeemWallet({
+    const result = await quoteWalletRedemption({
       walletId,
       userId: user.id,
       subtotal: Number(body.subtotal ?? 0),
-      kind: bookingId ? "booking" : "order",
-      orderId,
-      bookingId,
+      kind:
+        body.bookingId !== undefined && body.bookingId !== null
+          ? "booking"
+          : "order",
     });
     if (!result.ok) {
       return NextResponse.json(
@@ -43,11 +45,6 @@ export async function POST(
         { status: result.status },
       );
     }
-    void publishWalletChange({
-      kind: "voucher-used",
-      walletId,
-      userId: user.id,
-    });
     return NextResponse.json(result.data);
   } catch {
     return NextResponse.json(

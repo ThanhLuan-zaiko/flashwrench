@@ -23,7 +23,7 @@ import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
 import {
   redeemWallet,
   releaseWalletReservation,
-} from "@/lib/vouchers/voucher-wallet.service";
+} from "@/lib/vouchers/voucher-spend.service";
 import { insertCustomerBooking } from "./booking.repository";
 import type {
   BookingResult,
@@ -204,7 +204,7 @@ export async function createCustomerBooking(
       mechanicName,
     });
   } catch (error) {
-    if (walletId) await releaseWalletReservation(walletId);
+    if (walletId) await releaseWalletReservation(walletId, { bookingId });
     throw error;
   }
   if (walletId && customer) {

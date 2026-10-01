@@ -37,10 +37,15 @@ export function useDispatchCampaigns(enabled = true) {
   });
 }
 
-export function useMyWallets(enabled = true) {
+export function useMyWallets(
+  enabled = true,
+  params: { cursor?: string | null; limit?: number } = {},
+) {
+  const cursor = params.cursor ?? null;
+  const limit = params.limit ?? null;
   return useQuery({
-    queryKey: [...voucherKeys.mine],
-    queryFn: fetchMyWallets,
+    queryKey: [...voucherKeys.mine, cursor, limit],
+    queryFn: () => fetchMyWallets({ cursor, limit: limit ?? undefined }),
     enabled,
     staleTime: 20 * 1000,
     gcTime: 5 * 60 * 1000,

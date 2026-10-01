@@ -13,8 +13,8 @@ import type {
   VoucherResult,
 } from "./voucher.types";
 import {
-  bumpGrantedCount,
   claimCampaignCode,
+  claimGrantSlot,
   findCampaignIdByCode,
   findCampaignRowById,
   insertCampaign,
@@ -199,5 +199,5 @@ export async function toggleCampaign(
 }
 
 export async function incrementGranted(campaignId: string): Promise<void> {
-  await bumpGrantedCount(campaignId, 1).catch(() => undefined);
+  await claimGrantSlot(campaignId, 0).catch(() => undefined);
 }

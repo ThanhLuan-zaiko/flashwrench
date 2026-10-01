@@ -1,22 +1,30 @@
-// Wallet lifecycle: grant to one account, revoke, redeem on one ref.
+// Wallet lifecycle for staff: grant to one account, list, revoke.
 // Anti-share by design: wallets carry user_id, never a reusable code.
+// Spending lives in voucher-spend.service.ts (CAS transitions there).
 import { randomUUID } from "node:crypto";
+import { findUserById } from "@/lib/auth/user.repository";
 import type { UserRole } from "@/lib/auth/user.types";
+import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { toWallet } from "./voucher.mapper";
 import type {
+  CampaignRow,
   GrantWalletInput,
   VoucherResult,
   VoucherWallet,
 } from "./voucher.types";
-import { findCampaignRowById } from "./voucher-campaign.repository";
-import { clampVoucherDiscount } from "./voucher-discount";
+import {
+  claimGrantSlot,
+  findCampaignRowById,
+  releaseGrantSlot,
+} from "./voucher-campaign.repository";
 import { parseOptionalDate, validateGrantInput } from "./voucher-validation";
 import {
+  commitWalletTransition,
   countUserWalletsForCampaign,
   findWalletRowById,
   insertWallet,
-  listWalletRowsByUser,
-  markWalletStatus,
+  listWalletIdsByUser,
+  listWalletRowsByIds,
 } from "./voucher-wallet.repository";
 
 function fail<T>(status: number, form: string): VoucherResult<T> {
@@ -25,30 +33,38 @@ function fail<T>(status: number, form: string): VoucherResult<T> {
 
 type Actor = { id: string; role: UserRole };
 
+// Worst-case VND value of one grant: fixed campaigns pay face value,
+// percent campaigns are bounded by max_discount, and free_service (or an
+// uncapped percent) is unbounded — null means "no ceiling exists".
+function worstCaseDiscount(campaign: CampaignRow): number | null {
+  if (campaign.discount_type === "fixed") {
+    return campaign.discount_value ?? 0;
+  }
+  if (campaign.discount_type === "percent") {
+    const cap = campaign.max_discount ?? 0;
+    return cap > 0 ? cap : null;
+  }
+  return null;
+}
+
+// Dispatchers only grant campaigns flagged for them, and only when the
+// campaign's worst-case discount fits inside their VND cap. Admin is
+// unbounded; a zero cap is an explicit "no dispatcher cap" choice.
 function dispatcherCapAllows(
   actor: Actor,
-  grantedCount: number,
-  totalLimit: number,
-  discountValue: number,
-  cap: number,
-  allowed: boolean,
+  campaign: CampaignRow,
 ): VoucherResult<null> | null {
   if (actor.role === "admin") return null;
-  if (!allowed) {
+  if (!campaign.allow_dispatcher_grant) {
     return {
       ok: false,
       status: 403,
       errors: { form: "Chiến dịch này chỉ admin được phát." },
     };
   }
-  if (totalLimit > 0 && grantedCount >= totalLimit) {
-    return {
-      ok: false,
-      status: 400,
-      errors: { form: "Chiến dịch đã phát hết số lượng." },
-    };
-  }
-  if (cap > 0 && discountValue > cap) {
+  const cap = campaign.dispatcher_max_value ?? 0;
+  const worst = worstCaseDiscount(campaign);
+  if (cap > 0 && (worst === null || worst > cap)) {
     return {
       ok: false,
       status: 403,
@@ -74,19 +90,14 @@ export async function grantWallet(
   const campaign = await findCampaignRowById(raw.campaignId.trim());
   if (!campaign) return fail(404, "Không tìm thấy chiến dịch.");
   if (!campaign.is_active) return fail(400, "Chiến dịch đang tắt.");
-  const granted = campaign.granted_count ?? 0;
-  const totalLimit = campaign.total_limit ?? 0;
-  if (actor.role !== "admin" && totalLimit > 0 && granted >= totalLimit) {
-    return fail(400, "Chiến dịch đã phát hết số lượng.");
+  // Wallets only land on live customer accounts. That one check kills
+  // self-dealing (staff ids are never customer role) and grants aimed
+  // at ids that do not exist.
+  const target = await findUserById(raw.userId.trim());
+  if (target?.role !== "customer" || target.status !== "active") {
+    return fail(404, "Không tìm thấy tài khoản khách hàng.");
   }
-  const blocked = dispatcherCapAllows(
-    actor,
-    granted,
-    totalLimit,
-    campaign.discount_value ?? 0,
-    campaign.dispatcher_max_value ?? 0,
-    campaign.allow_dispatcher_grant ?? false,
-  );
+  const blocked = dispatcherCapAllows(actor, campaign);
   if (blocked) return blocked as VoucherResult<VoucherWallet>;
   const perUser = campaign.per_user_limit ?? 1;
   const owned = await countUserWalletsForCampaign(
@@ -96,50 +107,109 @@ export async function grantWallet(
   if (owned >= perUser) {
     return fail(400, "Khách này đã nhận đủ số voucher của chiến dịch.");
   }
+  // The slot claim carries the real total_limit enforcement: a CAS
+  // increment on granted_count, so parallel grants never overshoot.
+  // Admins pass 0 — unlimited, but still counted for the audit trail.
+  const slot = await claimGrantSlot(
+    campaign.campaign_id,
+    actor.role === "admin" ? 0 : (campaign.total_limit ?? 0),
+  );
+  if (slot === "limit") {
+    return fail(400, "Chiến dịch đã phát hết số lượng.");
+  }
+  if (slot !== "ok") {
+    return fail(500, "Không ghi nhận được lượt phát voucher. Thử lại.");
+  }
   const walletId = randomUUID();
   const now = new Date();
   const expiresAt = parseOptionalDate(raw.expiresAt) ?? campaign.end_at ?? null;
-  await insertWallet({
-    walletId,
-    userId: raw.userId.trim(),
-    campaignId: campaign.campaign_id,
-    campaignCode: campaign.code ?? "",
-    campaignName: campaign.name ?? "",
-    imageUrl: campaign.image_url ?? "",
-    discountType:
-      campaign.discount_type === "percent" ||
-      campaign.discount_type === "free_service"
-        ? campaign.discount_type
-        : "fixed",
-    discountValue: campaign.discount_value ?? 0,
-    maxDiscount: campaign.max_discount ?? 0,
-    grantedBy: actor.id,
-    grantNote: (raw.note ?? "").trim(),
-    grantedAt: now,
-    expiresAt,
-  });
-  const { bumpGrantedCount } = await import("./voucher-campaign.repository");
-  await bumpGrantedCount(campaign.campaign_id, 1).catch(() => undefined);
+  try {
+    await insertWallet({
+      walletId,
+      userId: raw.userId.trim(),
+      campaignId: campaign.campaign_id,
+      campaignCode: campaign.code ?? "",
+      campaignName: campaign.name ?? "",
+      imageUrl: campaign.image_url ?? "",
+      discountType:
+        campaign.discount_type === "percent" ||
+        campaign.discount_type === "free_service"
+          ? campaign.discount_type
+          : "fixed",
+      discountValue: campaign.discount_value ?? 0,
+      maxDiscount: campaign.max_discount ?? 0,
+      grantedBy: actor.id,
+      grantNote: (raw.note ?? "").trim(),
+      grantedAt: now,
+      expiresAt,
+    });
+  } catch (error) {
+    await releaseGrantSlot(campaign.campaign_id).catch(() => undefined);
+    throw error;
+  }
   const row = await findWalletRowById(walletId);
   if (!row) return fail(500, "Không phát được voucher.");
-  const { toWallet: map } = await import("./voucher.mapper");
-  return { ok: true, data: map(row) };
+  return { ok: true, data: toWallet(row) };
 }
+
+export type MyWalletPage = {
+  items: VoucherWallet[];
+  nextCursor: string | null;
+};
+
+const MY_WALLETS_SCOPE = "vouchers-mine";
+const MY_WALLETS_LIMIT = 12;
+const MY_WALLETS_MAX_LIMIT = 100;
 
 export async function listMyWallets(
   userId: string,
-): Promise<VoucherResult<VoucherWallet[]>> {
-  const rows = await listWalletRowsByUser(userId);
-  const wallets: VoucherWallet[] = [];
-  for (const row of rows) {
-    // Small fan-out (one wallet list per page): the campaign carries
-    // scope + minimum order so pickers can filter before submitting.
-    const campaign = row.campaign_id
-      ? await findCampaignRowById(row.campaign_id).catch(() => null)
-      : null;
-    wallets.push(toWallet(row, campaign));
+  params: { cursor?: string | null; limit?: number } = {},
+): Promise<VoucherResult<MyWalletPage>> {
+  let pageState: string | null = null;
+  try {
+    pageState = decodeCursor(params.cursor, MY_WALLETS_SCOPE);
+  } catch {
+    return fail(400, "Con trỏ trang không hợp lệ.");
   }
-  return { ok: true, data: wallets };
+  const limit = Math.min(
+    Math.max(params.limit ?? MY_WALLETS_LIMIT, 1),
+    MY_WALLETS_MAX_LIMIT,
+  );
+  const page = await listWalletIdsByUser(userId, limit, pageState);
+  const rows = await listWalletRowsByIds(page.ids);
+  // One campaign lookup per distinct campaign on this page — the row
+  // carries scope + minimum order so pickers can filter client-side.
+  const campaignIds = [
+    ...new Set(
+      rows
+        .map((row) => row.campaign_id)
+        .filter((id): id is string => id !== null),
+    ),
+  ];
+  const campaigns = new Map(
+    (
+      await Promise.all(
+        campaignIds.map(async (id) => {
+          const campaign = await findCampaignRowById(id).catch(() => null);
+          return [id, campaign] as const;
+        }),
+      )
+    ).filter((entry): entry is readonly [string, CampaignRow] =>
+      Boolean(entry[1]),
+    ),
+  );
+  return {
+    ok: true,
+    data: {
+      items: rows.map((row) =>
+        toWallet(
+          row,
+          row.campaign_id ? (campaigns.get(row.campaign_id) ?? null) : null,
+        ),
+      ),
+      nextCursor: encodeCursor(page.pageState, MY_WALLETS_SCOPE),
+    },
+  };
 }
 
 export async function revokeWallet(
@@ -153,7 +223,7 @@ export async function revokeWallet(
   if (actor.role !== "admin" && row.granted_by !== actor.id) {
     return fail(403, "Chỉ admin hoặc người đã phát mới được thu hồi.");
   }
-  await markWalletStatus({
+  const applied = await commitWalletTransition({
     walletId: row.wallet_id,
     userId: row.user_id,
     campaignId: row.campaign_id,
@@ -162,148 +232,11 @@ export async function revokeWallet(
     usedAt: null,
     usedOrderId: null,
     usedBookingId: null,
+    expectStatus: "active",
   });
+  if (!applied) return fail(400, "Voucher không còn hiệu lực.");
   void note;
   const next = await findWalletRowById(walletId);
   if (!next) return fail(500, "Không thu hồi được voucher.");
   return { ok: true, data: toWallet(next) };
-}
-
-export async function redeemWallet(params: {
-  walletId: string;
-  userId: string;
-  subtotal: number;
-  kind: "order" | "booking";
-  orderId?: string | null;
-  bookingId?: string | null;
-}): Promise<VoucherResult<{ discount: number; wallet: VoucherWallet }>> {
-  const row = await findWalletRowById(params.walletId);
-  if (!row || row.user_id !== params.userId) {
-    return fail(404, "Không tìm thấy voucher của bạn.");
-  }
-  if (row.status !== "active")
-    return fail(400, "Voucher đã được dùng hoặc thu hồi.");
-  if (params.orderId && params.bookingId) {
-    return fail(400, "Chỉ áp voucher cho đơn hàng hoặc lịch hẹn.");
-  }
-  const campaign = row.campaign_id
-    ? await findCampaignRowById(row.campaign_id)
-    : null;
-  const now = new Date();
-  if (!campaign) return fail(400, "Chiến dịch đã dừng.");
-  if (!campaign.is_active) {
-    return fail(400, "Chiến dịch đã tắt.");
-  }
-  if (campaign.start_at && now < campaign.start_at) {
-    return fail(400, "Chưa đến ngày áp dụng voucher.");
-  }
-  if (campaign.end_at && now > campaign.end_at) {
-    return fail(400, "Voucher đã hết hạn.");
-  }
-  const scope = campaign.scope ?? "all";
-  if (scope !== "all" && scope !== params.kind) {
-    return fail(400, "Voucher không áp dụng cho loại đơn này.");
-  }
-  const minOrder = campaign.min_order ?? 0;
-  if (params.subtotal < minOrder) {
-    return fail(400, "Đơn chưa đạt giá trị tối thiểu của voucher.");
-  }
-  if (row.expires_at && now > row.expires_at) {
-    await markWalletStatus({
-      walletId: row.wallet_id,
-      userId: row.user_id,
-      campaignId: row.campaign_id,
-      grantedAt: row.granted_at ?? now,
-      status: "expired",
-      usedAt: null,
-      usedOrderId: null,
-      usedBookingId: null,
-    });
-    return fail(400, "Voucher đã hết hạn.");
-  }
-  const discount = clampVoucherDiscount({
-    discountType:
-      row.discount_type === "percent" || row.discount_type === "free_service"
-        ? row.discount_type
-        : "fixed",
-    discountValue: row.discount_value ?? 0,
-    maxDiscount: row.max_discount ?? 0,
-    subtotal: params.subtotal,
-  });
-  if (discount <= 0) return fail(400, "Đơn chưa đạt điều kiện áp voucher.");
-  await markWalletStatus({
-    walletId: row.wallet_id,
-    userId: row.user_id,
-    campaignId: row.campaign_id,
-    grantedAt: row.granted_at ?? now,
-    status: "used",
-    usedAt: now,
-    usedOrderId: params.orderId ?? null,
-    usedBookingId: params.bookingId ?? null,
-  });
-  const next = await findWalletRowById(params.walletId);
-  if (!next) return fail(500, "Không áp được voucher.");
-  return { ok: true, data: { discount, wallet: toWallet(next) } };
-}
-
-// Best-effort rollback: a wallet reserved for a ref whose write failed
-// goes back to active so the customer keeps it. Never throws.
-export async function releaseWalletReservation(
-  walletId: string,
-): Promise<void> {
-  try {
-    const row = await findWalletRowById(walletId);
-    if (!row || row.status !== "used") return;
-    await markWalletStatus({
-      walletId: row.wallet_id,
-      userId: row.user_id,
-      campaignId: row.campaign_id,
-      grantedAt: row.granted_at ?? new Date(),
-      status: "active",
-      usedAt: null,
-      usedOrderId: null,
-      usedBookingId: null,
-    });
-  } catch {
-    return;
-  }
-}
-
-// Best-effort refund: a cancelled/refunded order or booking returns its
-// wallet to the owner. A wallet past its expiry comes back as expired,
-// not active, so it can never be spent late. Never throws.
-export async function restoreWalletForRef(params: {
-  walletId: string | null;
-  userId: string | null;
-  orderId?: string | null;
-  bookingId?: string | null;
-}): Promise<void> {
-  try {
-    if (!params.walletId || !params.userId) return;
-    const row = await findWalletRowById(params.walletId);
-    if (!row || row.user_id !== params.userId || row.status !== "used") {
-      return;
-    }
-    if (params.orderId && row.used_order_id !== params.orderId) return;
-    if (params.bookingId && row.used_booking_id !== params.bookingId) return;
-    const now = new Date();
-    const expiredByWallet = row.expires_at ? now > row.expires_at : false;
-    let expiredByCampaign = false;
-    if (row.campaign_id) {
-      const campaign = await findCampaignRowById(row.campaign_id);
-      if (campaign?.end_at && now > campaign.end_at) expiredByCampaign = true;
-    }
-    await markWalletStatus({
-      walletId: row.wallet_id,
-      userId: row.user_id,
-      campaignId: row.campaign_id,
-      grantedAt: row.granted_at ?? now,
-      status: expiredByWallet || expiredByCampaign ? "expired" : "active",
-      usedAt: null,
-      usedOrderId: null,
-      usedBookingId: null,
-    });
-  } catch {
-    return;
-  }
 }

@@ -2,8 +2,11 @@
 // scope and minimum-order checks, ownership. Storage untouched on
 // every rejection path.
 import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { makeUserRow } from "../helpers/auth.fixtures";
 import {
   resetServiceMocks,
+  serviceStubs,
+  userRepoMocks,
   voucherCampaignRepoMocks,
   voucherStubs,
   voucherWalletRepoMocks,
@@ -16,6 +19,7 @@ import {
 } from "../helpers/voucher.fixtures";
 
 // Helpers first, mocks second, system under test last.
+mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module(
   "@/lib/vouchers/voucher-campaign.repository",
   () => voucherCampaignRepoMocks,
@@ -25,16 +29,17 @@ mock.module(
   () => voucherWalletRepoMocks,
 );
 
-import {
-  grantWallet,
-  redeemWallet,
-} from "@/lib/vouchers/voucher-wallet.service";
+import { redeemWallet } from "@/lib/vouchers/voucher-spend.service";
+import { grantWallet } from "@/lib/vouchers/voucher-wallet.service";
 
 beforeEach(() => {
   resetServiceMocks();
   voucherStubs.campaignById = makeCampaignRow({ scope: "all", min_order: 0 });
   voucherStubs.walletById = null;
   voucherStubs.userCampaignCount = 0;
+  // Grants only land on a live customer account — the default stub is
+  // one; tests override it to probe the rejection paths.
+  serviceStubs.userById = makeUserRow();
 });
 
 describe("grantWallet permissions", () => {
@@ -92,6 +97,44 @@ describe("grantWallet permissions", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.status).toBe(400);
+    expect(voucherStubs.insertedWallets).toHaveLength(0);
+  });
+
+  test("unknown or non-customer target leaves storage untouched", async () => {
+    serviceStubs.userById = null;
+    const missing = await grantWallet(
+      { id: "admin-1", role: "admin" },
+      { campaignId: "camp-1", userId: "ghost-1" },
+    );
+    expect(missing.ok).toBe(false);
+    if (!missing.ok) expect(missing.status).toBe(404);
+
+    serviceStubs.userById = makeUserRow({ role: "dispatcher" });
+    const staff = await grantWallet(
+      { id: "disp-1", role: "dispatcher" },
+      { campaignId: "camp-1", userId: "disp-1" },
+    );
+    expect(staff.ok).toBe(false);
+    if (!staff.ok) expect(staff.status).toBe(404);
+    expect(voucherStubs.insertedWallets).toHaveLength(0);
+  });
+
+  test("dispatcher cannot grant an unbounded percent campaign", async () => {
+    // percent without max_discount has no VND ceiling, so any cap must
+    // block it — comparing raw 1-100 values against a money cap is a bug.
+    voucherStubs.campaignById = makeCampaignRow({
+      discount_type: "percent",
+      discount_value: 20,
+      max_discount: 0,
+      dispatcher_max_value: 50000,
+    });
+    const result = await grantWallet(
+      { id: "disp-1", role: "dispatcher" },
+      { campaignId: "camp-1", userId: "cust-1" },
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(403);
     expect(voucherStubs.insertedWallets).toHaveLength(0);
   });
 });
@@ -154,6 +197,23 @@ describe("redeemWallet guards", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.status).toBe(404);
+    expect(voucherStubs.statusMarks).toHaveLength(0);
+  });
+
+  test("a lost CAS race reports the wallet as already spent", async () => {
+    // A concurrent checkout won the transition between our read and our
+    // write — the spend must fail instead of double-granting a discount.
+    voucherStubs.casRejected = true;
+    const result = await redeemWallet({
+      walletId: VOUCHER_WALLET_ID,
+      userId: VOUCHER_CUSTOMER_ID,
+      subtotal: 500000,
+      kind: "order",
+      orderId: "order-1",
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(400);
     expect(voucherStubs.statusMarks).toHaveLength(0);
   });
 });

@@ -9,7 +9,7 @@ import { toBookingStatus } from "@/lib/mechanic/mechanic-mapper";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 import { isUuid } from "@/lib/validation";
 import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
-import { restoreWalletForRef } from "@/lib/vouchers/voucher-wallet.service";
+import { restoreWalletForRef } from "@/lib/vouchers/voucher-spend.service";
 import {
   mapBookingSummaries,
   readBookingDetail,

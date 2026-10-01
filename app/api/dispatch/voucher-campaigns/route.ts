@@ -1,6 +1,6 @@
+import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
 import { listCampaigns } from "@/lib/vouchers/voucher-campaign.service";
-import { NextResponse } from "next/server";
 
 export async function GET() {
   const { response } = await requireRole("dispatcher", "admin");
@@ -8,7 +8,10 @@ export async function GET() {
   try {
     const result = await listCampaigns();
     if (!result.ok) {
-      return NextResponse.json({ errors: result.errors }, { status: result.status });
+      return NextResponse.json(
+        { errors: result.errors },
+        { status: result.status },
+      );
     }
     return NextResponse.json({
       campaigns: result.data.filter((item) => item.isActive),

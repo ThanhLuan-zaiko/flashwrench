@@ -5,10 +5,15 @@
 import { mock } from "bun:test";
 import type { CampaignRow, WalletRow } from "@/lib/vouchers/voucher.types";
 import type {
+  GrantSlotOutcome,
   InsertCampaignParams,
   UpdateCampaignParams,
 } from "@/lib/vouchers/voucher-campaign.repository";
-import type { InsertWalletParams } from "@/lib/vouchers/voucher-wallet.repository";
+import type {
+  InsertWalletParams,
+  WalletIdPage,
+  WalletTransitionParams,
+} from "@/lib/vouchers/voucher-wallet.repository";
 
 export const voucherStubs = {
   campaignById: null as CampaignRow | null,
@@ -17,7 +22,13 @@ export const voucherStubs = {
   campaignRows: [] as CampaignRow[],
   walletById: null as WalletRow | null,
   walletRowsByUser: [] as WalletRow[],
+  walletIdPageState: null as string | null,
   userCampaignCount: 0,
+  // Forces every commitWalletTransition to lose its CAS race, so a test
+  // can simulate a concurrent spend winning first.
+  casRejected: false,
+  // Overrides claimGrantSlot's computed outcome when set.
+  grantSlotOutcome: null as GrantSlotOutcome | null,
   insertedWallets: [] as InsertWalletParams[],
   insertedCampaigns: [] as InsertCampaignParams[],
   statusMarks: [] as {
@@ -56,8 +67,25 @@ export const voucherCampaignRepoMocks = {
   setCampaignActive: mock(
     async (_campaignId: string, _isActive: boolean): Promise<void> => undefined,
   ),
-  bumpGrantedCount: mock(
-    async (_campaignId: string, _delta: number): Promise<void> => undefined,
+  // Mirrors the real CAS loop closely enough for service tests: the stub
+  // campaign is the row being claimed, and a sold-out fixture returns
+  // "limit" exactly like the database would.
+  claimGrantSlot: mock(
+    async (
+      _campaignId: string,
+      totalLimit: number,
+    ): Promise<GrantSlotOutcome> => {
+      if (voucherStubs.grantSlotOutcome) return voucherStubs.grantSlotOutcome;
+      const row = voucherStubs.campaignById;
+      if (!row) return "error";
+      const current = row.granted_count ?? 0;
+      if (totalLimit > 0 && current >= totalLimit) return "limit";
+      voucherStubs.campaignById = { ...row, granted_count: current + 1 };
+      return "ok";
+    },
+  ),
+  releaseGrantSlot: mock(
+    async (_campaignId: string): Promise<void> => undefined,
   ),
 };
 
@@ -66,9 +94,28 @@ export const voucherWalletRepoMocks = {
     async (_walletId: string): Promise<WalletRow | null> =>
       voucherStubs.walletById,
   ),
-  listWalletRowsByUser: mock(
-    async (_userId: string, _limit?: number): Promise<WalletRow[]> =>
-      voucherStubs.walletRowsByUser,
+  // Serves one page of index ids from the same fixture list the row
+  // fan-out reads — paging slices by limit so tests can walk pages.
+  listWalletIdsByUser: mock(
+    async (
+      _userId: string,
+      limit: number,
+      _pageState?: string | null,
+    ): Promise<WalletIdPage> => ({
+      ids: voucherStubs.walletRowsByUser
+        .slice(0, Math.min(Math.max(limit, 1), 100))
+        .map((row) => row.wallet_id ?? "")
+        .filter((id) => id !== ""),
+      pageState: voucherStubs.walletIdPageState,
+    }),
+  ),
+  listWalletRowsByIds: mock(
+    async (walletIds: string[]): Promise<WalletRow[]> =>
+      walletIds
+        .map((id) =>
+          voucherStubs.walletRowsByUser.find((row) => row.wallet_id === id),
+        )
+        .filter((row): row is WalletRow => row !== undefined),
   ),
   countUserWalletsForCampaign: mock(
     async (_userId: string, _campaignId: string): Promise<number> =>
@@ -77,17 +124,30 @@ export const voucherWalletRepoMocks = {
   insertWallet: mock(async (params: InsertWalletParams): Promise<void> => {
     voucherStubs.insertedWallets.push(params);
   }),
-  markWalletStatus: mock(
-    async (params: {
-      walletId: string;
-      userId: string;
-      campaignId: string | null;
-      grantedAt: Date;
-      status: string;
-      usedAt: Date | null;
-      usedOrderId: string | null;
-      usedBookingId: string | null;
-    }): Promise<void> => {
+  // Mirrors the real CAS guard: unmet expectations (wrong status or a
+  // ref that does not match) reject the transition without writing.
+  commitWalletTransition: mock(
+    async (params: WalletTransitionParams): Promise<boolean> => {
+      if (voucherStubs.casRejected) return false;
+      const row = voucherStubs.walletById;
+      if (
+        params.expectStatus !== undefined &&
+        row?.status !== params.expectStatus
+      ) {
+        return false;
+      }
+      if (
+        params.expectUsedOrderId != null &&
+        row?.used_order_id !== params.expectUsedOrderId
+      ) {
+        return false;
+      }
+      if (
+        params.expectUsedBookingId != null &&
+        row?.used_booking_id !== params.expectUsedBookingId
+      ) {
+        return false;
+      }
       voucherStubs.statusMarks.push({
         walletId: params.walletId,
         status: params.status,
@@ -103,6 +163,7 @@ export const voucherWalletRepoMocks = {
           used_booking_id: params.usedBookingId,
         };
       }
+      return true;
     },
   ),
 };
@@ -127,7 +188,10 @@ export function resetVoucherMocks(): void {
   voucherStubs.campaignRows = [];
   voucherStubs.walletById = null;
   voucherStubs.walletRowsByUser = [];
+  voucherStubs.walletIdPageState = null;
   voucherStubs.userCampaignCount = 0;
+  voucherStubs.casRejected = false;
+  voucherStubs.grantSlotOutcome = null;
   voucherStubs.insertedWallets = [];
   voucherStubs.insertedCampaigns = [];
   voucherStubs.statusMarks = [];

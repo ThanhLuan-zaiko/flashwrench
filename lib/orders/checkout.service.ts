@@ -13,7 +13,7 @@ import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
 import {
   redeemWallet,
   releaseWalletReservation,
-} from "@/lib/vouchers/voucher-wallet.service";
+} from "@/lib/vouchers/voucher-spend.service";
 import { clearCartRows, listCartRows } from "./cart.repository";
 import { reserveOrderLines } from "./order-lines.service";
 import { orderShippingFee } from "./order-pricing";
@@ -230,7 +230,7 @@ async function runCheckout(
   } catch (error) {
     // The simulated totals below stay untouched: the wallet reservation
     // is released so the customer keeps the voucher.
-    if (walletId) await releaseWalletReservation(walletId);
+    if (walletId) await releaseWalletReservation(walletId, { orderId });
     throw error;
   }
   if (walletId && actor.customerId) {

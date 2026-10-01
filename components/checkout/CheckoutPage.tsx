@@ -67,9 +67,9 @@ export function CheckoutPage() {
   const cartView = cart.data?.cart ?? null;
   const submitting = checkout.isPending;
   const isAccount = me.isSuccess && me.data?.role === "customer";
-  const myWallets = useMyWallets(isAccount);
+  const myWallets = useMyWallets(isAccount, { limit: 100 });
   const selectedWallet =
-    myWallets.data?.find((wallet) => wallet.id === walletId) ?? null;
+    myWallets.data?.items.find((wallet) => wallet.id === walletId) ?? null;
   const walletDiscount = selectedWallet
     ? clampVoucherDiscount({
         discountType: selectedWallet.discountType,

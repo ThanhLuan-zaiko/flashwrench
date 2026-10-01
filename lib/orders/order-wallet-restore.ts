@@ -1,7 +1,7 @@
 // Wallet refund for voided orders: a cancelled or refunded order
 // returns its spent wallet so the customer can spend it again.
 import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
-import { restoreWalletForRef } from "@/lib/vouchers/voucher-wallet.service";
+import { restoreWalletForRef } from "@/lib/vouchers/voucher-spend.service";
 
 export async function refundOrderWallet(params: {
   couponCode: string | null;
