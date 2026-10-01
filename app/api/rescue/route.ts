@@ -4,6 +4,7 @@ import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
+import { notifyRescueCreated } from "@/lib/mail/confirmation.service";
 import { createRescueRequest } from "@/lib/rescue/rescue.service";
 import type { CreateRescueInput } from "@/lib/rescue/rescue.types";
 import { listCustomerRescues } from "@/lib/rescue/rescue-reader.service";
@@ -50,17 +51,18 @@ export async function POST(request: Request) {
   }
 
   const customer = await authenticateRequest();
+  const input = body as CreateRescueInput;
   try {
-    const result = await createRescueRequest(
-      customer,
-      body as CreateRescueInput,
-    );
+    const result = await createRescueRequest(customer, input);
     if (!result.ok) {
       return NextResponse.json(
         { errors: result.errors },
         { status: result.status },
       );
     }
+    // Courtesy copy of the confirmation: fire-and-forget, a mail outage
+    // must never fail a rescue that already persisted.
+    notifyRescueCreated(result.data, input.email);
     return NextResponse.json({ request: result.data }, { status: 201 });
   } catch {
     return NextResponse.json(

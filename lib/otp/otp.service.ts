@@ -3,6 +3,7 @@
 // owns the resend cooldown, the attempt budget and the single generic
 // failure message.
 
+import { mailLogoAttachments } from "@/lib/mail/email-shell";
 import { isMailConfigured } from "@/lib/mail/mail.config";
 import { sendMail } from "@/lib/mail/mailer.service";
 import { buildOtpEmail, maskEmail } from "@/lib/mail/otp-email";
@@ -99,7 +100,11 @@ export async function requestEmailOtp(
 
   try {
     const content = buildOtpEmail(email, code, OTP_PURPOSE_LABELS[purpose]);
-    await sendMail({ to: email, ...content });
+    await sendMail({
+      to: email,
+      ...content,
+      attachments: mailLogoAttachments(),
+    });
   } catch (error) {
     // Roll the row back: a code nobody received must not stay valid, and
     // leaving it would make the next attempt look like it is in cooldown.

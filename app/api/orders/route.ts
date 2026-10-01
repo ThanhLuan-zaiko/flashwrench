@@ -5,6 +5,7 @@ import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
+import { notifyOrderCreated } from "@/lib/mail/confirmation.service";
 import { checkoutCart, checkoutGuestCart } from "@/lib/orders/checkout.service";
 import { listMyOrders } from "@/lib/orders/orders.service";
 import type { CheckoutInput } from "@/lib/orders/orders.types";
@@ -103,6 +104,9 @@ export async function POST(request: Request) {
         orderId: result.data.id,
       });
     }
+    // Courtesy copy of the tracking link: fire-and-forget, a mail outage
+    // must never fail a checkout that already persisted.
+    notifyOrderCreated(result.data);
     return NextResponse.json({ order: result.data }, { status: 201 });
   } catch {
     return NextResponse.json(

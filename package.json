@@ -14,6 +14,7 @@
     "type-check": "tsc --noEmit",
     "check:lines": "bun .github/scripts/check-file-limits.ts",
     "check:all": "bun run lint && bun run type-check && bun run check:lines",
+    "check:mail": "bun run scripts/check-mail.ts",
     "test": "bun run test:unit && bun run test:integration && bun run test:regression",
     "test:unit": "bash tests/run-suite.sh tests/unit",
     "test:integration": "bash tests/run-suite.sh tests/integration",

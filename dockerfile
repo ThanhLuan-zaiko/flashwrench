@@ -42,6 +42,10 @@ COPY --from=builder --chown=bun:bun /app/public ./public
 # (lib/pdf/pdf-fonts.ts). Without this the standalone image has no font and
 # every Vietnamese invoice fails to render.
 COPY --from=builder --chown=bun:bun /app/asset/fonts ./asset/fonts
+# Downscaled brand logo embedded as a CID attachment in transactional mail
+# (lib/mail/email-shell.ts). Missing file degrades to a broken img, not a
+# failed send — but ship it so the header renders.
+COPY --from=builder --chown=bun:bun /app/asset/mail-logo.png ./asset/mail-logo.png
 
 USER bun
 

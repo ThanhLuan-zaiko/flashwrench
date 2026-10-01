@@ -20,6 +20,7 @@ import {
   resultResponse,
   routeFailure,
 } from "@/lib/http/workspace-route";
+import { notifyBookingCreated } from "@/lib/mail/confirmation.service";
 import { mergeGuestCart } from "@/lib/orders/cart.service";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 
@@ -115,6 +116,7 @@ export async function POST(request: Request) {
       }
       const { booking, user: newUser, tokens } = signup.data;
       publishNewBooking(booking, newUser.id);
+      notifyBookingCreated(booking, newUser.email, newUser.fullName);
       // Same guest-cart handoff as register: what the shopper already
       // picked follows them into the new account.
       const guestId = await readGuestId();
@@ -166,6 +168,13 @@ export async function POST(request: Request) {
     }
     const booking = result.data;
     publishNewBooking(booking, user?.id ?? null);
+    // Courtesy copy of the tracking link: fire-and-forget so an SMTP
+    // outage can never fail a booking that already persisted.
+    notifyBookingCreated(
+      booking,
+      user?.email ?? input.email,
+      user?.fullName ?? input.fullName,
+    );
     return NextResponse.json({ booking }, { status: 201 });
   } catch {
     return NextResponse.json(

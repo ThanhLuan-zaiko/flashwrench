@@ -3,6 +3,8 @@
 // The gateway runs with `bun --hot` so editing realtime/server.ts (or the
 // modules it imports) reloads the gateway in place: web HMR plus gateway
 // hot reload means code changes show up without restarting anything.
+import { reportMailStatus } from "./check-mail";
 import { devChildren, runChildren } from "./proc-config";
 
+await reportMailStatus();
 await runChildren(devChildren());

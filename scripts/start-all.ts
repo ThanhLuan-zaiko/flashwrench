@@ -6,6 +6,8 @@
 // file watching, so editing source does nothing until the next `bun run
 // build`. Instant updates belong to `bun run dev:all`; rebuilding on every
 // change would cost a full production build per edit plus restart downtime.
+import { reportMailStatus } from "./check-mail";
 import { runChildren, startChildren } from "./proc-config";
 
+await reportMailStatus();
 await runChildren(startChildren());

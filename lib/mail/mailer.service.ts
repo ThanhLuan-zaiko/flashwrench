@@ -74,6 +74,7 @@ export async function sendMail(message: MailMessage): Promise<void> {
       subject: message.subject,
       text: message.text,
       html: message.html,
+      attachments: message.attachments,
     });
   } catch (error) {
     throw new MailDeliveryError(
