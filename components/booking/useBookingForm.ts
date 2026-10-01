@@ -1,8 +1,10 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
+import { seedSessionUser } from "@/hooks/auth";
 import { useCreateBooking } from "@/hooks/booking";
 import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import { validateCreateBookingInput } from "@/lib/booking/booking.validation";
@@ -42,12 +44,20 @@ export function useBookingForm({
 }: UseBookingFormOptions) {
   const router = useRouter();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const createBooking = useCreateBooking();
   const [serviceId, setServiceId] = useState(initialServiceId ?? "");
   const [contact, setContact] = useState({
     fullName: "",
     phone: "",
     email: "",
+  });
+  // Guest inline signup: the contact trio doubles as the account
+  // identity, so opting in only adds the password pair.
+  const [signup, setSignup] = useState({
+    enabled: false,
+    password: "",
+    confirmPassword: "",
   });
   const [scheduledAt, setScheduledAt] = useState(defaultScheduled);
   const [coords, setCoords] = useState<MapPoint | null>(
@@ -112,6 +122,10 @@ export function useBookingForm({
       fullName: guest ? contact.fullName : undefined,
       phone: guest ? contact.phone : undefined,
       email: guest ? contact.email : undefined,
+      createAccount: guest && signup.enabled ? true : undefined,
+      password: guest && signup.enabled ? signup.password : undefined,
+      confirmPassword:
+        guest && signup.enabled ? signup.confirmPassword : undefined,
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
       mechanicId: guest ? null : mechanicId,
@@ -126,6 +140,17 @@ export function useBookingForm({
     setErrors(EMPTY_ERRORS);
     createBooking.mutate(payload, {
       onSuccess: (data) => {
+        // Inline signup: the same submit minted a session, so land on the
+        // account-side confirmation instead of the public tracking page.
+        if (data.user) {
+          seedSessionUser(queryClient, data.user);
+          toast.success(
+            "Đặt lịch và tạo tài khoản thành công",
+            "Đơn này đã nằm trong lịch sử tài khoản của bạn.",
+          );
+          router.replace(BOOKING_SUCCESS_REDIRECT);
+          return;
+        }
         toast.success("Đặt lịch thành công", "Thợ sẽ xác nhận trong vài phút.");
         // Guests hold no account history — the public tracking page is
         // their confirmation and follow-up channel.
@@ -166,6 +191,8 @@ export function useBookingForm({
     setMechanicId,
     contact,
     setContact,
+    signup,
+    setSignup,
     address,
     setAddress,
     vehicle,

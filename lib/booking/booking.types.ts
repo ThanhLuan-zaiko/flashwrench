@@ -10,6 +10,12 @@ export type CreateBookingInput = {
   fullName?: string;
   phone?: string;
   email?: string;
+  // Inline signup: a guest can finish account creation in the same submit
+  // — the contact trio doubles as the account identity, only the password
+  // is new. Ignored when a session already exists.
+  createAccount?: boolean;
+  password?: string;
+  confirmPassword?: string;
   address: string;
   province?: string;
   district?: string;
@@ -55,6 +61,8 @@ export type BookingFieldErrors = Partial<
     | "fullName"
     | "phone"
     | "email"
+    | "password"
+    | "confirmPassword"
     | "address"
     | "province"
     | "district"

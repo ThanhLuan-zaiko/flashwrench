@@ -212,4 +212,65 @@ describe("validateCreateBookingInput — guest mode", () => {
     expect(result.errors.phone).toBeTruthy();
     expect(result.errors.email).toBeTruthy();
   });
+
+  test("ignores stray password fields when account creation is off", () => {
+    const result = validateCreateBookingInput(
+      makeBookingInput({
+        fullName: "Tran Thi Be",
+        phone: "0909999888",
+        email: "be@example.com",
+        createAccount: false,
+        password: "x",
+        confirmPassword: "y",
+      }),
+      { guest: true },
+    );
+    expect("value" in result).toBe(true);
+  });
+
+  test("demands a valid matching password pair for inline signup", () => {
+    const contact = {
+      fullName: "Tran Thi Be",
+      phone: "0909999888",
+      email: "be@example.com",
+      createAccount: true,
+    };
+    const missing = validateCreateBookingInput(makeBookingInput(contact), {
+      guest: true,
+    });
+    expect("errors" in missing).toBe(true);
+    if (!("errors" in missing)) return;
+    expect(missing.errors.password).toBeTruthy();
+    expect(missing.errors.confirmPassword).toBeTruthy();
+
+    const weak = validateCreateBookingInput(
+      makeBookingInput({ ...contact, password: "short" }),
+      { guest: true },
+    );
+    expect("errors" in weak).toBe(true);
+    if (!("errors" in weak)) return;
+    expect(weak.errors.password).toBeTruthy();
+
+    const mismatched = validateCreateBookingInput(
+      makeBookingInput({
+        ...contact,
+        password: "secret123",
+        confirmPassword: "secret124",
+      }),
+      { guest: true },
+    );
+    expect("errors" in mismatched).toBe(true);
+    if (!("errors" in mismatched)) return;
+    expect(mismatched.errors.confirmPassword).toContain("khớp");
+
+    const ok = validateCreateBookingInput(
+      makeBookingInput({
+        ...contact,
+        password: "secret123",
+        confirmPassword: "secret123",
+      }),
+      { guest: true },
+    );
+    expect("value" in ok).toBe(true);
+  });
 });

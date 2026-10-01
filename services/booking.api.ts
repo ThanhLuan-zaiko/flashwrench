@@ -9,13 +9,25 @@ import type {
   BookingTravelPoint,
   CursorPage,
 } from "@/lib/booking/workspace.types";
-import { AuthApiError, apiRequest } from "./auth.api";
+import {
+  AuthApiError,
+  apiRequest,
+  type PublicUser,
+  reconnectTransport,
+} from "./auth.api";
 
 export type {
   AuthApiError,
   BookingFieldErrors,
   CreateBookingInput,
   CreatedBooking,
+};
+
+export type CreateBookingResponse = {
+  booking: CreatedBooking;
+  // Present only when the guest checked "create account" — the same
+  // submit registered them, so the response carries the new session user.
+  user?: PublicUser;
 };
 
 export class BookingApiError extends Error {
@@ -35,12 +47,14 @@ export class BookingApiError extends Error {
 // bounces a logged-in customer back to the login page mid-booking.
 export async function createBookingRequest(
   payload: CreateBookingInput,
-): Promise<{ booking: CreatedBooking }> {
+): Promise<CreateBookingResponse> {
   try {
-    return await apiRequest<{ booking: CreatedBooking }>("/api/bookings", {
+    const data = await apiRequest<CreateBookingResponse>("/api/bookings", {
       method: "POST",
       body: JSON.stringify(payload),
     });
+    if (data.user) reconnectTransport();
+    return data;
   } catch (error) {
     if (error instanceof AuthApiError) {
       throw new BookingApiError(

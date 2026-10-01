@@ -74,7 +74,10 @@ async function rawRequest(path: string, init?: RequestInit): Promise<Response> {
 
 let refreshPromise: Promise<boolean> | null = null;
 
-function reconnectTransport(): void {
+// Exported for flows that mint a session outside login/register (guest
+// booking inline signup): the socket layer must reconnect under the new
+// identity there too.
+export function reconnectTransport(): void {
   void import("@/lib/realtime/realtime-client")
     .then((client) => client.reconnectRealtime())
     .catch(() => undefined);

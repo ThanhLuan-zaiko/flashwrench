@@ -2,6 +2,7 @@ import {
   normalizeEmail,
   normalizePhone,
   validateEmail,
+  validatePassword,
   validatePhone,
 } from "@/lib/auth/validation";
 import { normalizeTimeZone } from "@/lib/datetime/timezone";
@@ -102,6 +103,23 @@ export function validateCreateBookingInput(
       errors.email = emailError;
     } else {
       email = normalizeEmail(input.email ?? "");
+    }
+
+    // Inline signup: opting in asks for just the password pair — the
+    // contact trio doubles as the account identity. The register service
+    // re-checks everything; this pass exists so the form shows the
+    // booking-style field errors in one go.
+    if (input.createAccount === true) {
+      const password = typeof input.password === "string" ? input.password : "";
+      const passwordError = validatePassword(password);
+      if (passwordError) errors.password = passwordError;
+      const confirm =
+        typeof input.confirmPassword === "string" ? input.confirmPassword : "";
+      if (!confirm) {
+        errors.confirmPassword = "Vui lòng nhập lại mật khẩu.";
+      } else if (confirm !== password) {
+        errors.confirmPassword = "Mật khẩu nhập lại không khớp.";
+      }
     }
   }
 

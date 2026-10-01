@@ -137,6 +137,19 @@ export async function insertCustomerBooking(
         params.mechanicName,
       ],
     });
+  } else if (params.customerPhone) {
+    // Guest bookings leave a contact-keyed lookup row so a later
+    // register/login with the same phone+email can absorb them.
+    queries.push({
+      query:
+        "INSERT INTO guest_bookings_by_phone (phone, booking_id, created_at, email) VALUES (?, ?, ?, ?)",
+      params: [
+        params.customerPhone,
+        params.bookingId,
+        params.createdAt,
+        params.customerEmail,
+      ],
+    });
   }
 
   if (params.mechanicId) {

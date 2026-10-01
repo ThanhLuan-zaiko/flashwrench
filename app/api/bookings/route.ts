@@ -1,14 +1,50 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest, requireAuth } from "@/lib/auth/authorization";
+import { setSessionCookies } from "@/lib/auth/cookies";
+import { enforceRequestGuards } from "@/lib/auth/guards";
+import {
+  clearedGuestCookieOptions,
+  GUEST_COOKIE,
+  readGuestId,
+} from "@/lib/auth/guest-session";
+import { deviceLabel } from "@/lib/auth/user-sessions";
 import { createCustomerBooking } from "@/lib/booking/booking.service";
-import type { CreateBookingInput } from "@/lib/booking/booking.types";
+import type {
+  CreateBookingInput,
+  CreatedBooking,
+} from "@/lib/booking/booking.types";
+import { createGuestBookingWithAccount } from "@/lib/booking/booking-signup.service";
 import { listCustomerBookings } from "@/lib/booking/customer-booking.service";
 import {
   mutationOriginError,
   resultResponse,
   routeFailure,
 } from "@/lib/http/workspace-route";
+import { mergeGuestCart } from "@/lib/orders/cart.service";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
+
+// Signal only: subscribers refetch the real rows over HTTPS. A
+// preselected mechanic gets the job in their personal inbox, so their
+// queue updates without a reload; unassigned jobs stay on the booking
+// topic for the future dispatcher board.
+function publishNewBooking(booking: CreatedBooking, actorId: string | null) {
+  void publishBookingChange(
+    "booking-created",
+    booking.bookingId,
+    booking.status,
+    actorId,
+    [booking.mechanicId],
+  );
+  if (booking.mechanicId) {
+    void publishBookingChange(
+      "booking-assigned",
+      booking.bookingId,
+      booking.status,
+      actorId,
+      [booking.mechanicId],
+    );
+  }
+}
 
 // Customer booking creation. Thin handler: parse input, call the service,
 // shape the response, then fan the new-booking signal out over the
@@ -38,6 +74,9 @@ export async function GET(request: Request) {
 // contact trio (name/phone/email) plus the service address, and the row
 // stores customer_id null like a public rescue request. A logged-in
 // caller keeps the account link so the booking shows in their history.
+// With `createAccount`, the same submit also registers the guest — the
+// contact trio doubles as the account identity and the booking lands on
+// the fresh account directly.
 export async function POST(request: Request) {
   const originError = mutationOriginError(request);
   if (originError) return originError;
@@ -54,8 +93,49 @@ export async function POST(request: Request) {
   }
 
   const input = body as CreateBookingInput;
+  const wantsAccount = user === null && input.createAccount === true;
+  if (wantsAccount) {
+    // This request doubles as a registration, so it borrows the register
+    // bucket's stricter rate limit on top of the CSRF origin check above.
+    const blocked = await enforceRequestGuards(request, "register");
+    if (blocked) return blocked;
+  }
 
   try {
+    if (wantsAccount) {
+      const signup = await createGuestBookingWithAccount(
+        input,
+        deviceLabel(request.headers.get("user-agent")),
+      );
+      if (!signup.ok) {
+        return NextResponse.json(
+          { errors: signup.errors },
+          { status: signup.status },
+        );
+      }
+      const { booking, user: newUser, tokens } = signup.data;
+      publishNewBooking(booking, newUser.id);
+      // Same guest-cart handoff as register: what the shopper already
+      // picked follows them into the new account.
+      const guestId = await readGuestId();
+      if (guestId) {
+        try {
+          await mergeGuestCart(guestId, newUser.id);
+        } catch {
+          // Best effort only.
+        }
+      }
+      const response = NextResponse.json(
+        { booking, user: newUser },
+        { status: 201 },
+      );
+      setSessionCookies(response, tokens);
+      if (guestId) {
+        response.cookies.set(GUEST_COOKIE, "", clearedGuestCookieOptions());
+      }
+      return response;
+    }
+
     const result = await createCustomerBooking(user, {
       serviceId: input.serviceId ?? "",
       scheduledAt: input.scheduledAt ?? "",
@@ -85,26 +165,7 @@ export async function POST(request: Request) {
       );
     }
     const booking = result.data;
-    // Signal only: subscribers refetch the real rows over HTTPS.
-    // A preselected mechanic gets the job in their personal inbox, so
-    // their queue updates without a reload; unassigned jobs stay on the
-    // booking topic for the future dispatcher board.
-    void publishBookingChange(
-      "booking-created",
-      booking.bookingId,
-      booking.status,
-      user?.id ?? null,
-      [booking.mechanicId],
-    );
-    if (booking.mechanicId) {
-      void publishBookingChange(
-        "booking-assigned",
-        booking.bookingId,
-        booking.status,
-        user?.id ?? null,
-        [booking.mechanicId],
-      );
-    }
+    publishNewBooking(booking, user?.id ?? null);
     return NextResponse.json({ booking }, { status: 201 });
   } catch {
     return NextResponse.json(

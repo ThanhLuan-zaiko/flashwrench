@@ -468,6 +468,17 @@ CREATE TABLE IF NOT EXISTS bookings_by_status (
   PRIMARY KEY ((status, month_bucket), scheduled_at, booking_id)
 ) WITH CLUSTERING ORDER BY (scheduled_at DESC, booking_id ASC);
 
+-- Query: unclaimed guest bookings a fresh sign-in can absorb.
+-- Rows are written only while customer_id is null; a claim matches on the
+-- phone partition AND the stored email, then deletes the row.
+CREATE TABLE IF NOT EXISTS guest_bookings_by_phone (
+  phone      TEXT,
+  booking_id UUID,
+  created_at TIMESTAMP,
+  email      TEXT,
+  PRIMARY KEY ((phone), booking_id)
+);
+
 -- Line items of one booking (price snapshot at booking time)
 CREATE TABLE IF NOT EXISTS booking_items (
   booking_id   UUID,
@@ -773,6 +784,16 @@ CREATE TABLE IF NOT EXISTS orders_by_status (
   total        BIGINT,
   PRIMARY KEY ((status, month_bucket), created_at, order_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, order_id ASC);
+
+-- Query: unclaimed guest orders a fresh sign-in can absorb (same
+-- contact-pair match as guest_bookings_by_phone).
+CREATE TABLE IF NOT EXISTS guest_orders_by_phone (
+  phone      TEXT,
+  order_id   UUID,
+  created_at TIMESTAMP,
+  email      TEXT,
+  PRIMARY KEY ((phone), order_id)
+);
 
 -- Order lines (name + price snapshot at purchase time, kept even if price changes)
 CREATE TABLE IF NOT EXISTS order_items_by_order (

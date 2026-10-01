@@ -11,6 +11,9 @@ type BookingGuestContactProps = {
   values: GuestContactValues;
   errors: BookingFieldErrors;
   disabled?: boolean;
+  // Overrides the default "no account" hint while inline signup is on —
+  // the email then doubles as the new account's login.
+  emailHint?: string;
   onChange: (field: keyof GuestContactValues, value: string) => void;
 };
 
@@ -20,6 +23,7 @@ export function BookingGuestContact({
   values,
   errors,
   disabled,
+  emailHint,
   onChange,
 }: BookingGuestContactProps) {
   return (
@@ -64,7 +68,9 @@ export function BookingGuestContact({
         label="Email"
         required
         error={errors.email}
-        hint="Chỉ dùng để liên hệ về đơn này — không tạo tài khoản."
+        hint={
+          emailHint ?? "Chỉ dùng để liên hệ về đơn này — không tạo tài khoản."
+        }
       >
         <BookingTextInput
           id="guestEmail"

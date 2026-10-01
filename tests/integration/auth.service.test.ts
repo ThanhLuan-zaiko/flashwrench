@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { makeRegisterInput, makeUserRow } from "../helpers/auth.fixtures";
 import {
+  guestClaimServiceMocks,
   passwordMocks,
   refreshRepoMocks,
   resetServiceMocks,
@@ -14,6 +15,7 @@ import {
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
 mock.module("@/lib/auth/password", () => passwordMocks);
+mock.module("@/lib/auth/guest-claim.service", () => guestClaimServiceMocks);
 
 import {
   authenticate,
@@ -78,6 +80,28 @@ describe("registerUser", () => {
     if (result.ok) return;
     expect(result.errors.phone).toBeDefined();
   });
+
+  test("absorbs guest bookings/orders matching the account contact", async () => {
+    serviceStubs.userById = makeUserRow();
+    const result = await registerUser(makeRegisterInput(), "Test device");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(guestClaimServiceMocks.claimGuestRecords.mock.calls.length).toBe(1);
+    expect(
+      guestClaimServiceMocks.claimGuestRecords.mock.calls[0]?.[0],
+    ).toMatchObject({
+      id: result.user.id,
+      phone: result.user.phone,
+      email: result.user.email,
+    });
+  });
+
+  test("skips the guest-record claim when account creation fails", async () => {
+    serviceStubs.emailOwner = "existing-user";
+    const result = await registerUser(makeRegisterInput(), "Test device");
+    expect(result.ok).toBe(false);
+    expect(guestClaimServiceMocks.claimGuestRecords.mock.calls.length).toBe(0);
+  });
 });
 
 describe("loginUser", () => {
@@ -92,6 +116,7 @@ describe("loginUser", () => {
     if (!result.ok) return;
     expect(result.user.id).toBe("user-1");
     expect(refreshRepoMocks.createSession.mock.calls.length).toBe(1);
+    expect(guestClaimServiceMocks.claimGuestRecords.mock.calls.length).toBe(1);
   });
 
   test("rejects unknown identifiers with 401", async () => {

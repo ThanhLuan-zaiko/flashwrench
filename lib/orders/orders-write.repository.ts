@@ -140,6 +140,19 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
         ],
       },
     );
+  } else if (params.customerPhone) {
+    // Guest orders leave a contact-keyed lookup row so a later
+    // register/login with the same phone+email can absorb them.
+    statements.push({
+      query:
+        "INSERT INTO guest_orders_by_phone (phone, order_id, created_at, email) VALUES (?, ?, ?, ?)",
+      params: [
+        params.customerPhone,
+        params.orderId,
+        params.now,
+        params.customerEmail,
+      ],
+    });
   }
   for (const line of params.lines) {
     statements.push({

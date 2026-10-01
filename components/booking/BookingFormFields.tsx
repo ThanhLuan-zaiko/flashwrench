@@ -64,6 +64,7 @@ type TextProps = {
   disabled?: boolean;
   autoComplete?: string;
   inputMode?: "text" | "tel" | "numeric";
+  type?: "text" | "password";
 };
 
 export function BookingTextInput({
@@ -75,11 +76,12 @@ export function BookingTextInput({
   disabled,
   autoComplete,
   inputMode,
+  type = "text",
 }: TextProps) {
   return (
     <input
       id={id}
-      type="text"
+      type={type}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}

@@ -5,6 +5,7 @@ import { FormAlert } from "@/components/auth/FormAlert";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { BookingDetailsSection } from "./BookingDetailsSection";
 import { BookingGuestContact } from "./BookingGuestContact";
+import { BookingGuestSignup } from "./BookingGuestSignup";
 import { BookingMapSection } from "./BookingMapSection";
 import { BookingPrefillNotice } from "./BookingPrefillNotice";
 import { BookingReviewsSection } from "./BookingReviewsSection";
@@ -46,6 +47,8 @@ export function BookingForm({
     setMechanicId,
     contact,
     setContact,
+    signup,
+    setSignup,
     address,
     setAddress,
     vehicle,
@@ -110,14 +113,37 @@ export function BookingForm({
         </div>
 
         {guest && (
-          <div className="lg:col-start-2">
+          <div className="flex flex-col gap-4 lg:col-start-2">
             <BookingGuestContact
               values={contact}
               errors={errors}
               disabled={pending}
+              emailHint={
+                signup.enabled
+                  ? "Cũng là email đăng nhập cho tài khoản mới."
+                  : undefined
+              }
               onChange={(field, v) => {
                 setContact((prev) => ({ ...prev, [field]: v }));
                 clearError(field);
+              }}
+            />
+            <BookingGuestSignup
+              values={signup}
+              errors={errors}
+              disabled={pending}
+              onToggle={(enabled) => {
+                setSignup((prev) => ({ ...prev, enabled }));
+                clearError("password");
+                clearError("confirmPassword");
+              }}
+              onPassword={(v) => {
+                setSignup((prev) => ({ ...prev, password: v }));
+                clearError("password");
+              }}
+              onConfirmPassword={(v) => {
+                setSignup((prev) => ({ ...prev, confirmPassword: v }));
+                clearError("confirmPassword");
               }}
             />
           </div>

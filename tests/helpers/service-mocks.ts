@@ -14,6 +14,7 @@ import { makeUserRow } from "./auth.fixtures";
 import { bookingRepoMocks, resetBookingMocks } from "./booking.mocks";
 import { resetCatalogMocks } from "./catalog.mocks";
 import { complaintRepoMocks, resetComplaintMocks } from "./complaint.mocks";
+import { resetGuestClaimMocks } from "./guest-claim.mocks";
 import {
   mechanicBookingsRepoMocks,
   mechanicDirectoryRepoMocks,
@@ -41,6 +42,13 @@ export {
   categoryRepoMocks,
 } from "./catalog.mocks";
 export { complaintRepoMocks, complaintStubs } from "./complaint.mocks";
+export {
+  guestBookingClaimRepoMocks,
+  guestClaimServiceMocks,
+  guestClaimStubs,
+  guestOrderClaimRepoMocks,
+  paymentClaimRepoMocks,
+} from "./guest-claim.mocks";
 export {
   mechanicBookingsRepoMocks,
   mechanicDirectoryRepoMocks,
@@ -254,6 +262,7 @@ export function resetServiceMocks(): void {
   resetMechanicMocks();
   resetComplaintMocks();
   resetBookingMocks();
+  resetGuestClaimMocks();
   resetMediaMocks();
   resetPartsMocks();
   staffTempStubs.rowByUser = {};

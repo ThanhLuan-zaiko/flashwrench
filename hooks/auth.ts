@@ -65,6 +65,16 @@ function setAccountSession(
   queryClient.setQueryData<AccountSession>(authKeys.me, { user, status });
 }
 
+// Flows that mint a session without useLogin/useRegister (guest booking
+// inline signup) seed the same cached entry.
+export function seedSessionUser(
+  queryClient: QueryClient,
+  user: PublicUser,
+): void {
+  queryClient.clear();
+  setAccountSession(queryClient, user);
+}
+
 export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({

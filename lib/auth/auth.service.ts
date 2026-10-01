@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { claimGuestRecords } from "./guest-claim.service";
 import { hashPassword, verifyPassword } from "./password";
 import {
   createSession,
@@ -146,6 +147,11 @@ export async function registerUser(
     };
   }
   const user = toPublicUser(created);
+  // Registration proves control of the contact pair: guest bookings and
+  // orders filed under the same phone+email join the fresh account so
+  // the first history fetch already sees them. Best-effort — the helper
+  // swallows its own errors.
+  await claimGuestRecords(user);
   return { ok: true, user, tokens: await issueSessionPair(user, label) };
 }
 
@@ -195,6 +201,9 @@ export async function loginUser(
   }
 
   const user = toPublicUser(row);
+  // Same handoff as register: a guest who booked with this account's
+  // contact pair gets those records attached on sign-in.
+  await claimGuestRecords(user);
   return { ok: true, user, tokens: await issueSessionPair(user, label) };
 }
 
