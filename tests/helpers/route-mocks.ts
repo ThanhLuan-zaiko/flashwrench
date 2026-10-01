@@ -29,6 +29,7 @@ import type {
   MechanicDirectoryItem,
 } from "@/lib/mechanic/mechanic-directory.service";
 import { makePublicUser } from "./auth.fixtures";
+import { resetCartRouteMocks } from "./cart-route.mocks";
 import { resetCatalogRouteMocks } from "./catalog-route.mocks";
 import { mediaStorageMocks } from "./media.mocks";
 import { resetMediaRouteMocks } from "./media-route.mocks";
@@ -236,7 +237,7 @@ export const authorizationMocks = {
 export const bookingServiceMocks = {
   createCustomerBooking: mock(
     async (
-      _user: PublicUser,
+      _user: PublicUser | null,
       _input: CreateBookingInput,
     ): Promise<BookingResult<CreatedBooking>> =>
       routeStubs.bookingCreateResult ?? {
@@ -245,6 +246,10 @@ export const bookingServiceMocks = {
       },
   ),
 };
+
+// Cart service stubs (guest carts, TTL writes, auth-time merges) live in
+// cart-route.mocks.ts — this file is already at its size limit.
+export { cartRouteStubs, cartServiceRouteMocks } from "./cart-route.mocks";
 
 export const customerBookingServiceMocks = {
   listCustomerBookings: mock(
@@ -314,6 +319,7 @@ export function resetRouteMocks(): void {
   routeStubs.bookingListResult = null;
   routeStubs.mechanicsList = null;
   routeStubs.workspaceResult = null;
+  resetCartRouteMocks();
   resetCatalogRouteMocks();
   resetMediaRouteMocks();
   for (const fn of Object.values(guardMocks)) fn.mockClear();

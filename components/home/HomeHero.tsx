@@ -6,7 +6,6 @@ import { FiArrowRight, FiCheck, FiUserPlus } from "react-icons/fi";
 import logoImage from "@/asset/flashwrench.png";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 
 const TRUST_POINTS = ["Thợ đã xác thực", "Giá minh bạch", "Theo dõi tiến độ"];
 
@@ -50,7 +49,7 @@ export function HomeHero() {
             className="mt-7 flex w-full flex-col gap-2 sm:w-auto sm:flex-row"
           >
             <SmartCtaLink
-              guestHref={buildLoginHref(buildBookingHref())}
+              guestHref="/booking"
               authedHref="/booking"
               guestLabel={
                 <>
@@ -64,7 +63,7 @@ export function HomeHero() {
                   Đặt lịch ngay
                 </>
               }
-              guestAriaLabel="Đăng nhập để đặt lịch ngay"
+              guestAriaLabel="Đặt lịch ngay không cần tài khoản"
               authedAriaLabel="Đặt lịch ngay"
               className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
             />

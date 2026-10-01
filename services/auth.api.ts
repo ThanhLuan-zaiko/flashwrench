@@ -2,12 +2,12 @@ import type { AccountSession } from "@/lib/auth/account-status";
 import type { FieldErrors, PublicUser } from "@/lib/auth/user.types";
 import type { SessionListItem } from "@/lib/auth/user-sessions";
 
-export type { FieldErrors, PublicUser, SessionListItem };
 export type {
   AccountBlockReason,
   AccountSession,
   AccountStatus,
 } from "@/lib/auth/account-status";
+export type { FieldErrors, PublicUser, SessionListItem };
 
 export type RegisterPayload = {
   fullName: string;

@@ -1,17 +1,35 @@
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth/authorization";
+import { GUEST_CART_TTL_SECONDS } from "@/lib/auth/guest-session";
+import { resolveShopper } from "@/lib/auth/shopper";
 import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
 import { removeCartItem, updateCartItemQty } from "@/lib/orders/cart.service";
 
+function staffForbidden(): NextResponse {
+  return NextResponse.json(
+    { errors: { form: "Bạn không có quyền thực hiện thao tác này." } },
+    { status: 403 },
+  );
+}
+
+function noCart(): NextResponse {
+  return NextResponse.json(
+    { errors: { partId: "Sản phẩm không có trong giỏ." } },
+    { status: 404 },
+  );
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ partId: string }> },
 ) {
-  const { user, response } = await requireRole("customer");
-  if (response) return response;
+  const shopper = await resolveShopper();
+  if (shopper.user && shopper.user.role !== "customer") {
+    return staffForbidden();
+  }
+  if (!shopper.cartId) return noCart();
   const origin = mutationOriginError(request);
   if (origin) return origin;
   const body = await readJsonObject(request);
@@ -23,7 +41,12 @@ export async function PATCH(
   }
   try {
     const { partId } = await params;
-    const result = await updateCartItemQty(user.id, partId, body.qty);
+    const result = await updateCartItemQty(
+      shopper.cartId,
+      partId,
+      body.qty,
+      shopper.user ? undefined : GUEST_CART_TTL_SECONDS,
+    );
     if (!result.ok)
       return NextResponse.json(
         { errors: result.errors },
@@ -42,13 +65,16 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ partId: string }> },
 ) {
-  const { user, response } = await requireRole("customer");
-  if (response) return response;
+  const shopper = await resolveShopper();
+  if (shopper.user && shopper.user.role !== "customer") {
+    return staffForbidden();
+  }
+  if (!shopper.cartId) return noCart();
   const origin = mutationOriginError(request);
   if (origin) return origin;
   try {
     const { partId } = await params;
-    const result = await removeCartItem(user.id, partId);
+    const result = await removeCartItem(shopper.cartId, partId);
     if (!result.ok)
       return NextResponse.json(
         { errors: result.errors },

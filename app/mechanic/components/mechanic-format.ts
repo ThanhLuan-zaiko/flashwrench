@@ -28,8 +28,8 @@ import {
   STATUS_LABELS,
 } from "@/lib/mechanic/mechanic-status";
 
-export { MECHANIC_BOOKING_ACTIONS, STATUS_LABELS };
 export type { MechanicBookingAction };
+export { MECHANIC_BOOKING_ACTIONS, STATUS_LABELS };
 
 export function formatVnd(value: number): string {
   return `${new Intl.NumberFormat("vi-VN").format(value)}đ`;

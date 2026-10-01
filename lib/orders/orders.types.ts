@@ -153,6 +153,7 @@ export type OrderRow = {
   customer_id: string | null;
   customer_name: string | null;
   customer_phone: string | null;
+  customer_email: string | null;
   shipping_address: AddressSnapshot | null;
   status: string | null;
   payment_status: string | null;
@@ -246,6 +247,7 @@ export type OrderDetail = OrderSummary & {
   customerId: string | null;
   customerName: string;
   customerPhone: string;
+  customerEmail: string | null;
   address: AddressSnapshot | null;
   items: OrderItem[];
   history: OrderHistoryEntry[];
@@ -263,6 +265,7 @@ export type OrderHistoryEntry = {
 export type CheckoutInput = {
   recipientName: string;
   phone: string;
+  email?: string;
   fulfillment: string;
   address: string;
   addressLat: number | null;
@@ -292,32 +295,11 @@ export type CounterSaleInput = {
   lines: { partId: string; quantity: number }[];
 };
 
-// GPS breadcrumb written by the courier while an order is shipping.
-export type OrderTravelPointRow = {
-  order_id: string;
-  recorded_at: Date | null;
-  courier_id: string | null;
-  lat: number | null;
-  lng: number | null;
-};
-
-export type OrderTravelPoint = {
-  lat: number;
-  lng: number;
-  recordedAt: string | null;
-};
-
-// Customer-facing delivery tracking payload.
-export type OrderTrackView = {
-  destination: { lat: number; lng: number } | null;
-  courier: { lat: number; lng: number; updatedAt: string | null } | null;
-  points: OrderTravelPoint[];
-};
-
 export type OrderFieldErrors = Partial<
   Record<
     | "recipientName"
     | "phone"
+    | "email"
     | "fulfillment"
     | "paymentMethod"
     | "address"
@@ -345,3 +327,12 @@ export type OrdersResult<T> =
 export function orderToIso(value: Date | null): string | null {
   return value ? new Date(value).toISOString() : null;
 }
+
+// Tracking shapes live in orders-tracking.types.ts; re-exported here so
+// existing "@/lib/orders/orders.types" imports keep working.
+export type {
+  OrderTrackView,
+  OrderTravelPoint,
+  OrderTravelPointRow,
+  PublicOrderTracking,
+} from "./orders-tracking.types";

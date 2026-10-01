@@ -11,8 +11,14 @@ import type {
 import type { UserStatus } from "@/lib/auth/user.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
-export type { AdminUserItem, AdminUserAction, AdminRoleFilter };
-export type { StaffCreateInput, StaffUpdateInput, StaffFieldErrors };
+export type {
+  AdminRoleFilter,
+  AdminUserAction,
+  AdminUserItem,
+  StaffCreateInput,
+  StaffFieldErrors,
+  StaffUpdateInput,
+};
 export { AuthApiError };
 
 export type AdminUsersQuery = {

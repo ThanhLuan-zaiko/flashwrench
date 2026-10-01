@@ -7,27 +7,31 @@ import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useLastBooking } from "@/hooks/booking";
 import { usePublicCatalog } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import { BookingForm } from "./BookingForm";
 import { toBookingPrefill } from "./booking-prefill";
 
 type BookingEntryProps = {
   serviceId: string | null;
-  userName: string;
-  userContact: string;
+  // Null identity = guest booking: the form collects the contact trio
+  // instead of reading verified account fields.
+  userName: string | null;
+  userContact: string | null;
 };
 
-// Authenticated booking entry. The server already bounced guests to login
-// with `?next=/booking...`, so reaching here proves no second login is
-// needed. Unknown service ids show guidance back to /services instead of
-// guessing another service; otherwise the real booking form renders.
+// Booking entry for customers AND guests. Guests keep the whole flow —
+// they just fill contact fields themselves and get a public tracking
+// link instead of a history entry. Unknown service ids show guidance
+// back to /services instead of guessing another service.
 export function BookingEntry({
   serviceId,
   userName,
   userContact,
 }: BookingEntryProps) {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  const guest = userName === null;
   const catalog = usePublicCatalog();
-  const lastBooking = useLastBooking();
+  const lastBooking = useLastBooking(!guest);
 
   const selected = useMemo(() => {
     if (!serviceId) return null;
@@ -43,7 +47,8 @@ export function BookingEntry({
 
   const unknownService =
     catalog.isSuccess && serviceId !== null && selected === null;
-  const ready = catalog.isSuccess && !unknownService && !lastBooking.isPending;
+  const ready =
+    catalog.isSuccess && !unknownService && (guest || !lastBooking.isPending);
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
@@ -51,11 +56,15 @@ export function BookingEntry({
         level={1}
         eyebrow="Đặt lịch"
         title="Đặt lịch sửa xe tận nơi."
-        subtitle="Bạn đã đăng nhập nên không cần đăng nhập lại. Điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
+        subtitle={
+          guest
+            ? "Không cần tài khoản — điền thông tin liên hệ, khung giờ, địa điểm và xe của bạn rồi xác nhận."
+            : "Bạn đã đăng nhập nên không cần đăng nhập lại. Điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
+        }
       />
 
       <section
-        aria-label="Tài khoản đặt lịch"
+        aria-label={guest ? "Đặt lịch với tư cách khách" : "Tài khoản đặt lịch"}
         data-reveal
         className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
       >
@@ -65,24 +74,33 @@ export function BookingEntry({
           </span>
           <div>
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              {userName}
+              {guest ? "Đặt lịch với tư cách khách" : userName}
             </p>
-            {userContact && (
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                {userContact}
-              </p>
-            )}
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {guest
+                ? "Sau khi đặt bạn sẽ nhận được link theo dõi tiến trình."
+                : (userContact ?? "")}
+            </p>
           </div>
         </div>
-        <Link
-          href="/account"
-          className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
-        >
-          Quản lý tài khoản
-        </Link>
+        {guest ? (
+          <Link
+            href={buildLoginHref(buildBookingHref(serviceId))}
+            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          >
+            Đăng nhập
+          </Link>
+        ) : (
+          <Link
+            href="/account"
+            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          >
+            Quản lý tài khoản
+          </Link>
+        )}
       </section>
 
-      {(catalog.isPending || lastBooking.isPending) && (
+      {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">
           <p className="sr-only">Đang tải dịch vụ đã chọn</p>
           <div className="h-40 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900" />
@@ -136,6 +154,7 @@ export function BookingEntry({
           services={catalog.data?.services ?? []}
           initialServiceId={serviceId}
           prefill={prefill}
+          guest={guest}
         />
       )}
     </div>

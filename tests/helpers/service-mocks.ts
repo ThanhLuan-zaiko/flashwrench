@@ -34,7 +34,6 @@ import {
   staffTempStubs,
 } from "./staff.mocks";
 
-export { staffRepoMocks };
 export { bookingRepoMocks, bookingStubs } from "./booking.mocks";
 export {
   catalogServiceRepoMocks,
@@ -70,6 +69,7 @@ export {
   staffTempRepoMocks,
   staffTempStubs,
 } from "./staff.mocks";
+export { staffRepoMocks };
 
 // Mutable stub state for service-level suites. Factories in the test files
 // return these handles, so each test reconfigures behavior by mutating

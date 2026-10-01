@@ -112,9 +112,9 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
           </p>
         ) : (
           <ol className="mt-2 flex flex-col gap-2">
-            {booking.timeline.map((entry, index) => (
+            {booking.timeline.map((entry) => (
               <li
-                key={`${entry.at ?? "none"}-${entry.to}-${index}`}
+                key={`${entry.at ?? "none"}-${entry.to}-${entry.note ?? ""}`}
                 className="flex items-start gap-2 text-xs"
               >
                 <span

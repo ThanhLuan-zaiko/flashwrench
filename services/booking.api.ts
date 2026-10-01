@@ -11,8 +11,12 @@ import type {
 } from "@/lib/booking/workspace.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
-export type { BookingFieldErrors, CreatedBooking, CreateBookingInput };
-export type { AuthApiError };
+export type {
+  AuthApiError,
+  BookingFieldErrors,
+  CreateBookingInput,
+  CreatedBooking,
+};
 
 export class BookingApiError extends Error {
   status: number;

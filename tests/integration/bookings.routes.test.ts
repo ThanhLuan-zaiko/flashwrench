@@ -37,18 +37,29 @@ beforeEach(() => {
 });
 
 describe("POST /api/bookings", () => {
-  test("returns 401 without calling the service when logged out", async () => {
+  test("accepts a guest booking without a session", async () => {
     routeStubs.bookingUser = null;
-
-    const res = await bookingsPost(
-      postJsonRequest("/api/bookings", makeBookingInput()),
-    );
-
-    expect(res.status).toBe(401);
-    expect(await readJsonBody(res)).toMatchObject({
-      errors: { form: "Vui lòng đăng nhập để tiếp tục." },
+    const input = makeBookingInput({
+      fullName: "Tran Thi Be",
+      phone: "0909999888",
+      email: "be@example.com",
     });
-    expect(bookingServiceMocks.createCustomerBooking.mock.calls.length).toBe(0);
+
+    const res = await bookingsPost(postJsonRequest("/api/bookings", input));
+
+    expect(res.status).toBe(201);
+    expect(await readJsonBody(res)).toMatchObject({
+      booking: { bookingId: okCreatedBooking().bookingId },
+    });
+    // The service receives a null customer so the row stores the guest
+    // contact snapshot instead of an account link.
+    const [passedCustomer, passedInput] =
+      bookingServiceMocks.createCustomerBooking.mock.calls[0] ?? [];
+    expect(passedCustomer).toBeNull();
+    expect(passedInput).toMatchObject({
+      fullName: "Tran Thi Be",
+      email: "be@example.com",
+    });
   });
 
   test("returns 201 with the created booking on success", async () => {

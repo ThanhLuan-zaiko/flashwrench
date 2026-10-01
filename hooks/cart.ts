@@ -15,14 +15,15 @@ export const cartKeys = {
   all: ["cart"] as const,
 };
 
-// The cart only exists for logged-in customers. Guests skip the fetch so
-// the badge and the /cart page never fire a doomed request.
+// Guests (no session) and customers both own a cart partition — the
+// guest one lives under the fw_gid cookie. Only staff roles skip the
+// fetch; anonymous reads return an empty cart server-side.
 export function useCart() {
   const me = useMe();
   return useQuery({
     queryKey: cartKeys.all,
     queryFn: () => fetchCart(),
-    enabled: me.data?.role === "customer",
+    enabled: me.isSuccess && (me.data === null || me.data.role === "customer"),
     staleTime: 10 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,

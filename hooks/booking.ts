@@ -52,11 +52,13 @@ export function useCreateBooking() {
 }
 
 // The customer's most recent booking for quick-rebook prefill. Longer
-// cache: it only shifts when a new booking is created.
-export function useLastBooking() {
+// cache: it only shifts when a new booking is created. Guests hold no
+// history, so the caller disables it for them.
+export function useLastBooking(enabled = true) {
   return useQuery({
     queryKey: bookingKeys.last,
     queryFn: fetchLastBooking,
+    enabled,
     staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 1,

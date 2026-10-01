@@ -5,6 +5,7 @@ import type {
 } from "@/lib/mechanic/mechanic.types";
 import { toIso } from "@/lib/mechanic/mechanic.types";
 import {
+  findBookingRowById,
   listBookingItemRowsByBookingIds,
   listStatusHistoryRows,
 } from "@/lib/mechanic/mechanic-bookings.repository";
@@ -16,12 +17,15 @@ import {
   toTimelineEntry,
 } from "@/lib/mechanic/mechanic-mapper";
 import { findMechanicLocationRow } from "@/lib/mechanic/mechanic-workspace.repository";
+import { isUuid } from "@/lib/validation";
+import type { PublicBookingTracking } from "./booking.types";
 import type { BookingReviewRow } from "./review.repository";
 import { findReviewRowByBookingId } from "./review.repository";
 import type {
   BookingDetail,
   BookingReview,
   BookingSummary,
+  WorkspaceResult,
 } from "./workspace.types";
 
 const DETAIL_HISTORY_LIMIT = 100;
@@ -142,5 +146,64 @@ export async function readBookingDetail(
     location,
     paymentConfirmCode:
       row.payment_status === "paid" ? null : (row.payment_confirm_code ?? null),
+  };
+}
+
+// Guest tracking link: anyone holding the unguessable booking id can
+// follow status, the assigned mechanic and the live pin while en route.
+// Payload stays free of customer identity fields — same contract as the
+// public rescue tracking endpoint.
+export async function getPublicBookingTracking(
+  bookingId: string,
+): Promise<WorkspaceResult<PublicBookingTracking>> {
+  if (!isUuid(bookingId)) {
+    return {
+      ok: false,
+      status: 400,
+      errors: { form: "Mã đặt lịch không hợp lệ." },
+    };
+  }
+  const row = await findBookingRowById(bookingId);
+  if (!row) {
+    return {
+      ok: false,
+      status: 404,
+      errors: { form: "Không tìm thấy đơn đặt lịch này." },
+    };
+  }
+  const [itemRows, location] = await Promise.all([
+    listBookingItemRowsByBookingIds([row.booking_id]),
+    liveLocationFor(row, row.status ?? ""),
+  ]);
+  const items = groupItemsByBooking(itemRows).get(row.booking_id) ?? [];
+  return {
+    ok: true,
+    data: {
+      bookingId: row.booking_id,
+      status: row.status ?? "pending",
+      serviceName: items[0]?.serviceName ?? null,
+      scheduledAt: toIso(row.scheduled_at),
+      timezone: row.timezone,
+      mechanicName: row.mechanic_name,
+      destination:
+        row.address &&
+        isValidLatitude(row.address.lat) &&
+        isValidLongitude(row.address.lng)
+          ? { lat: row.address.lat, lng: row.address.lng }
+          : null,
+      location: location
+        ? {
+            lat: location.lat,
+            lng: location.lng,
+            updatedAt: location.updatedAt || null,
+          }
+        : null,
+      paymentConfirmCode:
+        row.payment_status === "paid"
+          ? null
+          : (row.payment_confirm_code ?? null),
+      cancelReason: row.cancel_reason,
+      updatedAt: toIso(row.updated_at),
+    },
   };
 }

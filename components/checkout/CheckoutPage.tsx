@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
-import { AuthTextField } from "@/components/auth/AuthTextField";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useMe } from "@/hooks/auth";
 import { useCart } from "@/hooks/cart";
 import { useCheckout } from "@/hooks/orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { buildLoginHref } from "@/lib/auth/auth-redirect";
 import type {
   FulfillmentType,
   OrderFieldErrors,
@@ -22,13 +20,15 @@ import {
 } from "@/lib/payments/order-payment.types";
 import { AuthApiError } from "@/services/auth.api";
 import type { MapAddressValues } from "@/services/geocode.api";
+import { CheckoutContactFields } from "./CheckoutContactFields";
 import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
 import { CheckoutSummary } from "./CheckoutSummary";
 import { accountRecipient } from "./checkout-utils";
 
-// Customer /checkout: shipping form plus an immutable summary of the
-// cart being purchased. Submits once; the server snapshots prices and
-// stock so the total here is the total charged.
+// Shared /checkout for customers and guests: shipping form plus an
+// immutable summary of the cart being purchased. Signed-in accounts keep
+// verified name/phone read-only; guests type the contact trio instead —
+// it lands on the order snapshot only, never on an account.
 export function CheckoutPage() {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const router = useRouter();
@@ -37,9 +37,15 @@ export function CheckoutPage() {
   const checkout = useCheckout();
   const fieldId = useId();
 
-  // Recipient contact is locked to the signed-in account: the order keeps
-  // verified name + phone, so the fields render read-only from `me`.
-  const { recipientName, phone } = accountRecipient(me.data ?? null);
+  const guest = me.isSuccess && me.data === null;
+  const account = accountRecipient(me.data ?? null);
+  const [guestName, setGuestName] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  // Customer fields mirror the verified account row; guest fields are
+  // local form state the guest fills in themselves.
+  const recipientName = guest ? guestName : account.recipientName;
+  const phone = guest ? guestPhone : account.phone;
   const [fulfillment, setFulfillment] = useState<FulfillmentType>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<OrderPaymentMethod>("cod");
   const [address, setAddress] = useState("");
@@ -83,6 +89,7 @@ export function CheckoutPage() {
       {
         recipientName: recipientName.trim(),
         phone: phone.trim(),
+        email: guest ? guestEmail.trim() : undefined,
         fulfillment,
         address: fulfillment === "delivery" ? address.trim() : "",
         addressLat: fulfillment === "delivery" ? addressLat : null,
@@ -96,7 +103,13 @@ export function CheckoutPage() {
       },
       {
         onSuccess: (data) => {
-          router.push(`/orders/${data.order.id}?placed=1`);
+          // Guests have no account history — their order lives behind the
+          // public tracking link instead.
+          router.push(
+            guest
+              ? `/track/order/${data.order.id}?placed=1`
+              : `/orders/${data.order.id}?placed=1`,
+          );
         },
         onError: (error) => {
           if (error instanceof AuthApiError) {
@@ -118,26 +131,25 @@ export function CheckoutPage() {
         subtitle="Chọn giao tận nơi hoặc nhận tại xưởng — nhân viên sẽ xác nhận đơn trước khi đóng gói."
       />
 
-      {me.isSuccess && me.data?.role !== "customer" && (
+      {me.isSuccess && me.data && me.data.role !== "customer" && (
         <div
           data-reveal
           className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
         >
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {me.data
-              ? "Chỉ tài khoản khách hàng mới đặt được hàng"
-              : "Đăng nhập để đặt hàng"}
+            Chỉ tài khoản khách hàng mới đặt được hàng
           </p>
           <Link
-            href={me.data ? "/products" : buildLoginHref("/checkout")}
+            href="/products"
             className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            {me.data ? "Quay lại cửa hàng" : "Đăng nhập"}
+            Quay lại cửa hàng
           </Link>
         </div>
       )}
 
-      {me.data?.role === "customer" &&
+      {me.isSuccess &&
+        (me.data === null || me.data.role === "customer") &&
         cartView &&
         cartView.items.length === 0 && (
           <div
@@ -156,7 +168,8 @@ export function CheckoutPage() {
           </div>
         )}
 
-      {me.data?.role === "customer" &&
+      {me.isSuccess &&
+        (me.data === null || me.data.role === "customer") &&
         cartView &&
         cartView.items.length > 0 && (
           <form
@@ -168,28 +181,17 @@ export function CheckoutPage() {
               className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 md:col-span-3 dark:border-zinc-800 dark:bg-zinc-950"
             >
               {errors.form && <FormAlert message={errors.form} />}
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Tên người nhận và số điện thoại được lấy từ tài khoản của bạn.
-              </p>
-              <AuthTextField
-                id={`${fieldId}-name`}
-                label="Tên người nhận"
-                value={recipientName}
-                autoComplete="name"
-                error={errors.recipientName}
+              <CheckoutContactFields
+                fieldId={fieldId}
+                guest={guest}
+                recipientName={recipientName}
+                phone={phone}
+                email={guestEmail}
+                errors={errors}
                 disabled={submitting}
-                readOnly
-              />
-              <AuthTextField
-                id={`${fieldId}-phone`}
-                label="Số điện thoại"
-                type="tel"
-                inputMode="tel"
-                value={phone}
-                autoComplete="tel"
-                error={errors.phone}
-                disabled={submitting}
-                readOnly
+                onName={setGuestName}
+                onPhone={setGuestPhone}
+                onEmail={setGuestEmail}
               />
               <CheckoutFulfillmentFields
                 fieldId={fieldId}

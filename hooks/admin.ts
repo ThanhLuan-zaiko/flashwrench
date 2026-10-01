@@ -17,7 +17,7 @@ import {
   updateStaffRequest,
 } from "@/services/admin.api";
 
-export type { AdminUserItem, AdminUserAction };
+export type { AdminUserAction, AdminUserItem };
 
 export const adminKeys = {
   all: ["admin"] as const,

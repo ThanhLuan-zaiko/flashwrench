@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth/authorization";
+import { authenticateRequest, requireAuth } from "@/lib/auth/authorization";
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 import type { CreateBookingInput } from "@/lib/booking/booking.types";
 import { listCustomerBookings } from "@/lib/booking/customer-booking.service";
@@ -34,11 +34,14 @@ export async function GET(request: Request) {
   }
 }
 
+// Public booking intake. Guests need no session — they leave the
+// contact trio (name/phone/email) plus the service address, and the row
+// stores customer_id null like a public rescue request. A logged-in
+// caller keeps the account link so the booking shows in their history.
 export async function POST(request: Request) {
   const originError = mutationOriginError(request);
   if (originError) return originError;
-  const { response, user } = await requireAuth();
-  if (response) return response;
+  const user = await authenticateRequest();
 
   let body: unknown;
   try {
@@ -57,6 +60,9 @@ export async function POST(request: Request) {
       serviceId: input.serviceId ?? "",
       scheduledAt: input.scheduledAt ?? "",
       timeZone: input.timeZone,
+      fullName: input.fullName,
+      phone: input.phone,
+      email: input.email,
       address: input.address ?? "",
       province: input.province,
       district: input.district,
@@ -87,7 +93,7 @@ export async function POST(request: Request) {
       "booking-created",
       booking.bookingId,
       booking.status,
-      user.id,
+      user?.id ?? null,
       [booking.mechanicId],
     );
     if (booking.mechanicId) {
@@ -95,7 +101,7 @@ export async function POST(request: Request) {
         "booking-assigned",
         booking.bookingId,
         booking.status,
-        user.id,
+        user?.id ?? null,
         [booking.mechanicId],
       );
     }

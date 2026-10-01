@@ -200,7 +200,8 @@ describe("PATCH /api/comments/[commentId]", () => {
     expect(res.status).toBe(200);
     const call = commentModerationMocks.moderateComment.mock.calls[0];
     expect(call?.[1]).toBe("78787878-7878-4787-8787-787878787878");
-    expect((call?.[2] as { action: string }).action).toBe("hide");
+    const payload = call?.[2] as { action: string } | undefined;
+    expect(payload?.action).toBe("hide");
   });
 });
 

@@ -103,9 +103,9 @@ export function OrderOpsDetail({
           Tiến trình
         </h3>
         <ol className="mt-1.5 space-y-1.5">
-          {order.history.map((entry, index) => (
+          {order.history.map((entry) => (
             <li
-              key={`${entry.changedAt ?? "init"}-${index}`}
+              key={`${entry.changedAt ?? "init"}-${entry.newStatus}-${entry.note ?? ""}`}
               className="text-[11px] text-zinc-500 dark:text-zinc-400"
             >
               <span className="font-semibold text-zinc-700 dark:text-zinc-300">

@@ -1,6 +1,5 @@
 import { FiArrowRight, FiCalendar } from "react-icons/fi";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
-import { buildBookingHref, buildRegisterHref } from "@/lib/auth/auth-redirect";
 
 // Wide booking action card for the services bento grid.
 export function BookingWideCard() {
@@ -22,11 +21,11 @@ export function BookingWideCard() {
         </p>
       </div>
       <SmartCtaLink
-        guestHref={buildRegisterHref(buildBookingHref())}
+        guestHref="/booking"
         authedHref="/booking"
         guestLabel={
           <>
-            Tạo tài khoản miễn phí
+            Đặt lịch ngay — không cần tài khoản
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
           </>
         }
@@ -36,7 +35,7 @@ export function BookingWideCard() {
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
           </>
         }
-        guestAriaLabel="Tạo tài khoản miễn phí để đặt lịch"
+        guestAriaLabel="Đặt lịch ngay không cần tài khoản"
         authedAriaLabel="Đặt lịch ngay"
         className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
       />

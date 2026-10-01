@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { FormAlert } from "@/components/auth/FormAlert";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { BookingDetailsSection } from "./BookingDetailsSection";
+import { BookingGuestContact } from "./BookingGuestContact";
 import { BookingMapSection } from "./BookingMapSection";
 import { BookingPrefillNotice } from "./BookingPrefillNotice";
 import { BookingReviewsSection } from "./BookingReviewsSection";
@@ -19,18 +20,20 @@ type BookingFormProps = {
   services: ServiceItem[];
   initialServiceId: string | null;
   prefill: BookingPrefill | null;
+  guest: boolean;
 };
 
 // Booking form layout: stacked on mobile, map column plus one column of
 // fields on `lg`, and a third media-plus-mechanic column on `xl`. State
-// and submit live in `useBookingForm`; success swaps to the
-// confirmation panel in place. Customer reviews of the picked service and
-// the best rated mechanics sit right under the form.
+// and submit live in `useBookingForm`. Guests get a contact block and
+// skip the mechanic picker — the directory API is account-only, so
+// guest bookings always auto-dispatch.
 export function BookingForm({
   preselected,
   services,
   initialServiceId,
   prefill,
+  guest,
 }: BookingFormProps) {
   const {
     serviceId,
@@ -41,6 +44,8 @@ export function BookingForm({
     setCoords,
     mechanicId,
     setMechanicId,
+    contact,
+    setContact,
     address,
     setAddress,
     vehicle,
@@ -54,7 +59,7 @@ export function BookingForm({
     handleMapAddress,
     resetDetails,
     handleSubmit,
-  } = useBookingForm({ initialServiceId, prefill });
+  } = useBookingForm({ initialServiceId, prefill, guest });
 
   const activeService = useMemo(
     () => preselected ?? services.find((s) => s.id === serviceId) ?? null,
@@ -102,6 +107,20 @@ export function BookingForm({
           />
         </div>
 
+        {guest && (
+          <div className="lg:col-start-2">
+            <BookingGuestContact
+              values={contact}
+              errors={errors}
+              disabled={pending}
+              onChange={(field, v) => {
+                setContact((prev) => ({ ...prev, [field]: v }));
+                clearError(field);
+              }}
+            />
+          </div>
+        )}
+
         <div className="lg:col-start-1 lg:row-span-5 lg:self-start lg:sticky lg:top-20 xl:row-span-3">
           <BookingMapSection
             lat={coords?.lat ?? null}
@@ -139,22 +158,24 @@ export function BookingForm({
           />
         </div>
 
-        <div className="lg:col-start-2 xl:col-start-3">
-          {/* Remount on reset so the picker collapses back to the
+        {!guest && (
+          <div className="lg:col-start-2 xl:col-start-3">
+            {/* Remount on reset so the picker collapses back to the
             auto-dispatch default instead of staying open. */}
-          <MechanicSection
-            key={prefilled ? "saved" : "fresh"}
-            lat={coords?.lat ?? null}
-            lng={coords?.lng ?? null}
-            value={mechanicId}
-            error={errors.mechanicId}
-            disabled={pending}
-            onChange={(v) => {
-              setMechanicId(v);
-              clearError("mechanicId");
-            }}
-          />
-        </div>
+            <MechanicSection
+              key={prefilled ? "saved" : "fresh"}
+              lat={coords?.lat ?? null}
+              lng={coords?.lng ?? null}
+              value={mechanicId}
+              error={errors.mechanicId}
+              disabled={pending}
+              onChange={(v) => {
+                setMechanicId(v);
+                clearError("mechanicId");
+              }}
+            />
+          </div>
+        )}
 
         <div className="lg:col-start-2 xl:col-span-2">
           <BookingSubmitButton pending={pending} />

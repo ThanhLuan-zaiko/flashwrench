@@ -5,6 +5,11 @@ export type CreateBookingInput = {
   serviceId: string;
   scheduledAt: string;
   timeZone?: string | null;
+  // Guest contact trio: required only when no session exists; signed-in
+  // customers keep using their verified account fields instead.
+  fullName?: string;
+  phone?: string;
+  email?: string;
   address: string;
   province?: string;
   district?: string;
@@ -24,6 +29,9 @@ export type NormalizedBookingInput = {
   serviceId: string;
   scheduledAt: Date;
   timeZone: string | null;
+  fullName: string | null;
+  phone: string | null;
+  email: string | null;
   address: string;
   province: string | null;
   district: string | null;
@@ -44,6 +52,9 @@ export type BookingFieldErrors = Partial<
     | "serviceId"
     | "scheduledAt"
     | "timeZone"
+    | "fullName"
+    | "phone"
+    | "email"
     | "address"
     | "province"
     | "district"
@@ -80,3 +91,22 @@ export type CreatedBooking = {
 export type BookingResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number; errors: BookingFieldErrors };
+
+// Public guest-tracking payload: the unguessable booking id is the
+// capability, so the shape carries journey progress only — status,
+// schedule, assigned mechanic, live pin while en route — plus the cash
+// confirmation code the guest must read to the mechanic (their only
+// channel, since they hold no account session). Never customer PII.
+export type PublicBookingTracking = {
+  bookingId: string;
+  status: string;
+  serviceName: string | null;
+  scheduledAt: string | null;
+  timezone: string | null;
+  mechanicName: string | null;
+  destination: { lat: number; lng: number } | null;
+  location: { lat: number; lng: number; updatedAt: string | null } | null;
+  paymentConfirmCode: string | null;
+  cancelReason: string | null;
+  updatedAt: string | null;
+};

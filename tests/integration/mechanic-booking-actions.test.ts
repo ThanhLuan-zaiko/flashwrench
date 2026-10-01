@@ -138,13 +138,9 @@ describe("applyMechanicBookingAction", () => {
         2,
       ),
     ).toEqual([MECHANIC_ID, 4]);
-    expect(
-      (
-        bookingWorkflowRepoMocks.claimBookingTransition.mock.calls[1]?.[0] as {
-          note: string;
-        }
-      ).note,
-    ).toBe("Fixed and tested");
+    const transition = bookingWorkflowRepoMocks.claimBookingTransition.mock
+      .calls[1]?.[0] as { note: string } | undefined;
+    expect(transition?.note).toBe("Fixed and tested");
   });
 
   test("decline returns the booking to pending unassigned", async () => {

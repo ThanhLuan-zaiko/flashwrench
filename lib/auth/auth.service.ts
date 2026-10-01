@@ -40,8 +40,8 @@ import {
   validateRegisterInput,
 } from "./validation";
 
-export type { SessionTokens };
 export type { SessionListItem } from "./user-sessions";
+export type { SessionTokens };
 
 export type RefreshOutcome =
   | { ok: true; user: PublicUser; tokens: SessionTokens }

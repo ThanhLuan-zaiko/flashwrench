@@ -26,7 +26,8 @@ export async function listCartRows(customerId: string): Promise<CartRow[]> {
 
 // Upsert with a fresh snapshot of name/image/price: the cart row always
 // shows the latest known display data. added_at refreshes on each write
-// so the newest touch sorts the row.
+// so the newest touch sorts the row. Guest carts pass ttlSeconds so an
+// abandoned token's partition deletes itself instead of piling up.
 export async function upsertCartItem(params: {
   customerId: string;
   partId: string;
@@ -35,20 +36,26 @@ export async function upsertCartItem(params: {
   partName: string;
   partImage: string;
   now: Date;
+  ttlSeconds?: number;
 }): Promise<void> {
-  await scylla.execute(
-    "INSERT INTO carts_by_customer (customer_id, part_id, qty, unit_price, part_name, part_image, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    [
-      params.customerId,
-      params.partId,
-      params.qty,
-      params.unitPrice,
-      params.partName,
-      params.partImage,
-      params.now,
-    ],
-    { prepare: true },
-  );
+  const ttlSeconds =
+    params.ttlSeconds && params.ttlSeconds > 0
+      ? Math.floor(params.ttlSeconds)
+      : null;
+  const query = ttlSeconds
+    ? "INSERT INTO carts_by_customer (customer_id, part_id, qty, unit_price, part_name, part_image, added_at) VALUES (?, ?, ?, ?, ?, ?, ?) USING TTL ?"
+    : "INSERT INTO carts_by_customer (customer_id, part_id, qty, unit_price, part_name, part_image, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  const values: unknown[] = [
+    params.customerId,
+    params.partId,
+    params.qty,
+    params.unitPrice,
+    params.partName,
+    params.partImage,
+    params.now,
+  ];
+  if (ttlSeconds) values.push(ttlSeconds);
+  await scylla.execute(query, values, { prepare: true });
 }
 
 export async function deleteCartItem(

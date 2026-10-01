@@ -159,3 +159,57 @@ describe("validateCreateBookingInput", () => {
     expect(garbage.errors.timeZone).toContain("Múi giờ");
   });
 });
+
+describe("validateCreateBookingInput — guest mode", () => {
+  test("requires the contact trio for guests", () => {
+    const result = validateCreateBookingInput(makeBookingInput(), {
+      guest: true,
+    });
+    expect("errors" in result).toBe(true);
+    if (!("errors" in result)) return;
+    expect(result.errors.fullName).toContain("họ và tên");
+    expect(result.errors.phone).toBeTruthy();
+    expect(result.errors.email).toBeTruthy();
+  });
+
+  test("ignores contact fields for signed-in customers", () => {
+    const result = validateCreateBookingInput(makeBookingInput());
+    expect("value" in result).toBe(true);
+    if (!("value" in result)) return;
+    expect(result.value.fullName).toBeNull();
+    expect(result.value.phone).toBeNull();
+    expect(result.value.email).toBeNull();
+  });
+
+  test("normalizes guest contact values", () => {
+    const result = validateCreateBookingInput(
+      makeBookingInput({
+        fullName: "  Tran  Thi   Be ",
+        phone: " 090 999 9888 ",
+        email: " Be@Example.COM ",
+      }),
+      { guest: true },
+    );
+    expect("value" in result).toBe(true);
+    if (!("value" in result)) return;
+    expect(result.value.fullName).toBe("Tran Thi Be");
+    expect(result.value.phone).toBe("0909999888");
+    expect(result.value.email).toBe("be@example.com");
+  });
+
+  test("rejects malformed guest contact values", () => {
+    const result = validateCreateBookingInput(
+      makeBookingInput({
+        fullName: "B",
+        phone: "abc",
+        email: "khong-phai-email",
+      }),
+      { guest: true },
+    );
+    expect("errors" in result).toBe(true);
+    if (!("errors" in result)) return;
+    expect(result.errors.fullName).toContain("2 ký tự");
+    expect(result.errors.phone).toBeTruthy();
+    expect(result.errors.email).toBeTruthy();
+  });
+});

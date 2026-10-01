@@ -282,4 +282,27 @@ describe("checkoutCart", () => {
     expect(result.errors.paymentMethod).toBeTruthy();
     expect(cartRepoMocks.listCartRows).not.toHaveBeenCalled();
   });
+
+  test("stores the account email on the order when provided", async () => {
+    cartStubs.cartRows = [makeCartRow()];
+    partStubs.partById = makePartRow();
+    orderStubs.orderById = makeOrderRow();
+    orderStubs.itemRows = [makeOrderItemRow()];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+
+    const result = await checkoutCart(
+      CUSTOMER,
+      makeCheckoutInput(),
+      "an@example.com",
+    );
+    expect(result.ok).toBe(true);
+    const insert = orderWriteRepoMocks.insertOrder.mock.calls[0]?.at(0) as {
+      customerId: string | null;
+      customerEmail: string | null;
+    } | null;
+    expect(insert).toMatchObject({
+      customerId: CUSTOMER,
+      customerEmail: "an@example.com",
+    });
+  });
 });

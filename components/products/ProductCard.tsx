@@ -77,7 +77,7 @@ export function ProductCard({ part }: ProductCardProps) {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <AddToCartButton part={part} returnHref={href} />
+        <AddToCartButton part={part} />
         <Link
           href={href}
           aria-label={`Xem chi tiết sản phẩm ${part.name}`}

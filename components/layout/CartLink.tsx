@@ -7,9 +7,9 @@ import { useCart } from "@/hooks/cart";
 import { canSeeCartLink } from "./cart-link-utils";
 
 // Header cart shortcut with a live item-count badge. Only staff roles
-// lose it: guests land on /cart's sign-in prompt and customers see the
-// live count, so the icon stays mounted instead of popping in and out.
-// useCart stays gated on the customer role, so no doomed fetch fires.
+// lose it: guests and customers both own a cart partition (fw_gid token
+// vs account id), so the icon stays mounted with a live count instead
+// of popping in and out. Anonymous reads return an empty cart.
 export function CartLink() {
   const me = useMe();
   const cart = useCart();

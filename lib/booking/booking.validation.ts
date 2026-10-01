@@ -1,3 +1,9 @@
+import {
+  normalizeEmail,
+  normalizePhone,
+  validateEmail,
+  validatePhone,
+} from "@/lib/auth/validation";
 import { normalizeTimeZone } from "@/lib/datetime/timezone";
 import { isValidLatitude, isValidLongitude } from "@/lib/mechanic/mechanic-geo";
 import { isUuid } from "@/lib/validation";
@@ -11,6 +17,7 @@ import type {
 // arbitrarily far ahead: the dispatcher bucket is monthly.
 export const BOOKING_MIN_LEAD_MINUTES = 60;
 export const BOOKING_MAX_AHEAD_DAYS = 30;
+export const BOOKING_NAME_MAX = 100;
 export const BOOKING_ADDRESS_MIN = 10;
 export const BOOKING_ADDRESS_MAX = 300;
 export const BOOKING_NOTES_MAX = 500;
@@ -60,8 +67,44 @@ function optionalText(
 // messages: they are shown directly in the form.
 export function validateCreateBookingInput(
   input: CreateBookingInput,
+  options?: { guest?: boolean },
 ): { value: NormalizedBookingInput } | { errors: BookingFieldErrors } {
   const errors: BookingFieldErrors = {};
+
+  // Guests file without an account: the contact trio is their only
+  // reach-back channel, so all three are required and validated here.
+  let fullName: string | null = null;
+  let phone: string | null = null;
+  let email: string | null = null;
+  if (options?.guest) {
+    fullName =
+      typeof input.fullName === "string"
+        ? input.fullName.trim().replace(/\s+/g, " ")
+        : "";
+    if (!fullName) {
+      errors.fullName = "Vui lòng nhập họ và tên.";
+    } else if (fullName.length < 2) {
+      errors.fullName = "Họ và tên phải có ít nhất 2 ký tự.";
+    } else if (fullName.length > BOOKING_NAME_MAX) {
+      errors.fullName = "Họ và tên không được quá 100 ký tự.";
+    }
+    const phoneError = validatePhone(
+      typeof input.phone === "string" ? input.phone : "",
+    );
+    if (phoneError) {
+      errors.phone = phoneError;
+    } else {
+      phone = normalizePhone(input.phone ?? "");
+    }
+    const emailError = validateEmail(
+      typeof input.email === "string" ? input.email : "",
+    );
+    if (emailError) {
+      errors.email = emailError;
+    } else {
+      email = normalizeEmail(input.email ?? "");
+    }
+  }
 
   const serviceId =
     typeof input.serviceId === "string" ? input.serviceId.trim() : "";
@@ -265,6 +308,9 @@ export function validateCreateBookingInput(
       serviceId,
       scheduledAt,
       timeZone,
+      fullName,
+      phone,
+      email,
       address,
       province,
       district,

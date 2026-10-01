@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
+import { resolveShopper } from "@/lib/auth/shopper";
 import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
-import { checkoutCart } from "@/lib/orders/checkout.service";
+import { checkoutCart, checkoutGuestCart } from "@/lib/orders/checkout.service";
 import { listMyOrders } from "@/lib/orders/orders.service";
 import type { CheckoutInput } from "@/lib/orders/orders.types";
 import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
@@ -39,6 +40,7 @@ function toCheckoutInput(body: Record<string, unknown>): CheckoutInput {
   return {
     recipientName: String(body.recipientName ?? ""),
     phone: String(body.phone ?? ""),
+    email: body.email === undefined ? undefined : String(body.email),
     fulfillment: String(body.fulfillment ?? ""),
     address: String(body.address ?? ""),
     addressLat: toNumberOrNull(body.addressLat),
@@ -56,10 +58,16 @@ function toCheckoutInput(body: Record<string, unknown>): CheckoutInput {
 // Checkout: cart -> pending order + payment row for the chosen method
 // (cod / counter / mock bank_transfer), stock decremented with CAS. The
 // operations topic notifies the dispatch board and the customer topic
-// refreshes their own orders list.
+// refreshes their own orders list. Guests check out against their fw_gid
+// cart partition and must leave name + phone + email on the order.
 export async function POST(request: Request) {
-  const { user, response } = await requireRole("customer");
-  if (response) return response;
+  const shopper = await resolveShopper();
+  if (shopper.user && shopper.user.role !== "customer") {
+    return NextResponse.json(
+      { errors: { form: "Bạn không có quyền thực hiện thao tác này." } },
+      { status: 403 },
+    );
+  }
   const origin = mutationOriginError(request);
   if (origin) return origin;
   const body = await readJsonObject(request);
@@ -69,8 +77,17 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
+  if (!shopper.cartId) {
+    return NextResponse.json(
+      { errors: { form: "Giỏ hàng đang trống. Hãy chọn sản phẩm trước." } },
+      { status: 400 },
+    );
+  }
   try {
-    const result = await checkoutCart(user.id, toCheckoutInput(body));
+    const input = toCheckoutInput(body);
+    const result = shopper.user
+      ? await checkoutCart(shopper.cartId, input, shopper.user.email)
+      : await checkoutGuestCart(shopper.cartId, input);
     if (!result.ok)
       return NextResponse.json(
         { errors: result.errors },
@@ -80,10 +97,12 @@ export async function POST(request: Request) {
       kind: "orders-updated",
       updatedAt: new Date().toISOString(),
     });
-    void publishRealtimeEvent(userTopic(user.id), {
-      kind: "order-updated",
-      orderId: result.data.id,
-    });
+    if (shopper.user) {
+      void publishRealtimeEvent(userTopic(shopper.user.id), {
+        kind: "order-updated",
+        orderId: result.data.id,
+      });
+    }
     return NextResponse.json({ order: result.data }, { status: 201 });
   } catch {
     return NextResponse.json(

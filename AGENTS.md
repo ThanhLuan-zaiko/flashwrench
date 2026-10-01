@@ -1,3 +1,12 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
 # AGENTS.md - Mobile Vehicle Repair Booking Web App
 
 ## 1. Project Overview
@@ -48,7 +57,14 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 - **No Joins:** Do not attempt SQL-like joins. Denormalize data if necessary.
 - **Partition Keys:** Always choose partition keys carefully to ensure even data distribution across the cluster.
 - **Client:** Use a ScyllaDB/Cassandra compatible Node.js driver (e.g., `cassandra-driver` or a modern Bun-compatible alternative).
-- **Schema changes (dev):** Edit `schema.cql` directly and reset via `reset_data.sh`. Do NOT create migration files or a `lib/db/migrations/` folder while in active development.
+- **Schema changes (non-destructive — the default):** `schema.cql` stays the source of truth for fresh setups, but the live database is migrated IN PLACE — never reset or drop existing data. Recipe:
+  1. Edit `schema.cql` first so a fresh environment still builds correctly.
+  2. Write a one-off idempotent script `scripts/migrate-<feature>.ts` modeled on `scripts/migrate-revenue.ts`: connect via `lib/db/client` (`scylla` client, picks up `SCYLLA_*` from `.env.local`), execute each `ALTER TABLE ... ADD <column>` / `CREATE TABLE IF NOT EXISTS ...`, and skip "already exists" errors so it is safe to re-run.
+  3. Run it with `bun run scripts/migrate-<feature>.ts` against the connected database — columns/tables land directly, existing rows untouched.
+  - ScyllaDB 3.0.8 does NOT support `ALTER TABLE ... ADD IF NOT EXISTS` — either catch the duplicate-column error (like `migrate-revenue.ts`) or check `system_schema.columns`/`system_schema.tables` before issuing the ALTER.
+  - `CREATE TABLE IF NOT EXISTS` and `CREATE INDEX IF NOT EXISTS` ARE supported — always use them.
+  - One-off `scripts/migrate-*.ts` files are the migration mechanism; do NOT create a `lib/db/migrations/` folder or a migration framework.
+  - `reset_data.sh` is for disposable dev databases ONLY — never run it against a database holding data that must be kept.
 
 ---
 

@@ -105,6 +105,7 @@ export function makeOrderRow(overrides?: Partial<OrderRow>): OrderRow {
     customer_id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
     customer_name: "Nguyen Van A",
     customer_phone: "0901234567",
+    customer_email: null,
     shipping_address: {
       province: "",
       district: "",

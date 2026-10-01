@@ -9,7 +9,6 @@ import {
   skillLabel,
 } from "@/components/home/home-card-utils";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import type { ShowcaseMechanic } from "@/lib/home/mechanic-showcase.service";
 
 const MAX_VISIBLE_SKILLS = 3;
@@ -142,7 +141,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
         </ul>
         <div data-reveal className="mt-6 flex justify-center">
           <SmartCtaLink
-            guestHref={buildLoginHref(buildBookingHref())}
+            guestHref="/booking"
             authedHref="/booking"
             guestLabel={
               <>
@@ -156,7 +155,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
                 Đặt lịch với đội ngũ này
               </>
             }
-            guestAriaLabel="Đăng nhập để đặt lịch với đội ngũ này"
+            guestAriaLabel="Đặt lịch với đội ngũ này không cần tài khoản"
             authedAriaLabel="Đặt lịch với đội ngũ này"
             className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
           />

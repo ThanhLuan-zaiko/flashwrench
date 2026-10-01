@@ -7,12 +7,11 @@ import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useMe } from "@/hooks/auth";
 import { useCart, useClearCart } from "@/hooks/cart";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { buildLoginHref } from "@/lib/auth/auth-redirect";
 import { CartItemRow } from "./CartItemRow";
 
-// Customer /cart page: review lines, adjust quantities and head to
-// checkout. The cart only exists for the customer role; guests and staff
-// get a guidance panel instead of a doomed request.
+// Shared /cart page for customers and guests: review lines, adjust
+// quantities and head to checkout. Guests keep a token-keyed cart;
+// only staff roles get a guidance panel instead of a doomed request.
 export function CartPage() {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const me = useMe();
@@ -41,44 +40,45 @@ export function CartPage() {
         />
       )}
 
-      {me.isSuccess && me.data?.role !== "customer" && (
+      {me.isSuccess && me.data && me.data.role !== "customer" && (
         <div
           data-reveal
           className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
         >
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {me.data
-              ? "Giỏ hàng chỉ dành cho tài khoản khách hàng"
-              : "Đăng nhập để xem giỏ hàng"}
+            Giỏ hàng chỉ dành cho tài khoản khách hàng
           </p>
           <Link
-            href={me.data ? "/products" : buildLoginHref("/cart")}
+            href="/products"
             className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
           >
-            {me.data ? "Quay lại cửa hàng" : "Đăng nhập"}
+            Quay lại cửa hàng
           </Link>
         </div>
       )}
 
-      {me.data?.role === "customer" && cart.isError && (
-        <div
-          role="alert"
-          data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
-        >
-          <p className="font-semibold">Không tải được giỏ hàng.</p>
-          <button
-            type="button"
-            onClick={() => void cart.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+      {me.isSuccess &&
+        (me.data === null || me.data.role === "customer") &&
+        cart.isError && (
+          <div
+            role="alert"
+            data-reveal
+            className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
           >
-            <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
-            Thử tải lại
-          </button>
-        </div>
-      )}
+            <p className="font-semibold">Không tải được giỏ hàng.</p>
+            <button
+              type="button"
+              onClick={() => void cart.refetch()}
+              className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            >
+              <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
+              Thử tải lại
+            </button>
+          </div>
+        )}
 
-      {me.data?.role === "customer" &&
+      {me.isSuccess &&
+        (me.data === null || me.data.role === "customer") &&
         cartView &&
         (cartView.items.length === 0 ? (
           <div

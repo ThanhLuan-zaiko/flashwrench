@@ -5,7 +5,7 @@ import type {
 import type { RevenueRange } from "@/lib/revenue/revenue-period";
 import { AuthApiError, apiRequest } from "./auth.api";
 
-export type { PaymentAuditEvent, RevenueReport, RevenueRange };
+export type { PaymentAuditEvent, RevenueRange, RevenueReport };
 export { AuthApiError };
 
 export type RevenueQuery = {

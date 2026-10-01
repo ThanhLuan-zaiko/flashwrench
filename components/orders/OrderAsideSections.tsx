@@ -53,7 +53,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
         <ol className="mt-3 space-y-2.5">
           {order.history.map((entry, index) => (
             <li
-              key={`${entry.changedAt ?? "init"}-${index}`}
+              key={`${entry.changedAt ?? "init"}-${entry.newStatus}-${entry.note ?? ""}`}
               className="flex items-start gap-2.5"
             >
               <span

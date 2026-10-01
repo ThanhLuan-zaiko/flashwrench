@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { NextResponse } from "next/server";
+import { GUEST_COOKIE } from "@/lib/auth/guest-session";
 import { ACCESS_COOKIE, REFRESH_COOKIE } from "@/lib/auth/session";
 import {
   getResponseCookie,
@@ -11,6 +12,8 @@ import {
 import {
   accountStatusRouteMocks,
   authServiceMocks,
+  cartRouteStubs,
+  cartServiceRouteMocks,
   guardMocks,
   nextHeadersMocks,
   resetRouteMocks,
@@ -24,6 +27,7 @@ import {
 mock.module("@/lib/auth/guards", () => guardMocks);
 mock.module("@/lib/auth/auth.service", () => authServiceMocks);
 mock.module("@/lib/auth/account-status.service", () => accountStatusRouteMocks);
+mock.module("@/lib/orders/cart.service", () => cartServiceRouteMocks);
 mock.module("next/headers", () => nextHeadersMocks);
 
 import { POST as loginPost } from "@/app/api/auth/login/route";
@@ -126,6 +130,93 @@ describe("POST /api/auth/login", () => {
     expect(await readJsonBody(res)).toMatchObject({
       errors: { form: "bad credentials" },
     });
+  });
+});
+
+describe("guest cart merge on auth", () => {
+  const GUEST_ID = "99999999-9999-4999-8999-999999999999";
+  const ACCOUNT_ID = "11111111-1111-4111-8111-111111111111";
+
+  test("login folds the guest cart into the account and retires fw_gid", async () => {
+    setMockCookies({ [GUEST_COOKIE]: GUEST_ID });
+    const res = await loginPost(
+      postJsonRequest("/api/auth/login", {
+        identifier: "0912345678",
+        password: "secret123",
+      }),
+    );
+    expect(res.status).toBe(200);
+    expect(cartServiceRouteMocks.mergeGuestCart.mock.calls[0]).toEqual([
+      GUEST_ID,
+      ACCOUNT_ID,
+    ]);
+    expect(getResponseCookie(res, GUEST_COOKIE)).toBe("");
+  });
+
+  test("login without a guest cookie never touches the cart", async () => {
+    const res = await loginPost(
+      postJsonRequest("/api/auth/login", {
+        identifier: "0912345678",
+        password: "secret123",
+      }),
+    );
+    expect(res.status).toBe(200);
+    expect(cartServiceRouteMocks.mergeGuestCart).not.toHaveBeenCalled();
+    expect(getResponseCookie(res, GUEST_COOKIE)).toBeUndefined();
+  });
+
+  test("a staff login retires fw_gid without merging", async () => {
+    setMockCookies({ [GUEST_COOKIE]: GUEST_ID });
+    routeStubs.loginResult = {
+      ok: true,
+      user: makePublicUser({ role: "mechanic" }),
+      tokens: {
+        accessToken: "access-1",
+        refreshToken: "refresh-1",
+        familyId: "family-1",
+      },
+    };
+    const res = await loginPost(
+      postJsonRequest("/api/auth/login", {
+        identifier: "0901111222",
+        password: "secret123",
+      }),
+    );
+    expect(res.status).toBe(200);
+    expect(cartServiceRouteMocks.mergeGuestCart).not.toHaveBeenCalled();
+    expect(getResponseCookie(res, GUEST_COOKIE)).toBe("");
+  });
+
+  test("a merge failure never blocks the login", async () => {
+    setMockCookies({ [GUEST_COOKIE]: GUEST_ID });
+    cartRouteStubs.mergeGuestCartFails = true;
+    const res = await loginPost(
+      postJsonRequest("/api/auth/login", {
+        identifier: "0912345678",
+        password: "secret123",
+      }),
+    );
+    expect(res.status).toBe(200);
+    expect(getResponseCookie(res, ACCESS_COOKIE)).toBe("access-token");
+  });
+
+  test("register merges the guest cart too", async () => {
+    setMockCookies({ [GUEST_COOKIE]: GUEST_ID });
+    const res = await registerPost(
+      postJsonRequest("/api/auth/register", {
+        fullName: "Nguyen Van An",
+        phone: "0912345678",
+        email: "an@example.com",
+        password: "secret123",
+        confirmPassword: "secret123",
+      }),
+    );
+    expect(res.status).toBe(201);
+    expect(cartServiceRouteMocks.mergeGuestCart.mock.calls[0]).toEqual([
+      GUEST_ID,
+      ACCOUNT_ID,
+    ]);
+    expect(getResponseCookie(res, GUEST_COOKIE)).toBe("");
   });
 });
 

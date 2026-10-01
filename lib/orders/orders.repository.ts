@@ -7,7 +7,7 @@ import type {
 } from "./orders.types";
 
 export const ORDER_COLUMNS =
-  "order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at, return_reason, return_images, return_requested_at, return_decision, return_decision_note, return_decided_by, return_decided_at";
+  "order_id, customer_id, customer_name, customer_phone, customer_email, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at, return_reason, return_images, return_requested_at, return_decision, return_decision_note, return_decided_by, return_decided_at";
 
 function toAddressSnapshot(raw: unknown): AddressSnapshot | null {
   if (!raw || typeof raw !== "object") return null;
@@ -29,6 +29,7 @@ export function toOrderRow(row: Record<string, unknown>): OrderRow {
     customer_id: row.customer_id ? String(row.customer_id) : null,
     customer_name: (row.customer_name as string | null) ?? null,
     customer_phone: (row.customer_phone as string | null) ?? null,
+    customer_email: (row.customer_email as string | null) ?? null,
     shipping_address: toAddressSnapshot(row.shipping_address),
     status: (row.status as string | null) ?? null,
     payment_status: (row.payment_status as string | null) ?? null,

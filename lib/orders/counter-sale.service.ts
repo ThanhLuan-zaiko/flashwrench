@@ -68,6 +68,7 @@ export async function createCounterSale(
     customerId: null,
     customerName: customerName || "Khách mua tại quầy",
     customerPhone,
+    customerEmail: null,
     address: null,
     status: "delivered",
     paymentStatus: "paid",

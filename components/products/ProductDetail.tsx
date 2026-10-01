@@ -127,7 +127,7 @@ export function ProductDetail({ slug }: { slug: string }) {
                 </p>
               )}
 
-              <AddToCartButton part={part} returnHref={`/products/${slug}`} />
+              <AddToCartButton part={part} />
             </div>
           </div>
 

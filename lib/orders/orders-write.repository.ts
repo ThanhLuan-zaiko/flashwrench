@@ -16,6 +16,7 @@ export type InsertOrderParams = {
   customerId: string | null;
   customerName: string;
   customerPhone: string;
+  customerEmail: string | null;
   address: AddressSnapshot | null;
   status: string;
   paymentStatus: string;
@@ -43,12 +44,13 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
   const statements: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO orders_by_id (order_id, customer_id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, null, null, null, null, ?, ?, 0, ?, null, ?, ?, ?, ?)",
+        "INSERT INTO orders_by_id (order_id, customer_id, customer_name, customer_phone, customer_email, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, null, null, null, ?, ?, 0, ?, null, ?, ?, ?, ?)",
       params: [
         params.orderId,
         params.customerId,
         params.customerName,
         params.customerPhone,
+        params.customerEmail,
         params.address,
         params.status,
         params.paymentStatus,

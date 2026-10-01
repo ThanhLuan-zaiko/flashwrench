@@ -31,6 +31,7 @@ export type SpeculationScope =
   | "history"
   | "booking"
   | "rescue"
+  | "track"
   | "login"
   | "register"
   | "account"
@@ -108,6 +109,10 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
   // wall for account holders.
   rescue: buildSpeculationRules({
     prefetch: ["/", "/services*", "/login*"],
+  }),
+  // Public tracking pages: exits are the shop and the rescue intake.
+  track: buildSpeculationRules({
+    prefetch: ["/", "/products*", "/rescue*"],
   }),
   // The two auth forms point at each other; home is the fallback.
   login: buildSpeculationRules({

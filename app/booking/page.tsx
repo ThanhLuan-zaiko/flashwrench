@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { BookingEntry } from "@/components/booking/BookingEntry";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
-import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 import { pageOg } from "@/lib/seo/site";
 
@@ -14,9 +12,10 @@ export const metadata: Metadata = {
   openGraph: pageOg("Đặt lịch | FlashWrench", DESCRIPTION),
 };
 
-// Separate booking entry for customers. Guests bounce to login with the
-// full booking intent (`serviceId`) preserved in `?next=`; logged-in
-// customers render directly and never see an auth form again.
+// Public booking entry: guests book without an account — they leave a
+// contact trio on the form and follow the job through the public
+// tracking link. Signed-in customers keep their verified identity and
+// history-linked flow.
 export default async function BookingPage({
   searchParams,
 }: {
@@ -27,18 +26,15 @@ export default async function BookingPage({
   const normalized = trimmed.length > 0 ? trimmed : null;
 
   const session = await getServerAccountSession();
-  if (!session.user) {
-    redirect(buildLoginHref(buildBookingHref(normalized)));
-  }
-
-  const contact = session.user.phone || session.user.email;
+  const user = session.user;
+  const contact = user ? user.phone || user.email : null;
 
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14 xl:max-w-7xl">
         <BookingEntry
           serviceId={normalized}
-          userName={session.user.fullName}
+          userName={user?.fullName ?? null}
           userContact={contact}
         />
       </div>

@@ -6,7 +6,6 @@ import { FiPhoneCall, FiUserPlus } from "react-icons/fi";
 import logoImage from "@/asset/flashwrench.png";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 
 // Inverted closing band: hierarchy comes from the monochrome swap, not from
 // color. The mascot finishes the page the same way it opens the hero.
@@ -36,7 +35,7 @@ export function HomeCtaBand() {
           </div>
           <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto md:flex-col lg:flex-row">
             <SmartCtaLink
-              guestHref={buildLoginHref(buildBookingHref())}
+              guestHref="/booking"
               authedHref="/booking"
               guestLabel={
                 <>
@@ -50,7 +49,7 @@ export function HomeCtaBand() {
                   Đặt lịch ngay
                 </>
               }
-              guestAriaLabel="Đăng nhập để đặt lịch ngay"
+              guestAriaLabel="Đặt lịch ngay không cần tài khoản"
               authedAriaLabel="Đặt lịch ngay"
               className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 motion-safe:active:scale-[0.99] dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-700 dark:focus-visible:ring-zinc-900 dark:focus-visible:ring-offset-zinc-100"
             />

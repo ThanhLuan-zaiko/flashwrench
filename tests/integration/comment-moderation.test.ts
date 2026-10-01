@@ -129,13 +129,10 @@ describe("moderateComment behavior", () => {
       action: "unhide",
     });
     expect(unhide).toMatchObject({ ok: true, data: { hidden: false } });
-    expect(
-      (
-        commentRepoMocks.setCommentHidden.mock.calls[0]?.[0] as {
-          hidden: boolean;
-        }
-      ).hidden,
-    ).toBe(false);
+    const unhideWrite = commentRepoMocks.setCommentHidden.mock.calls[0]?.[0] as
+      | { hidden: boolean }
+      | undefined;
+    expect(unhideWrite?.hidden).toBe(false);
     expect(realtimePublishMocks.publishRealtimeEvent.mock.calls.length).toBe(1);
   });
 

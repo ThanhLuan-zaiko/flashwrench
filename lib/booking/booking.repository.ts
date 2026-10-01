@@ -14,9 +14,10 @@ export type CustomerBookingAddress = {
 
 export type InsertCustomerBookingParams = {
   bookingId: string;
-  customerId: string;
+  customerId: string | null;
   customerName: string;
   customerPhone: string;
+  customerEmail: string | null;
   vehiclePlate: string;
   vehicleBrand: string | null;
   vehicleModel: string | null;
@@ -43,18 +44,21 @@ export type InsertCustomerBookingParams = {
 // customer history, the dispatcher status bucket, the price snapshot and
 // the tracking timeline. A preselected mechanic also lands in the
 // mechanic workload table so their queue shows the job instantly.
+// Guests have no customer partition, so their by_customer row is skipped
+// (same split as emergency_by_customer and orders_by_customer).
 export async function insertCustomerBooking(
   params: InsertCustomerBookingParams,
 ): Promise<void> {
   const queries: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, customer_email, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       params: [
         params.bookingId,
         params.customerId,
         params.customerName,
         params.customerPhone,
+        params.customerEmail,
         params.vehicleId,
         params.vehiclePlate,
         params.vehicleBrand,
@@ -77,19 +81,6 @@ export async function insertCustomerBooking(
         params.monthBucket,
         params.createdAt,
         params.updatedAt,
-      ],
-    },
-    {
-      query:
-        "INSERT INTO bookings_by_customer (customer_id, scheduled_at, booking_id, status, total, vehicle_plate, mechanic_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      params: [
-        params.customerId,
-        params.scheduledAt,
-        params.bookingId,
-        params.status,
-        params.total,
-        params.vehiclePlate,
-        params.mechanicName,
       ],
     },
     {
@@ -131,6 +122,22 @@ export async function insertCustomerBooking(
       ],
     },
   ];
+
+  if (params.customerId) {
+    queries.push({
+      query:
+        "INSERT INTO bookings_by_customer (customer_id, scheduled_at, booking_id, status, total, vehicle_plate, mechanic_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        params.customerId,
+        params.scheduledAt,
+        params.bookingId,
+        params.status,
+        params.total,
+        params.vehiclePlate,
+        params.mechanicName,
+      ],
+    });
+  }
 
   if (params.mechanicId) {
     queries.push({

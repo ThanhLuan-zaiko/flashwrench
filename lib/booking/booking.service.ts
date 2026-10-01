@@ -35,10 +35,11 @@ function fail<T>(status: number, form: string): BookingResult<T> {
 }
 
 export async function createCustomerBooking(
-  customer: PublicUser,
+  customer: PublicUser | null,
   raw: CreateBookingInput,
 ): Promise<BookingResult<CreatedBooking>> {
-  const checked = validateCreateBookingInput(raw);
+  const guest = customer === null;
+  const checked = validateCreateBookingInput(raw, { guest });
   if ("errors" in checked) {
     return { ok: false, status: 400, errors: checked.errors };
   }
@@ -78,7 +79,9 @@ export async function createCustomerBooking(
   let vehiclePlate = value.vehiclePlate;
   let vehicleBrand = value.vehicleBrand;
   let vehicleModel = value.vehicleModel;
-  if (value.vehicleId) {
+  // Saved vehicles belong to an account; guests always describe their
+  // vehicle through the plate/brand/model text fields instead.
+  if (value.vehicleId && customer) {
     const vehicle = await findVehicleRowById(value.vehicleId);
     if (!vehicle || vehicle.owner_id !== customer.id) {
       return fail(400, "Xe đã chọn không thuộc tài khoản của bạn.");
@@ -131,9 +134,10 @@ export async function createCustomerBooking(
 
   await insertCustomerBooking({
     bookingId,
-    customerId: customer.id,
-    customerName: customer.fullName,
-    customerPhone: customer.phone,
+    customerId: customer?.id ?? null,
+    customerName: customer?.fullName ?? value.fullName ?? "",
+    customerPhone: customer?.phone ?? value.phone ?? "",
+    customerEmail: customer?.email || value.email,
     vehicleId,
     vehiclePlate,
     vehicleBrand,

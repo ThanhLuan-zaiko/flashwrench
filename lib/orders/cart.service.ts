@@ -89,6 +89,7 @@ export async function addToCart(
   customerId: string,
   partId: string,
   qty: unknown,
+  ttlSeconds?: number,
 ): Promise<OrdersResult<CartView>> {
   if (!isUuid(partId)) {
     return failFields(400, { partId: "Sản phẩm không hợp lệ." });
@@ -119,6 +120,7 @@ export async function addToCart(
     partName: part.name ?? "",
     partImage: part.images?.[0] ?? "",
     now: new Date(),
+    ttlSeconds,
   });
   return getCartView(customerId);
 }
@@ -127,6 +129,7 @@ export async function updateCartItemQty(
   customerId: string,
   partId: string,
   qty: unknown,
+  ttlSeconds?: number,
 ): Promise<OrdersResult<CartView>> {
   if (!isUuid(partId)) {
     return failFields(400, { partId: "Sản phẩm không hợp lệ." });
@@ -154,6 +157,7 @@ export async function updateCartItemQty(
     partName: part?.name ?? existing.part_name ?? "",
     partImage: part?.images?.[0] ?? existing.part_image ?? "",
     now: new Date(),
+    ttlSeconds,
   });
   return getCartView(customerId);
 }
@@ -174,4 +178,39 @@ export async function clearCart(
 ): Promise<OrdersResult<CartView>> {
   await clearCartRows(customerId);
   return { ok: true, data: { items: [], subtotal: 0, itemCount: 0 } };
+}
+
+// Login/register hook: fold the guest token's cart into the fresh
+// account so items picked before signing in survive the transition.
+// Quantities are capped like addToCart; the guest partition is dropped
+// afterwards (its rows also carry a TTL, this just frees them early).
+export async function mergeGuestCart(
+  guestId: string,
+  customerId: string,
+): Promise<void> {
+  if (guestId === customerId) return;
+  const rows = await listCartRows(guestId);
+  if (rows.length === 0) return;
+  const accountRows = await listCartRows(customerId);
+  const now = new Date();
+  for (const row of rows) {
+    const part = await findPartRowById(row.part_id);
+    const existing = accountRows.find((r) => r.part_id === row.part_id);
+    const qty = Math.min(
+      (existing?.qty ?? 0) + (row.qty ?? 0),
+      sellable(part) ? (part.stock_qty ?? 0) : MAX_CART_QTY,
+      MAX_CART_QTY,
+    );
+    if (qty <= 0) continue;
+    await upsertCartItem({
+      customerId,
+      partId: row.part_id,
+      qty,
+      unitPrice: part?.price ?? row.unit_price ?? 0,
+      partName: part?.name ?? row.part_name ?? "",
+      partImage: part?.images?.[0] ?? row.part_image ?? "",
+      now,
+    });
+  }
+  await clearCartRows(guestId);
 }

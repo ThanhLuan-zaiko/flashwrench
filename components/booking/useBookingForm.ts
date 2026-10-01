@@ -29,6 +29,9 @@ const EMPTY_ERRORS: BookingFieldErrors = {};
 type UseBookingFormOptions = {
   initialServiceId: string | null;
   prefill: BookingPrefill | null;
+  // Guest mode: no session, so the form collects the contact trio
+  // (name/phone/email) and success lands on the public tracking page.
+  guest?: boolean;
 };
 
 // All booking form state and submit logic. `prefill` seeds the saved
@@ -39,11 +42,17 @@ type UseBookingFormOptions = {
 export function useBookingForm({
   initialServiceId,
   prefill,
+  guest = false,
 }: UseBookingFormOptions) {
   const router = useRouter();
   const toast = useToast();
   const createBooking = useCreateBooking();
   const [serviceId, setServiceId] = useState(initialServiceId ?? "");
+  const [contact, setContact] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+  });
   const [scheduledAt, setScheduledAt] = useState(defaultScheduled);
   const [coords, setCoords] = useState<MapPoint | null>(
     prefill?.coords ?? null,
@@ -105,22 +114,31 @@ export function useBookingForm({
       serviceId,
       scheduledAt: picked.toISOString(),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      fullName: guest ? contact.fullName : undefined,
+      phone: guest ? contact.phone : undefined,
+      email: guest ? contact.email : undefined,
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
-      mechanicId,
+      mechanicId: guest ? null : mechanicId,
       ...address,
       ...vehicle,
     };
-    const checked = validateCreateBookingInput(payload);
+    const checked = validateCreateBookingInput(payload, { guest });
     if ("errors" in checked) {
       setErrors(checked.errors);
       return;
     }
     setErrors(EMPTY_ERRORS);
     createBooking.mutate(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success("Đặt lịch thành công", "Thợ sẽ xác nhận trong vài phút.");
-        router.replace(BOOKING_SUCCESS_REDIRECT);
+        // Guests hold no account history — the public tracking page is
+        // their confirmation and follow-up channel.
+        router.replace(
+          guest
+            ? `/track/booking/${data.booking.bookingId}?placed=1`
+            : BOOKING_SUCCESS_REDIRECT,
+        );
       },
       onError: (error) => {
         if (error instanceof BookingApiError) {
@@ -151,6 +169,8 @@ export function useBookingForm({
     setCoords,
     mechanicId,
     setMechanicId,
+    contact,
+    setContact,
     address,
     setAddress,
     vehicle,
