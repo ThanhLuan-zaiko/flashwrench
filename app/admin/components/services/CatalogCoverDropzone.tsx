@@ -9,6 +9,7 @@ type CatalogCoverDropzoneProps = {
   disabled: boolean;
   canAddMore: boolean;
   total: number;
+  max: number;
   onDragChange: (dragging: boolean) => void;
   onFiles: (files: File[]) => void;
 };
@@ -21,6 +22,7 @@ export function CatalogCoverDropzone({
   disabled,
   canAddMore,
   total,
+  max,
   onDragChange,
   onFiles,
 }: CatalogCoverDropzoneProps) {
@@ -62,7 +64,7 @@ export function CatalogCoverDropzone({
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        multiple
+        multiple={max > 1}
         disabled={blocked}
         aria-label="Chọn một hoặc nhiều ảnh bìa"
         onClick={(event) => event.stopPropagation()}
@@ -80,8 +82,8 @@ export function CatalogCoverDropzone({
       <span className="flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
         <FiImage aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
         {canAddMore
-          ? `JPEG/PNG/WebP, tối đa ${maxUploadMbLabel()}/ảnh. Đã có ${total}/5 ảnh.`
-          : "Đã đủ 5 ảnh. Xóa bớt trước khi thêm."}
+          ? `JPEG/PNG/WebP, tối đa ${maxUploadMbLabel()}/ảnh. Đã có ${total}/${max} ảnh.`
+          : `Đã đủ ${max} ảnh. Xóa bớt trước khi thêm.`}
       </span>
     </button>
   );

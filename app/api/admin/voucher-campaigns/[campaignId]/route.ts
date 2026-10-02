@@ -6,19 +6,25 @@ import type {
   VoucherScope,
 } from "@/lib/vouchers/voucher.types";
 import {
+  hardDeleteCampaignWithConfirm,
+  restoreCampaign,
+  softDeleteCampaign,
   toggleCampaign,
   updateCampaign,
 } from "@/lib/vouchers/voucher-campaign.service";
 import { publishCampaignChange } from "@/lib/vouchers/voucher-realtime";
 
+function toStringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.map(String) : [];
+}
+
 function toInput(body: Record<string, unknown>): UpdateCampaignInput {
   return {
-    code: String(body.code ?? ""),
+    slug: String(body.slug ?? ""),
     name: String(body.name ?? ""),
     description: body.description === undefined ? "" : String(body.description),
-    imageUrl: body.imageUrl === undefined ? "" : String(body.imageUrl),
-    imageAssetId:
-      body.imageAssetId === undefined ? undefined : String(body.imageAssetId),
+    images: toStringList(body.images),
+    imageAssetIds: toStringList(body.imageAssetIds),
     discountType: String(body.discountType ?? "fixed") as VoucherDiscountType,
     discountValue: Number(body.discountValue),
     maxDiscount: body.maxDiscount === undefined ? 0 : Number(body.maxDiscount),
@@ -69,6 +75,28 @@ export async function PATCH(
       void publishCampaignChange(campaignId);
       return NextResponse.json({ campaign: toggled.data });
     }
+    if (body.action === "soft-delete") {
+      const result = await softDeleteCampaign(campaignId);
+      if (!result.ok) {
+        return NextResponse.json(
+          { errors: result.errors },
+          { status: result.status },
+        );
+      }
+      void publishCampaignChange(campaignId);
+      return NextResponse.json({ campaign: result.data });
+    }
+    if (body.action === "restore") {
+      const result = await restoreCampaign(campaignId);
+      if (!result.ok) {
+        return NextResponse.json(
+          { errors: result.errors },
+          { status: result.status },
+        );
+      }
+      void publishCampaignChange(campaignId);
+      return NextResponse.json({ campaign: result.data });
+    }
     const result = await updateCampaign(campaignId, toInput(body));
     if (!result.ok) {
       return NextResponse.json(
@@ -81,6 +109,47 @@ export async function PATCH(
   } catch {
     return NextResponse.json(
       { errors: { form: "Không cập nhật được chiến dịch." } },
+      { status: 500 },
+    );
+  }
+}
+
+// Hard delete is permanent. The client sends { confirm: slug } after the
+// type-to-confirm dialog; the service re-validates it and refuses while
+// any wallet of the campaign is still active.
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ campaignId: string }> },
+) {
+  const { user, response } = await requireRole("admin");
+  if (response || !user) return response;
+  const { campaignId } = await context.params;
+  let body: Record<string, unknown> = {};
+  try {
+    body = ((await request.json()) as Record<string, unknown>) ?? {};
+  } catch {
+    body = {};
+  }
+  try {
+    const result = await hardDeleteCampaignWithConfirm(
+      campaignId,
+      String(body.confirm ?? ""),
+    );
+    if (!result.ok) {
+      return NextResponse.json(
+        { errors: result.errors },
+        { status: result.status },
+      );
+    }
+    void publishCampaignChange(campaignId);
+    return NextResponse.json({ deleted: result.data });
+  } catch {
+    return NextResponse.json(
+      {
+        errors: {
+          form: "Không xóa vĩnh viễn được chiến dịch. Vui lòng thử lại sau.",
+        },
+      },
       { status: 500 },
     );
   }

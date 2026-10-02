@@ -13,6 +13,10 @@ import {
   resetRescueMocks,
 } from "../helpers/rescue.mocks";
 import {
+  autoGrantServiceMocks,
+  resetAutoRuleMocks,
+} from "../helpers/voucher-auto.mocks";
+import {
   domainPublishMocks,
   resetWorkspaceMocks,
 } from "../helpers/workspace.mocks";
@@ -23,6 +27,7 @@ mock.module(
 );
 mock.module("@/lib/reviews/reviews.repository", () => reviewRepoMocks);
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
 
 import {
   createRescueReview,
@@ -54,6 +59,7 @@ beforeEach(() => {
   resetRescueMocks();
   resetFeedbackMocks();
   resetWorkspaceMocks();
+  resetAutoRuleMocks();
   rescueStubs.rowById = completedRescue();
 });
 
@@ -117,6 +123,10 @@ describe("createRescueReview writes", () => {
     expect(reviewRepoMocks.bumpRatingCounter.mock.calls.length).toBe(0);
     expect(domainPublishMocks.publishRescueChange.mock.calls[0]?.[0]).toBe(
       "rescue-updated",
+    );
+    // Rescue reviews join the same voucher hook, keyed on the request id.
+    expect(autoGrantServiceMocks.handleVoucherReviewCreated.mock.calls).toEqual(
+      [[CUSTOMER_ID, `rescue:${REQUEST_ID}`]],
     );
   });
 

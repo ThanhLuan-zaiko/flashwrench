@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { makeRegisterInput, makeUserRow } from "../helpers/auth.fixtures";
 import {
+  autoGrantServiceMocks,
+  autoGrantStubs,
   guestClaimServiceMocks,
   passwordMocks,
   refreshRepoMocks,
@@ -16,6 +18,7 @@ mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/auth/refresh.repository", () => refreshRepoMocks);
 mock.module("@/lib/auth/password", () => passwordMocks);
 mock.module("@/lib/auth/guest-claim.service", () => guestClaimServiceMocks);
+mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
 
 import {
   authenticate,
@@ -101,6 +104,25 @@ describe("registerUser", () => {
     const result = await registerUser(makeRegisterInput(), "Test device");
     expect(result.ok).toBe(false);
     expect(guestClaimServiceMocks.claimGuestRecords.mock.calls.length).toBe(0);
+  });
+
+  test("fires the voucher signup hook for the new customer account", async () => {
+    serviceStubs.userById = makeUserRow();
+    const result = await registerUser(makeRegisterInput(), "Test device");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const calls = autoGrantServiceMocks.handleVoucherSignup.mock.calls;
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.[0]).toBe(result.user.id);
+  });
+
+  test("signup still succeeds when voucher automation throws", async () => {
+    serviceStubs.userById = makeUserRow();
+    autoGrantStubs.throws = true;
+    const result = await registerUser(makeRegisterInput(), "Test device");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.tokens.familyId).toBeDefined();
   });
 });
 

@@ -1,8 +1,10 @@
-// Voucher campaign validation: codes, money, dates, dispatcher caps.
+// Voucher campaign validation: codes, slugs, money, dates, dispatcher caps.
 import { describe, expect, test } from "bun:test";
 import {
   normalizeVoucherCode,
+  normalizeVoucherSlug,
   validateCampaignInput,
+  voucherCodeFromSlug,
 } from "@/lib/vouchers/voucher-validation";
 
 describe("normalizeVoucherCode", () => {
@@ -11,12 +13,25 @@ describe("normalizeVoucherCode", () => {
   });
 });
 
+describe("normalizeVoucherSlug", () => {
+  test("lowercases and trims", () => {
+    expect(normalizeVoucherSlug(" Chao-Mung ")).toBe("chao-mung");
+  });
+});
+
+describe("voucherCodeFromSlug", () => {
+  test("uppercases and replaces dashes with underscores", () => {
+    expect(voucherCodeFromSlug("chao-mung-2026")).toBe("CHAO_MUNG_2026");
+  });
+});
+
 describe("validateCampaignInput", () => {
   const base = {
     code: "CHAO_MUNG",
+    slug: "chao-mung",
     name: "Chao mung tai khoan moi",
     description: "",
-    imageUrl: "",
+    images: [] as string[],
     discountType: "fixed" as const,
     discountValue: 50000,
     maxDiscount: 0,
@@ -46,6 +61,20 @@ describe("validateCampaignInput", () => {
     expect(badPercent?.discountValue).toBeDefined();
   });
 
+  test("rejects bad slugs", () => {
+    const tooShort = validateCampaignInput({ ...base, slug: "ab" });
+    expect(tooShort?.slug).toBeDefined();
+    const badChars = validateCampaignInput({ ...base, slug: "Chao_Mung" });
+    expect(badChars?.slug).toBeDefined();
+    const doubleDash = validateCampaignInput({ ...base, slug: "chao--mung" });
+    expect(doubleDash?.slug).toBeDefined();
+    const tooLong = validateCampaignInput({
+      ...base,
+      slug: "a".repeat(33),
+    });
+    expect(tooLong?.slug).toBeDefined();
+  });
+
   test("rejects end before start and bad image urls", () => {
     const badDates = validateCampaignInput({
       ...base,
@@ -55,8 +84,19 @@ describe("validateCampaignInput", () => {
     expect(badDates?.endAt).toBeDefined();
     const badImage = validateCampaignInput({
       ...base,
-      imageUrl: "https://example.com/a.jpg",
+      images: ["https://example.com/a.jpg"],
     });
-    expect(badImage?.imageUrl).toBeDefined();
+    expect(badImage?.images).toBeDefined();
+  });
+
+  test("caps the gallery at 5 media urls", () => {
+    const over = validateCampaignInput({
+      ...base,
+      images: Array.from(
+        { length: 6 },
+        (_, i) => `/api/media/promotion/c/${i}.webp`,
+      ),
+    });
+    expect(over?.images).toBeDefined();
   });
 });

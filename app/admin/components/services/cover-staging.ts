@@ -30,22 +30,24 @@ export function maxUploadMbLabel(): string {
 // Client pre-check mirroring the server guardrails: mime allowlist,
 // non-empty size and the shared max-bytes cap. Magic-byte sniffing runs
 // later in the hook (needs async bytes); this stays sync for tests.
+// `max` lets single-image fields (voucher cover) reuse the same UX.
 export function decideStageFiles(
   incoming: PickableFile[],
   alreadyCount: number,
   maxBytes: number = defaultMaxUploadBytes(),
+  max: number = MAX_COVER_IMAGES,
 ): StageDecision {
   const accepted: PickableFile[] = [];
   const rejected: { name: string; reason: string }[] = [];
-  const slots = Math.max(0, MAX_COVER_IMAGES - alreadyCount);
-  let limitHit = alreadyCount >= MAX_COVER_IMAGES;
+  const slots = Math.max(0, max - alreadyCount);
+  let limitHit = alreadyCount >= max;
 
   for (const file of incoming) {
     if (accepted.length >= slots) {
       limitHit = true;
       rejected.push({
         name: file.name,
-        reason: `Tối đa ${MAX_COVER_IMAGES} ảnh cho mỗi mục.`,
+        reason: `Tối đa ${max} ảnh cho mỗi mục.`,
       });
       continue;
     }
@@ -87,8 +89,9 @@ export function moveToCover<T>(list: T[], index: number): T[] {
 export function canAddMore(
   existingCount: number,
   stagedCount: number,
+  max: number = MAX_COVER_IMAGES,
 ): boolean {
-  return existingCount + stagedCount < MAX_COVER_IMAGES;
+  return existingCount + stagedCount < max;
 }
 
 // Saved gallery of a catalog row for dialog init: full order when the

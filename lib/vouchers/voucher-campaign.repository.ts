@@ -6,9 +6,15 @@ function toRow(raw: Record<string, unknown>): CampaignRow {
   return {
     campaign_id: String(raw.campaign_id),
     code: (raw.code as string | null) ?? null,
+    slug: (raw.slug as string | null) ?? null,
     name: (raw.name as string | null) ?? null,
     description: (raw.description as string | null) ?? null,
     image_url: (raw.image_url as string | null) ?? null,
+    images: Array.isArray(raw.images)
+      ? (raw.images as unknown[]).filter(
+          (u): u is string => typeof u === "string",
+        )
+      : null,
     discount_type: (raw.discount_type as string | null) ?? null,
     discount_value: (raw.discount_value as number | null) ?? null,
     max_discount: (raw.max_discount as number | null) ?? null,
@@ -23,6 +29,8 @@ function toRow(raw: Record<string, unknown>): CampaignRow {
       (raw.allow_dispatcher_grant as boolean | null) ?? null,
     dispatcher_max_value: (raw.dispatcher_max_value as number | null) ?? null,
     is_active: (raw.is_active as boolean | null) ?? null,
+    is_deleted: (raw.is_deleted as boolean | null) ?? null,
+    deleted_at: (raw.deleted_at as Date | null) ?? null,
     created_by: raw.created_by ? String(raw.created_by) : null,
     created_at: (raw.created_at as Date | null) ?? null,
     updated_at: (raw.updated_at as Date | null) ?? null,
@@ -30,7 +38,7 @@ function toRow(raw: Record<string, unknown>): CampaignRow {
 }
 
 const COLUMNS =
-  "campaign_id, code, name, description, image_url, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, created_by, created_at, updated_at";
+  "campaign_id, code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, deleted_at, created_by, created_at, updated_at";
 
 export async function listCampaignRows(): Promise<CampaignRow[]> {
   const result = await scylla.execute(
@@ -67,12 +75,26 @@ export async function findCampaignIdByCode(
   return row?.campaign_id ? String(row.campaign_id) : null;
 }
 
+export async function findCampaignIdBySlug(
+  slug: string,
+): Promise<string | null> {
+  const result = await scylla.execute(
+    "SELECT campaign_id FROM voucher_campaigns_by_slug WHERE slug = ?",
+    [slug],
+    { prepare: true },
+  );
+  const row = result.first() as unknown as { campaign_id: unknown } | null;
+  return row?.campaign_id ? String(row.campaign_id) : null;
+}
+
 export type InsertCampaignParams = {
   campaignId: string;
   code: string;
+  slug: string;
   name: string;
   description: string;
   imageUrl: string;
+  images: string[];
   discountType: string;
   discountValue: number;
   maxDiscount: number;
@@ -96,13 +118,15 @@ export async function insertCampaign(
     [
       {
         query:
-          "INSERT INTO voucher_campaigns_by_id (campaign_id, code, name, description, image_url, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)",
+          "INSERT INTO voucher_campaigns_by_id (campaign_id, code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, false, ?, ?, ?)",
         params: [
           params.campaignId,
           params.code,
+          params.slug,
           params.name,
           params.description,
           params.imageUrl,
+          params.images,
           params.discountType,
           params.discountValue,
           params.maxDiscount,
@@ -124,6 +148,11 @@ export async function insertCampaign(
         query:
           "INSERT INTO voucher_campaigns_by_code (code, campaign_id) VALUES (?, ?)",
         params: [params.code, params.campaignId],
+      },
+      {
+        query:
+          "INSERT INTO voucher_campaigns_by_slug (slug, campaign_id) VALUES (?, ?)",
+        params: [params.slug, params.campaignId],
       },
     ],
     { prepare: true },
@@ -154,17 +183,42 @@ export async function releaseCampaignCode(
   return result.wasApplied();
 }
 
+export async function claimCampaignSlug(
+  slug: string,
+  campaignId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "INSERT INTO voucher_campaigns_by_slug (slug, campaign_id) VALUES (?, ?) IF NOT EXISTS",
+    [slug, campaignId],
+    { prepare: true },
+  );
+  return result.wasApplied();
+}
+
+export async function releaseCampaignSlug(
+  slug: string,
+  campaignId: string,
+): Promise<boolean> {
+  const result = await scylla.execute(
+    "DELETE FROM voucher_campaigns_by_slug WHERE slug = ? IF campaign_id = ?",
+    [slug, campaignId],
+    { prepare: true },
+  );
+  return result.wasApplied();
+}
+
 export type UpdateCampaignParams = InsertCampaignParams & { now: Date };
 
 export async function updateCampaignRows(
   params: UpdateCampaignParams,
 ): Promise<void> {
   await scylla.execute(
-    "UPDATE voucher_campaigns_by_id SET name = ?, description = ?, image_url = ?, discount_type = ?, discount_value = ?, max_discount = ?, min_order = ?, scope = ?, start_at = ?, end_at = ?, total_limit = ?, per_user_limit = ?, allow_dispatcher_grant = ?, dispatcher_max_value = ?, is_active = ?, updated_at = ? WHERE campaign_id = ?",
+    "UPDATE voucher_campaigns_by_id SET name = ?, description = ?, image_url = ?, images = ?, discount_type = ?, discount_value = ?, max_discount = ?, min_order = ?, scope = ?, start_at = ?, end_at = ?, total_limit = ?, per_user_limit = ?, allow_dispatcher_grant = ?, dispatcher_max_value = ?, is_active = ?, updated_at = ? WHERE campaign_id = ?",
     [
       params.name,
       params.description,
       params.imageUrl,
+      params.images,
       params.discountType,
       params.discountValue,
       params.maxDiscount,
@@ -191,6 +245,45 @@ export async function setCampaignActive(
   await scylla.execute(
     "UPDATE voucher_campaigns_by_id SET is_active = ?, updated_at = ? WHERE campaign_id = ?",
     [isActive, new Date(), campaignId],
+    { prepare: true },
+  );
+}
+
+export async function setCampaignDeleted(
+  campaignId: string,
+  isDeleted: boolean,
+  deletedAt: Date | null,
+): Promise<void> {
+  await scylla.execute(
+    "UPDATE voucher_campaigns_by_id SET is_deleted = ?, deleted_at = ?, updated_at = ? WHERE campaign_id = ?",
+    [isDeleted, deletedAt, new Date(), campaignId],
+    { prepare: true },
+  );
+}
+
+// Permanent removal: the campaign row plus both uniqueness claims. Rows
+// that reference the campaign (wallets, rules) keep their denormalized
+// copies — the service blocks this while any wallet stays active.
+export async function hardDeleteCampaign(params: {
+  campaignId: string;
+  code: string;
+  slug: string;
+}): Promise<void> {
+  await scylla.batch(
+    [
+      {
+        query: "DELETE FROM voucher_campaigns_by_id WHERE campaign_id = ?",
+        params: [params.campaignId],
+      },
+      {
+        query: "DELETE FROM voucher_campaigns_by_code WHERE code = ?",
+        params: [params.code],
+      },
+      {
+        query: "DELETE FROM voucher_campaigns_by_slug WHERE slug = ?",
+        params: [params.slug],
+      },
+    ],
     { prepare: true },
   );
 }

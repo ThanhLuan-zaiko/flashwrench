@@ -8,6 +8,7 @@ import {
 } from "@/lib/booking/booking-workflow.service";
 import { redispatchAfterDecline } from "@/lib/dispatch/auto-dispatch.service";
 import { isUuid } from "@/lib/validation";
+import { handleVoucherBookingCompleted } from "@/lib/vouchers/auto-grant.service";
 import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
 import { restoreWalletForRef } from "@/lib/vouchers/voucher-spend.service";
 import type {
@@ -257,6 +258,14 @@ export async function applyMechanicBookingAction(
       now,
       nextMechanicName,
     );
+    // Loyalty automation: a completed booking ticks the customer rollup
+    // and evaluates count/spend voucher rules. Best-effort, never throws.
+    if (detail.customer_id) {
+      await handleVoucherBookingCompleted(
+        detail.customer_id,
+        detail.total ?? 0,
+      ).catch(() => undefined);
+    }
   }
   // A mechanic-side cancel or no-show voids the visit, so the spent
   // wallet comes back to the customer just like a customer cancel.

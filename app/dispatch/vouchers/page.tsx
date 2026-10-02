@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AutoRulesSection } from "../components/vouchers/AutoRulesSection";
 import { DispatchVoucherBoard } from "../components/vouchers/DispatchVoucherBoard";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function DispatchVouchersPage() {
         </p>
       </header>
       <DispatchVoucherBoard />
+      <AutoRulesSection />
     </div>
   );
 }

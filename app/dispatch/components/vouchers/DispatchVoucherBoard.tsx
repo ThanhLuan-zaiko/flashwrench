@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DropdownSelect } from "@/components/ui/DropdownSelect";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { useDispatchCampaigns, useGrantWallet } from "@/hooks/useVouchers";
 
@@ -40,21 +41,21 @@ export function DispatchVoucherBoard() {
           Chỉ phát chiến dịch admin cho phép, vượt hạn mức sẽ bị chặn.
         </p>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-            Chiến dịch
-            <select
+          <div className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+            <span id="grant-campaign-label">Chiến dịch</span>
+            <DropdownSelect
+              id="grant-campaign"
+              labelId="grant-campaign-label"
               value={campaignId}
-              onChange={(e) => setCampaignId(e.target.value)}
-              className="min-h-[44px] rounded-xl border border-zinc-200 bg-white px-3 text-sm dark:border-zinc-800 dark:bg-zinc-950"
-            >
-              <option value="">Chọn chiến dịch…</option>
-              {items.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} ({item.code})
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={setCampaignId}
+              placeholder="Chọn chiến dịch…"
+              options={items.map((item) => ({
+                value: item.id,
+                label: item.name,
+                hint: item.code,
+              }))}
+            />
+          </div>
           <label className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
             ID khách hàng
             <input

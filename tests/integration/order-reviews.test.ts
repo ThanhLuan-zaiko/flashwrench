@@ -19,11 +19,16 @@ import {
   resetPartsMocks,
 } from "../helpers/parts.mocks";
 import { realtimePublishMocks, resetRouteMocks } from "../helpers/route-mocks";
+import {
+  autoGrantServiceMocks,
+  resetAutoRuleMocks,
+} from "../helpers/voucher-auto.mocks";
 
 mock.module("@/lib/orders/orders.repository", () => orderRepoMocks);
 mock.module("@/lib/parts/parts.repository", () => partRepoMocks);
 mock.module("@/lib/reviews/reviews.repository", () => reviewRepoMocks);
 mock.module("@/lib/realtime/publish", () => realtimePublishMocks);
+mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
 
 import {
   createOrderPartReview,
@@ -55,6 +60,7 @@ beforeEach(() => {
   resetPartsMocks();
   resetFeedbackMocks();
   resetRouteMocks();
+  resetAutoRuleMocks();
   orderStubs.orderById = deliveredOrder();
   orderStubs.itemRows = [makeOrderItemRow({ part_id: PART_ID })];
   partStubs.partById = makePartRow({ part_id: PART_ID });
@@ -118,6 +124,10 @@ describe("createOrderReview writes", () => {
       | undefined;
     expect(projection?.targetType).toBe("order");
     expect(projection?.targetId).toBe(ORDER_ID);
+    // The loyalty hook keys the order-level review on the order ref.
+    expect(autoGrantServiceMocks.handleVoucherReviewCreated.mock.calls).toEqual(
+      [[CUSTOMER_ID, `order:${ORDER_ID}`]],
+    );
   });
 
   test("an existing review returns 409 without writing", async () => {
@@ -190,6 +200,10 @@ describe("createOrderPartReview", () => {
     expect(realtimePublishMocks.publishRealtimeEvent.mock.calls).toEqual([
       [`part:${PART_ID}`, { kind: "review-created", partId: PART_ID }],
     ]);
+    // Part reviews earn their own dedupe ref: one voucher per part review.
+    expect(autoGrantServiceMocks.handleVoucherReviewCreated.mock.calls).toEqual(
+      [[CUSTOMER_ID, `part:${ORDER_ID}:${PART_ID}`]],
+    );
   });
 
   test("a lost part claim returns 409 without touching counters", async () => {

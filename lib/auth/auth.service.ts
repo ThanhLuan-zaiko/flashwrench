@@ -2,11 +2,9 @@ import { randomUUID } from "node:crypto";
 import { claimGuestRecords } from "./guest-claim.service";
 import { hashPassword, verifyPassword } from "./password";
 import {
-  createSession,
   deleteSession,
   findSession,
   rotateSessionCas,
-  touchSessionIndex,
 } from "./refresh.repository";
 import {
   createRefreshToken,
@@ -14,9 +12,13 @@ import {
   parseRefreshToken,
   REFRESH_REUSE_GRACE_SECONDS,
   REFRESH_TTL_SECONDS,
-  signAccessToken,
   verifyAccessToken,
 } from "./session";
+import {
+  buildRotatedPair,
+  issueSessionPair,
+  type RefreshOutcome,
+} from "./session-issuance";
 import { revokeUserSessions } from "./session-revoke.service";
 import {
   bumpTokenVersion,
@@ -42,33 +44,10 @@ import {
 } from "./validation";
 
 export type { SessionListItem } from "./user-sessions";
-export type { SessionTokens };
-
-export type RefreshOutcome =
-  | { ok: true; user: PublicUser; tokens: SessionTokens }
-  | { ok: false; revoked: boolean };
+export type { RefreshOutcome, SessionTokens };
 
 function cleanFullName(value: string): string {
   return value.trim().replace(/\s+/g, " ");
-}
-
-async function issueSessionPair(
-  user: PublicUser,
-  label: string,
-): Promise<SessionTokens> {
-  const familyId = randomUUID();
-  const refresh = createRefreshToken(user.id, familyId);
-  await createSession({
-    userId: user.id,
-    familyId,
-    tokenHash: refresh.hash,
-    deviceLabel: label,
-  });
-  return {
-    accessToken: await signAccessToken(user.id, user.tokenVersion),
-    refreshToken: refresh.token,
-    familyId,
-  };
 }
 
 export async function registerUser(
@@ -152,6 +131,17 @@ export async function registerUser(
   // the first history fetch already sees them. Best-effort — the helper
   // swallows its own errors.
   await claimGuestRecords(user);
+  // Auto-grant rules (e.g. a welcome voucher) fire on account creation.
+  // Best-effort: a campaign hiccup must not fail signup. The engine is
+  // imported lazily — auth.service sits on the root layout's static
+  // graph, and a static edge would drag the realtime protocol into the
+  // first paint (see tests/unit/initial-bundle-graph.test.ts).
+  if (user.role === "customer") {
+    const { handleVoucherSignup } = await import(
+      "@/lib/vouchers/auto-grant.service"
+    );
+    await handleVoucherSignup(user.id).catch(() => undefined);
+  }
   return { ok: true, user, tokens: await issueSessionPair(user, label) };
 }
 
@@ -217,36 +207,6 @@ export async function authenticate(
   if (!row || row.status === "locked" || row.status === "deleted") return null;
   if ((row.token_version ?? 0) !== claims.tokenVersion) return null;
   return toPublicUser(row);
-}
-
-async function buildRotatedPair(
-  userId: string,
-  familyId: string,
-  rowCreatedAt: Date | null,
-  refreshToken: string,
-  label: string,
-): Promise<RefreshOutcome> {
-  const userRow = await findUserById(userId);
-  if (!userRow || userRow.status === "locked" || userRow.status === "deleted")
-    return { ok: false, revoked: false };
-  if (rowCreatedAt) {
-    await touchSessionIndex({
-      userId,
-      familyId,
-      createdAt: rowCreatedAt,
-      deviceLabel: label,
-    }).catch(() => undefined);
-  }
-  const user = toPublicUser(userRow);
-  return {
-    ok: true,
-    user,
-    tokens: {
-      accessToken: await signAccessToken(user.id, user.tokenVersion),
-      refreshToken,
-      familyId,
-    },
-  };
 }
 
 export async function refreshSession(

@@ -33,12 +33,21 @@ function toStatus(value: string | null): WalletStatus {
 }
 
 export function toCampaign(row: CampaignRow): VoucherCampaign {
+  // Gallery first; pre-migration rows may only carry the legacy single
+  // image_url, which then doubles as images[0].
+  const images = row.images?.length
+    ? row.images
+    : row.image_url
+      ? [row.image_url]
+      : [];
   return {
     id: row.campaign_id,
     code: row.code ?? "",
+    slug: row.slug ?? "",
     name: row.name ?? "",
     description: row.description ?? "",
-    imageUrl: row.image_url ?? "",
+    imageUrl: images[0] ?? row.image_url ?? "",
+    images,
     discountType: toDiscountType(row.discount_type),
     discountValue: row.discount_value ?? 0,
     maxDiscount: row.max_discount ?? 0,
@@ -52,8 +61,10 @@ export function toCampaign(row: CampaignRow): VoucherCampaign {
     allowDispatcherGrant: row.allow_dispatcher_grant ?? false,
     dispatcherMaxValue: row.dispatcher_max_value ?? 0,
     isActive: row.is_active ?? false,
+    isDeleted: row.is_deleted === true,
     createdAt: toIso(row.created_at),
     updatedAt: toIso(row.updated_at),
+    deletedAt: toIso(row.deleted_at),
   };
 }
 

@@ -12,28 +12,36 @@ type CatalogCoverFieldProps = {
   disabled: boolean;
   serverError: unknown;
   onFiles: (files: File[]) => void;
+  label?: string;
+  hint?: string;
 };
 
 // Deferred cover gallery field: dropzone stages local thumbnails, crop
 // edits staged blobs in memory, uploads run only on dialog save. Saved
-// covers show real thumbnails; staged ones show pending previews.
+// covers show real thumbnails; staged ones show pending previews. The
+// `max` on the hook drives copy — single-cover fields pass 1 and get a
+// plain "Ảnh bìa" label without the pick-a-cover wording.
 export function CatalogCoverField({
   covers,
   disabled,
   serverError,
   onFiles,
+  label,
+  hint,
 }: CatalogCoverFieldProps) {
   const [croppingId, setCroppingId] = useState<string | null>(null);
   const cropping = covers.staged.find((s) => s.id === croppingId) ?? null;
   const error =
     covers.error ??
     fieldError(serverError, "imageUrl") ??
-    fieldError(serverError, "images");
+    fieldError(serverError, "images") ??
+    fieldError(serverError, "imageAssetId");
 
   return (
     <div className="flex flex-col gap-2">
       <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-        Ảnh bìa (tối đa 5, ảnh đầu là bìa chính)
+        {label ??
+          `Ảnh bìa (tối đa ${covers.max}${covers.max > 1 ? ", ảnh đầu là bìa chính" : ""})`}
       </span>
       <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
         <CatalogCoverThumbs
@@ -51,13 +59,14 @@ export function CatalogCoverField({
           disabled={disabled}
           canAddMore={covers.canAddMore}
           total={covers.total}
+          max={covers.max}
           onDragChange={covers.setDragging}
           onFiles={onFiles}
         />
       </div>
       <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-        Ảnh chỉ tải lên khi bấm lưu. Gắn sao để chọn bìa, bấm cắt để sửa từng
-        ảnh chờ.
+        {hint ??
+          "Ảnh chỉ tải lên khi bấm lưu. Gắn sao để chọn bìa, bấm cắt để sửa từng ảnh chờ."}
       </span>
       {error && (
         <span className="text-xs font-medium text-red-600 dark:text-red-400">

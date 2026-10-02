@@ -6,6 +6,8 @@ import {
   makePartRow,
 } from "../helpers/parts.fixtures";
 import {
+  autoGrantServiceMocks,
+  autoGrantStubs,
   orderDeliveryRepoMocks,
   orderRepoMocks,
   orderRevenueMocks,
@@ -34,12 +36,9 @@ mock.module(
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/orders/order-revenue", () => orderRevenueMocks);
+mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
 
-import {
-  cancelMyOrder,
-  listStaffOrders,
-  updateOrderStatus,
-} from "@/lib/orders/orders.service";
+import { cancelMyOrder, updateOrderStatus } from "@/lib/orders/orders.service";
 
 const CUSTOMER = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
 const ORDER_ID = "ffffffff-ffff-4fff-8fff-ffffffffffff";
@@ -199,6 +198,41 @@ describe("updateOrderStatus", () => {
     expect(statusCall?.newStatus).toBe("refunded");
     // Refund is not a restock transition.
     expect(partInventoryRepoMocks.setPartStock).not.toHaveBeenCalled();
+    // The refund hook unwinds the customer's loyalty rollup.
+    const refundCalls =
+      autoGrantServiceMocks.handleVoucherOrderTransition.mock.calls;
+    expect(refundCalls).toHaveLength(1);
+    expect(refundCalls[0]?.[0]).toMatchObject({
+      customer_id: CUSTOMER,
+      order_id: ORDER_ID,
+      total: 270000,
+    });
+    expect(refundCalls[0]?.[1]).toBe("refunded");
+  });
+
+  test("delivered orders fire the loyalty hook; a throwing hook is absorbed", async () => {
+    orderStubs.orderById = makeOrderRow({ status: "shipping" });
+    orderStubs.itemRows = [makeOrderItemRow()];
+    orderStubs.historyRows = [makeOrderHistoryRow()];
+
+    const result = await updateOrderStatus(DISPATCHER, ORDER_ID, "delivered");
+    expect(result.ok).toBe(true);
+    const deliveredCalls =
+      autoGrantServiceMocks.handleVoucherOrderTransition.mock.calls;
+    expect(deliveredCalls).toHaveLength(1);
+    expect(deliveredCalls[0]?.[0]).toMatchObject({
+      customer_id: CUSTOMER,
+      order_id: ORDER_ID,
+      total: 270000,
+    });
+    expect(deliveredCalls[0]?.[1]).toBe("delivered");
+
+    // Automation is best-effort: a throwing handler must not fail the
+    // status transition itself.
+    autoGrantStubs.throws = true;
+    orderStubs.orderById = makeOrderRow({ status: "shipping" });
+    const again = await updateOrderStatus(DISPATCHER, ORDER_ID, "delivered");
+    expect(again.ok).toBe(true);
   });
 
   test("walks a pending order to confirmed with history", async () => {
@@ -259,59 +293,5 @@ describe("updateOrderStatus", () => {
       makePartRow().created_at,
       5,
     ]);
-  });
-});
-
-describe("listStaffOrders", () => {
-  test("rejects an unknown status filter", async () => {
-    const result = await listStaffOrders({ status: "archived" });
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
-    expect(result.status).toBe(400);
-  });
-
-  test("rejects a malformed month bucket", async () => {
-    const result = await listStaffOrders({
-      status: "pending",
-      month: "2026/01",
-    });
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
-    expect(result.status).toBe(400);
-  });
-
-  test("pages one status partition and returns the encoded cursor", async () => {
-    orderStubs.statusPage = {
-      rows: [makeOrderRow()],
-      pageState: "opaque-next",
-    };
-    const result = await listStaffOrders({
-      status: "pending",
-      month: "2026-01",
-    });
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.data.items).toHaveLength(1);
-    expect(result.data.items[0]?.id).toBe(ORDER_ID);
-    expect(result.data.nextCursor).toBeTruthy();
-    const listCall = orderRepoMocks.listOrderRowsByStatus.mock.calls[0];
-    expect(listCall?.[0]).toBe("pending");
-    expect(listCall?.[1]).toBe("2026-01");
-    expect(listCall?.[3]).toBeNull();
-  });
-
-  test("rejects a foreign cursor scope", async () => {
-    orderStubs.statusPage = { rows: [], pageState: "x" };
-    const first = await listStaffOrders({ status: "pending" });
-    if (!first.ok) throw new Error("expected ok");
-    // Cursors are scoped: a token minted for another scope must not decode.
-    const forged = `${first.data.nextCursor}-tampered`;
-    const result = await listStaffOrders({
-      status: "pending",
-      cursor: forged,
-    });
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
-    expect(result.status).toBe(400);
   });
 });

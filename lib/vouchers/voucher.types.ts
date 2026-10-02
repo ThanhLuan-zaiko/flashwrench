@@ -7,9 +7,11 @@ export type WalletStatus = "active" | "used" | "expired" | "revoked";
 export type VoucherCampaign = {
   id: string;
   code: string;
+  slug: string;
   name: string;
   description: string;
   imageUrl: string;
+  images: string[];
   discountType: VoucherDiscountType;
   discountValue: number;
   maxDiscount: number;
@@ -23,8 +25,10 @@ export type VoucherCampaign = {
   allowDispatcherGrant: boolean;
   dispatcherMaxValue: number;
   isActive: boolean;
+  isDeleted: boolean;
   createdAt: string | null;
   updatedAt: string | null;
+  deletedAt: string | null;
 };
 
 export type VoucherWallet = {
@@ -52,9 +56,11 @@ export type VoucherWallet = {
 export type CampaignRow = {
   campaign_id: string;
   code: string | null;
+  slug: string | null;
   name: string | null;
   description: string | null;
   image_url: string | null;
+  images: string[] | null;
   discount_type: string | null;
   discount_value: number | null;
   max_discount: number | null;
@@ -68,6 +74,8 @@ export type CampaignRow = {
   allow_dispatcher_grant: boolean | null;
   dispatcher_max_value: number | null;
   is_active: boolean | null;
+  is_deleted: boolean | null;
+  deleted_at: Date | null;
   created_by: string | null;
   created_at: Date | null;
   updated_at: Date | null;
@@ -104,9 +112,13 @@ export type WalletUserIndexRow = {
 export type VoucherFieldErrors = Partial<
   Record<
     | "code"
+    | "slug"
     | "name"
     | "description"
     | "imageUrl"
+    | "images"
+    | "imageAssetIds"
+    | "confirm"
     | "discountType"
     | "discountValue"
     | "maxDiscount"
@@ -134,12 +146,20 @@ export type VoucherResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number; errors: VoucherFieldErrors };
 
+export function isDeletedFlag(value: boolean | null): boolean {
+  return value === true;
+}
+
+// The human input is the slug; the voucher code is derived from it
+// server-side (dashes -> underscores, uppercased) and never typed by hand.
+// The gallery mirrors the catalog contract: images[] are stored media
+// urls, imageAssetIds are the fresh uploads to claim on save.
 export type CreateCampaignInput = {
-  code: string;
+  slug: string;
   name: string;
   description?: string;
-  imageUrl?: string;
-  imageAssetId?: string;
+  images?: string[];
+  imageAssetIds?: string[];
   discountType: VoucherDiscountType;
   discountValue: number;
   maxDiscount?: number;

@@ -6,12 +6,25 @@ import type {
 } from "./voucher.types";
 
 const CODE_PATTERN = /^[A-Z0-9_-]{3,32}$/;
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function normalizeVoucherCode(raw: unknown): string {
   return String(raw ?? "")
     .trim()
     .toUpperCase()
     .replace(/\s+/g, "_");
+}
+
+export function normalizeVoucherSlug(raw: unknown): string {
+  return String(raw ?? "")
+    .trim()
+    .toLowerCase();
+}
+
+// Code derives from the slug 1:1, so slug bounds keep the derived code
+// inside CODE_PATTERN (3-32 chars) without a separate rule.
+export function voucherCodeFromSlug(slug: string): string {
+  return slug.toUpperCase().replace(/-/g, "_");
 }
 
 export function isDiscountType(value: unknown): value is VoucherDiscountType {
@@ -26,11 +39,14 @@ export function isMediaVoucherUrl(value: string): boolean {
   return value.startsWith("/api/media/promotion/");
 }
 
+export const MAX_CAMPAIGN_IMAGES = 5;
+
 export function validateCampaignInput(input: {
   code: string;
+  slug: string;
   name: string;
   description: string;
-  imageUrl: string;
+  images: string[];
   discountType: unknown;
   discountValue: unknown;
   maxDiscount: unknown;
@@ -48,14 +64,23 @@ export function validateCampaignInput(input: {
   if (!CODE_PATTERN.test(input.code)) {
     errors.code = "Mã gồm 3-32 ký tự hoa, số, gạch dưới hoặc gạch ngang.";
   }
+  if (
+    input.slug.length < 3 ||
+    input.slug.length > 32 ||
+    !SLUG_PATTERN.test(input.slug)
+  ) {
+    errors.slug = "Slug gồm 3-32 ký tự thường, số và gạch ngang.";
+  }
   if (input.name.length < 3 || input.name.length > 120) {
     errors.name = "Tên chương trình từ 3 đến 120 ký tự.";
   }
   if (input.description.length > 500) {
     errors.description = "Mô tả tối đa 500 ký tự.";
   }
-  if (input.imageUrl && !isMediaVoucherUrl(input.imageUrl)) {
-    errors.imageUrl = "Ảnh bìa phải tải lên từ kho ảnh khuyến mãi.";
+  if (input.images.length > MAX_CAMPAIGN_IMAGES) {
+    errors.images = `Tối đa ${MAX_CAMPAIGN_IMAGES} ảnh mỗi chiến dịch.`;
+  } else if (input.images.some((url) => !isMediaVoucherUrl(url))) {
+    errors.images = "Ảnh phải tải lên từ kho ảnh khuyến mãi.";
   }
   if (!isDiscountType(input.discountType)) {
     errors.discountType = "Loại giảm giá không hợp lệ.";

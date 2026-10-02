@@ -32,6 +32,7 @@ import {
   type TopicRegistry,
 } from "./registry";
 import { isAllowedRealtimeOrigin } from "./security";
+import { startVoucherWinBackLoop } from "./winback-loop";
 
 const MAX_PAYLOAD_BYTES = 64 * 1024;
 const MAX_SUBSCRIPTIONS_PER_SOCKET = 64;
@@ -327,4 +328,5 @@ export function startRealtimeServer(options?: RealtimeServerOptions) {
 if (import.meta.main) {
   const server = startRealtimeServer();
   console.log(`[realtime] listening on :${server.port}`);
+  startVoucherWinBackLoop();
 }

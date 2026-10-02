@@ -16,7 +16,13 @@ import {
   mechanicWorkspaceRepoMocks,
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
-import { serviceStubs, userRepoMocks } from "../helpers/service-mocks";
+import {
+  autoGrantServiceMocks,
+  autoGrantStubs,
+  serviceStubs,
+  userRepoMocks,
+} from "../helpers/service-mocks";
+import { resetAutoRuleMocks } from "../helpers/voucher-auto.mocks";
 import {
   resetWorkspaceMocks,
   vehicleRepoMocks,
@@ -40,12 +46,14 @@ mock.module(
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/vehicles/vehicle.repository", () => vehicleRepoMocks);
+mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
 
 import { applyMechanicBookingAction } from "@/lib/mechanic/mechanic-bookings.service";
 
 beforeEach(() => {
   resetMechanicMocks();
   resetWorkspaceMocks();
+  resetAutoRuleMocks();
   serviceStubs.userById = makeUserRow({ role: "mechanic", status: "active" });
 });
 
@@ -141,6 +149,28 @@ describe("applyMechanicBookingAction", () => {
     const transition = bookingWorkflowRepoMocks.claimBookingTransition.mock
       .calls[1]?.[0] as { note: string } | undefined;
     expect(transition?.note).toBe("Fixed and tested");
+    // Completion fires the loyalty hook once with the customer's total.
+    const voucherCalls =
+      autoGrantServiceMocks.handleVoucherBookingCompleted.mock.calls;
+    expect(voucherCalls).toHaveLength(1);
+    expect(voucherCalls[0]).toEqual([CUSTOMER_ID, 450000]);
+  });
+
+  test("completion still succeeds when voucher automation throws", async () => {
+    mechanicStubs.bookingById = makeBookingRow({ status: "in_progress" });
+    mechanicStubs.bookingRowsByIds = [
+      makeBookingRow({ status: "in_progress" }),
+    ];
+    mechanicStubs.itemRows = [];
+    mechanicStubs.profile = makeProfileRow({ completed_jobs: 0 });
+    autoGrantStubs.throws = true;
+
+    const done = await applyMechanicBookingAction(
+      MECHANIC_ID,
+      BOOKING_ID,
+      "complete",
+    );
+    expect(done.ok).toBe(true);
   });
 
   test("decline returns the booking to pending unassigned", async () => {

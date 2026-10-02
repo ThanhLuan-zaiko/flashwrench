@@ -1216,9 +1216,11 @@ CREATE TABLE IF NOT EXISTS complaints_by_user (
 CREATE TABLE IF NOT EXISTS voucher_campaigns_by_id (
   campaign_id            UUID PRIMARY KEY,
   code                   TEXT,
+  slug                   TEXT,
   name                   TEXT,
   description            TEXT,
   image_url              TEXT,
+  images                 LIST<TEXT>,
   discount_type          TEXT,
   discount_value         BIGINT,
   max_discount           BIGINT,
@@ -1232,6 +1234,8 @@ CREATE TABLE IF NOT EXISTS voucher_campaigns_by_id (
   allow_dispatcher_grant BOOLEAN,
   dispatcher_max_value   BIGINT,
   is_active              BOOLEAN,
+  is_deleted             BOOLEAN,
+  deleted_at             TIMESTAMP,
   created_by             UUID,
   created_at             TIMESTAMP,
   updated_at             TIMESTAMP
@@ -1239,6 +1243,14 @@ CREATE TABLE IF NOT EXISTS voucher_campaigns_by_id (
 
 CREATE TABLE IF NOT EXISTS voucher_campaigns_by_code (
   code        TEXT PRIMARY KEY,
+  campaign_id UUID
+);
+
+-- Query: uniqueness claim for the human-editable slug; code derives from
+-- it (slug.lower + dashes -> code.upper + underscores), so one slug maps
+-- to exactly one code.
+CREATE TABLE IF NOT EXISTS voucher_campaigns_by_slug (
+  slug        TEXT PRIMARY KEY,
   campaign_id UUID
 );
 
@@ -1281,6 +1293,51 @@ CREATE TABLE IF NOT EXISTS voucher_wallets_by_campaign (
   status      TEXT,
   PRIMARY KEY ((campaign_id), granted_at, wallet_id)
 ) WITH CLUSTERING ORDER BY (granted_at DESC, wallet_id ASC);
+
+-- ============================================================================
+-- 11c. VOUCHER AUTO-GRANT RULES (system-driven wallet grants)
+-- trigger_type = signup | booking_count | order_count | order_value |
+--                spend_total | review_created | win_back
+-- ============================================================================
+
+-- Query: every automation rule (staff board lists all; the evaluator loads
+-- the small table on each trigger)
+CREATE TABLE IF NOT EXISTS voucher_auto_rules_by_id (
+  rule_id       UUID PRIMARY KEY,
+  name          TEXT,
+  campaign_id   UUID,
+  trigger_type  TEXT,
+  threshold     BIGINT,
+  window_days   INT,
+  is_active     BOOLEAN,
+  granted_count INT,
+  created_by    UUID,
+  created_at    TIMESTAMP,
+  updated_at    TIMESTAMP
+);
+
+-- Grant ledger: one row per (rule, user, milestone). INSERT ... IF NOT
+-- EXISTS is the dedupe point — a milestone can only pay out once.
+CREATE TABLE IF NOT EXISTS voucher_auto_grants_by_rule (
+  rule_id    UUID,
+  user_id    UUID,
+  dedupe_key TEXT,
+  wallet_id  UUID,
+  granted_at TIMESTAMP,
+  PRIMARY KEY ((rule_id, user_id), dedupe_key)
+) WITH CLUSTERING ORDER BY (dedupe_key ASC);
+
+-- Per-customer activity rollup, updated on booking completion, order
+-- delivery/refund. Drives milestone evaluation, the dispatcher
+-- "almost there" board and the win-back scan (last_activity_at).
+CREATE TABLE IF NOT EXISTS customer_stats_by_id (
+  customer_id        UUID PRIMARY KEY,
+  completed_bookings INT,
+  completed_orders   INT,
+  total_spent        BIGINT,
+  last_activity_at   TIMESTAMP,
+  updated_at         TIMESTAMP
+);
 
 -- Chat: customer <-> mechanic direct messages (internal mini Telegram)
 -- Query: one thread by id (membership, peer ids, last activity snapshot)

@@ -12,6 +12,7 @@ import type {
   VoucherResult,
   VoucherWallet,
 } from "./voucher.types";
+import { isDeletedFlag } from "./voucher.types";
 import {
   claimGrantSlot,
   findCampaignRowById,
@@ -50,7 +51,9 @@ function worstCaseDiscount(campaign: CampaignRow): number | null {
 // Dispatchers only grant campaigns flagged for them, and only when the
 // campaign's worst-case discount fits inside their VND cap. Admin is
 // unbounded; a zero cap is an explicit "no dispatcher cap" choice.
-function dispatcherCapAllows(
+// Shared with the auto-rule service — wiring a rule to a campaign is the
+// same power as granting from it.
+export function dispatcherCapAllows(
   actor: Actor,
   campaign: CampaignRow,
 ): VoucherResult<null> | null {
@@ -89,6 +92,9 @@ export async function grantWallet(
   }
   const campaign = await findCampaignRowById(raw.campaignId.trim());
   if (!campaign) return fail(404, "Không tìm thấy chiến dịch.");
+  if (isDeletedFlag(campaign.is_deleted)) {
+    return fail(400, "Chiến dịch đang nằm trong thùng rác.");
+  }
   if (!campaign.is_active) return fail(400, "Chiến dịch đang tắt.");
   // Wallets only land on live customer accounts. That one check kills
   // self-dealing (staff ids are never customer role) and grants aimed

@@ -11,14 +11,17 @@ import {
 } from "@/lib/vouchers/voucher-campaign.service";
 import { publishCampaignChange } from "@/lib/vouchers/voucher-realtime";
 
+function toStringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.map(String) : [];
+}
+
 function toInput(body: Record<string, unknown>): CreateCampaignInput {
   return {
-    code: String(body.code ?? ""),
+    slug: String(body.slug ?? ""),
     name: String(body.name ?? ""),
     description: body.description === undefined ? "" : String(body.description),
-    imageUrl: body.imageUrl === undefined ? "" : String(body.imageUrl),
-    imageAssetId:
-      body.imageAssetId === undefined ? undefined : String(body.imageAssetId),
+    images: toStringList(body.images),
+    imageAssetIds: toStringList(body.imageAssetIds),
     discountType: String(body.discountType ?? "fixed") as VoucherDiscountType,
     discountValue: Number(body.discountValue),
     maxDiscount: body.maxDiscount === undefined ? 0 : Number(body.maxDiscount),
@@ -45,7 +48,7 @@ export async function GET() {
   const { user, response } = await requireRole("admin");
   if (response || !user) return response;
   try {
-    const result = await listCampaigns();
+    const result = await listCampaigns({ includeDeleted: true });
     if (!result.ok) {
       return NextResponse.json(
         { errors: result.errors },

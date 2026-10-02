@@ -11,6 +11,7 @@ import { findPartRowById } from "@/lib/parts/parts.repository";
 import { partTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 import { isUuid } from "@/lib/validation";
+import { handleVoucherReviewCreated } from "@/lib/vouchers/auto-grant.service";
 import type {
   OrderReviewRow,
   OrderReviewState,
@@ -121,6 +122,11 @@ export async function createOrderReview(
     createdAt: write.createdAt,
     orderId,
   });
+  // Loyalty automation: a posted review may pay a voucher (deduped on the
+  // order ref). Best-effort, never throws.
+  await handleVoucherReviewCreated(customer.id, `order:${orderId}`).catch(
+    () => undefined,
+  );
   return {
     ok: true,
     data: {
@@ -194,6 +200,12 @@ export async function createOrderPartReview(
     kind: "review-created",
     partId,
   });
+  // Loyalty automation: same hook as the order-level review, keyed on the
+  // order+part pair so each part review counts once. Never throws.
+  await handleVoucherReviewCreated(
+    customer.id,
+    `part:${orderId}:${partId}`,
+  ).catch(() => undefined);
   return {
     ok: true,
     data: {

@@ -6,6 +6,7 @@ import type { PublicUser } from "@/lib/auth/user.types";
 import { publishRescueChange } from "@/lib/realtime/domain-publish";
 import { findRescueRowById } from "@/lib/rescue/rescue-workflow.repository";
 import { isUuid } from "@/lib/validation";
+import { handleVoucherReviewCreated } from "@/lib/vouchers/auto-grant.service";
 import type { ReviewItem, ReviewResult } from "./review.types";
 import { toIso } from "./review.types";
 import { validateReviewInput } from "./review-validation";
@@ -97,6 +98,11 @@ export async function createRescueReview(
     customer.id,
     [mechanicId],
     rescue.zone_id ?? null,
+  );
+  // Loyalty automation: a posted review may pay a voucher, deduped on the
+  // rescue request id. Best-effort, never throws.
+  await handleVoucherReviewCreated(customer.id, `rescue:${requestId}`).catch(
+    () => undefined,
   );
   return {
     ok: true,

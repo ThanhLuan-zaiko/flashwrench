@@ -12,6 +12,10 @@ import {
   resetMechanicMocks,
 } from "../helpers/mechanic.mocks";
 import {
+  autoGrantServiceMocks,
+  resetAutoRuleMocks,
+} from "../helpers/voucher-auto.mocks";
+import {
   domainPublishMocks,
   makeReviewBookingRow,
   resetWorkspaceMocks,
@@ -25,6 +29,7 @@ mock.module(
 );
 mock.module("@/lib/booking/review.repository", () => reviewRepoMocks);
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
 
 import { createBookingReview } from "@/lib/booking/review.service";
 
@@ -42,6 +47,7 @@ function reviewBody(overrides?: Record<string, unknown>) {
 beforeEach(() => {
   resetMechanicMocks();
   resetWorkspaceMocks();
+  resetAutoRuleMocks();
   mechanicStubs.bookingById = completedBooking();
 });
 
@@ -120,6 +126,11 @@ describe("createBookingReview claims and retries", () => {
     expect(reviewRepoMocks.projectBookingReview.mock.calls.length).toBe(1);
     expect(domainPublishMocks.publishBookingChange.mock.calls[0]?.[0]).toBe(
       "review-created",
+    );
+    // The loyalty hook keys the review on the booking id — an idempotent
+    // repair retry cannot double-grant the voucher.
+    expect(autoGrantServiceMocks.handleVoucherReviewCreated.mock.calls).toEqual(
+      [[CUSTOMER_ID, BOOKING_ID]],
     );
     // A mechanic-only review never reads booking items nor rates a service.
     expect(

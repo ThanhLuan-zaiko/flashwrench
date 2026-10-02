@@ -36,6 +36,7 @@ import {
   staffTempStubs,
 } from "./staff.mocks";
 import { resetVoucherMocks } from "./voucher.mocks";
+import { resetAutoRuleMocks } from "./voucher-auto.mocks";
 
 export { bookingRepoMocks, bookingStubs } from "./booking.mocks";
 export {
@@ -86,6 +87,14 @@ export {
   voucherStubs,
   voucherWalletRepoMocks,
 } from "./voucher.mocks";
+export {
+  autoGrantServiceMocks,
+  autoGrantStubs,
+  autoRuleRepoMocks,
+  autoRuleRouteStubs,
+  autoRuleServiceMocks,
+  autoRuleStubs,
+} from "./voucher-auto.mocks";
 export { staffRepoMocks };
 
 // Mutable stub state for service-level suites. Factories in the test files
@@ -276,6 +285,7 @@ export function resetServiceMocks(): void {
   resetPartsMocks();
   resetOrderLinesMocks();
   resetVoucherMocks();
+  resetAutoRuleMocks();
   staffTempStubs.rowByUser = {};
   for (const fn of Object.values(userRepoMocks)) fn.mockClear();
   for (const fn of Object.values(staffRepoMocks)) fn.mockClear();

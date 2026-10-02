@@ -1,9 +1,16 @@
 // Fetch layer for voucher wallets. Components never call fetch directly.
+
+import type {
+  CreateAutoRuleInput,
+  NearMilestoneEntry,
+  VoucherAutoRule,
+} from "@/lib/vouchers/auto-rule.types";
 import type {
   CreateCampaignInput,
   VoucherCampaign,
   VoucherWallet,
 } from "@/lib/vouchers/voucher.types";
+import { AuthApiError } from "./auth.api";
 
 async function readErrors(response: Response): Promise<Record<string, string>> {
   try {
@@ -33,8 +40,24 @@ export async function createAdminCampaign(
     body: JSON.stringify(input),
   });
   if (!response.ok) {
-    const errors = await readErrors(response);
-    throw new Error(errors.form ?? "Không tạo được chiến dịch.");
+    throw new AuthApiError(response.status, await readErrors(response));
+  }
+  const body = (await response.json()) as { campaign: VoucherCampaign };
+  return body.campaign;
+}
+
+export async function updateAdminCampaign(
+  campaignId: string,
+  input: CreateCampaignInput,
+): Promise<VoucherCampaign> {
+  const response = await fetch(`/api/admin/voucher-campaigns/${campaignId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(input),
+  });
+  if (!response.ok) {
+    throw new AuthApiError(response.status, await readErrors(response));
   }
   const body = (await response.json()) as { campaign: VoucherCampaign };
   return body.campaign;
@@ -43,17 +66,62 @@ export async function createAdminCampaign(
 export async function toggleAdminCampaign(
   campaignId: string,
   isActive: boolean,
-  code: string,
 ): Promise<VoucherCampaign> {
   const response = await fetch(`/api/admin/voucher-campaigns/${campaignId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ action: "toggle", isActive, code }),
+    body: JSON.stringify({ action: "toggle", isActive }),
   });
-  if (!response.ok) throw new Error("Không đổi được trạng thái.");
+  if (!response.ok) {
+    throw new AuthApiError(response.status, await readErrors(response));
+  }
   const body = (await response.json()) as { campaign: VoucherCampaign };
   return body.campaign;
+}
+
+async function patchCampaignLifecycle(
+  campaignId: string,
+  action: "soft-delete" | "restore",
+): Promise<VoucherCampaign> {
+  const response = await fetch(`/api/admin/voucher-campaigns/${campaignId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ action }),
+  });
+  if (!response.ok) {
+    throw new AuthApiError(response.status, await readErrors(response));
+  }
+  const body = (await response.json()) as { campaign: VoucherCampaign };
+  return body.campaign;
+}
+
+export async function softDeleteAdminCampaign(
+  campaignId: string,
+): Promise<VoucherCampaign> {
+  return patchCampaignLifecycle(campaignId, "soft-delete");
+}
+
+export async function restoreAdminCampaign(
+  campaignId: string,
+): Promise<VoucherCampaign> {
+  return patchCampaignLifecycle(campaignId, "restore");
+}
+
+export async function hardDeleteAdminCampaign(
+  campaignId: string,
+  confirm: string,
+): Promise<void> {
+  const response = await fetch(`/api/admin/voucher-campaigns/${campaignId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ confirm }),
+  });
+  if (!response.ok) {
+    throw new AuthApiError(response.status, await readErrors(response));
+  }
 }
 
 export async function fetchDispatchCampaigns(): Promise<VoucherCampaign[]> {
@@ -99,6 +167,64 @@ export async function revokeDispatchWallet(
   return body.wallet;
 }
 
+export async function fetchAutoRules(): Promise<VoucherAutoRule[]> {
+  const response = await fetch("/api/dispatch/voucher-rules", {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Không tải được quy tắc tự động.");
+  const body = (await response.json()) as { rules: VoucherAutoRule[] };
+  return body.rules;
+}
+
+export async function createAutoRule(
+  input: CreateAutoRuleInput,
+): Promise<VoucherAutoRule> {
+  const response = await fetch("/api/dispatch/voucher-rules", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(input),
+  });
+  if (!response.ok) {
+    const errors = await readErrors(response);
+    throw new Error(errors.form ?? "Không tạo được quy tắc.");
+  }
+  const body = (await response.json()) as { rule: VoucherAutoRule };
+  return body.rule;
+}
+
+export async function toggleAutoRule(
+  ruleId: string,
+  isActive: boolean,
+): Promise<VoucherAutoRule> {
+  const response = await fetch(`/api/dispatch/voucher-rules/${ruleId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ isActive }),
+  });
+  if (!response.ok) {
+    const errors = await readErrors(response);
+    throw new Error(errors.form ?? "Không đổi được trạng thái quy tắc.");
+  }
+  const body = (await response.json()) as { rule: VoucherAutoRule };
+  return body.rule;
+}
+
+export type VoucherProgress = {
+  entries: NearMilestoneEntry[];
+  scannedCustomers: number;
+  truncated: boolean;
+};
+
+export async function fetchVoucherProgress(): Promise<VoucherProgress> {
+  const response = await fetch("/api/dispatch/voucher-progress", {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Không tải được tiến độ khách hàng.");
+  return (await response.json()) as VoucherProgress;
+}
+
 export type MyWalletPage = {
   items: VoucherWallet[];
   nextCursor: string | null;
@@ -117,22 +243,4 @@ export async function fetchMyWallets(params: {
   });
   if (!response.ok) throw new Error("Không tải được ví voucher.");
   return (await response.json()) as MyWalletPage;
-}
-
-export async function uploadPromotionImage(file: File): Promise<string> {
-  const form = new FormData();
-  form.set("file", file);
-  form.set("scope", "promotion");
-  form.set("ownerType", "promotion");
-  form.set("ownerId", "pending");
-  const response = await fetch("/api/media", {
-    method: "POST",
-    credentials: "include",
-    body: form,
-  });
-  if (!response.ok) throw new Error("Không tải được ảnh bìa.");
-  const body = (await response.json()) as {
-    asset: { url: string; assetId: string };
-  };
-  return `${body.asset.url}|${body.asset.assetId}`;
 }

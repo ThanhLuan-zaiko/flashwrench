@@ -19,11 +19,16 @@ export const voucherStubs = {
   campaignById: null as CampaignRow | null,
   campaignCodeOwner: null as string | null,
   campaignCodeClaimed: true,
+  campaignSlugOwner: null as string | null,
+  campaignSlugClaimed: true,
   campaignRows: [] as CampaignRow[],
   walletById: null as WalletRow | null,
   walletRowsByUser: [] as WalletRow[],
   walletIdPageState: null as string | null,
   userCampaignCount: 0,
+  // Active wallets the campaign still owns — hard delete refuses while
+  // this is above zero, same as the real partition scan.
+  campaignActiveWallets: 0,
   // Forces every commitWalletTransition to lose its CAS race, so a test
   // can simulate a concurrent spend winning first.
   casRejected: false,
@@ -31,6 +36,16 @@ export const voucherStubs = {
   grantSlotOutcome: null as GrantSlotOutcome | null,
   insertedWallets: [] as InsertWalletParams[],
   insertedCampaigns: [] as InsertCampaignParams[],
+  deletedCampaigns: [] as {
+    campaignId: string;
+    isDeleted: boolean;
+    deletedAt: Date | null;
+  }[],
+  purgedCampaigns: [] as {
+    campaignId: string;
+    code: string;
+    slug: string;
+  }[],
   statusMarks: [] as {
     walletId: string;
     status: string;
@@ -51,6 +66,17 @@ export const voucherCampaignRepoMocks = {
     async (_code: string): Promise<string | null> =>
       voucherStubs.campaignCodeOwner,
   ),
+  findCampaignIdBySlug: mock(
+    async (_slug: string): Promise<string | null> =>
+      voucherStubs.campaignSlugOwner,
+  ),
+  claimCampaignSlug: mock(
+    async (_slug: string, _campaignId: string): Promise<boolean> =>
+      voucherStubs.campaignSlugClaimed,
+  ),
+  releaseCampaignSlug: mock(
+    async (_slug: string, _campaignId: string): Promise<boolean> => true,
+  ),
   insertCampaign: mock(async (params: InsertCampaignParams): Promise<void> => {
     voucherStubs.insertedCampaigns.push(params);
   }),
@@ -66,6 +92,31 @@ export const voucherCampaignRepoMocks = {
   ),
   setCampaignActive: mock(
     async (_campaignId: string, _isActive: boolean): Promise<void> => undefined,
+  ),
+  setCampaignDeleted: mock(
+    async (
+      campaignId: string,
+      isDeleted: boolean,
+      deletedAt: Date | null,
+    ): Promise<void> => {
+      voucherStubs.deletedCampaigns.push({ campaignId, isDeleted, deletedAt });
+      if (voucherStubs.campaignById?.campaign_id === campaignId) {
+        voucherStubs.campaignById = {
+          ...voucherStubs.campaignById,
+          is_deleted: isDeleted,
+          deleted_at: deletedAt,
+        };
+      }
+    },
+  ),
+  hardDeleteCampaign: mock(
+    async (params: {
+      campaignId: string;
+      code: string;
+      slug: string;
+    }): Promise<void> => {
+      voucherStubs.purgedCampaigns.push(params);
+    },
   ),
   // Mirrors the real CAS loop closely enough for service tests: the stub
   // campaign is the row being claimed, and a sold-out fixture returns
@@ -120,6 +171,10 @@ export const voucherWalletRepoMocks = {
   countUserWalletsForCampaign: mock(
     async (_userId: string, _campaignId: string): Promise<number> =>
       voucherStubs.userCampaignCount,
+  ),
+  countActiveWalletsForCampaign: mock(
+    async (_campaignId: string): Promise<number> =>
+      voucherStubs.campaignActiveWallets,
   ),
   insertWallet: mock(async (params: InsertWalletParams): Promise<void> => {
     voucherStubs.insertedWallets.push(params);
@@ -185,15 +240,20 @@ export function resetVoucherMocks(): void {
   voucherStubs.campaignById = null;
   voucherStubs.campaignCodeOwner = null;
   voucherStubs.campaignCodeClaimed = true;
+  voucherStubs.campaignSlugOwner = null;
+  voucherStubs.campaignSlugClaimed = true;
   voucherStubs.campaignRows = [];
   voucherStubs.walletById = null;
   voucherStubs.walletRowsByUser = [];
   voucherStubs.walletIdPageState = null;
   voucherStubs.userCampaignCount = 0;
+  voucherStubs.campaignActiveWallets = 0;
   voucherStubs.casRejected = false;
   voucherStubs.grantSlotOutcome = null;
   voucherStubs.insertedWallets = [];
   voucherStubs.insertedCampaigns = [];
+  voucherStubs.deletedCampaigns = [];
+  voucherStubs.purgedCampaigns = [];
   voucherStubs.statusMarks = [];
   for (const fn of Object.values(voucherCampaignRepoMocks)) fn.mockClear();
   for (const fn of Object.values(voucherWalletRepoMocks)) fn.mockClear();

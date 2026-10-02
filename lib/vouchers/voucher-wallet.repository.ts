@@ -117,6 +117,25 @@ export async function countUserWalletsForCampaign(
   return count;
 }
 
+// Active wallets still live under one campaign — the hard-delete guard.
+// Reads only the campaign partition of the audit index; status is a
+// regular column there, so the filter stays partition-scoped.
+export async function countActiveWalletsForCampaign(
+  campaignId: string,
+): Promise<number> {
+  const result = await scylla.execute(
+    "SELECT status FROM voucher_wallets_by_campaign WHERE campaign_id = ? LIMIT 2000",
+    [campaignId],
+    { prepare: true },
+  );
+  let count = 0;
+  for (const raw of result.rows) {
+    const row = raw as unknown as { status: string | null };
+    if (row.status === "active") count += 1;
+  }
+  return count;
+}
+
 export type InsertWalletParams = {
   walletId: string;
   userId: string;
@@ -127,7 +146,7 @@ export type InsertWalletParams = {
   discountType: string;
   discountValue: number;
   maxDiscount: number;
-  grantedBy: string;
+  grantedBy: string | null;
   grantNote: string;
   grantedAt: Date;
   expiresAt: Date | null;

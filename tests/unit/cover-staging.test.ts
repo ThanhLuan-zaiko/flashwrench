@@ -84,6 +84,19 @@ describe("decideStageFiles", () => {
     expect(decision.accepted).toEqual([]);
     expect(decision.limitHit).toBe(true);
   });
+
+  test("a custom max caps single-image fields", () => {
+    const decision = decideStageFiles(
+      [pick("a.jpg", "image/jpeg", MB), pick("b.jpg", "image/jpeg", MB)],
+      0,
+      8 * MB,
+      1,
+    );
+    expect(decision.accepted.length).toBe(1);
+    expect(decision.rejected.length).toBe(1);
+    expect(decision.rejected[0]?.reason).toMatch("Tối đa 1 ảnh");
+    expect(decision.limitHit).toBe(true);
+  });
 });
 
 describe("gallery ordering", () => {
@@ -101,6 +114,12 @@ describe("gallery ordering", () => {
   test("canAddMore reflects remaining slots", () => {
     expect(canAddMore(2, 2)).toBe(true);
     expect(canAddMore(3, 2)).toBe(false);
+  });
+
+  test("canAddMore honors a custom max for single-cover rows", () => {
+    expect(canAddMore(0, 0, 1)).toBe(true);
+    expect(canAddMore(1, 0, 1)).toBe(false);
+    expect(canAddMore(0, 1, 1)).toBe(false);
   });
 
   test("buildGalleryPayload dedupes and caps, cover first", () => {

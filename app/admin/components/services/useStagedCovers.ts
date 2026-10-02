@@ -26,7 +26,11 @@ export type StagedCover = {
 // Deferred gallery state for one category dialog. Dropped files become
 // local object-URL previews only; uploads happen in the dialog submit.
 // Existing covers are plain URLs from the row; staged covers hold blobs.
-export function useStagedCovers(initialUrls: string[]) {
+// `max` caps the gallery — single-cover rows (voucher campaigns) pass 1.
+export function useStagedCovers(
+  initialUrls: string[],
+  max: number = MAX_COVER_IMAGES,
+) {
   const [existing, setExisting] = useState<string[]>(initialUrls);
   const [staged, setStaged] = useState<StagedCover[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +50,7 @@ export function useStagedCovers(initialUrls: string[]) {
   }, []);
 
   const total = existing.length + staged.length;
-  const full = canAddMore(existing.length, staged.length);
+  const full = canAddMore(existing.length, staged.length, max);
 
   const addFiles = useCallback(
     async (files: File[] | FileList) => {
@@ -59,7 +63,12 @@ export function useStagedCovers(initialUrls: string[]) {
         type: f.type,
         size: f.size,
       }));
-      const decision = decideStageFiles(pickables, currentTotal);
+      const decision = decideStageFiles(
+        pickables,
+        currentTotal,
+        defaultMaxUploadBytes(),
+        max,
+      );
       if (decision.rejected.length > 0) {
         setError(decision.rejected[0]?.reason ?? null);
       }
@@ -99,16 +108,13 @@ export function useStagedCovers(initialUrls: string[]) {
           width: null,
           height: null,
         });
-        if (
-          existing.length + stagedRef.current.length + next.length >=
-          MAX_COVER_IMAGES
-        )
+        if (existing.length + stagedRef.current.length + next.length >= max)
           break;
       }
       if (next.length > 0) setStaged((prev) => [...prev, ...next]);
       else if (!decision.rejected.length) setError("Không thêm được ảnh nào.");
     },
-    [existing.length],
+    [existing.length, max],
   );
 
   const removeExisting = useCallback((url: string) => {
@@ -216,6 +222,7 @@ export function useStagedCovers(initialUrls: string[]) {
     setDragging,
     setError,
     total,
+    max,
     canAddMore: full,
     pinnedCover,
     addFiles,

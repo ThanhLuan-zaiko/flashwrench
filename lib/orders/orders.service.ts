@@ -2,6 +2,7 @@ import type { UserRole } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
 import { restockForOrder } from "@/lib/parts/parts-lifecycle.service";
+import { handleVoucherOrderTransition } from "@/lib/vouchers/auto-grant.service";
 import {
   type ResolvedCourier,
   resolveCourierConfig,
@@ -310,6 +311,10 @@ async function applyStatusChange(
     });
     await refundOrderReceipts(row.order_id, changedBy);
   }
+  // Loyalty automation: delivered ticks the rollup and evaluates
+  // count/value/spend rules; refunded unwinds the counters without
+  // clawing back grants. Best-effort, never throws.
+  await handleVoucherOrderTransition(row, nextStatus).catch(() => undefined);
   // Leaving the review queue: approving means the money goes back, a
   // rejection puts the order back on the delivered shelf.
   if (row.status === "return_requested") {

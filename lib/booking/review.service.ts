@@ -8,6 +8,7 @@ import {
 import { toBookingStatus } from "@/lib/mechanic/mechanic-mapper";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
 import { isUuid } from "@/lib/validation";
+import { handleVoucherReviewCreated } from "@/lib/vouchers/auto-grant.service";
 import {
   type BookingReviewRow,
   type BookingReviewWrite,
@@ -99,6 +100,12 @@ async function repairAndPublish(
     status,
     write.customerId,
     [write.mechanicId],
+  );
+  // Loyalty automation: a posted review may pay a voucher. Deduped on the
+  // booking id, so the idempotent-retry path above cannot double-grant.
+  // Best-effort, never throws.
+  await handleVoucherReviewCreated(write.customerId, write.bookingId).catch(
+    () => undefined,
   );
 }
 
