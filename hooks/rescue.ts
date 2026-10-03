@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { parseDomainEvent, userTopic } from "@/lib/realtime/protocol";
 import type { CreateRescueInput } from "@/services/rescue.api";
 import {
+  cancelRescueRequest,
   createRescueRequest,
   fetchMyRescueDetail,
   fetchMyRescues,
@@ -77,6 +78,22 @@ export function useRescueTracking(requestId: string | null) {
         : 15 * 1000;
     },
     refetchOnWindowFocus: true,
+  });
+}
+
+// Customer self-cancel before the mechanic departs. Success invalidates
+// the whole rescue namespace so the tracker, history list and detail all
+// pick up the cancelled status (realtime also fires, this just covers
+// surfaces without a live socket).
+export function useCancelRescue() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { requestId: string; note: string }) =>
+      cancelRescueRequest(input.requestId, input.note),
+    retry: false,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: rescueKeys.all });
+    },
   });
 }
 

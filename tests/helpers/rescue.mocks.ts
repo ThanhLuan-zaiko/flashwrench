@@ -16,6 +16,7 @@ export const rescueStubs = {
   rowReadQueue: [] as (RescueRow | null)[],
   historyRows: [] as RescueHistoryRow[],
   transitionClaimed: true,
+  claimResults: [] as boolean[],
   paymentClaimed: true,
   transitions: [] as RescueTransitionWrite[],
 };
@@ -68,7 +69,11 @@ export const rescueWorkflowRepoMocks = {
   claimRescueTransition: mock(
     async (write: RescueTransitionWrite): Promise<boolean> => {
       rescueStubs.transitions.push(write);
-      return rescueStubs.transitionClaimed;
+      // Queued outcomes let tests replay a won-then-lost CAS race; the
+      // boolean flag remains the default when the queue runs dry.
+      return rescueStubs.claimResults.length > 0
+        ? (rescueStubs.claimResults.shift() ?? true)
+        : rescueStubs.transitionClaimed;
     },
   ),
   projectRescueTransition: mock(
@@ -178,6 +183,7 @@ export function resetRescueMocks(): void {
   rescueStubs.rowReadQueue = [];
   rescueStubs.historyRows = [];
   rescueStubs.transitionClaimed = true;
+  rescueStubs.claimResults = [];
   rescueStubs.paymentClaimed = true;
   rescueStubs.transitions = [];
   rescueDispatchStubs.autoDispatch = null;

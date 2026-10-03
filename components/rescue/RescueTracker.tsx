@@ -8,6 +8,7 @@ import {
   type RescueProgressStep,
   rescueProgressStep,
 } from "@/lib/rescue/rescue-status";
+import { RescueCancelSection } from "./RescueCancelSection";
 
 const STEP_LABELS: Record<RescueProgressStep, string> = {
   received: "Đã gửi yêu cầu",
@@ -119,6 +120,10 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
           Cập nhật {formatDateTime(tracking.updatedAt)} · tự làm mới mỗi 15 giây
         </p>
       )}
+      <RescueCancelSection
+        requestId={tracking.requestId}
+        status={tracking.status}
+      />
     </div>
   );
 }

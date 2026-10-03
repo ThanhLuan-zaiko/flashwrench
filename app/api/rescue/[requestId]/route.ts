@@ -4,6 +4,7 @@ import {
   mutationOriginError,
   readJsonObject,
 } from "@/lib/http/workspace-route";
+import { cancelCustomerRescue } from "@/lib/rescue/rescue-customer-actions.service";
 import { applyRescueMechanicAction } from "@/lib/rescue/rescue-mechanic.service";
 import { getRescueDetail } from "@/lib/rescue/rescue-reader.service";
 
@@ -40,14 +41,13 @@ export async function GET(_request: Request, { params }: RouteParams) {
   }
 }
 
-// Mechanic answers the 30s offer: { action: "accept" | "decline" }.
-// A decline triggers an immediate re-offer to the next nearest mechanic.
+// Two writers share this route: the filing customer may send
+// { action: "cancel", note } while no mechanic is on the road, and the
+// assigned mechanic answers the 30s offer or drives the journey with
+// { action: "accept" | "decline" | "depart" | "arrive" | "complete" }.
 export async function PATCH(request: Request, { params }: RouteParams) {
   const originError = mutationOriginError(request);
   if (originError) return originError;
-  const { response, user } = await requireRole("mechanic");
-  if (response) return response;
-  const { requestId } = await params;
 
   const body = await readJsonObject(request);
   if (!body) {
@@ -56,8 +56,24 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       { status: 400 },
     );
   }
+  const { requestId } = await params;
 
   try {
+    if (body.action === "cancel") {
+      const { response, user } = await requireRole("customer");
+      if (response) return response;
+      const result = await cancelCustomerRescue(user, requestId, body.note);
+      if (!result.ok) {
+        return NextResponse.json(
+          { errors: result.errors },
+          { status: result.status },
+        );
+      }
+      return NextResponse.json({ rescue: result.data });
+    }
+
+    const { response, user } = await requireRole("mechanic");
+    if (response) return response;
     const result = await applyRescueMechanicAction(
       user.id,
       requestId,

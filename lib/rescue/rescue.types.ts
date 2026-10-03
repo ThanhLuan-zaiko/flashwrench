@@ -53,6 +53,7 @@ export type RescueFieldErrors = Partial<
     | "ward"
     | "street"
     | "location"
+    | "note"
     | "form",
     string
   >

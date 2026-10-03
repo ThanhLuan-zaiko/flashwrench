@@ -1,6 +1,7 @@
 "use client";
 
 import { FiLoader, FiPhone, FiX } from "react-icons/fi";
+import { RescueCancelSection } from "@/components/rescue/RescueCancelSection";
 import {
   RESCUE_HOTLINE,
   RESCUE_ISSUE_OPTIONS,
@@ -146,6 +147,11 @@ export function HistoryRescueDialog({
               <FiPhone aria-hidden="true" className="h-4 w-4" />
               Gọi hotline {RESCUE_HOTLINE}
             </a>
+
+            <RescueCancelSection
+              requestId={rescue.requestId}
+              status={rescue.status}
+            />
 
             <RescueFeedbackSection rescue={rescue} />
 

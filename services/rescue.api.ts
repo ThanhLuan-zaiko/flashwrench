@@ -3,11 +3,12 @@ import type {
   CreateRescueInput,
   RescueFieldErrors,
 } from "@/lib/rescue/rescue.types";
+import type { CustomerCancelRescueOutcome } from "@/lib/rescue/rescue-customer-actions.service";
 import type {
   RescueDetail,
   RescueTracking,
 } from "@/lib/rescue/rescue-reader.service";
-import { apiRequest } from "./auth.api";
+import { AuthApiError, apiRequest } from "./auth.api";
 import type { RescueDetailPayload } from "./rescue-mechanic.api";
 
 export type {
@@ -80,6 +81,29 @@ export function fetchMyRescueDetail(
   return apiRequest<RescueDetailPayload>(
     `/api/rescue/${encodeURIComponent(requestId)}`,
   );
+}
+
+// Customer self-cancel while no mechanic has departed. apiRequest carries
+// the session + refresh retry; AuthApiError is rewrapped like the booking
+// cancel so callers only ever handle RescueApiError.
+export async function cancelRescueRequest(
+  requestId: string,
+  note: string,
+): Promise<{ rescue: CustomerCancelRescueOutcome }> {
+  try {
+    return await apiRequest<{ rescue: CustomerCancelRescueOutcome }>(
+      `/api/rescue/${encodeURIComponent(requestId)}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ action: "cancel", note }),
+      },
+    );
+  } catch (error) {
+    if (error instanceof AuthApiError) {
+      throw new RescueApiError(error.status, error.errors as RescueFieldErrors);
+    }
+    throw error;
+  }
 }
 
 // Guest-facing journey tracking: no session, the unguessable request id

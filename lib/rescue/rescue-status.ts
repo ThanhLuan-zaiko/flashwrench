@@ -75,6 +75,22 @@ export function rescueActionTarget(action: RescueMechanicAction): RescueStatus {
   return ACTION_TARGET_STATUS[action];
 }
 
+// Customer self-cancel window: only while no mechanic is rolling yet.
+// Once the mechanic departs (en_route) the trip is real, so cancellation
+// from there on stays a hotline/dispatcher decision.
+export const CUSTOMER_CANCELLABLE_RESCUE_STATUSES: readonly RescueStatus[] = [
+  "open",
+  "dispatched",
+  "accepted",
+];
+
+export function canCustomerCancelRescue(status: string | null): boolean {
+  return (
+    status !== null &&
+    (CUSTOMER_CANCELLABLE_RESCUE_STATUSES as readonly string[]).includes(status)
+  );
+}
+
 // Customer-facing progress ladder for trackers and status steppers.
 // open/dispatched collapse into "finding a mechanic"; accepted means the
 // offer was taken but the mechanic has not departed yet.
