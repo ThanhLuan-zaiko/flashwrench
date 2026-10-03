@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { FiMapPin } from "react-icons/fi";
 import type { ChatMessage } from "@/lib/chat/chat.types";
 import { chatLocationMapUrl, parseChatLocation } from "@/lib/chat/chat-content";
+import { ChatLocationPreview } from "./ChatLocationPreview";
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("vi-VN", {
@@ -88,6 +89,7 @@ function LocationBody({ message }: { message: ChatMessage }) {
           {point.lat.toFixed(5)}, {point.lng.toFixed(5)}
         </span>
       ) : null}
+      {point ? <ChatLocationPreview point={point} /> : null}
       {point ? (
         <a
           href={chatLocationMapUrl(point)}

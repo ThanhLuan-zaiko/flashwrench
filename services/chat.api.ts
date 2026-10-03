@@ -5,6 +5,7 @@ import type {
   ChatThreadDetail,
   ChatThreadSummary,
 } from "@/lib/chat/chat.types";
+import type { ChatBookingContext } from "@/lib/chat/chat-booking.types";
 import { uploadMediaRequest } from "./media.api";
 
 async function readErrors(response: Response): Promise<Record<string, string>> {
@@ -144,4 +145,18 @@ export async function markChatThreadRead(threadId: string): Promise<void> {
     const errors = await readErrors(response);
     throw new Error(errors.form ?? "Không cập nhật được trạng thái đã đọc.");
   }
+}
+
+export async function fetchChatBookings(
+  threadId: string,
+): Promise<ChatBookingContext[]> {
+  const response = await fetch(`/api/chat/threads/${threadId}/bookings`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const errors = await readErrors(response);
+    throw new Error(errors.form ?? "Không tải được đơn liên quan.");
+  }
+  const body = (await response.json()) as { items: ChatBookingContext[] };
+  return body.items ?? [];
 }

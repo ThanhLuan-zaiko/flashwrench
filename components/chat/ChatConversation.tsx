@@ -4,8 +4,10 @@ import { useEffect, useMemo, useRef } from "react";
 import { FiLoader } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useChatMessages, useChatThread, useMarkChatRead } from "@/hooks/chat";
+import { ChatBookingCard } from "./ChatBookingCard";
 import { ChatComposer } from "./ChatComposer";
 import { ChatMessageBubble } from "./ChatMessageBubble";
+import { ChatQuickReplies } from "./ChatQuickReplies";
 
 type ChatConversationProps = {
   threadId: string;
@@ -48,6 +50,7 @@ export function ChatConversation({ threadId }: ChatConversationProps) {
 
   return (
     <div className="flex h-full flex-col">
+      <ChatBookingCard threadId={threadId} />
       <div
         ref={scrollerRef}
         className={`flex-1 space-y-2 overflow-y-auto px-3 py-3 ${SCROLLBAR_CLASSES}`}
@@ -93,6 +96,7 @@ export function ChatConversation({ threadId }: ChatConversationProps) {
           ))
         )}
       </div>
+      <ChatQuickReplies threadId={threadId} />
       <ChatComposer threadId={threadId} />
     </div>
   );

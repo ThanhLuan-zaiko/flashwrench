@@ -16,6 +16,7 @@ import {
 import {
   type ChatMessagePage,
   type ChatSendInput,
+  fetchChatBookings,
   fetchChatMessages,
   fetchChatThread,
   fetchChatThreads,
@@ -30,6 +31,8 @@ export const chatKeys = {
   thread: (threadId: string) => [...chatKeys.all, "thread", threadId] as const,
   messages: (threadId: string) =>
     [...chatKeys.all, "messages", threadId] as const,
+  bookings: (threadId: string) =>
+    [...chatKeys.all, "bookings", threadId] as const,
 };
 
 export function useChatThreads(enabled: boolean) {
@@ -142,5 +145,15 @@ export function useMarkChatRead(threadId: string | null) {
         });
       }
     },
+  });
+}
+
+export function useChatBookings(threadId: string | null, enabled: boolean) {
+  return useQuery({
+    queryKey: chatKeys.bookings(threadId ?? ""),
+    queryFn: () => fetchChatBookings(threadId ?? ""),
+    enabled: enabled && !!threadId,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
   });
 }
