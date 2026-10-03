@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { FiGift } from "react-icons/fi";
+import Link from "next/link";
+import { FiArrowRight, FiGift } from "react-icons/fi";
 import type { VoucherWallet } from "@/lib/vouchers/voucher.types";
+import { walletDetailHref } from "./voucher-detail-href";
 
 function statusLabel(status: VoucherWallet["status"]): string {
   if (status === "used") return "Đã dùng";
@@ -53,6 +55,16 @@ export function WalletCard({ wallet }: { wallet: VoucherWallet }) {
         >
           {statusLabel(wallet.status)}
         </p>
+        <Link
+          href={walletDetailHref(wallet.id)}
+          scroll={false}
+          prefetch
+          aria-label={`Xem chi tiết ${wallet.campaignName}`}
+          className="mt-2 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+        >
+          Xem chi tiết
+          <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
       </div>
     </article>
   );

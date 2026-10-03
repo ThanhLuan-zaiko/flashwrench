@@ -5,6 +5,7 @@ import { MechanicsBento } from "@/components/home/mechanics/MechanicsBento";
 import { ServicesBento } from "@/components/home/services/ServicesBento";
 import { StepsBento } from "@/components/home/steps/StepsBento";
 import { TestimonialsBento } from "@/components/home/testimonials/TestimonialsBento";
+import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { listLandingReviews } from "@/lib/home/landing-reviews.service";
 import { listShowcaseMechanics } from "@/lib/home/mechanic-showcase.service";
@@ -25,6 +26,9 @@ export default async function HomePage() {
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <HomeHero />
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <PromoBannerSection />
+      </div>
       <ServicesBento />
       <StepsBento />
       <MechanicsBento items={mechanics} />

@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { parseDomainEvent } from "@/lib/realtime/protocol";
 import { subscribeRealtimeTopic } from "@/lib/realtime/realtime-client";
 import { PROMOTIONS_TOPIC } from "@/lib/vouchers/voucher-realtime-topics";
-import { voucherKeys } from "./useVouchers";
 
 // Live refresh for voucher screens: public campaign feed plus the
 // private owner inbox (user:{id}) and the staff operations board.
@@ -33,7 +32,6 @@ export function useVoucherRealtime(ownerId?: string, isStaff = false): void {
         }
       }),
     );
-    void voucherKeys;
     return () => {
       for (const cleanup of cleanups) cleanup();
     };

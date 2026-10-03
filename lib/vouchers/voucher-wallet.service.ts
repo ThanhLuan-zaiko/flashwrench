@@ -5,12 +5,13 @@ import { randomUUID } from "node:crypto";
 import { findUserById } from "@/lib/auth/user.repository";
 import type { UserRole } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
-import { toWallet } from "./voucher.mapper";
+import { toCampaign, toWallet } from "./voucher.mapper";
 import type {
   CampaignRow,
   GrantWalletInput,
   VoucherResult,
   VoucherWallet,
+  WalletDetail,
 } from "./voucher.types";
 import { isDeletedFlag } from "./voucher.types";
 import {
@@ -214,6 +215,29 @@ export async function listMyWallets(
         ),
       ),
       nextCursor: encodeCursor(page.pageState, MY_WALLETS_SCOPE),
+    },
+  };
+}
+
+// Owner-only wallet detail: 404 unless the row exists and belongs to
+// the caller. The campaign join is best-effort so a wallet stays
+// viewable even after its campaign was hard-deleted.
+export async function getMyWalletDetail(
+  userId: string,
+  walletId: string,
+): Promise<VoucherResult<WalletDetail>> {
+  const row = await findWalletRowById(walletId);
+  if (!row || row.user_id !== userId) {
+    return fail(404, "Không tìm thấy voucher của bạn.");
+  }
+  const campaign = row.campaign_id
+    ? await findCampaignRowById(row.campaign_id).catch(() => null)
+    : null;
+  return {
+    ok: true,
+    data: {
+      wallet: toWallet(row, campaign),
+      campaign: campaign ? toCampaign(campaign) : null,
     },
   };
 }

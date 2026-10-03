@@ -77,6 +77,24 @@ bị gỡ.
 
 Sự kiện chỉ mang `kind + id`, dữ liệu thật luôn fetch lại qua HTTPS.
 
+## Trang chi tiết
+
+Giữ nguyên `/vouchers` (ưu đãi đang chạy + ví của tôi), nút trên thẻ
+mở trang chi tiết đọc toàn bộ thông tin:
+
+- `/vouchers/c/[slug]` (công khai, không cần đăng nhập): gallery,
+  mệnh giá, phạm vi, đơn tối thiểu, khung giờ, suất còn lại, cách
+  nhận. Slug lạ hoặc chương trình đã kết thúc hiện panel dẫn về
+  `/vouchers`. API `GET /api/voucher-campaigns/public/[slug]`.
+- `/vouchers/w/[walletId]` (chủ ví, 404 với tài khoản khác): trạng
+  thái, mệnh giá, phạm vi, đơn tối thiểu, ngày nhận/hạn dùng/lúc
+  dùng, nút sang đặt lịch hoặc mua linh kiện khi còn hiệu lực. API
+  `GET /api/vouchers/[walletId]`.
+
+Cả hai dùng tiền tố tĩnh (`c`, `w`) nên không đụng pager
+`/vouchers/page/N`. Shell `VouchersRouteShell` giữ mount một lần,
+`page.tsx` chỉ metadata như `/products/*`.
+
 ## Phase 2 — tính tiền giả lập
 
 Tiền vẫn giả lập như thanh toán hiện tại (`MOCK-*`, không tiền thật),

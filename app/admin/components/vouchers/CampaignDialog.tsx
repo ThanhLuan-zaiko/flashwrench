@@ -19,6 +19,7 @@ import { isGalleryDirty } from "../services/cover-staging";
 import { useDeferredGallerySubmit } from "../services/useDeferredGallerySubmit";
 import { useStagedCovers } from "../services/useStagedCovers";
 import { CampaignIdentityFields } from "./CampaignIdentityFields";
+import { CampaignLivePreview } from "./CampaignLivePreview";
 import { CampaignRuleFields } from "./CampaignRuleFields";
 import {
   type CampaignFormState,
@@ -164,6 +165,13 @@ export function CampaignDialog({ dialog, onClose }: CampaignDialogProps) {
               hint="Ảnh đầu tiên làm ảnh bìa. Ảnh chỉ tải lên khi bấm lưu. Bấm cắt để sửa ảnh chờ trước khi lưu."
             />
           </div>
+          <CampaignLivePreview
+            form={form}
+            gallery={[
+              ...covers.existing,
+              ...covers.staged.map((item) => item.previewUrl),
+            ]}
+          />
         </div>
         {alert && (
           <p

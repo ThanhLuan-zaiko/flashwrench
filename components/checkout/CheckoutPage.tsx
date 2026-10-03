@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PromoTeaser } from "@/components/promotions/PromoTeaser";
 import { useMe } from "@/hooks/auth";
 import { useCart } from "@/hooks/cart";
 import { useCheckout } from "@/hooks/orders";
@@ -158,6 +159,8 @@ export function CheckoutPage() {
           )}
         />
       )}
+
+      <PromoTeaser />
 
       {me.isSuccess &&
         (me.data === null || me.data.role === "customer") &&

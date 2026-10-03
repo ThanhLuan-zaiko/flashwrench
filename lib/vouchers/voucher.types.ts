@@ -31,6 +31,28 @@ export type VoucherCampaign = {
   deletedAt: string | null;
 };
 
+// Public advertising payload: the customer-facing subset of a campaign.
+// Staff-only fields (code, grant limits, lifecycle flags, timestamps)
+// never leave the server on public endpoints.
+export type PublicVoucherCampaign = Pick<
+  VoucherCampaign,
+  | "id"
+  | "slug"
+  | "name"
+  | "description"
+  | "imageUrl"
+  | "images"
+  | "discountType"
+  | "discountValue"
+  | "maxDiscount"
+  | "minOrder"
+  | "scope"
+  | "startAt"
+  | "endAt"
+  | "totalLimit"
+  | "grantedCount"
+>;
+
 export type VoucherWallet = {
   id: string;
   userId: string;
@@ -145,6 +167,14 @@ export type VoucherFieldErrors = Partial<
 export type VoucherResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number; errors: VoucherFieldErrors };
+
+// Owner detail payload: the wallet plus its campaign for full context
+// (description, gallery, time window). Campaign may be gone (null) when
+// the row was hard-deleted after the grant.
+export type WalletDetail = {
+  wallet: VoucherWallet;
+  campaign: VoucherCampaign | null;
+};
 
 export function isDeletedFlag(value: boolean | null): boolean {
   return value === true;

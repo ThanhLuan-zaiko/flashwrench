@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useId, useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { useMe } from "@/hooks/auth";
 import { usePartsCatalogRealtime, usePublicParts } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
@@ -135,6 +136,12 @@ export function ProductsLanding() {
         query={query}
         searchId={searchId}
         onQuery={typeQuery}
+      />
+
+      <PromoBannerSection
+        title="Ưu đãi cho đơn linh kiện"
+        subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
+        maxItems={2}
       />
 
       {unknownSlug && (

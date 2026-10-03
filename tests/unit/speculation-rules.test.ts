@@ -70,6 +70,7 @@ describe("speculationRulesForScope", () => {
       "/services*",
       "/products*",
       "/rescue*",
+      "/vouchers/c/*",
     ]);
     expect(rules.prefetch.map((rule) => rule.where.href_matches)).toEqual([
       "/booking*",
@@ -107,6 +108,7 @@ describe("speculationRulesForScope", () => {
       ["admin", `${BASE}/admin/users/staff/page/5`],
       ["mechanic", `${BASE}/mechanic/income/all/page/2`],
       ["history", `${BASE}/history/page/2`],
+      ["vouchers", `${BASE}/vouchers/page/2`],
     ];
     for (const [scope, url] of pagedUrls) {
       expect(matchesAnyRule(scope, url)).toBe(true);

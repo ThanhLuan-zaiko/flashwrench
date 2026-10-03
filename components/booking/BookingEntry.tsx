@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { FiArrowRight, FiRefreshCw, FiUser } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PromoTeaser } from "@/components/promotions/PromoTeaser";
 import { useLastBooking } from "@/hooks/booking";
 import { usePublicCatalog } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
@@ -99,6 +100,8 @@ export function BookingEntry({
           </Link>
         )}
       </section>
+
+      <PromoTeaser />
 
       {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">

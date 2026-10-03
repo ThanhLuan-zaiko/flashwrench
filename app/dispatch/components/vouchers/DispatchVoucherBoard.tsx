@@ -1,13 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { PromoCarousel } from "@/components/promotions/PromoCarousel";
 import { DropdownSelect } from "@/components/ui/DropdownSelect";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
-import { useDispatchCampaigns, useGrantWallet } from "@/hooks/useVouchers";
+import {
+  useDispatchCampaigns,
+  useGrantWallet,
+  usePublicCampaigns,
+} from "@/hooks/useVouchers";
 
 export function DispatchVoucherBoard() {
   useVoucherRealtime(undefined, true);
   const campaigns = useDispatchCampaigns(true);
+  const publicCampaigns = usePublicCampaigns(true);
   const grant = useGrantWallet();
   const [campaignId, setCampaignId] = useState("");
   const [userId, setUserId] = useState("");
@@ -28,6 +34,7 @@ export function DispatchVoucherBoard() {
   }
 
   const items = campaigns.data ?? [];
+  const visible = publicCampaigns.data ?? [];
   return (
     <div className="flex flex-col gap-4">
       <form
@@ -95,6 +102,30 @@ export function DispatchVoucherBoard() {
         Thu hồi voucher thực hiện ở bảng điều phối đơn khi phát hiện gian lận —
         điều phối chỉ thu hồi voucher mình đã phát, admin thu hồi mọi voucher.
       </p>
+      <section aria-label="Khách đang thấy gì" className="flex flex-col gap-2">
+        <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
+          Khách đang thấy gì
+        </h2>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Đúng banner công khai ngoài trang chủ — kiểm tra ảnh bìa và điều kiện
+          trước khi phát tay.
+        </p>
+        {publicCampaigns.isPending ? (
+          <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:border-zinc-800 dark:text-zinc-400">
+            Đang tải ưu đãi công khai…
+          </p>
+        ) : publicCampaigns.isError ? (
+          <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            Không tải được ưu đãi công khai.
+          </p>
+        ) : visible.length === 0 ? (
+          <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            Chưa có ưu đãi nào đang chạy cho khách.
+          </p>
+        ) : (
+          <PromoCarousel campaigns={visible.slice(0, 4)} />
+        )}
+      </section>
     </div>
   );
 }

@@ -8,7 +8,10 @@ import {
   fetchAdminCampaigns,
   fetchAutoRules,
   fetchDispatchCampaigns,
+  fetchMyWalletDetail,
   fetchMyWallets,
+  fetchPublicCampaignBySlug,
+  fetchPublicCampaigns,
   fetchVoucherProgress,
   grantDispatchWallet,
   hardDeleteAdminCampaign,
@@ -23,10 +26,45 @@ import {
 export const voucherKeys = {
   admin: ["vouchers", "admin-campaigns"] as const,
   dispatch: ["vouchers", "dispatch-campaigns"] as const,
+  public: ["vouchers", "public-campaigns"] as const,
   mine: ["vouchers", "mine"] as const,
   rules: ["vouchers", "auto-rules"] as const,
   progress: ["vouchers", "auto-progress"] as const,
+  walletDetail: (walletId: string) =>
+    ["vouchers", "wallet-detail", walletId] as const,
+  publicCampaign: (slug: string) =>
+    ["vouchers", "public-campaign", slug] as const,
 };
+
+export function usePublicCampaign(slug: string, enabled = true) {
+  return useQuery({
+    queryKey: [...voucherKeys.publicCampaign(slug)],
+    queryFn: () => fetchPublicCampaignBySlug(slug),
+    enabled: enabled && slug.trim().length > 0,
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+}
+
+export function useMyWalletDetail(walletId: string, enabled = true) {
+  return useQuery({
+    queryKey: [...voucherKeys.walletDetail(walletId)],
+    queryFn: () => fetchMyWalletDetail(walletId),
+    enabled: enabled && walletId.trim().length > 0,
+    staleTime: 20 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+}
+
+export function usePublicCampaigns(enabled = true) {
+  return useQuery({
+    queryKey: [...voucherKeys.public],
+    queryFn: fetchPublicCampaigns,
+    enabled,
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+}
 
 export function useAdminCampaigns(enabled = true) {
   return useQuery({
@@ -67,12 +105,7 @@ export function useCreateCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createAdminCampaign,
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: [...voucherKeys.admin] });
-      void queryClient.invalidateQueries({
-        queryKey: [...voucherKeys.dispatch],
-      });
-    },
+    onSettled: () => invalidateCampaignKeys(queryClient),
   });
 }
 
@@ -81,12 +114,7 @@ export function useUpdateCampaign() {
   return useMutation({
     mutationFn: (params: { id: string; input: CreateCampaignInput }) =>
       updateAdminCampaign(params.id, params.input),
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: [...voucherKeys.admin] });
-      void queryClient.invalidateQueries({
-        queryKey: [...voucherKeys.dispatch],
-      });
-    },
+    onSettled: () => invalidateCampaignKeys(queryClient),
   });
 }
 
@@ -95,12 +123,7 @@ export function useToggleCampaign() {
   return useMutation({
     mutationFn: (params: { id: string; isActive: boolean }) =>
       toggleAdminCampaign(params.id, params.isActive),
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: [...voucherKeys.admin] });
-      void queryClient.invalidateQueries({
-        queryKey: [...voucherKeys.dispatch],
-      });
-    },
+    onSettled: () => invalidateCampaignKeys(queryClient),
   });
 }
 
@@ -109,6 +132,7 @@ function invalidateCampaignKeys(
 ) {
   void queryClient.invalidateQueries({ queryKey: [...voucherKeys.admin] });
   void queryClient.invalidateQueries({ queryKey: [...voucherKeys.dispatch] });
+  void queryClient.invalidateQueries({ queryKey: [...voucherKeys.public] });
 }
 
 export function useSoftDeleteCampaign() {

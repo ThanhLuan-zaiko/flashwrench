@@ -7,8 +7,10 @@ import type {
 } from "@/lib/vouchers/auto-rule.types";
 import type {
   CreateCampaignInput,
+  PublicVoucherCampaign,
   VoucherCampaign,
   VoucherWallet,
+  WalletDetail,
 } from "@/lib/vouchers/voucher.types";
 import { AuthApiError } from "./auth.api";
 
@@ -229,6 +231,37 @@ export type MyWalletPage = {
   items: VoucherWallet[];
   nextCursor: string | null;
 };
+
+export async function fetchPublicCampaigns(): Promise<PublicVoucherCampaign[]> {
+  const response = await fetch("/api/voucher-campaigns/public");
+  if (!response.ok) throw new Error("Không tải được ưu đãi.");
+  const body = (await response.json()) as {
+    campaigns: PublicVoucherCampaign[];
+  };
+  return body.campaigns;
+}
+
+export async function fetchPublicCampaignBySlug(
+  slug: string,
+): Promise<PublicVoucherCampaign> {
+  const response = await fetch(
+    `/api/voucher-campaigns/public/${encodeURIComponent(slug)}`,
+  );
+  if (!response.ok) throw new Error("Ưu đãi không tồn tại hoặc đã kết thúc.");
+  const body = (await response.json()) as { campaign: PublicVoucherCampaign };
+  return body.campaign;
+}
+
+export async function fetchMyWalletDetail(
+  walletId: string,
+): Promise<WalletDetail> {
+  const response = await fetch(
+    `/api/vouchers/${encodeURIComponent(walletId)}`,
+    { credentials: "include" },
+  );
+  if (!response.ok) throw new Error("Không tải được voucher.");
+  return (await response.json()) as WalletDetail;
+}
 
 export async function fetchMyWallets(params: {
   cursor?: string | null;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useId, useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import {
   usePublicCatalog,
   useServiceCatalogRealtime,
@@ -130,6 +131,12 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         query={query}
         searchId={searchId}
         onQuery={typeQuery}
+      />
+
+      <PromoBannerSection
+        title="Ưu đãi cho khách đặt dịch vụ"
+        subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
+        maxItems={2}
       />
 
       {unknownSlug && (

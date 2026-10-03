@@ -1,6 +1,7 @@
 // Row -> API shape mapping for voucher campaigns and wallets.
 import type {
   CampaignRow,
+  PublicVoucherCampaign,
   VoucherCampaign,
   VoucherDiscountType,
   VoucherScope,
@@ -65,6 +66,30 @@ export function toCampaign(row: CampaignRow): VoucherCampaign {
     createdAt: toIso(row.created_at),
     updatedAt: toIso(row.updated_at),
     deletedAt: toIso(row.deleted_at),
+  };
+}
+
+// Advertising feed: only fields a guest needs to read a promotion.
+// Internal staff fields (code, grant caps, lifecycle flags) stay
+// server-side so public endpoints never leak operations detail.
+export function toPublicCampaign(row: CampaignRow): PublicVoucherCampaign {
+  const campaign = toCampaign(row);
+  return {
+    id: campaign.id,
+    slug: campaign.slug,
+    name: campaign.name,
+    description: campaign.description,
+    imageUrl: campaign.imageUrl,
+    images: campaign.images,
+    discountType: campaign.discountType,
+    discountValue: campaign.discountValue,
+    maxDiscount: campaign.maxDiscount,
+    minOrder: campaign.minOrder,
+    scope: campaign.scope,
+    startAt: campaign.startAt,
+    endAt: campaign.endAt,
+    totalLimit: campaign.totalLimit,
+    grantedCount: campaign.grantedCount,
   };
 }
 

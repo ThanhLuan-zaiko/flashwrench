@@ -15,7 +15,8 @@ import {
 //
 // Pagination coverage: `/page/N` links ride each scope's section pattern
 // (`/services/*` covers `/services/<slug>/page/2`, `/dispatch/*` covers
-// every board's page segment). Embedded pagers instead link back to the
+// every board's page segment, `/vouchers/page/*` covers the wallet
+// pager). Embedded pagers instead link back to the
 // SAME pathname with a namespaced param (`?srv_page=2`, `?cm_<id>=2`) —
 // scopes hosting those widgets must self-match the bare path (`/booking*`,
 // `/history*`), because a pattern like `/history/*` never fires on
@@ -36,6 +37,7 @@ export type SpeculationScope =
   | "login"
   | "register"
   | "account"
+  | "vouchers"
   | "mechanic"
   | "dispatch"
   | "admin";
@@ -43,14 +45,14 @@ export type SpeculationScope =
 const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
   // Landing page: sell the catalog, soften the auth detour.
   home: buildSpeculationRules({
-    prerender: ["/services*", "/products*", "/rescue*"],
+    prerender: ["/services*", "/products*", "/rescue*", "/vouchers/c/*"],
     prefetch: ["/booking*", "/login*", "/register*"],
   }),
   // Catalog browsing: the next click is almost always another category
   // tab, the rescue card, or the booking funnel (guests bounce to login,
   // so booking stays a prefetch).
   services: buildSpeculationRules({
-    prerender: ["/services/*", "/rescue*"],
+    prerender: ["/services/*", "/rescue*", "/vouchers/c/*"],
     prefetch: [
       "/login*",
       "/register*",
@@ -60,7 +62,7 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
   // Product catalog and detail pages are fully public; the cart is the
   // funnel exit and renders for guests too.
   products: buildSpeculationRules({
-    prerender: ["/products/*", "/cart*"],
+    prerender: ["/products/*", "/cart*", "/vouchers/c/*"],
     prefetch: ["/login*"],
   }),
   // Cart → checkout is the highest-intent hop in the shop; item rows link
@@ -77,7 +79,7 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
   // programmatic router.push to /orders/[id], which document rules can
   // never match.
   checkout: buildSpeculationRules({
-    prefetch: ["/products*", "/cart*"],
+    prefetch: ["/products*", "/cart*", "/vouchers*"],
   }),
   // Order list: hovering a row prerenders its detail page. Guest visits
   // render no order links, so the rule never fires signed out.
@@ -104,6 +106,7 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
       { match: "/booking*", eagerness: "moderate" },
       "/services*",
       "/account*",
+      "/vouchers*",
     ],
   }),
   // Public emergency page: next hops are home, the catalog or the auth
@@ -131,6 +134,23 @@ const SCOPE_RULES: Record<SpeculationScope, SpeculationRuleSet> = {
   }),
   account: buildSpeculationRules({
     prefetch: [{ match: "/account/*", eagerness: "moderate" }, "/"],
+  }),
+  // Voucher shelf plus detail pages. Public campaign details render
+  // identically signed out — safe to prerender. The /page/N pager and
+  // owner wallet details are cookie-gated, so they stay prefetch; the
+  // `/vouchers` self-match keeps the back links warm.
+  vouchers: buildSpeculationRules({
+    prerender: ["/vouchers/c/*"],
+    prefetch: [
+      { match: "/vouchers/page/*", eagerness: "moderate" },
+      { match: "/vouchers/w/*", eagerness: "moderate" },
+      "/vouchers",
+      "/booking*",
+      "/products*",
+      "/register*",
+      "/login*",
+      "/",
+    ],
   }),
   // Staff workspaces: every sidebar entry lives under the section root.
   // Prefetch only — these screens run live polling, so prerendering them
