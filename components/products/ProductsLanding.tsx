@@ -141,7 +141,7 @@ export function ProductsLanding() {
       <PromoBannerSection
         title="Ưu đãi cho đơn linh kiện"
         subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
-        maxItems={2}
+        audience="order"
       />
 
       {unknownSlug && (

@@ -1,5 +1,7 @@
 // Shared voucher wallet shapes. Wallets are account-bound: each row
 // belongs to exactly one user_id, so codes are never shared.
+import type { AutoTrigger } from "./auto-rule.types";
+
 export type VoucherDiscountType = "percent" | "fixed" | "free_service";
 export type VoucherScope = "order" | "booking" | "all";
 export type WalletStatus = "active" | "used" | "expired" | "revoked";
@@ -31,9 +33,19 @@ export type VoucherCampaign = {
   deletedAt: string | null;
 };
 
+// One active auto-rule reduced to its public marketing essence: which
+// customer action earns the campaign and at what threshold. Rule names,
+// ids and grant caps stay staff-side.
+export type VoucherEarnHint = {
+  trigger: AutoTrigger;
+  threshold: number;
+  windowDays: number;
+};
+
 // Public advertising payload: the customer-facing subset of a campaign.
 // Staff-only fields (code, grant limits, lifecycle flags, timestamps)
-// never leave the server on public endpoints.
+// never leave the server on public endpoints. `earn` carries the active
+// rule triggers so surfaces can explain "how to get this".
 export type PublicVoucherCampaign = Pick<
   VoucherCampaign,
   | "id"
@@ -51,7 +63,7 @@ export type PublicVoucherCampaign = Pick<
   | "endAt"
   | "totalLimit"
   | "grantedCount"
->;
+> & { earn: VoucherEarnHint[] };
 
 export type VoucherWallet = {
   id: string;

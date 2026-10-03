@@ -101,7 +101,7 @@ export function BookingEntry({
         )}
       </section>
 
-      <PromoTeaser />
+      <PromoTeaser audience="booking" />
 
       {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">

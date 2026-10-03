@@ -8,6 +8,7 @@ import {
   fetchAdminCampaigns,
   fetchAutoRules,
   fetchDispatchCampaigns,
+  fetchMyVoucherStats,
   fetchMyWalletDetail,
   fetchMyWallets,
   fetchPublicCampaignBySlug,
@@ -28,6 +29,7 @@ export const voucherKeys = {
   dispatch: ["vouchers", "dispatch-campaigns"] as const,
   public: ["vouchers", "public-campaigns"] as const,
   mine: ["vouchers", "mine"] as const,
+  myStats: ["vouchers", "my-stats"] as const,
   rules: ["vouchers", "auto-rules"] as const,
   progress: ["vouchers", "auto-progress"] as const,
   walletDetail: (walletId: string) =>
@@ -97,6 +99,18 @@ export function useMyWallets(
     queryFn: () => fetchMyWallets({ cursor, limit: limit ?? undefined }),
     enabled,
     staleTime: 20 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+}
+
+// The "almost there" counters behind earn-progress bars on /vouchers.
+// Off for guests — the endpoint is auth-only.
+export function useMyVoucherStats(enabled = true) {
+  return useQuery({
+    queryKey: [...voucherKeys.myStats],
+    queryFn: fetchMyVoucherStats,
+    enabled,
+    staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
   });
 }

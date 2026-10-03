@@ -1,6 +1,7 @@
 import {
   FiClock,
   FiCompass,
+  FiGift,
   FiHome,
   FiLifeBuoy,
   FiMail,
@@ -21,6 +22,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/products", label: "Sản phẩm", icon: FiPackage },
   { href: "/services", label: "Dịch vụ", icon: FiSettings },
   { href: "/rescue", label: "Cứu hộ", icon: FiLifeBuoy },
+  { href: "/vouchers", label: "Voucher", icon: FiGift },
   { href: "/history", label: "Lịch sử", icon: FiClock },
   // For customers who booked without an account: the only way back to their
   // history and invoices is an OTP-verified email, so it needs to be one click

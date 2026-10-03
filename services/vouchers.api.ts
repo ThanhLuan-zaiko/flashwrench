@@ -263,6 +263,21 @@ export async function fetchMyWalletDetail(
   return (await response.json()) as WalletDetail;
 }
 
+export type MyVoucherStats = {
+  bookings: number;
+  orders: number;
+  spent: number;
+  lastActivityAt: string | null;
+};
+
+export async function fetchMyVoucherStats(): Promise<MyVoucherStats> {
+  const response = await fetch("/api/vouchers/progress", {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Không tải được tiến độ ưu đãi.");
+  return (await response.json()) as MyVoucherStats;
+}
+
 export async function fetchMyWallets(params: {
   cursor?: string | null;
   limit?: number;

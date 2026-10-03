@@ -72,7 +72,10 @@ export function toCampaign(row: CampaignRow): VoucherCampaign {
 // Advertising feed: only fields a guest needs to read a promotion.
 // Internal staff fields (code, grant caps, lifecycle flags) stay
 // server-side so public endpoints never leak operations detail.
-export function toPublicCampaign(row: CampaignRow): PublicVoucherCampaign {
+export function toPublicCampaign(
+  row: CampaignRow,
+  earn: PublicVoucherCampaign["earn"] = [],
+): PublicVoucherCampaign {
   const campaign = toCampaign(row);
   return {
     id: campaign.id,
@@ -90,6 +93,7 @@ export function toPublicCampaign(row: CampaignRow): PublicVoucherCampaign {
     endAt: campaign.endAt,
     totalLimit: campaign.totalLimit,
     grantedCount: campaign.grantedCount,
+    earn,
   };
 }
 

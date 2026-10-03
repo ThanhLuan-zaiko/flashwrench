@@ -115,4 +115,19 @@ export async function applyCustomerActivity(
   return null;
 }
 
+// Read-side snapshot for the customer-facing progress endpoint. A
+// customer with no rollup yet gets a real one backfilled from their own
+// partitions — same rebuild applyCustomerActivity runs lazily, so the
+// first read already reflects real history.
+export async function getCustomerStatsSnapshot(
+  customerId: string,
+): Promise<CustomerStatsRow> {
+  const row = await findCustomerStatsRow(customerId);
+  if (row) return row;
+  if (await backfillCustomerStats(customerId, new Date())) {
+    return (await findCustomerStatsRow(customerId)) ?? emptyStats(customerId);
+  }
+  return emptyStats(customerId);
+}
+
 export { emptyStats };

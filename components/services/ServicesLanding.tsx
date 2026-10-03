@@ -136,7 +136,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
       <PromoBannerSection
         title="Ưu đãi cho khách đặt dịch vụ"
         subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
-        maxItems={2}
+        audience="booking"
       />
 
       {unknownSlug && (

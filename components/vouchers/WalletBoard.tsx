@@ -50,7 +50,14 @@ export function WalletBoard() {
     );
   }
   return (
-    <>
+    <section
+      id="tat-ca-voucher"
+      aria-label="Tất cả voucher của bạn"
+      className="flex flex-col gap-3"
+    >
+      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+        Tất cả voucher
+      </h2>
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
         {items.map((wallet) => (
           <li key={wallet.id}>
@@ -70,6 +77,6 @@ export function WalletBoard() {
           if (nextCursor) recordNext(nextCursor);
         }}
       />
-    </>
+    </section>
   );
 }

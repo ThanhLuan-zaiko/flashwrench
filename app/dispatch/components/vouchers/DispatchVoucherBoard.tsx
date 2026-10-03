@@ -123,7 +123,7 @@ export function DispatchVoucherBoard() {
             Chưa có ưu đãi nào đang chạy cho khách.
           </p>
         ) : (
-          <PromoCarousel campaigns={visible.slice(0, 4)} />
+          <PromoCarousel campaigns={visible} />
         )}
       </section>
     </div>

@@ -1,10 +1,14 @@
 // Public campaign feed for customer advertising. Only live campaigns
 // customers may see: active, not deleted, inside the time window and not
 // sold out. Small config table so filtering in the service is fine.
+
+import { listAutoRuleRows } from "./auto-rule.repository";
+import { AUTO_TRIGGERS, type AutoTrigger } from "./auto-rule.types";
 import { toPublicCampaign } from "./voucher.mapper";
 import type {
   CampaignRow,
   PublicVoucherCampaign,
+  VoucherEarnHint,
   VoucherResult,
 } from "./voucher.types";
 import { isDeletedFlag } from "./voucher.types";
@@ -28,16 +32,39 @@ export function isPublicVisible(
   return true;
 }
 
+// Active auto-rules grouped by campaign, reduced to the public essence —
+// trigger + threshold. A campaign with no rule earns nothing here; the
+// client falls back to the staff-grant copy.
+async function earnHintsByCampaign(): Promise<Map<string, VoucherEarnHint[]>> {
+  const hints = new Map<string, VoucherEarnHint[]>();
+  for (const rule of await listAutoRuleRows()) {
+    if (rule.is_active !== true || !rule.campaign_id) continue;
+    const trigger = rule.trigger_type as AutoTrigger;
+    if (!AUTO_TRIGGERS.includes(trigger)) continue;
+    const list = hints.get(rule.campaign_id) ?? [];
+    list.push({
+      trigger,
+      threshold: rule.threshold ?? 0,
+      windowDays: rule.window_days ?? 0,
+    });
+    hints.set(rule.campaign_id, list);
+  }
+  return hints;
+}
+
 export async function listPublicCampaigns(
   now: Date = new Date(),
 ): Promise<VoucherResult<PublicVoucherCampaign[]>> {
-  const rows = await listCampaignRows();
+  const [rows, earnHints] = await Promise.all([
+    listCampaignRows(),
+    earnHintsByCampaign(),
+  ]);
   const items = rows
     .filter((row) => isPublicVisible(row, now))
     .sort(
       (a, b) => (b.created_at?.getTime() ?? 0) - (a.created_at?.getTime() ?? 0),
     )
-    .map(toPublicCampaign);
+    .map((row) => toPublicCampaign(row, earnHints.get(row.campaign_id) ?? []));
   return { ok: true, data: items };
 }
 
@@ -68,5 +95,9 @@ export async function getPublicCampaignBySlug(
   if (!row || !isPublicVisible(row, now)) {
     return { ok: false, status: 404, errors: { form: "Ưu đãi đã kết thúc." } };
   }
-  return { ok: true, data: toPublicCampaign(row) };
+  const earnHints = await earnHintsByCampaign();
+  return {
+    ok: true,
+    data: toPublicCampaign(row, earnHints.get(row.campaign_id) ?? []),
+  };
 }

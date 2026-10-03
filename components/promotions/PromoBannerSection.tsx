@@ -3,21 +3,27 @@
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { usePublicCampaigns } from "@/hooks/useVouchers";
 import { PromoCarousel } from "./PromoCarousel";
+import { type PromoAudience, promoAppliesTo } from "./promo-format";
 
 type PromoBannerSectionProps = {
   title?: string;
   subtitle?: string;
-  maxItems?: number;
+  audience?: PromoAudience;
+  // Campaign ids the viewer already owns — hidden so the carousel only
+  // sells promotions still up for grabs.
+  excludeIds?: ReadonlySet<string>;
 };
 
 // Public promotion banner: a large auto-rotating carousel guests see to
 // create an account, customers see to know which campaign to ask staff
-// about. Renders nothing when no campaign is running so landing layouts
-// keep their rhythm.
+// about. Every live campaign renders — optionally narrowed to the page's
+// audience (booking on /services, order on /products). Renders nothing
+// when nothing matches so landing layouts keep their rhythm.
 export function PromoBannerSection({
   title = "Ưu đãi đang chạy",
   subtitle = "Voucher gắn thẳng vào tài khoản, tạo tài khoản để được phát tự động khi đủ điều kiện.",
-  maxItems = 4,
+  audience,
+  excludeIds,
 }: PromoBannerSectionProps) {
   useVoucherRealtime(undefined, false);
   const campaigns = usePublicCampaigns(true);
@@ -31,7 +37,11 @@ export function PromoBannerSection({
   }
 
   if (campaigns.isError) return null;
-  const items = (campaigns.data ?? []).slice(0, Math.max(1, maxItems));
+  const items = (campaigns.data ?? []).filter(
+    (campaign) =>
+      (audience ? promoAppliesTo(campaign, audience) : true) &&
+      !excludeIds?.has(campaign.id),
+  );
   if (items.length === 0) return null;
 
   return (

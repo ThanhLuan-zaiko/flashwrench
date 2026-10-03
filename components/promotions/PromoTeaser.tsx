@@ -6,17 +6,28 @@ import { useMe } from "@/hooks/auth";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { usePublicCampaigns } from "@/hooks/useVouchers";
 import { campaignDetailHref } from "../vouchers/voucher-detail-href";
-import { promoDiscountLabel } from "./promo-format";
+import {
+  type PromoAudience,
+  promoAppliesTo,
+  promoDiscountLabel,
+} from "./promo-format";
+
+type PromoTeaserProps = {
+  audience?: PromoAudience;
+};
 
 // Compact guest nudge for booking and checkout: shows the top running
-// promotion and routes guests to register, accounts to their wallet.
-export function PromoTeaser() {
+// promotion for the page audience and routes guests to register,
+// accounts to their wallet.
+export function PromoTeaser({ audience }: PromoTeaserProps) {
   useVoucherRealtime(undefined, false);
   const me = useMe();
   const campaigns = usePublicCampaigns(true);
 
   const guest = me.isSuccess && me.data === null;
-  const items = campaigns.data ?? [];
+  const items = (campaigns.data ?? []).filter((campaign) =>
+    audience ? promoAppliesTo(campaign, audience) : true,
+  );
   if (campaigns.isPending || campaigns.isError || items.length === 0) {
     return null;
   }

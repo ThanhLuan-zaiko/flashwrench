@@ -160,7 +160,7 @@ export function CheckoutPage() {
         />
       )}
 
-      <PromoTeaser />
+      <PromoTeaser audience="order" />
 
       {me.isSuccess &&
         (me.data === null || me.data.role === "customer") &&

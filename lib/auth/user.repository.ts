@@ -194,6 +194,30 @@ export async function hasAnyUserWithRole(
   return result.rowLength > 0;
 }
 
+export type UserRoleRow = {
+  user_id: string;
+  role: string | null;
+  status: string | null;
+};
+
+// Token-range scan of users_by_id for one-off backfills (e.g. voucher
+// welcome grants) — dev-scale reads, same pattern as listAutoRuleRows.
+export async function listUserRoleRows(): Promise<UserRoleRow[]> {
+  const result = await scylla.execute(
+    "SELECT user_id, role, status FROM users_by_id",
+    [],
+    { prepare: true },
+  );
+  return result.rows.map((row) => {
+    const raw = row as unknown as Record<string, unknown>;
+    return {
+      user_id: String(raw.user_id),
+      role: (raw.role as string | null) ?? null,
+      status: (raw.status as string | null) ?? null,
+    };
+  });
+}
+
 export async function bumpTokenVersion(userId: string): Promise<number> {
   const row = await findUserById(userId);
   const next = (row?.token_version ?? 0) + 1;
