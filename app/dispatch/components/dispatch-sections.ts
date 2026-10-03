@@ -6,6 +6,7 @@ import {
   FiGift,
   FiLifeBuoy,
   FiPackage,
+  FiPieChart,
 } from "react-icons/fi";
 
 export type DispatchSectionId =
@@ -14,7 +15,8 @@ export type DispatchSectionId =
   | "orders"
   | "vouchers"
   | "stock"
-  | "revenue";
+  | "revenue"
+  | "customer-mix";
 
 export type DispatchSection = {
   id: DispatchSectionId;
@@ -66,6 +68,13 @@ export const DISPATCH_SECTIONS: DispatchSection[] = [
     description: "Báo cáo theo ngày, tuần, tháng, năm và xuất CSV",
     href: "/dispatch/revenue/day",
     icon: FiBarChart2,
+  },
+  {
+    id: "customer-mix",
+    label: "Nguồn khách hàng",
+    description: "Tỷ trọng khách thành viên và vãng lai theo đơn và đăng nhập",
+    href: "/dispatch/customer-mix/day",
+    icon: FiPieChart,
   },
 ];
 

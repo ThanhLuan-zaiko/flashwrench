@@ -90,6 +90,10 @@ export async function createCounterSale(
   });
   const row = await findOrderRowById(orderId);
   if (!row) return fail(500, "Không tạo được đơn bán. Vui lòng thử lại.");
+  // Counter sales are walk-ins: always the guest channel. Best-effort.
+  void import("@/lib/customer-mix/customer-mix.service")
+    .then(({ recordMixEvent }) => recordMixEvent("order", "guest", { at: now }))
+    .catch(() => undefined);
   const [items, history] = await Promise.all([
     listOrderItemRows(orderId),
     listOrderHistoryRows(orderId),

@@ -21,7 +21,8 @@ export function resolveChartColors(): ChartColors {
 
 const PAD = { top: 12, right: 4, bottom: 22, left: 4 };
 
-function niceCeil(value: number): number {
+/** Smallest 1/2/5-step ceiling at or above the value — shared axis math. */
+export function niceCeil(value: number): number {
   if (value <= 0) return 1;
   const exponent = Math.floor(Math.log10(value));
   const base = 10 ** exponent;

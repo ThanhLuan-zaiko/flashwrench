@@ -5,6 +5,7 @@ import {
   FiGift,
   FiLifeBuoy,
   FiPackage,
+  FiPieChart,
   FiSettings,
   FiUsers,
 } from "react-icons/fi";
@@ -17,7 +18,8 @@ export type AdminSectionId =
   | "vouchers"
   | "orders"
   | "rescue"
-  | "revenue";
+  | "revenue"
+  | "customer-mix";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -84,6 +86,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/revenue/day",
     icon: FiBarChart2,
   },
+  {
+    id: "customer-mix",
+    label: "Nguồn khách hàng",
+    description: "Tỷ trọng khách thành viên và vãng lai theo đơn và đăng nhập.",
+    href: "/admin/customer-mix/day",
+    icon: FiPieChart,
+  },
 ];
 
 export function getAdminSection(id: AdminSectionId): AdminSection {
@@ -100,5 +109,6 @@ export function sectionIdForPath(pathname: string): AdminSectionId {
   if (pathname.startsWith("/admin/rescue")) return "rescue";
   if (pathname.startsWith("/admin/orders")) return "orders";
   if (pathname.startsWith("/admin/revenue")) return "revenue";
+  if (pathname.startsWith("/admin/customer-mix")) return "customer-mix";
   return "dashboard";
 }

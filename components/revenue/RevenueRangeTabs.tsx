@@ -2,17 +2,25 @@ import Link from "next/link";
 import type { RevenueRange } from "@/lib/revenue/revenue-period";
 import { REVENUE_RANGE_TABS } from "./revenue-format";
 
+type RangeTab = { id: RevenueRange; label: string };
+
 type RevenueRangeTabsProps = {
   basePath: string;
   active: RevenueRange;
+  tabs?: readonly RangeTab[];
 };
 
 // One URL per range so a switch is a fast cached navigation, never a
-// remount — same contract as the bookings status tabs.
-export function RevenueRangeTabs({ basePath, active }: RevenueRangeTabsProps) {
+// remount — same contract as the bookings status tabs. Reports with fewer
+// ranges (customer mix: day/week/month) pass their own `tabs` subset.
+export function RevenueRangeTabs({
+  basePath,
+  active,
+  tabs = REVENUE_RANGE_TABS,
+}: RevenueRangeTabsProps) {
   return (
     <nav aria-label="Khoảng báo cáo" className="flex flex-wrap gap-1.5">
-      {REVENUE_RANGE_TABS.map((tab) => {
+      {tabs.map((tab) => {
         const isActive = tab.id === active;
         return (
           <Link

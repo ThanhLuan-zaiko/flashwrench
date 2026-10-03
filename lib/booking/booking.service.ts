@@ -215,6 +215,17 @@ export async function createCustomerBooking(
     });
   }
 
+  // Member-vs-guest counters: best-effort, never blocks the booking.
+  // Lazy import keeps this module out of the client bundle graph.
+  void import("@/lib/customer-mix/customer-mix.service")
+    .then(({ recordMixEvent }) =>
+      recordMixEvent("booking", guest ? "guest" : "member", {
+        at: now,
+        actor: customer ? customer.id : (value.email ?? undefined),
+      }),
+    )
+    .catch(() => undefined);
+
   // No mechanic picked: auto-dispatch runs the dispatcher's "assign"
   // step immediately so the nearest eligible mechanic gets the offer.
   // A dispatch failure must never fail a booking that already

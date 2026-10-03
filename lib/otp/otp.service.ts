@@ -178,5 +178,15 @@ export async function verifyEmailOtp(
   }
 
   await deleteEmailOtp(email, purpose).catch(() => undefined);
+  // Guest OTP verifications feed the member-vs-guest report as guest
+  // sign-ins. Lazy and best-effort: counting never fails verification.
+  if (purpose === "guest_access") {
+    const { recordMixEvent } = await import(
+      "@/lib/customer-mix/customer-mix.service"
+    );
+    await recordMixEvent("login", "guest", { actor: email }).catch(
+      () => undefined,
+    );
+  }
   return { ok: true, data: { email } };
 }

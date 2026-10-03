@@ -1339,6 +1339,34 @@ CREATE TABLE IF NOT EXISTS customer_stats_by_id (
   updated_at         TIMESTAMP
 );
 
+-- Member-vs-guest mix counters for the admin/dispatcher report. One
+-- counter row per (day, kind, channel): booking | order | rescue count
+-- created orders, login counts verified sign-ins (member passwords,
+-- guest OTP), signup counts new member registrations. Counters only
+-- move forward from the deploy day — claimed guest rows are
+-- indistinguishable afterwards, so history before that undercounts
+-- the guest channel.
+CREATE TABLE IF NOT EXISTS customer_mix_daily (
+  day     TEXT, -- 'YYYY-MM-DD', Asia/Ho_Chi_Minh
+  kind    TEXT, -- booking | order | rescue | login | signup
+  channel TEXT, -- member | guest
+  total   COUNTER,
+  PRIMARY KEY ((day), kind, channel)
+);
+
+-- Unique-actor ledger for the same report: one row per identity per
+-- (day, kind, channel). The primary key dedupes repeats, so a customer
+-- signing in five times still reads as one actor. Members key on
+-- 'u:<user id>'; guests key on 'e:<normalized email>'. Counter-sale
+-- walk-ins carry no identity and never land here.
+CREATE TABLE IF NOT EXISTS customer_mix_actors (
+  day     TEXT, -- 'YYYY-MM-DD', Asia/Ho_Chi_Minh
+  kind    TEXT, -- booking | order | rescue | login | signup
+  channel TEXT, -- member | guest
+  actor   TEXT, -- u:<user id> | e:<email>
+  PRIMARY KEY ((day), kind, channel, actor)
+);
+
 -- Chat: customer <-> mechanic direct messages (internal mini Telegram)
 -- Query: one thread by id (membership, peer ids, last activity snapshot)
 CREATE TABLE IF NOT EXISTS chat_threads_by_id (

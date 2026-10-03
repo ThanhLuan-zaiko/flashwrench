@@ -78,6 +78,16 @@ export async function createRescueRequest(
     updatedAt: now,
   });
 
+  // Member-vs-guest counters: best-effort, never blocks the rescue.
+  void import("@/lib/customer-mix/customer-mix.service")
+    .then(({ recordMixEvent }) =>
+      recordMixEvent("rescue", customer ? "member" : "guest", {
+        at: now,
+        actor: customer ? customer.id : value.email || undefined,
+      }),
+    )
+    .catch(() => undefined);
+
   // Auto-offer runs the dispatcher assign step immediately so the
   // nearest eligible mechanic gets a 30s offer. A dispatch failure must
   // never fail a rescue that already persisted: it stays open for a human.

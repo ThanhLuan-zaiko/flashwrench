@@ -142,6 +142,17 @@ export async function registerUser(
     );
     await handleVoucherSignup(user.id).catch(() => undefined);
   }
+  // Registrations feed the member-vs-guest report as their own kind:
+  // signup keeps the login counter honest and tracks the guest-to-member
+  // conversion. Same lazy, best-effort treatment as the voucher hook.
+  if (user.role === "customer") {
+    const { recordMixEvent } = await import(
+      "@/lib/customer-mix/customer-mix.service"
+    );
+    await recordMixEvent("signup", "member", { actor: user.id }).catch(
+      () => undefined,
+    );
+  }
   return { ok: true, user, tokens: await issueSessionPair(user, label) };
 }
 
@@ -194,6 +205,16 @@ export async function loginUser(
   // Same handoff as register: a guest who booked with this account's
   // contact pair gets those records attached on sign-in.
   await claimGuestRecords(user);
+  // Member sign-ins feed the member-vs-guest report. Lazy and
+  // best-effort: counting must never fail authentication.
+  if (user.role === "customer") {
+    const { recordMixEvent } = await import(
+      "@/lib/customer-mix/customer-mix.service"
+    );
+    await recordMixEvent("login", "member", { actor: user.id }).catch(
+      () => undefined,
+    );
+  }
   return { ok: true, user, tokens: await issueSessionPair(user, label) };
 }
 

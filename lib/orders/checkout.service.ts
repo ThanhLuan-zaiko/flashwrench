@@ -242,6 +242,16 @@ async function runCheckout(
   }
   await clearCartRows(actor.cartId);
 
+  // Member-vs-guest counters: best-effort, never blocks the checkout.
+  void import("@/lib/customer-mix/customer-mix.service")
+    .then(({ recordMixEvent }) =>
+      recordMixEvent("order", guest ? "guest" : "member", {
+        at: now,
+        actor: actor.customerId ?? (customerEmail || undefined),
+      }),
+    )
+    .catch(() => undefined);
+
   const row = await findOrderRowById(orderId);
   if (!row) return fail(500, "Không tạo được đơn hàng. Vui lòng thử lại.");
   const [items, history] = await Promise.all([

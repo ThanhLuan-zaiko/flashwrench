@@ -7,7 +7,8 @@ import { shiftAnchor, todayAnchor } from "./revenue-format";
 type RevenueToolbarProps = {
   range: RevenueRange;
   anchor: string;
-  csvHref: string;
+  /** CSV export URL; reports without a CSV endpoint omit the button. */
+  csvHref?: string;
   onAnchorChange: (anchor: string) => void;
 };
 
@@ -59,15 +60,17 @@ export function RevenueToolbar({
           Về kỳ hiện tại
         </button>
       )}
-      <a
-        href={csvHref}
-        download
-        className={`${BUTTON_CLASSES} ml-auto`}
-        aria-label="Xuất báo cáo CSV"
-      >
-        <FiDownload aria-hidden="true" className="h-4 w-4" />
-        Xuất CSV
-      </a>
+      {csvHref && (
+        <a
+          href={csvHref}
+          download
+          className={`${BUTTON_CLASSES} ml-auto`}
+          aria-label="Xuất báo cáo CSV"
+        >
+          <FiDownload aria-hidden="true" className="h-4 w-4" />
+          Xuất CSV
+        </a>
+      )}
     </div>
   );
 }
