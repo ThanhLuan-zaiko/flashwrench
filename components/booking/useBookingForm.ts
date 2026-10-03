@@ -6,7 +6,8 @@ import { useMemo, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
 import { seedSessionUser } from "@/hooks/auth";
 import { useCreateBooking } from "@/hooks/booking";
-import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
+import { useSessionExpired } from "@/hooks/useSessionExpired";
+import { buildBookingHref } from "@/lib/auth/auth-redirect";
 import { validateCreateBookingInput } from "@/lib/booking/booking.validation";
 import { BOOKING_SUCCESS_REDIRECT } from "@/lib/booking/booking-navigation";
 import type { BookingFieldErrors } from "@/services/booking.api";
@@ -44,6 +45,7 @@ export function useBookingForm({
 }: UseBookingFormOptions) {
   const router = useRouter();
   const toast = useToast();
+  const sessionExpired = useSessionExpired();
   const queryClient = useQueryClient();
   const createBooking = useCreateBooking();
   const [serviceId, setServiceId] = useState(initialServiceId ?? "");
@@ -164,11 +166,7 @@ export function useBookingForm({
       },
       onError: (error) => {
         if (error instanceof BookingApiError) {
-          if (error.status === 401) {
-            toast.error("Phiên đăng nhập đã hết", "Vui lòng đăng nhập lại.");
-            router.push(buildLoginHref(buildBookingHref(serviceId)));
-            return;
-          }
+          if (sessionExpired(error, buildBookingHref(serviceId))) return;
           setErrors(error.errors);
           toast.error(
             "Không tạo được lịch hẹn",

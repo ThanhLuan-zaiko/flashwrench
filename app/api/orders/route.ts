@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
-import { resolveShopper } from "@/lib/auth/shopper";
+import { resolveShopper, staleSessionResponse } from "@/lib/auth/shopper";
 import {
   mutationOriginError,
   readJsonObject,
@@ -67,6 +67,9 @@ function toCheckoutInput(body: Record<string, unknown>): CheckoutInput {
 // cart partition and must leave name + phone + email on the order.
 export async function POST(request: Request) {
   const shopper = await resolveShopper();
+  // A killed session must not fall through to the guest partition: 401
+  // lets the client refresh and retry the checkout under the account.
+  if (shopper.staleAccessToken) return staleSessionResponse();
   if (shopper.user && shopper.user.role !== "customer") {
     return NextResponse.json(
       { errors: { form: "Bạn không có quyền thực hiện thao tác này." } },

@@ -5,6 +5,7 @@ import { FaQrcode } from "react-icons/fa";
 import { FiLoader, FiX } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { usePayOrderOnline } from "@/hooks/orders";
+import { useSessionExpired } from "@/hooks/useSessionExpired";
 import { AuthApiError } from "@/services/auth.api";
 
 type MockPaymentDialogProps = {
@@ -28,6 +29,7 @@ export function MockPaymentDialog({
   onError,
 }: MockPaymentDialogProps) {
   const payOrder = usePayOrderOnline();
+  const sessionExpired = useSessionExpired();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -52,6 +54,7 @@ export function MockPaymentDialog({
         },
         onError: (err) => {
           setProcessing(false);
+          if (sessionExpired(err, `/orders/${orderId}`)) return;
           if (err instanceof AuthApiError) {
             setError(
               err.errors.form ??

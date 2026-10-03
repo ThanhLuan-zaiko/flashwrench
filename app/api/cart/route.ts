@@ -4,6 +4,7 @@ import {
   attachGuestCookie,
   resolveShopper,
   type Shopper,
+  staleSessionResponse,
 } from "@/lib/auth/shopper";
 import {
   mutationOriginError,
@@ -40,6 +41,9 @@ function cartTtl(shopper: Shopper): number | undefined {
 
 export async function GET() {
   const shopper = await resolveShopper();
+  // A killed session gets a 401 (client refresh-retry), never the empty
+  // guest cart that would masquerade as their account cart.
+  if (shopper.staleAccessToken) return staleSessionResponse();
   // Anonymous visitors have no cart partition yet — render an empty cart
   // instead of minting a token on a read or hard-failing the badge.
   if (!shopper.cartId) {
@@ -64,6 +68,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const shopper = await resolveShopper({ createGuest: true });
+  if (shopper.staleAccessToken) return staleSessionResponse();
   const guard = shopperOrForbidden(shopper);
   if (guard instanceof NextResponse) return guard;
   const origin = mutationOriginError(request);
@@ -102,6 +107,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const shopper = await resolveShopper();
+  if (shopper.staleAccessToken) return staleSessionResponse();
   const origin = mutationOriginError(request);
   if (origin) return origin;
   // Clearing a cart that was never minted is a no-op success.

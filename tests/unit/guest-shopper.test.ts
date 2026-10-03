@@ -18,6 +18,7 @@ mock.module("@/lib/auth/authorization", () => ({
 }));
 
 import { GUEST_COOKIE } from "@/lib/auth/guest-session";
+import { ACCESS_COOKIE } from "@/lib/auth/session";
 import { attachGuestCookie, resolveShopper } from "@/lib/auth/shopper";
 
 const GUEST_ID = "99999999-9999-4999-8999-999999999999";
@@ -86,6 +87,28 @@ describe("resolveShopper", () => {
 
     expect(shopper.cartId).toBe(GUEST_ID);
     expect(shopper.pendingGuestId).toBeNull();
+  });
+
+  test("a presented-but-rejected access token is flagged stale", async () => {
+    setMockCookies({
+      [ACCESS_COOKIE]: "revoked-token",
+      [GUEST_COOKIE]: GUEST_ID,
+    });
+    const shopper = await resolveShopper({ createGuest: true });
+
+    expect(shopper.user).toBeNull();
+    expect(shopper.staleAccessToken).toBe(true);
+    // The guest partition still resolves — the route decides whether the
+    // stale flag becomes a 401 before any guest fallthrough happens.
+    expect(shopper.cartId).toBe(GUEST_ID);
+  });
+
+  test("a working session is never flagged stale", async () => {
+    routeStubs.bookingUser = makePublicUser();
+    setMockCookies({ [ACCESS_COOKIE]: "live-token" });
+    const shopper = await resolveShopper();
+
+    expect(shopper.staleAccessToken).toBe(false);
   });
 });
 

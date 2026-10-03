@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { GUEST_CART_TTL_SECONDS, GUEST_COOKIE } from "@/lib/auth/guest-session";
+import { ACCESS_COOKIE } from "@/lib/auth/session";
 import { isUuid } from "@/lib/validation";
 import { makePublicUser, postJsonRequest } from "../helpers/auth.fixtures";
 import {
@@ -55,6 +56,13 @@ describe("GET /api/cart", () => {
     routeStubs.bookingUser = makePublicUser({ role: "dispatcher" });
     const res = await cartGet();
     expect(res.status).toBe(403);
+  });
+
+  test("a rejected access token gets 401, never the guest partition", async () => {
+    setMockCookies({ [ACCESS_COOKIE]: "revoked", [GUEST_COOKIE]: GUEST_ID });
+    const res = await cartGet();
+    expect(res.status).toBe(401);
+    expect(cartServiceRouteMocks.getCartView).not.toHaveBeenCalled();
   });
 });
 
@@ -117,6 +125,16 @@ describe("POST /api/cart", () => {
     expect(cartServiceRouteMocks.addToCart).not.toHaveBeenCalled();
     expect(res.cookies.get(GUEST_COOKIE)).toBeUndefined();
   });
+
+  test("a rejected access token gets 401 and mints no guest token", async () => {
+    setMockCookies({ [ACCESS_COOKIE]: "revoked" });
+    const res = await cartPost(
+      postJsonRequest("/api/cart", { partId: PART_ID, qty: 1 }),
+    );
+    expect(res.status).toBe(401);
+    expect(cartServiceRouteMocks.addToCart).not.toHaveBeenCalled();
+    expect(res.cookies.get(GUEST_COOKIE)).toBeUndefined();
+  });
 });
 
 describe("PATCH /api/cart/[partId]", () => {
@@ -142,6 +160,16 @@ describe("PATCH /api/cart/[partId]", () => {
     );
     expect(res.status).toBe(404);
     expect(cartServiceRouteMocks.updateCartItemQty.mock.calls.length).toBe(0);
+  });
+
+  test("a rejected access token gets 401 instead of a guest-cart write", async () => {
+    setMockCookies({ [ACCESS_COOKIE]: "revoked", [GUEST_COOKIE]: GUEST_ID });
+    const res = await itemPatch(
+      postJsonRequest(`/api/cart/${PART_ID}`, { qty: 3 }),
+      { params: ITEM_PARAMS },
+    );
+    expect(res.status).toBe(401);
+    expect(cartServiceRouteMocks.updateCartItemQty).not.toHaveBeenCalled();
   });
 });
 

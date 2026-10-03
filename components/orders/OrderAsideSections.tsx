@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FiLoader } from "react-icons/fi";
 import { useCancelOrder } from "@/hooks/orders";
+import { useSessionExpired } from "@/hooks/useSessionExpired";
 import { formatDateTime } from "@/lib/datetime/format";
 import type { OrderDetail, OrderStatus } from "@/lib/orders/orders.types";
 import { canCustomerCancel, ORDER_STATUS_LABELS } from "./order-format";
@@ -95,12 +96,16 @@ export function OrderCancelSection({
 }) {
   const [confirming, setConfirming] = useState(false);
   const cancelOrder = useCancelOrder();
+  const sessionExpired = useSessionExpired();
   if (!canCustomerCancel(status)) return null;
 
   const cancel = () =>
     cancelOrder.mutate(orderId, {
       onSuccess: () => setConfirming(false),
-      onError: (error) => onError(error.message || "Không hủy được đơn."),
+      onError: (error) => {
+        if (sessionExpired(error, `/orders/${orderId}`)) return;
+        onError(error.message || "Không hủy được đơn.");
+      },
     });
 
   return (

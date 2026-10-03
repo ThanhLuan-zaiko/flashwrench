@@ -9,6 +9,7 @@ import { useMe } from "@/hooks/auth";
 import { useCart } from "@/hooks/cart";
 import { useCheckout } from "@/hooks/orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useSessionExpired } from "@/hooks/useSessionExpired";
 import { useMyWallets } from "@/hooks/useVouchers";
 import type {
   FulfillmentType,
@@ -39,6 +40,7 @@ export function CheckoutPage() {
   const me = useMe();
   const cart = useCart();
   const checkout = useCheckout();
+  const sessionExpired = useSessionExpired();
   const fieldId = useId();
 
   const guest = me.isSuccess && me.data === null;
@@ -130,6 +132,7 @@ export function CheckoutPage() {
           );
         },
         onError: (error) => {
+          if (sessionExpired(error, "/checkout")) return;
           if (error instanceof AuthApiError) {
             setErrors(error.errors as OrderFieldErrors);
           } else {

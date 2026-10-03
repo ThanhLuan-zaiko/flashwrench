@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { GUEST_CART_TTL_SECONDS } from "@/lib/auth/guest-session";
-import { resolveShopper } from "@/lib/auth/shopper";
+import { resolveShopper, staleSessionResponse } from "@/lib/auth/shopper";
 import {
   mutationOriginError,
   readJsonObject,
@@ -26,6 +26,7 @@ export async function PATCH(
   { params }: { params: Promise<{ partId: string }> },
 ) {
   const shopper = await resolveShopper();
+  if (shopper.staleAccessToken) return staleSessionResponse();
   if (shopper.user && shopper.user.role !== "customer") {
     return staffForbidden();
   }
@@ -66,6 +67,7 @@ export async function DELETE(
   { params }: { params: Promise<{ partId: string }> },
 ) {
   const shopper = await resolveShopper();
+  if (shopper.staleAccessToken) return staleSessionResponse();
   if (shopper.user && shopper.user.role !== "customer") {
     return staffForbidden();
   }
