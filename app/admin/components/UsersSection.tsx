@@ -11,15 +11,11 @@ import { BentoCard } from "./bento/BentoCard";
 import { UsersStatCard } from "./bento/UsersStatCard";
 import { AccountManageList } from "./users/AccountManageList";
 import { ApprovalQueueList } from "./users/ApprovalQueueList";
-import {
-  ComplaintDialog,
-  type ComplaintDialogState,
-} from "./users/ComplaintDialog";
+import type { ComplaintDialogState } from "./users/ComplaintDialog";
 import { ComplaintList } from "./users/ComplaintList";
-import { StaffDeleteDialog } from "./users/StaffDeleteDialog";
-import { StaffDialog } from "./users/StaffDialog";
+import { CustomerManageList } from "./users/CustomerManageList";
 import { StaffSection } from "./users/StaffSection";
-import { UserActionDialog } from "./users/UserActionDialog";
+import { UsersDialogs } from "./users/UsersDialogs";
 import { UsersHeaderAction } from "./users/UsersHeaderAction";
 import { USER_TABS, type UserTab } from "./users/user-tabs";
 import { useStaffActions } from "./users/useStaffActions";
@@ -167,6 +163,18 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                 onRetry={() => void overview.allQuery.refetch()}
               />
             )}
+            {tab === "customers" && (
+              <CustomerManageList
+                items={overview.customerLive}
+                isPending={overview.allQuery.isPending}
+                isError={overview.allQuery.isError}
+                pendingId={staff.pendingStaffId}
+                currentUserId={currentUserId}
+                onEdit={staff.openEdit}
+                onSoft={staff.openSoft}
+                onRetry={() => void overview.allQuery.refetch()}
+              />
+            )}
             {tab === "trash" && (
               <StaffSection
                 mode="trash"
@@ -201,44 +209,12 @@ export function UsersSection({ tab }: { tab: UserTab }) {
         </BentoCard>
       </div>
 
-      <UserActionDialog
-        target={actions.actionTarget}
-        pending={actions.actionPending}
-        error={actions.actionError}
-        onClose={actions.closeAction}
-        onConfirm={actions.confirmAction}
+      <UsersDialogs
+        actions={actions}
+        staff={staff}
+        complaintDialog={complaintDialog}
+        onCloseComplaint={() => setComplaintDialog(null)}
       />
-      {staff.staffDialog && (
-        <StaffDialog
-          key={
-            staff.staffDialog.mode === "edit"
-              ? `staff-${staff.staffDialog.item.id}`
-              : "staff-create"
-          }
-          dialog={staff.staffDialog}
-          onClose={staff.closeStaffDialog}
-        />
-      )}
-      <StaffDeleteDialog
-        target={staff.deleteTarget}
-        confirmText={staff.deleteConfirm}
-        pending={staff.deletePending}
-        error={staff.deleteError}
-        onConfirmText={staff.setDeleteConfirm}
-        onClose={staff.closeDelete}
-        onConfirm={staff.confirmDelete}
-      />
-      {complaintDialog && (
-        <ComplaintDialog
-          key={
-            complaintDialog.mode === "handle"
-              ? `complaint-${complaintDialog.item.id}`
-              : "complaint-create"
-          }
-          dialog={complaintDialog}
-          onClose={() => setComplaintDialog(null)}
-        />
-      )}
     </div>
   );
 }

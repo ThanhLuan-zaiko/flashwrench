@@ -31,11 +31,20 @@ export function useUsersOverview() {
       complaints.filter((c) => c.status === "open" || c.status === "in_review"),
     [complaints],
   );
-  // Staff tab: manageable accounts only (no admins), split into live rows
-  // and the soft-deleted trash. Self-hiding happens in the lists, which
-  // know the current admin id.
+  // Staff tab: employee accounts only (mechanic/dispatcher); customers get
+  // their own tab. Trash keeps every non-admin deleted account grouped by
+  // role. Self-hiding happens in the lists, which know the current admin id.
   const staffLive = useMemo(
-    () => allUsers.filter((u) => u.role !== "admin" && u.status !== "deleted"),
+    () =>
+      allUsers.filter(
+        (u) =>
+          u.role !== "admin" && u.role !== "customer" && u.status !== "deleted",
+      ),
+    [allUsers],
+  );
+  const customerLive = useMemo(
+    () =>
+      allUsers.filter((u) => u.role === "customer" && u.status !== "deleted"),
     [allUsers],
   );
   const staffTrash = useMemo(
@@ -80,6 +89,7 @@ export function useUsersOverview() {
     complaintsQuery,
     allUsers,
     staffLive,
+    customerLive,
     staffTrash,
     complaints,
     openComplaints,

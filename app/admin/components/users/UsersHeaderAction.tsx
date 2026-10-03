@@ -1,6 +1,6 @@
 "use client";
 
-import { FiPlus, FiShield, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiShield, FiTrash2, FiUser } from "react-icons/fi";
 import type { UserTab } from "./user-tabs";
 
 type UsersHeaderActionProps = {
@@ -41,6 +41,14 @@ export function UsersHeaderAction({
         <FiPlus aria-hidden="true" className="h-4 w-4" />
         Thêm nhân viên
       </button>
+    );
+  }
+  if (tab === "customers") {
+    return (
+      <p className={NOTE_CLASS}>
+        <FiUser aria-hidden="true" className="h-4 w-4" />
+        Sửa hồ sơ hoặc xóa mềm khách hàng
+      </p>
     );
   }
   if (tab === "trash") {

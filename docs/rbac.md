@@ -80,8 +80,9 @@ server-side: chưa đăng nhập thì redirect `/login`, sai role thì trả pan
 |---|---|
 | `/admin` | Dashboard tổng quan (số liệu vận hành) |
 | `/admin/users` | Quản lý người dùng: duyệt thợ, khóa/mở khóa tài khoản |
-| `/admin/users/staff` | Quản lý nhân viên: tạo/sửa, xóa mềm |
-| `/admin/users/trash` | Thùng rác nhân viên: khôi phục, xóa vĩnh viễn |
+| `/admin/users/staff` | Quản lý nhân viên (thợ + điều phối): tạo/sửa, xóa mềm |
+| `/admin/users/customers` | Quản lý khách hàng: sửa hồ sơ, xóa mềm |
+| `/admin/users/trash` | Thùng rác tài khoản: khôi phục, xóa vĩnh viễn (nhóm theo vai trò) |
 | `/admin/services` | Cấu hình dịch vụ: bảng giá, loại hình sửa chữa |
 
 Sidebar dùng `Link` nên mỗi mục có URL riêng, deep-link và refresh giữ

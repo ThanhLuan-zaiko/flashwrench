@@ -1,121 +1,75 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FiInbox, FiLoader, FiUsers } from "react-icons/fi";
+import { FiInbox, FiLoader } from "react-icons/fi";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import { CatalogPager } from "../services/CatalogPager";
-import { SelectDropdown } from "../services/SelectDropdown";
 import { usePagination } from "../services/usePagination";
 import { excludeSelfAccount } from "./admin-user-guards";
-import { RealtimeStatusBadge } from "./RealtimeStatusBadge";
 import { StaffCard } from "./StaffCard";
 
-type StaffManageListProps = {
+type CustomerManageListProps = {
   items: AdminUserItem[];
   isPending: boolean;
   isError: boolean;
   pendingId: string | null;
   currentUserId?: string | null;
-  pendingMap?: Record<string, string>;
-  cryptoConfigured?: boolean;
-  resetPendingId?: string | null;
-  resetError?: string | null;
   onEdit: (item: AdminUserItem) => void;
   onSoft: (item: AdminUserItem) => void;
-  onResetPassword?: (item: AdminUserItem) => void;
   onRetry: () => void;
 };
 
-const ROLE_OPTIONS = [
-  { value: "mechanic", label: "Thợ" },
-  { value: "dispatcher", label: "Điều phối" },
-];
-
-// Live staff with search plus role filter. The current admin is hidden so
-// they can never soft-delete themselves. Mirrors AccountManageList.
-export function StaffManageList({
+// Live customer accounts with search — no role filter (single role) and
+// no staff-only extras (temp passwords, realtime badge). Actions are the
+// shared staff row actions: edit profile and soft delete.
+export function CustomerManageList({
   items,
   isPending,
   isError,
   pendingId,
   currentUserId,
-  pendingMap,
-  cryptoConfigured,
-  resetPendingId,
-  resetError,
   onEdit,
   onSoft,
-  onResetPassword,
   onRetry,
-}: StaffManageListProps) {
+}: CustomerManageListProps) {
   const [text, setText] = useState("");
-  const [role, setRole] = useState("");
   const visible = useMemo(() => {
     const needle = text.trim().toLowerCase();
     return excludeSelfAccount(items, currentUserId).filter((u) => {
-      if (role && u.role !== role) return false;
       if (!needle) return true;
       return [u.fullName, u.phone, u.email].some((f) =>
         f.toLowerCase().includes(needle),
       );
     });
-  }, [items, text, role, currentUserId]);
+  }, [items, text, currentUserId]);
   const pager = usePagination(visible.length);
 
   const handleText = (value: string) => {
     pager.reset();
     setText(value);
   };
-  const handleRole = (value: string) => {
-    pager.reset();
-    setRole(value);
-  };
 
   return (
     <div className="flex flex-col gap-3">
-      {cryptoConfigured === false && (
-        <p
-          role="alert"
-          className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+      <div>
+        <label
+          htmlFor="customer-search"
+          className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
         >
-          Chưa cấu hình STAFF_TEMP_SECRET nên mật khẩu tạm không được lưu. Hãy
-          cấu hình rồi dùng nút Cấp lại mật khẩu ở từng nhân viên.
-        </p>
-      )}
-      <div className="flex items-center justify-end">
-        <RealtimeStatusBadge />
-      </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div>
-          <label
-            htmlFor="staff-search"
-            className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
-          >
-            Tìm kiếm
-          </label>
-          <input
-            id="staff-search"
-            type="search"
-            value={text}
-            onChange={(e) => handleText(e.target.value)}
-            placeholder="Tên, số điện thoại, email…"
-            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
-          />
-        </div>
-        <SelectDropdown
-          label="Vai trò"
-          value={role}
-          options={ROLE_OPTIONS}
-          onChange={handleRole}
-          allLabel="Mọi vai trò"
-          listLabel="Chọn vai trò"
-          unitName="vai trò"
-          icon={FiUsers}
+          Tìm kiếm
+        </label>
+        <input
+          id="customer-search"
+          type="search"
+          value={text}
+          onChange={(e) => handleText(e.target.value)}
+          placeholder="Tên, số điện thoại, email…"
+          className="mt-1.5 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:max-w-md dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
         />
       </div>
 
       {isPending ? (
-        <ul className="flex flex-col gap-2" aria-label="Đang tải nhân viên">
+        <ul className="flex flex-col gap-2" aria-label="Đang tải khách hàng">
           {[0, 1, 2].map((i) => (
             <li
               key={i}
@@ -126,7 +80,7 @@ export function StaffManageList({
                 className="h-4 w-4 motion-safe:animate-spin"
               />
               <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                Đang tải nhân viên…
+                Đang tải khách hàng…
               </span>
             </li>
           ))}
@@ -151,10 +105,10 @@ export function StaffManageList({
           </span>
           <span>
             <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-              Chưa có nhân viên nào
+              Chưa có khách hàng nào
             </span>
             <span className="block text-xs text-zinc-500 dark:text-zinc-400">
-              Nhấn Thêm nhân viên để tạo tài khoản mới
+              Khách hàng tự đăng ký tài khoản từ trang chủ
             </span>
           </span>
         </div>
@@ -167,14 +121,8 @@ export function StaffManageList({
                 user={item}
                 pendingId={pendingId}
                 variant="live"
-                tempPassword={pendingMap?.[item.id] ?? null}
-                resetPending={resetPendingId === item.id}
-                resetError={
-                  resetPendingId === item.id ? (resetError ?? null) : null
-                }
                 onEdit={onEdit}
                 onSoft={onSoft}
-                onResetPassword={onResetPassword}
               />
             ))}
           </ul>

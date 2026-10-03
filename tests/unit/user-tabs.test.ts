@@ -11,6 +11,7 @@ describe("user tabs", () => {
       "approve",
       "lock",
       "staff",
+      "customers",
       "trash",
       "complaints",
     ]);
@@ -31,6 +32,7 @@ describe("user tabs", () => {
     expect(isUserTab("approve")).toBe(true);
     expect(isUserTab("lock")).toBe(true);
     expect(isUserTab("staff")).toBe(true);
+    expect(isUserTab("customers")).toBe(true);
     expect(isUserTab("trash")).toBe(true);
     expect(isUserTab("complaints")).toBe(true);
     expect(isUserTab("unknown")).toBe(false);
@@ -44,7 +46,7 @@ describe("user tabs", () => {
   });
 
   test("attaches one icon component per tab", () => {
-    expect(USER_TABS.length).toBe(5);
+    expect(USER_TABS.length).toBe(6);
     for (const tab of USER_TABS) {
       expect(typeof tab.icon).toBe("function");
     }

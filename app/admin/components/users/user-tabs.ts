@@ -3,11 +3,18 @@ import {
   FiLock,
   FiMessageSquare,
   FiTrash2,
+  FiUser,
   FiUserCheck,
   FiUsers,
 } from "react-icons/fi";
 
-export type UserTab = "approve" | "lock" | "staff" | "trash" | "complaints";
+export type UserTab =
+  | "approve"
+  | "lock"
+  | "staff"
+  | "customers"
+  | "trash"
+  | "complaints";
 
 export type UserTabDef = {
   id: UserTab;
@@ -48,6 +55,14 @@ export const USER_TABS: UserTabDef[] = [
     description: "Tạo, sửa, xóa mềm và xóa vĩnh viễn tài khoản nhân viên.",
   },
   {
+    id: "customers",
+    label: "Khách hàng",
+    href: tabHref("customers"),
+    icon: FiUser,
+    title: "Khách hàng | Quản lý người dùng",
+    description: "Sửa hồ sơ và xóa mềm tài khoản khách hàng.",
+  },
+  {
     id: "trash",
     label: "Thùng rác",
     href: tabHref("trash"),
@@ -70,6 +85,7 @@ export function isUserTab(value: unknown): value is UserTab {
     value === "approve" ||
     value === "lock" ||
     value === "staff" ||
+    value === "customers" ||
     value === "trash" ||
     value === "complaints"
   );
