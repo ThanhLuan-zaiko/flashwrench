@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FiInfo, FiPackage } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import type { PartItem } from "@/lib/parts/parts.types";
+import { ApplicableVoucherBadge } from "../vouchers/ApplicableVoucherBadge";
 import { AddToCartButton } from "./AddToCartButton";
 import { discountPercent, stockLabel } from "./products-utils";
 
@@ -77,6 +78,7 @@ export function ProductCard({ part }: ProductCardProps) {
         </p>
       </div>
       <div className="flex flex-col gap-2">
+        <ApplicableVoucherBadge kind="order" subtotal={part.price} />
         <AddToCartButton part={part} />
         <Link
           href={href}

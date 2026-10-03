@@ -5,6 +5,7 @@ import {
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import { ApplicableVoucherPanel } from "../vouchers/ApplicableVoucherPanel";
 
 type BookingServiceSummaryProps = {
   service: ServiceItem;
@@ -64,6 +65,9 @@ export function BookingServiceSummary({ service }: BookingServiceSummaryProps) {
           </span>
         )}
       </p>
+      <div className="mt-3">
+        <ApplicableVoucherPanel kind="booking" subtotal={service.basePrice} />
+      </div>
     </section>
   );
 }

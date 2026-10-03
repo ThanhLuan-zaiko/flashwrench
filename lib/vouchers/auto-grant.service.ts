@@ -24,6 +24,7 @@ import {
   findCampaignRowById,
   releaseGrantSlot,
 } from "./voucher-campaign.repository";
+import { notifyVoucherGranted } from "./voucher-notify.service";
 import { publishWalletChange } from "./voucher-realtime";
 import {
   countUserWalletsForCampaign,
@@ -97,6 +98,14 @@ export async function grantFromRule(
       kind: "voucher-granted",
       walletId,
       userId,
+    });
+    notifyVoucherGranted(userId, {
+      campaignName: campaign.name ?? "",
+      discountType: campaign.discount_type,
+      discountValue: campaign.discount_value,
+      maxDiscount: campaign.max_discount,
+      minOrder: campaign.min_order,
+      expiresAt: campaign.end_at,
     });
     return true;
   } catch {

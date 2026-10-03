@@ -50,6 +50,7 @@ export function CampaignLivePreview({
     endAt: toIsoOrNull(form.endAt),
     totalLimit: toNumber(form.totalLimit, 0),
     grantedCount: 0,
+    earn: [],
   };
   return (
     <div className="sm:col-span-2">

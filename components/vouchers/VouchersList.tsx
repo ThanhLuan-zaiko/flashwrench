@@ -4,6 +4,8 @@ import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { PromoCampaignGrid } from "@/components/promotions/PromoCampaignGrid";
 import { useMe } from "@/hooks/auth";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useVoucherGrantToast } from "@/hooks/useVoucherGrantToast";
+import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import {
   useMyVoucherStats,
   useMyWallets,
@@ -19,6 +21,9 @@ import { WalletBoard } from "./WalletBoard";
 export function VouchersList() {
   const rootRef = useBentoReveal<HTMLDivElement>();
   const me = useMe();
+  const ownerId = me.data?.id ?? null;
+  useVoucherRealtime(ownerId ?? undefined, false);
+  useVoucherGrantToast(ownerId);
   const authed = me.isSuccess && Boolean(me.data?.id);
   // One wide wallet page supplies both the bento block and the owned
   // campaign id set; WalletBoard keeps its own paged read for the archive.

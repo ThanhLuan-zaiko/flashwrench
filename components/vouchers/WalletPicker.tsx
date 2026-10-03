@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
+import { DropdownSelect } from "@/components/ui/DropdownSelect";
 import { useMyWallets } from "@/hooks/useVouchers";
 import type { VoucherWallet } from "@/lib/vouchers/voucher.types";
 import { clampVoucherDiscount } from "@/lib/vouchers/voucher-discount";
@@ -36,6 +37,7 @@ export function WalletPicker({
   disabled,
   onChange,
 }: WalletPickerProps) {
+  const labelId = useId();
   // The picker needs every usable wallet, not just the newest page —
   // ask for the bounded max so none is hidden behind pagination.
   const wallets = useMyWallets(true, { limit: 100 });
@@ -54,6 +56,25 @@ export function WalletPicker({
         }) > 0,
     );
   }, [wallets.data, kind, subtotal]);
+
+  const options = useMemo(
+    () => [
+      {
+        value: "",
+        label: "Không dùng voucher",
+        hint: "Thanh toán đủ tiền",
+      },
+      ...usable.map((wallet) => ({
+        value: wallet.id,
+        label: `${wallet.campaignName} — ${discountLabel(wallet, subtotal)}`,
+        hint:
+          wallet.minOrder > 0
+            ? `Đơn từ ${wallet.minOrder.toLocaleString("vi-VN")}đ`
+            : "Không yêu cầu giá trị tối thiểu",
+      })),
+    ],
+    [usable, subtotal],
+  );
 
   if (wallets.isPending) {
     return (
@@ -74,26 +95,22 @@ export function WalletPicker({
   }
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="wallet-picker"
+      <span
+        id={labelId}
         className="text-sm font-medium text-zinc-800 dark:text-zinc-200"
       >
         Voucher của tôi (không bắt buộc)
-      </label>
-      <select
+      </span>
+      <DropdownSelect
         id="wallet-picker"
+        labelId={labelId}
         value={value ?? ""}
+        onChange={(next) => onChange(next || null)}
+        options={options}
+        placeholder="Chọn voucher…"
         disabled={disabled}
-        onChange={(event) => onChange(event.target.value || null)}
-        className="min-h-[44px] rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-      >
-        <option value="">Không dùng voucher</option>
-        {usable.map((wallet) => (
-          <option key={wallet.id} value={wallet.id}>
-            {wallet.campaignName} — {discountLabel(wallet, subtotal)}
-          </option>
-        ))}
-      </select>
+        error={Boolean(error)}
+      />
       {error && (
         <p
           role="alert"

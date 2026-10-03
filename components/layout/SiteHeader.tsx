@@ -24,10 +24,10 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
         <SiteLogo />
 
-        <div className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
+        <div className="hidden min-w-0 flex-1 justify-center lg:flex">
           <HeaderNav items={NAV_ITEMS} currentPath={activePath} />
         </div>
 

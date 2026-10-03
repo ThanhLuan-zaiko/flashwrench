@@ -5,6 +5,7 @@ import {
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import { ApplicableVoucherBadge } from "../vouchers/ApplicableVoucherBadge";
 import { ServiceBookingButton } from "./ServiceBookingButton";
 
 type PublicServiceCardProps = {
@@ -69,6 +70,7 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
         </p>
       </div>
       <ServiceBookingButton serviceId={service.id} serviceName={service.name} />
+      <ApplicableVoucherBadge kind="booking" subtotal={service.basePrice} />
     </article>
   );
 }

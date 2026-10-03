@@ -19,6 +19,7 @@ import {
   findCampaignRowById,
   releaseGrantSlot,
 } from "./voucher-campaign.repository";
+import { notifyVoucherGranted } from "./voucher-notify.service";
 import { parseOptionalDate, validateGrantInput } from "./voucher-validation";
 import {
   commitWalletTransition,
@@ -156,6 +157,14 @@ export async function grantWallet(
   }
   const row = await findWalletRowById(walletId);
   if (!row) return fail(500, "Không phát được voucher.");
+  notifyVoucherGranted(raw.userId.trim(), {
+    campaignName: campaign.name ?? "",
+    discountType: campaign.discount_type,
+    discountValue: campaign.discount_value,
+    maxDiscount: campaign.max_discount,
+    minOrder: campaign.min_order,
+    expiresAt: campaign.end_at,
+  });
   return { ok: true, data: toWallet(row) };
 }
 

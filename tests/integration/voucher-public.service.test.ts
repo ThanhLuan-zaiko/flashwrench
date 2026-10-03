@@ -2,6 +2,7 @@
 // campaigns never reach customer advertising. Storage is stubbed.
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import {
+  autoRuleRepoMocks,
   resetServiceMocks,
   voucherCampaignRepoMocks,
   voucherStubs,
@@ -12,6 +13,7 @@ mock.module(
   "@/lib/vouchers/voucher-campaign.repository",
   () => voucherCampaignRepoMocks,
 );
+mock.module("@/lib/vouchers/auto-rule.repository", () => autoRuleRepoMocks);
 
 import {
   getPublicCampaignBySlug,

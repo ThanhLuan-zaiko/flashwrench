@@ -6,6 +6,7 @@ import { FiArrowLeft, FiPackage, FiRefreshCw, FiTag } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { usePartsCatalogRealtime, usePublicPart } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { ApplicableVoucherPanel } from "../vouchers/ApplicableVoucherPanel";
 import { AddToCartButton } from "./AddToCartButton";
 import { ProductGallery } from "./ProductGallery";
 import { ProductReviewsSection } from "./ProductReviewsSection";
@@ -128,6 +129,7 @@ export function ProductDetail({ slug }: { slug: string }) {
               )}
 
               <AddToCartButton part={part} />
+              <ApplicableVoucherPanel kind="order" subtotal={part.price} />
             </div>
           </div>
 
