@@ -8,6 +8,7 @@ import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyBooking } from "@/hooks/booking";
 import { formatDateTime } from "@/lib/datetime/format";
 import { STATUS_LABELS } from "@/lib/mechanic/mechanic-status";
+import { BookingCancelSection } from "./BookingCancelSection";
 import { BookingFeedbackSection } from "./BookingFeedbackSection";
 import { BookingTimeline } from "./BookingTimeline";
 import {
@@ -225,6 +226,11 @@ export function BookingDetailDialog({
                 </p>
                 <BookingTimeline timeline={booking.timeline} />
               </section>
+
+              <BookingCancelSection
+                bookingId={bookingId}
+                status={booking.status}
+              />
             </div>
           )}
         </div>

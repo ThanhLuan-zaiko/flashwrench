@@ -128,3 +128,27 @@ export async function createBookingReviewRequest(
     { method: "POST", body: JSON.stringify(payload) },
   );
 }
+
+// Customer cancel on an owned booking: the reason is mandatory because
+// it lands on the shared timeline that staff and the mechanic read.
+// AuthApiError is rewrapped like createBookingRequest so callers only
+// ever handle BookingApiError.
+export async function cancelBookingRequest(
+  bookingId: string,
+  note: string,
+): Promise<{ booking: BookingSummary }> {
+  try {
+    return await apiRequest<{ booking: BookingSummary }>(
+      `/api/bookings/${encodeURIComponent(bookingId)}`,
+      { method: "PATCH", body: JSON.stringify({ action: "cancel", note }) },
+    );
+  } catch (error) {
+    if (error instanceof AuthApiError) {
+      throw new BookingApiError(
+        error.status,
+        error.errors as BookingFieldErrors,
+      );
+    }
+    throw error;
+  }
+}

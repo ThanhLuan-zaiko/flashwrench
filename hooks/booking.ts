@@ -11,6 +11,7 @@ import type {
   CreateBookingInput,
 } from "@/services/booking.api";
 import {
+  cancelBookingRequest,
   createBookingRequest,
   createBookingReviewRequest,
   fetchBookingTravelPoints,
@@ -112,6 +113,24 @@ export function useCreateBookingReview(bookingId: string) {
       void queryClient.invalidateQueries({
         queryKey: bookingKeys.mechanicsAll,
       });
+    },
+  });
+}
+
+// Customer cancel: only pending/confirmed/mechanic_assigned qualify (the
+// service enforces it). Success refreshes the open detail dialog and the
+// history list so the cancelled chip lands without a reload.
+export function useCancelBooking() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { bookingId: string; note: string }) =>
+      cancelBookingRequest(input.bookingId, input.note),
+    retry: false,
+    onSuccess: (_data, input) => {
+      void queryClient.invalidateQueries({
+        queryKey: bookingKeys.detail(input.bookingId),
+      });
+      void queryClient.invalidateQueries({ queryKey: bookingKeys.mine });
     },
   });
 }

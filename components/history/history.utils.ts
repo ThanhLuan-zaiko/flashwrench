@@ -12,6 +12,21 @@ export function isTrackableStatus(status: MechanicBookingStatus): boolean {
   return status === "en_route" || status === "in_progress";
 }
 
+// Mirrors CANCELLABLE_STATUSES in lib/booking/customer-booking.service.ts:
+// once the mechanic is on the road the booking is theirs to finish, so
+// self-serve cancel stops at mechanic_assigned.
+const CUSTOMER_CANCELLABLE = new Set<MechanicBookingStatus>([
+  "pending",
+  "confirmed",
+  "mechanic_assigned",
+]);
+
+export function canCustomerCancelBooking(
+  status: MechanicBookingStatus,
+): boolean {
+  return CUSTOMER_CANCELLABLE.has(status);
+}
+
 export type BookingBuckets<T> = { active: T[]; past: T[] };
 
 // In-flight bookings first (they need watching), finished ones behind.
