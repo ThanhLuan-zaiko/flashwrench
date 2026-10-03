@@ -1,9 +1,10 @@
 "use client";
 
-import { FiArrowLeft, FiMail } from "react-icons/fi";
+import { FiArrowLeft, FiKey, FiLoader, FiMail } from "react-icons/fi";
 import { AuthTextField } from "@/components/auth/AuthTextField";
 import { FormAlert } from "@/components/auth/FormAlert";
 import type { OtpSent } from "@/services/guest-access.api";
+import { isCompleteOtpCode, sanitizeOtpInput } from "./guest-otp-format";
 
 // Step 1 of the lookup: collect the address the visitor booked with. The
 // submit button stays disabled until the address looks like an email so the
@@ -68,7 +69,14 @@ export function OtpRequestStep({
         disabled={!ready || pending}
         className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
       >
-        <FiMail aria-hidden="true" className="h-4 w-4" />
+        {pending ? (
+          <FiLoader
+            aria-hidden="true"
+            className="h-4 w-4 motion-safe:animate-spin"
+          />
+        ) : (
+          <FiMail aria-hidden="true" className="h-4 w-4" />
+        )}
         {pending ? "Đang gửi mã…" : "Gửi mã xác minh"}
       </button>
     </form>
@@ -104,7 +112,7 @@ export function OtpCodeStep({
   formError,
   codeError,
 }: OtpCodeStepProps) {
-  const ready = /^\d{6}$/.test(code);
+  const ready = isCompleteOtpCode(code);
 
   return (
     <form
@@ -130,23 +138,66 @@ export function OtpCodeStep({
 
       {formError && <FormAlert message={formError} />}
 
-      <AuthTextField
-        id="guest-lookup-code"
-        label="Mã xác minh"
-        value={code}
-        onChange={(value) => onCode(value.replace(/\D/g, "").slice(0, 6))}
-        placeholder="000000"
-        autoComplete="one-time-code"
-        inputMode="text"
-        error={codeError ?? undefined}
-        disabled={pending}
-      />
+      <div>
+        <label
+          htmlFor="guest-lookup-code"
+          className="block text-sm font-medium text-zinc-800 dark:text-zinc-200"
+        >
+          Mã xác minh — 6 chữ số
+        </label>
+        <div className="mt-1.5 flex items-center gap-2">
+          <FiKey
+            aria-hidden="true"
+            className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500"
+          />
+          <input
+            id="guest-lookup-code"
+            name="guest-lookup-code"
+            type="text"
+            value={code}
+            onChange={(event) => onCode(sanitizeOtpInput(event.target.value))}
+            placeholder="••••••"
+            autoComplete="one-time-code"
+            inputMode="numeric"
+            maxLength={6}
+            // biome-ignore lint/a11y/noAutofocus: the code step only mounts after the visitor asks for a code, so focusing keeps them in the verify flow they opened.
+            autoFocus
+            disabled={pending}
+            aria-invalid={Boolean(codeError)}
+            aria-describedby={codeError ? "guest-lookup-code-error" : undefined}
+            className={`min-h-[44px] w-full rounded-xl border bg-white px-3 py-2 text-center font-mono text-lg font-semibold tracking-[0.3em] text-zinc-900 outline-none transition-colors duration-200 focus:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400 ${
+              codeError
+                ? "border-red-500 dark:border-red-400"
+                : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-600"
+            }`}
+          />
+        </div>
+        {codeError ? (
+          <p
+            id="guest-lookup-code-error"
+            role="alert"
+            className="mt-1.5 text-sm text-red-600 dark:text-red-400"
+          >
+            {codeError}
+          </p>
+        ) : (
+          <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+            Nhập đủ 6 chữ số trong email chúng tôi vừa gửi.
+          </p>
+        )}
+      </div>
 
       <button
         type="submit"
         disabled={!ready || pending}
-        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
       >
+        {pending && (
+          <FiLoader
+            aria-hidden="true"
+            className="h-4 w-4 motion-safe:animate-spin"
+          />
+        )}
         {pending ? "Đang xác minh…" : "Xác minh và xem dịch vụ"}
       </button>
 
@@ -164,8 +215,14 @@ export function OtpCodeStep({
           type="button"
           onClick={onResend}
           disabled={resendPending || resendAfterSeconds > 0}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 underline-offset-4 transition-colors duration-200 hover:text-zinc-900 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:text-zinc-50"
+          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 underline-offset-4 transition-colors duration-200 hover:text-zinc-900 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:text-zinc-50"
         >
+          {resendPending && (
+            <FiLoader
+              aria-hidden="true"
+              className="h-4 w-4 motion-safe:animate-spin"
+            />
+          )}
           {resendPending
             ? "Đang gửi lại…"
             : resendAfterSeconds > 0
