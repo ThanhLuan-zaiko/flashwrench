@@ -4,6 +4,7 @@ import { FiArrowLeft, FiX } from "react-icons/fi";
 import { useChatThread } from "@/hooks/chat";
 import { ChatConversation } from "./ChatConversation";
 import { ChatThreadList } from "./ChatThreadList";
+import { CHAT_PANEL_CLASSES } from "./chat-overlay.classes";
 
 type ChatPanelProps = {
   activeThreadId: string | null;
@@ -22,11 +23,7 @@ export function ChatPanel({
   const peerName = detail.data?.peerName ?? "";
 
   return (
-    <div
-      role="dialog"
-      aria-label="Hộp thư"
-      className="fixed bottom-24 right-4 z-50 flex h-[min(560px,calc(100dvh-7rem))] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900 sm:right-5"
-    >
+    <div role="dialog" aria-label="Hộp thư" className={CHAT_PANEL_CLASSES}>
       <div className="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-200 px-3 dark:border-zinc-800">
         {activeThreadId ? (
           <button

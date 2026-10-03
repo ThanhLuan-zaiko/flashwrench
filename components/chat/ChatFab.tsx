@@ -7,6 +7,7 @@ import { useChatThreads } from "@/hooks/chat";
 import { useChatRealtime } from "@/hooks/useChatRealtime";
 import { ChatPanel } from "./ChatPanel";
 import { registerChatLauncher } from "./chat-launcher";
+import { CHAT_FAB_CLASSES } from "./chat-overlay.classes";
 
 // Floating launcher for the internal chat — renders only for logged-in
 // customers and mechanics, and doubles as the app-wide open handler that
@@ -50,7 +51,7 @@ export function ChatFab() {
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-label={open ? "Đóng hộp thư" : "Mở hộp thư"}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
+        className={CHAT_FAB_CLASSES}
       >
         {open ? (
           <FiX className="h-6 w-6" aria-hidden />
