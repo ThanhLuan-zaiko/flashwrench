@@ -99,7 +99,7 @@ export const guestAccessRepoMocks = {
   }),
   listGuestRecordRefsByEmail: mock(
     async (
-      email: string,
+      _email: string,
     ): Promise<
       {
         record_type: GuestRecordType;

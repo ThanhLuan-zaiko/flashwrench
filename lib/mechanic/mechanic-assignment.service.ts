@@ -100,7 +100,7 @@ export async function isMechanicEligible(mechanicId: string): Promise<boolean> {
     findMechanicProfileRow(mechanicId),
     findMechanicActiveJob(mechanicId),
   ]);
-  if (!user || user.role !== "mechanic" || user.status !== "active") {
+  if (user?.role !== "mechanic" || user.status !== "active") {
     return false;
   }
   if (activeJob !== null) return false;

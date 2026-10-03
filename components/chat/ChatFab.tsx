@@ -5,44 +5,55 @@ import { FiMessageCircle, FiX } from "react-icons/fi";
 import { useMe } from "@/hooks/auth";
 import { useChatThreads } from "@/hooks/chat";
 import { useChatRealtime } from "@/hooks/useChatRealtime";
+import { canUseChat } from "@/lib/chat/chat-visibility";
 import { ChatPanel } from "./ChatPanel";
 import { registerChatLauncher } from "./chat-launcher";
 import { CHAT_FAB_CLASSES } from "./chat-overlay.classes";
 
-// Floating launcher for the internal chat — renders only for logged-in
-// customers and mechanics, and doubles as the app-wide open handler that
-// booking screens trigger through `openChatPanel`.
+// Floating launcher for the internal chat — always visible so guests can
+// discover the channel, but the inbox stays locked until sign-in. Booking
+// screens trigger it through `openChatPanel`.
 export function ChatFab() {
   const me = useMe();
   const user = me.data;
-  const isChatter = user?.role === "customer" || user?.role === "mechanic";
+  const isChatter = canUseChat(user?.role);
   const [open, setOpen] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
-  useChatRealtime(isChatter ? user.id : null);
+  useChatRealtime(isChatter && user ? user.id : null);
   const threads = useChatThreads(isChatter);
-  const unreadThreads =
-    threads.data?.pages[threads.data.pages.length - 1]?.unreadThreads ?? 0;
+  const unreadThreads = isChatter
+    ? (threads.data?.pages[threads.data.pages.length - 1]?.unreadThreads ?? 0)
+    : 0;
 
   useEffect(() => {
-    if (!isChatter) return;
     return registerChatLauncher((threadId) => {
       setActiveThreadId(threadId ?? null);
       setOpen(true);
     });
-  }, [isChatter]);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   const selectThread = useCallback((threadId: string | null) => {
     setActiveThreadId(threadId);
   }, []);
 
-  if (!isChatter) return null;
-
   return (
     <>
       {open ? (
         <ChatPanel
-          activeThreadId={activeThreadId}
+          activeThreadId={isChatter ? activeThreadId : null}
+          isLocked={!isChatter}
           onSelectThread={selectThread}
           onClose={() => setOpen(false)}
         />

@@ -10,6 +10,7 @@ import type {
   InboxRow,
   MessageRow,
 } from "./chat.types";
+import { normalizeMessageKind } from "./chat-content";
 
 export type ChatActor = { id: string; role: UserRole };
 
@@ -44,7 +45,7 @@ export function toMessage(row: MessageRow, viewerId: string): ChatMessage {
     id: row.message_id,
     threadId: row.thread_id,
     senderId: row.sender_id ?? "",
-    kind: "text",
+    kind: normalizeMessageKind(row.kind),
     body: row.body ?? "",
     createdAt: row.created_at?.toISOString() ?? new Date(0).toISOString(),
     mine: row.sender_id === viewerId,

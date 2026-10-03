@@ -21,7 +21,7 @@ export async function setMyAvatar(
   const row = await findAssetRowById(id);
   // Only own avatar-scope uploads can become an avatar: catalog or
   // flow photos (and anyone else's uploads) are rejected here.
-  if (!row || !row.url) {
+  if (!row?.url) {
     return {
       ok: false,
       status: 404,

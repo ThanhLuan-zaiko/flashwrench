@@ -44,7 +44,7 @@ export async function resolveCourierConfig(
       });
     }
     const user = await findUserById(mechanicId);
-    if (!user || user.role !== "mechanic" || user.status !== "active") {
+    if (user?.role !== "mechanic" || user.status !== "active") {
       return failFields(400, {
         mechanicId: "Thợ đã chọn không khả dụng. Vui lòng chọn thợ khác.",
       });

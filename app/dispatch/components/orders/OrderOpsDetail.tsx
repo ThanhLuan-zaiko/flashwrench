@@ -85,6 +85,7 @@ export function OrderOpsDetail({
                     className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded-lg"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {/* biome-ignore lint/performance/noImgElement: immutable /api/media evidence photo; optimizer hop adds nothing. */}
                     <img
                       src={url}
                       alt="Ảnh hiện trạng sản phẩm"

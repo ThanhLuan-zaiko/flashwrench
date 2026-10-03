@@ -1,9 +1,11 @@
 // Fetch layer for the internal chat. Components never call fetch directly.
 import type {
   ChatMessage,
+  ChatMessageKind,
   ChatThreadDetail,
   ChatThreadSummary,
 } from "@/lib/chat/chat.types";
+import { uploadMediaRequest } from "./media.api";
 
 async function readErrors(response: Response): Promise<Record<string, string>> {
   try {
@@ -90,21 +92,47 @@ export async function fetchChatMessages(
   return (await response.json()) as ChatMessagePage;
 }
 
+export type ChatSendInput = { body: string; kind?: ChatMessageKind };
+
 export async function sendChatMessage(
   threadId: string,
   body: string,
+): Promise<ChatMessage> {
+  return sendChatContentMessage(threadId, { body, kind: "text" });
+}
+
+export async function sendChatContentMessage(
+  threadId: string,
+  input: ChatSendInput,
 ): Promise<ChatMessage> {
   const response = await fetch(`/api/chat/threads/${threadId}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ body }),
+    body: JSON.stringify({ body: input.body, kind: input.kind ?? "text" }),
   });
   if (!response.ok) {
     const errors = await readErrors(response);
     throw new Error(errors.form ?? "Không gửi được tin nhắn.");
   }
   return (await response.json()) as ChatMessage;
+}
+
+// Chat image upload through the shared media pipeline (scope "misc",
+// owned by the thread). The returned URL is what travels as an image
+// message body; the service accepts only our own /api/media URLs.
+export async function uploadChatImage(
+  threadId: string,
+  file: Blob,
+): Promise<string> {
+  const { asset } = await uploadMediaRequest({
+    file,
+    scope: "misc",
+    ownerType: "chat-thread",
+    ownerId: threadId,
+    alt: "Ảnh trong cuộc trò chuyện",
+  });
+  return asset.url;
 }
 
 export async function markChatThreadRead(threadId: string): Promise<void> {

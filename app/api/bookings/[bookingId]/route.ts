@@ -33,7 +33,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   const { bookingId } = await params;
 
   const body = await readJsonObject(request);
-  if (!body || body.action !== "cancel") {
+  if (body?.action !== "cancel") {
     return NextResponse.json(
       { errors: { form: "Dữ liệu gửi lên không hợp lệ." } },
       { status: 400 },

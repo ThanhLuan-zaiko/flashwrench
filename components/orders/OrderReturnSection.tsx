@@ -57,6 +57,7 @@ export function OrderReturnSection({
                   className="block"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {/* biome-ignore lint/performance/noImgElement: immutable /api/media evidence photo; optimizer hop adds nothing. */}
                   <img
                     src={url}
                     alt="Ảnh hiện trạng sản phẩm"

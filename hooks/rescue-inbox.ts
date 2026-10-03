@@ -79,7 +79,7 @@ export function useRescueOperations() {
   useRealtimeTopic(OPERATIONS_TOPIC, {
     onEvent: (payload) => {
       const event = parseDomainEvent(payload);
-      if (!event || !event.kind.startsWith("rescue-")) return;
+      if (!event?.kind.startsWith("rescue-")) return;
       void queryClient.invalidateQueries({ queryKey: rescueInboxKeys.all });
     },
     onReconnect: () => {

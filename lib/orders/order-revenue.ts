@@ -19,7 +19,7 @@ export async function projectOrderReceipts(
   const refs = await listOrderPaymentRefs(orderId);
   for (const ref of refs) {
     const row = await findPaymentRowById(ref.paymentId);
-    if (!row || row.status !== "paid" || !(row.paid_at instanceof Date)) {
+    if (row?.status !== "paid" || !(row.paid_at instanceof Date)) {
       continue;
     }
     await projectReceipt({

@@ -5,7 +5,7 @@
 // encoding, which is required once the text leaves Latin-1.
 import { describe, expect, test } from "bun:test";
 import { invoiceFileName, renderInvoicePdf } from "@/lib/pdf/invoice-pdf";
-import { fontBase64, registerPdfFonts } from "@/lib/pdf/pdf-fonts";
+import { fontBase64 } from "@/lib/pdf/pdf-fonts";
 import {
   makeGuestInvoice,
   makeInvoiceLine,

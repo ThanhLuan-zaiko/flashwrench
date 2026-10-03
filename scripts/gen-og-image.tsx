@@ -58,6 +58,7 @@ const response = new ImageResponse(
           backgroundColor: "#18181b",
         }}
       >
+        {/* biome-ignore lint/performance/noImgElement: data-URL logo inside an OG image template; next/image is unavailable here. */}
         <img src={logoData} width={290} height={290} alt="" />
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>

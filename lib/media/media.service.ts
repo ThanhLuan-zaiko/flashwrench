@@ -82,7 +82,7 @@ export async function authorizeAssetDelete(
   user: PublicUser,
 ): Promise<MediaResult<AuthorizedAsset>> {
   const row = await findAssetRowById(assetId);
-  if (!row || !row.owner_type || !row.owner_id || !row.created_at) {
+  if (!row?.owner_type || !row.owner_id || !row.created_at) {
     return fail(404, "Không tìm thấy ảnh này.");
   }
   if (user.role !== "admin" && row.created_by !== user.id) {

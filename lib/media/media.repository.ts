@@ -148,7 +148,7 @@ export async function relinkAssetOwner(
   ownerId: string,
 ): Promise<boolean> {
   const row = await findAssetRowById(assetId);
-  if (!row || !row.owner_type || !row.owner_id || !row.created_at) {
+  if (!row?.owner_type || !row.owner_id || !row.created_at) {
     return false;
   }
   await scylla.batch(

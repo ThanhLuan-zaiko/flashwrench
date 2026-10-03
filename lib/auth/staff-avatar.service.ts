@@ -18,7 +18,7 @@ export async function resolveStaffAvatar(
   }
   const id = assetId.trim();
   const row = await findAssetRowById(id);
-  if (!row || !row.url || !row.created_at) {
+  if (!row?.url || !row.created_at) {
     return {
       ok: false,
       status: 404,

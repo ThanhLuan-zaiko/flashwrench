@@ -76,7 +76,7 @@ export async function moderateReview(
     );
     if (projection) void indexReviewProjection(projection);
   }
-  if (!projection || !projection.created_at) {
+  if (!projection?.created_at) {
     return fail(404, { form: "Không tìm thấy đánh giá." });
   }
 

@@ -90,7 +90,7 @@ export function useMyRescuesRealtime(enabled = true) {
     enabled: enabled && me.data?.role === "customer",
     onEvent: (payload) => {
       const event = parseDomainEvent(payload);
-      if (!event || !event.kind.startsWith("rescue-")) return;
+      if (!event?.kind.startsWith("rescue-")) return;
       void queryClient.invalidateQueries({ queryKey: rescueKeys.all });
     },
     onReconnect: () => {

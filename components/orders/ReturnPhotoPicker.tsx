@@ -34,6 +34,7 @@ export function ReturnPhotoPicker({
         {previews.map((url, index) => (
           <div key={url} className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* biome-ignore lint/performance/noImgElement: local object-URL preview; the optimizer cannot process blob URLs. */}
             <img
               src={url}
               alt={`Ảnh đổi trả ${index + 1}`}

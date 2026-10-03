@@ -55,7 +55,7 @@ export async function moderateComment(
     );
     if (lookup) void indexCommentLookup(lookup);
   }
-  if (!lookup || !lookup.created_at) {
+  if (!lookup?.created_at) {
     return fail(404, "Không tìm thấy bình luận.");
   }
   // Complaint threads stay admin-only end to end.

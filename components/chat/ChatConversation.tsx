@@ -4,44 +4,12 @@ import { useEffect, useMemo, useRef } from "react";
 import { FiLoader } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useChatMessages, useChatThread, useMarkChatRead } from "@/hooks/chat";
-import type { ChatMessage } from "@/lib/chat/chat.types";
 import { ChatComposer } from "./ChatComposer";
+import { ChatMessageBubble } from "./ChatMessageBubble";
 
 type ChatConversationProps = {
   threadId: string;
 };
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function Bubble({ message }: { message: ChatMessage }) {
-  return (
-    <div className={`flex ${message.mine ? "justify-end" : "justify-start"}`}>
-      <div
-        className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
-          message.mine
-            ? "rounded-br-md bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-            : "rounded-bl-md bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-        }`}
-      >
-        <p className="whitespace-pre-wrap break-words">{message.body}</p>
-        <p
-          className={`mt-1 text-right text-[10px] ${
-            message.mine
-              ? "text-zinc-300 dark:text-zinc-500"
-              : "text-zinc-400 dark:text-zinc-500"
-          }`}
-        >
-          {formatTime(message.createdAt)}
-        </p>
-      </div>
-    </div>
-  );
-}
 
 export function ChatConversation({ threadId }: ChatConversationProps) {
   const messages = useChatMessages(threadId, true);
@@ -115,7 +83,7 @@ export function ChatConversation({ threadId }: ChatConversationProps) {
         ) : (
           items.map((message) => (
             <div key={message.id}>
-              <Bubble message={message} />
+              <ChatMessageBubble message={message} />
               {message.id === lastSeenMineId ? (
                 <p className="mt-1 pr-1 text-right text-[10px] text-zinc-400 dark:text-zinc-500">
                   Đã xem

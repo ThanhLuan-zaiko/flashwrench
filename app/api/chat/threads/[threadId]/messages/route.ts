@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth/authorization";
+import { parseMessageKind } from "@/lib/chat/chat-content";
 import {
   listThreadMessages,
-  sendChatMessage,
+  sendChatContentMessage,
 } from "@/lib/chat/chat-messages.service";
 
 type RouteContext = { params: Promise<{ threadId: string }> };
@@ -37,9 +38,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const { user, response } = await requireAuth();
   if (response || !user) return response;
   const { threadId } = await context.params;
-  let body: { body?: unknown };
+  let body: { body?: unknown; kind?: unknown };
   try {
-    body = (await request.json()) as { body?: unknown };
+    body = (await request.json()) as { body?: unknown; kind?: unknown };
   } catch {
     body = {};
   }
@@ -49,8 +50,18 @@ export async function POST(request: NextRequest, context: RouteContext) {
       { status: 400 },
     );
   }
+  const kind = body.kind === undefined ? "text" : parseMessageKind(body.kind);
+  if (!kind) {
+    return NextResponse.json(
+      { errors: { kind: "Loại tin nhắn không hợp lệ." } },
+      { status: 400 },
+    );
+  }
   try {
-    const result = await sendChatMessage(user, threadId, body.body);
+    const result = await sendChatContentMessage(user, threadId, {
+      kind,
+      body: body.body,
+    });
     if (!result.ok) {
       return NextResponse.json(
         { errors: result.errors },

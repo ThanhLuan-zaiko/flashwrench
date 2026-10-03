@@ -21,7 +21,7 @@ export async function POST(
   const origin = mutationOriginError(request);
   if (origin) return origin;
   const body = await readJsonObject(request);
-  if (!body || body.action !== "pay") {
+  if (body?.action !== "pay") {
     return NextResponse.json(
       { errors: { form: "Hành động không hợp lệ." } },
       { status: 400 },

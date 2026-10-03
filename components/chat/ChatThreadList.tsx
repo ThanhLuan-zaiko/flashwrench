@@ -1,13 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { FiInbox, FiLoader } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useChatThreads } from "@/hooks/chat";
 import type { ChatThreadSummary } from "@/lib/chat/chat.types";
+import { getChatEmptyActions } from "@/lib/chat/chat-visibility";
 
 type ChatThreadListProps = {
   onSelect: (threadId: string) => void;
+  enabled?: boolean;
 };
+
+const EMPTY_ACTIONS = getChatEmptyActions();
 
 function formatStamp(iso: string | null): string {
   if (!iso) return "";
@@ -76,8 +81,11 @@ function ThreadRow({
   );
 }
 
-export function ChatThreadList({ onSelect }: ChatThreadListProps) {
-  const query = useChatThreads(true);
+export function ChatThreadList({
+  onSelect,
+  enabled = true,
+}: ChatThreadListProps) {
+  const query = useChatThreads(enabled);
   const pages = query.data?.pages ?? [];
   const threads = pages.flatMap((page) => page.items);
 
@@ -115,6 +123,21 @@ export function ChatThreadList({ onSelect }: ChatThreadListProps) {
           Chưa có cuộc trò chuyện nào. Mở một đơn hàng và nhấn &quot;Nhắn
           tin&quot; để bắt đầu.
         </p>
+        <div className="flex items-center gap-2">
+          {EMPTY_ACTIONS.map((action, index) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className={
+                index === 0
+                  ? "rounded-full bg-zinc-900 px-4 py-2 text-xs font-medium text-white transition-transform duration-150 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
+                  : "rounded-full border border-zinc-200 px-4 py-2 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              }
+            >
+              {action.label}
+            </Link>
+          ))}
+        </div>
       </div>
     );
   }

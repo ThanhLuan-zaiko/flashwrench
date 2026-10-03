@@ -3,29 +3,37 @@
 import { FiArrowLeft, FiX } from "react-icons/fi";
 import { useChatThread } from "@/hooks/chat";
 import { ChatConversation } from "./ChatConversation";
+import { ChatLockedPanel } from "./ChatLockedPanel";
 import { ChatThreadList } from "./ChatThreadList";
 import { CHAT_PANEL_CLASSES } from "./chat-overlay.classes";
 
 type ChatPanelProps = {
   activeThreadId: string | null;
+  isLocked: boolean;
   onSelectThread: (threadId: string | null) => void;
   onClose: () => void;
 };
 
 // Telegram-mini style sheet: thread list on the left view, tapping a row
-// swaps to the conversation view without leaving the page.
+// swaps to the conversation view without leaving the page. Locked visitors
+// (guests and non-chat roles) see a sign-in prompt and trigger no queries.
 export function ChatPanel({
   activeThreadId,
+  isLocked,
   onSelectThread,
   onClose,
 }: ChatPanelProps) {
-  const detail = useChatThread(activeThreadId, activeThreadId !== null);
+  const detail = useChatThread(
+    activeThreadId,
+    !isLocked && activeThreadId !== null,
+  );
   const peerName = detail.data?.peerName ?? "";
+  const showConversation = !isLocked && activeThreadId !== null;
 
   return (
     <div role="dialog" aria-label="Hộp thư" className={CHAT_PANEL_CLASSES}>
       <div className="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-200 px-3 dark:border-zinc-800">
-        {activeThreadId ? (
+        {showConversation ? (
           <button
             type="button"
             onClick={() => onSelectThread(null)}
@@ -37,10 +45,14 @@ export function ChatPanel({
         ) : null}
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            {activeThreadId ? peerName || "Cuộc trò chuyện" : "Tin nhắn"}
+            {showConversation ? peerName || "Cuộc trò chuyện" : "Tin nhắn"}
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            {activeThreadId ? "Đang trò chuyện" : "Khách hàng ↔ thợ"}
+            {isLocked
+              ? "Cần đăng nhập"
+              : showConversation
+                ? "Đang trò chuyện"
+                : "Khách hàng ↔ thợ"}
           </p>
         </div>
         <button
@@ -53,10 +65,12 @@ export function ChatPanel({
         </button>
       </div>
       <div className="min-h-0 flex-1">
-        {activeThreadId ? (
+        {isLocked ? (
+          <ChatLockedPanel />
+        ) : activeThreadId ? (
           <ChatConversation threadId={activeThreadId} />
         ) : (
-          <ChatThreadList onSelect={onSelectThread} />
+          <ChatThreadList onSelect={onSelectThread} enabled={!isLocked} />
         )}
       </div>
     </div>

@@ -68,7 +68,7 @@ export async function autoDispatchRescue(
   options?: { excludeMechanicIds?: Iterable<string> },
 ): Promise<RescueDispatchOutcome | null> {
   const row = await findRescueRowById(requestId);
-  if (!row || row.status !== "open" || row.assigned_mechanic_id !== null) {
+  if (row?.status !== "open" || row.assigned_mechanic_id !== null) {
     return null;
   }
 
@@ -152,8 +152,7 @@ export async function expireRescueOffer(
   const row = await findRescueRowById(requestId);
   const config = await getDispatchConfig();
   if (
-    !row ||
-    row.status !== "dispatched" ||
+    row?.status !== "dispatched" ||
     !row.assigned_mechanic_id ||
     (!options?.force &&
       !isRescueOfferExpired(row.updated_at, now, config.offerTimeoutMs))

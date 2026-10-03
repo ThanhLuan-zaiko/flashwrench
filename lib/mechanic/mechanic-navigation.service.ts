@@ -279,8 +279,7 @@ export async function saveMechanicLocation(
   if (jobType === "order" && jobId) {
     linkedOrder = await findOrderRowById(jobId);
     if (
-      !linkedOrder ||
-      linkedOrder.courier_type !== "mechanic" ||
+      linkedOrder?.courier_type !== "mechanic" ||
       linkedOrder.courier_id !== mechanicId
     ) {
       return fieldError(404, { form: "Không tìm thấy đơn giao hàng này." });

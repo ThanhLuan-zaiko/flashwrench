@@ -1,18 +1,27 @@
 "use client";
 
 import {
+  type InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useMe } from "@/hooks/auth";
 import {
+  buildOptimisticMessage,
+  insertOptimisticMessage,
+  replaceOptimisticMessage,
+} from "@/lib/chat/chat-optimistic";
+import {
+  type ChatMessagePage,
+  type ChatSendInput,
   fetchChatMessages,
   fetchChatThread,
   fetchChatThreads,
   markChatThreadRead,
   openChatThread,
-  sendChatMessage,
+  sendChatContentMessage,
 } from "@/services/chat.api";
 
 export const chatKeys = {
@@ -67,12 +76,55 @@ export function useOpenChatThread() {
 
 export function useSendChatMessage(threadId: string) {
   const queryClient = useQueryClient();
+  const me = useMe();
+  const key = chatKeys.messages(threadId);
   return useMutation({
-    mutationFn: (body: string) => sendChatMessage(threadId, body),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: chatKeys.messages(threadId),
+    mutationFn: (input: ChatSendInput) =>
+      sendChatContentMessage(threadId, input),
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous =
+        queryClient.getQueryData<InfiniteData<ChatMessagePage>>(key);
+      const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const optimistic = buildOptimisticMessage({
+        id: tempId,
+        threadId,
+        senderId: me.data?.id ?? "",
+        kind: input.kind ?? "text",
+        body: input.body.trim(),
+        createdAt: new Date().toISOString(),
       });
+      queryClient.setQueryData<InfiniteData<ChatMessagePage>>(key, (old) => {
+        if (!old) {
+          return {
+            pages: [{ items: [optimistic], nextCursor: null }],
+            pageParams: [null],
+          };
+        }
+        return {
+          ...old,
+          pages: insertOptimisticMessage(old.pages, optimistic),
+        };
+      });
+      return { previous, tempId };
+    },
+    onError: (_error, _body, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(key, context.previous);
+      }
+    },
+    onSuccess: (real, _body, context) => {
+      if (!context?.tempId) return;
+      queryClient.setQueryData<InfiniteData<ChatMessagePage>>(key, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: replaceOptimisticMessage(old.pages, context.tempId, real),
+        };
+      });
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: key });
       void queryClient.invalidateQueries({ queryKey: chatKeys.threads() });
     },
   });

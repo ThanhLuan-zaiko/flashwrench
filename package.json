@@ -16,9 +16,9 @@
     "check:all": "bun run lint && bun run type-check && bun run check:lines",
     "check:mail": "bun run scripts/check-mail.ts",
     "test": "bun run test:unit && bun run test:integration && bun run test:regression",
-    "test:unit": "bash tests/run-suite.sh tests/unit",
-    "test:integration": "bash tests/run-suite.sh tests/integration",
-    "test:regression": "bash tests/run-suite.sh tests/regression",
+    "test:unit": "bun tests/run-suite.ts tests/unit",
+    "test:integration": "bun tests/run-suite.ts tests/integration",
+    "test:regression": "bun tests/run-suite.ts tests/regression",
     "seed:admin": "bun scripts/seed-admin.ts"
   },
   "dependencies": {

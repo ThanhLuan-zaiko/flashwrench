@@ -14,7 +14,6 @@ import {
 } from "../helpers/service-mocks";
 import {
   makeCampaignRow,
-  VOUCHER_CAMPAIGN_ID,
   VOUCHER_CUSTOMER_ID,
 } from "../helpers/voucher.fixtures";
 import {

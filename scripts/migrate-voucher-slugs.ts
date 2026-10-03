@@ -46,7 +46,7 @@ async function backfillSlugs(): Promise<number> {
       code: string | null;
       slug: string | null;
     };
-    if (record.slug && record.slug.trim()) continue;
+    if (record.slug?.trim()) continue;
     const campaignId = record.campaign_id.toString();
     const suffix = campaignId.slice(0, 8);
     const base = (slugifyName(record.code ?? "") || `campaign-${suffix}`)

@@ -239,7 +239,7 @@ export async function recordRescuePayment(
     );
     if (!applied) {
       const reread = await findRescueRowById(requestId);
-      if (!reread || reread.payment_status !== "paid") {
+      if (!reread?.payment_status || reread.payment_status !== "paid") {
         return fail(
           409,
           "Trạng thái thanh toán vừa thay đổi. Vui lòng tải lại.",

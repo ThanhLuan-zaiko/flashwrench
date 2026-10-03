@@ -52,11 +52,13 @@ export type ChatThreadDetail = ChatThreadSummary & {
   peerLastReadAt: string | null;
 };
 
+export type ChatMessageKind = "text" | "image" | "location";
+
 export type ChatMessage = {
   id: string;
   threadId: string;
   senderId: string;
-  kind: "text";
+  kind: ChatMessageKind;
   body: string;
   createdAt: string;
   mine: boolean;
