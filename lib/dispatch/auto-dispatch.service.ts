@@ -100,6 +100,7 @@ export async function autoDispatchBooking(
       candidate.id,
       scheduledAt,
       bookingId,
+      row.duration_min,
     );
     if (conflict !== false) continue;
 

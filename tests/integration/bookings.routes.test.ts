@@ -37,6 +37,37 @@ beforeEach(() => {
 });
 
 describe("POST /api/bookings", () => {
+  test("preserves all selected services and the quote for the service layer", async () => {
+    const input = makeBookingInput({
+      serviceId: undefined,
+      serviceIds: [
+        "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      ],
+      expectedSubtotal: 300000,
+    });
+    const response = await bookingsPost(
+      postJsonRequest("/api/bookings", input),
+    );
+    expect(response.status).toBe(201);
+    expect(
+      bookingServiceMocks.createCustomerBooking.mock.calls[0]?.[1],
+    ).toMatchObject({
+      serviceIds: input.serviceIds,
+      expectedSubtotal: 300000,
+    });
+  });
+
+  test("rejects non-object JSON before calling the service", async () => {
+    for (const input of [null, [], "invalid"]) {
+      const response = await bookingsPost(
+        postJsonRequest("/api/bookings", input),
+      );
+      expect(response.status).toBe(400);
+    }
+    expect(bookingServiceMocks.createCustomerBooking).not.toHaveBeenCalled();
+  });
+
   test("accepts a guest booking without a session", async () => {
     routeStubs.bookingUser = null;
     const input = makeBookingInput({

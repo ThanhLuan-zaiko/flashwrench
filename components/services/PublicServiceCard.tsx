@@ -1,4 +1,4 @@
-import { FiClock, FiHome, FiLifeBuoy } from "react-icons/fi";
+import { FiCheck, FiClock, FiHome, FiLifeBuoy, FiPlus } from "react-icons/fi";
 import {
   formatDuration,
   formatVnd,
@@ -6,20 +6,27 @@ import {
 } from "@/app/admin/components/services/catalog-format";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { ApplicableVoucherBadge } from "../vouchers/ApplicableVoucherBadge";
-import { ServiceBookingButton } from "./ServiceBookingButton";
 
 type PublicServiceCardProps = {
   service: ServiceItem;
+  selected: boolean;
+  disabledReason: string | null;
+  onToggle: () => void;
 };
 
 // One bento cell for a bookable service: price, duration and support
 // badges plus a booking entry. Monochrome, 44px touch target.
-export function PublicServiceCard({ service }: PublicServiceCardProps) {
+export function PublicServiceCard({
+  service,
+  selected,
+  disabledReason,
+  onToggle,
+}: PublicServiceCardProps) {
   return (
     <article
       data-reveal
       aria-label={service.name}
-      className="flex flex-col justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+      className={`flex min-w-0 flex-col justify-between gap-3 rounded-2xl border bg-white p-4 dark:bg-zinc-950 ${selected ? "border-zinc-900 dark:border-zinc-100" : "border-zinc-200 dark:border-zinc-800"}`}
     >
       <div>
         {service.imageUrl && (
@@ -34,7 +41,7 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
         <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
           {service.categoryName}
         </p>
-        <h3 className="mt-1 text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <h3 className="mt-1 break-words text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           {service.name}
         </h3>
         {service.description && (
@@ -69,7 +76,32 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
           )}
         </p>
       </div>
-      <ServiceBookingButton serviceId={service.id} serviceName={service.name} />
+      <div className="mt-auto flex flex-col gap-2">
+        <button
+          type="button"
+          aria-pressed={selected}
+          aria-label={
+            selected
+              ? `Bỏ chọn ${service.name}`
+              : `Thêm ${service.name} vào lịch hẹn`
+          }
+          disabled={!selected && Boolean(disabledReason)}
+          onClick={onToggle}
+          className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 ${selected ? "border-zinc-300 bg-zinc-100 text-zinc-800 hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800" : "border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-700 dark:border-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"}`}
+        >
+          {selected ? (
+            <FiCheck aria-hidden="true" className="h-4 w-4 shrink-0" />
+          ) : (
+            <FiPlus aria-hidden="true" className="h-4 w-4 shrink-0" />
+          )}
+          {selected ? "Đã thêm · Bỏ chọn" : "Thêm vào lịch hẹn"}
+        </button>
+        {!selected && disabledReason && (
+          <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {disabledReason}
+          </p>
+        )}
+      </div>
       <ApplicableVoucherBadge kind="booking" subtotal={service.basePrice} />
     </article>
   );

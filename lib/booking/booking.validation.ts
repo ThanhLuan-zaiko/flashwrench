@@ -12,6 +12,7 @@ import type {
   CreateBookingInput,
   NormalizedBookingInput,
 } from "./booking.types";
+import { normalizeBookingServices } from "./booking-services.validation";
 import { normalizeBookingTimeZone } from "./booking-timezone.validation";
 import { normalizeWalletId } from "./booking-wallet.validation";
 
@@ -124,11 +125,11 @@ export function validateCreateBookingInput(
     }
   }
 
-  const serviceId =
-    typeof input.serviceId === "string" ? input.serviceId.trim() : "";
-  if (!serviceId) {
-    errors.serviceId = "Vui lòng chọn dịch vụ.";
-  }
+  const { serviceIds, expectedSubtotal } = normalizeBookingServices(
+    input,
+    errors,
+  );
+  const serviceId = serviceIds[0] ?? "";
 
   let scheduledAt: Date | null = null;
   const rawScheduled =
@@ -313,6 +314,8 @@ export function validateCreateBookingInput(
   return {
     value: {
       serviceId,
+      serviceIds,
+      expectedSubtotal,
       scheduledAt,
       timeZone,
       fullName,

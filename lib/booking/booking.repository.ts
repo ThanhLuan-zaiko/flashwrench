@@ -1,46 +1,12 @@
 // Raw CQL for customer booking creation. No business logic here: the
 // service validates, snapshots the catalog price and computes totals.
 import { scylla } from "@/lib/db/client";
+import type { InsertCustomerBookingParams } from "./booking-write.types";
 
-export type CustomerBookingAddress = {
-  province: string | null;
-  district: string | null;
-  ward: string | null;
-  street: string | null;
-  full_text: string;
-  lat: number | null;
-  lng: number | null;
-};
-
-export type InsertCustomerBookingParams = {
-  bookingId: string;
-  customerId: string | null;
-  customerName: string;
-  customerPhone: string;
-  customerEmail: string | null;
-  vehiclePlate: string;
-  vehicleBrand: string | null;
-  vehicleModel: string | null;
-  address: CustomerBookingAddress;
-  scheduledAt: Date;
-  timezone: string;
-  status: string;
-  paymentStatus: string;
-  subtotal: number;
-  discount: number;
-  couponCode: string | null;
-  total: number;
-  notes: string | null;
-  monthBucket: string;
-  createdAt: Date;
-  updatedAt: Date;
-  serviceId: string;
-  serviceName: string;
-  unitPrice: number;
-  mechanicId: string | null;
-  mechanicName: string | null;
-  vehicleId: string | null;
-};
+export type {
+  CustomerBookingAddress,
+  InsertCustomerBookingParams,
+} from "./booking-write.types";
 
 // One batch keeps every denormalized copy in sync: the booking row, the
 // customer history, the dispatcher status bucket, the price snapshot and
@@ -54,7 +20,7 @@ export async function insertCustomerBooking(
   const queries: { query: string; params: unknown[] }[] = [
     {
       query:
-        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, customer_email, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO bookings_by_id (booking_id, customer_id, customer_name, customer_phone, customer_email, vehicle_id, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, mechanic_name, zone_id, address, scheduled_at, timezone, duration_min, status, payment_status, subtotal, travel_fee, discount, total, coupon_code, notes, cancel_reason, month_bucket, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       params: [
         params.bookingId,
         params.customerId,
@@ -71,6 +37,7 @@ export async function insertCustomerBooking(
         params.address,
         params.scheduledAt,
         params.timezone,
+        params.durationMin,
         params.status,
         params.paymentStatus,
         params.subtotal,
@@ -101,18 +68,6 @@ export async function insertCustomerBooking(
     },
     {
       query:
-        "INSERT INTO booking_items (booking_id, service_id, service_name, quantity, unit_price, line_total) VALUES (?, ?, ?, ?, ?, ?)",
-      params: [
-        params.bookingId,
-        params.serviceId,
-        params.serviceName,
-        1,
-        params.unitPrice,
-        params.unitPrice,
-      ],
-    },
-    {
-      query:
         "INSERT INTO booking_status_history (booking_id, changed_at, old_status, new_status, changed_by, note) VALUES (?, ?, ?, ?, ?, ?)",
       params: [
         params.bookingId,
@@ -124,6 +79,22 @@ export async function insertCustomerBooking(
       ],
     },
   ];
+  queries.push(
+    ...params.items.map((item) => ({
+      query:
+        "INSERT INTO booking_items (booking_id, service_id, service_name, quantity, unit_price, line_total, duration_min, price_unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      params: [
+        params.bookingId,
+        item.serviceId,
+        item.serviceName,
+        item.quantity,
+        item.unitPrice,
+        item.lineTotal,
+        item.durationMin,
+        item.priceUnit,
+      ],
+    })),
+  );
 
   if (params.customerId) {
     queries.push({

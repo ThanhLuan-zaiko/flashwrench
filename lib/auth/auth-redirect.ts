@@ -3,6 +3,8 @@
 // instead of the homepage. Every consumer must validate through
 // getSafeNextPath: raw query values are attacker-controlled.
 
+import type { BookingFieldErrors } from "@/lib/booking/booking.types";
+import { normalizeBookingServices } from "@/lib/booking/booking-services.validation";
 import type { UserRole } from "./user.types";
 
 const MAX_NEXT_LENGTH = 512;
@@ -87,8 +89,21 @@ export function buildRegisterHref(next?: string | null): string {
 
 // Booking entry for an optional preselected service. Unknown ids still
 // produce a valid page: /booking resolves them to a guidance panel.
-export function buildBookingHref(serviceId?: string | null): string {
-  const id = (serviceId ?? "").trim();
+export function buildBookingHref(
+  serviceId?: string | readonly string[] | null,
+): string {
+  if (serviceId && typeof serviceId !== "string") {
+    if (serviceId.length === 0) return "/booking";
+    const errors: BookingFieldErrors = {};
+    const { serviceIds } = normalizeBookingServices(
+      { serviceIds: [...serviceId] },
+      errors,
+    );
+    if (Object.keys(errors).length > 0) return "/booking";
+    if (serviceIds.length === 1) return buildBookingHref(serviceIds[0]);
+    return `/booking?serviceIds=${encodeURIComponent(serviceIds.join(","))}`;
+  }
+  const id = typeof serviceId === "string" ? serviceId.trim() : "";
   if (!id) return "/booking";
   if (id.length > 128 || id.includes("/") || id.includes("\\")) {
     return "/booking";

@@ -72,6 +72,20 @@ describe("resolvePostAuthHref", () => {
 });
 
 describe("auth href builders", () => {
+  test("preserves a full service bundle through authentication", () => {
+    const ids = [
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+    ];
+    const href = buildBookingHref(ids);
+    expect(
+      new URL(href, "http://localhost").searchParams.get("serviceIds"),
+    ).toBe(ids.join(","));
+    expect(getSafeNextPath(href)).toBe(href);
+    expect(buildLoginHref(href)).toContain(encodeURIComponent(href));
+    expect(buildRegisterHref(href)).toContain(encodeURIComponent(href));
+  });
+
   test("preserves a safe booking target in login and register links", () => {
     expect(buildLoginHref("/booking?serviceId=s1")).toBe(
       "/login?next=%2Fbooking%3FserviceId%3Ds1",

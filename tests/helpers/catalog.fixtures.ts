@@ -3,8 +3,10 @@ import type {
   CreateServiceInput,
   ServiceByCategoryRow,
   ServiceCategoryRow,
+  ServiceItem,
   ServiceRow,
 } from "@/lib/catalog/service-catalog.types";
+import { toServiceItem } from "@/lib/catalog/services.mapper";
 
 // Builders for the catalog suites. Each test derives its own rows instead
 // of mutating shared objects, mirroring tests/helpers/auth.fixtures.ts.
@@ -100,4 +102,8 @@ export function makeServiceByCategoryRow(
     is_deleted: false,
     ...overrides,
   };
+}
+
+export function makeServiceItem(overrides?: Partial<ServiceItem>): ServiceItem {
+  return { ...toServiceItem(makeServiceRow()), ...overrides };
 }

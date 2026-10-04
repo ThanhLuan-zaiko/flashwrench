@@ -2,15 +2,25 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
 import { seedSessionUser } from "@/hooks/auth";
 import { useCreateBooking } from "@/hooks/booking";
+import { publicCatalogKeys } from "@/hooks/public-catalog";
+import { useBookingServiceSelection } from "@/hooks/useBookingServiceSelection";
 import { useSessionExpired } from "@/hooks/useSessionExpired";
 import { buildBookingHref } from "@/lib/auth/auth-redirect";
 import { validateCreateBookingInput } from "@/lib/booking/booking.validation";
 import { BOOKING_SUCCESS_REDIRECT } from "@/lib/booking/booking-navigation";
-import type { BookingFieldErrors } from "@/services/booking.api";
+import {
+  getBookingServiceSelection,
+  replaceBookingServiceParams,
+} from "@/lib/booking/booking-service-selection";
+import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import type {
+  BookingFieldErrors,
+  CreateBookingResponse,
+} from "@/services/booking.api";
 import { BookingApiError } from "@/services/booking.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import type { AddressValues } from "./BookingAddressSection";
@@ -26,8 +36,10 @@ import type { MapPoint } from "./MapPicker";
 const EMPTY_ERRORS: BookingFieldErrors = {};
 
 type UseBookingFormOptions = {
-  initialServiceId: string | null;
+  initialServiceIds: string[];
+  services: ServiceItem[];
   prefill: BookingPrefill | null;
+  onCreated?: (response: CreateBookingResponse) => void;
   // Guest mode: no session, so the form collects the contact trio
   // (name/phone/email) and success lands on the public tracking page.
   guest?: boolean;
@@ -39,8 +51,10 @@ type UseBookingFormOptions = {
 // service. Client validation mirrors the service rules for instant
 // feedback; POST /api/bookings is the source of truth.
 export function useBookingForm({
-  initialServiceId,
+  initialServiceIds,
+  services,
   prefill,
+  onCreated,
   guest = false,
 }: UseBookingFormOptions) {
   const router = useRouter();
@@ -48,7 +62,11 @@ export function useBookingForm({
   const sessionExpired = useSessionExpired();
   const queryClient = useQueryClient();
   const createBooking = useCreateBooking();
-  const [serviceId, setServiceId] = useState(initialServiceId ?? "");
+  const draft = useBookingServiceSelection();
+  const [selectedIds, setSelectedIds] = useState<string[] | null>(
+    initialServiceIds.length > 0 ? initialServiceIds : null,
+  );
+  const serviceIds = selectedIds ?? draft.serviceIds;
   const [contact, setContact] = useState({
     fullName: "",
     phone: "",
@@ -77,8 +95,35 @@ export function useBookingForm({
   const [errors, setErrors] = useState<BookingFieldErrors>(EMPTY_ERRORS);
   const [prefilled, setPrefilled] = useState(prefill !== null);
   const [walletId, setWalletId] = useState<string | null>(null);
-
   const minSlot = useMemo(() => minScheduled(), []);
+
+  useEffect(() => {
+    if (initialServiceIds.length > 0) draft.setServiceIds(initialServiceIds);
+  }, [initialServiceIds, draft.setServiceIds]);
+
+  useEffect(() => {
+    if (
+      window.location.pathname !== "/booking" ||
+      (selectedIds === null && serviceIds.length === 0)
+    )
+      return;
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const next = replaceBookingServiceParams(current, serviceIds);
+    if (next !== current) window.history.replaceState(null, "", next);
+  }, [serviceIds, selectedIds]);
+
+  function setServiceIds(ids: string[]) {
+    if (!draft.setServiceIds(ids)) return;
+    setSelectedIds(ids);
+    setWalletId(null);
+    setErrors((previous) => ({
+      ...previous,
+      serviceId: undefined,
+      serviceIds: undefined,
+      walletId: undefined,
+      form: undefined,
+    }));
+  }
 
   function clearError(field: keyof BookingFieldErrors) {
     setErrors((prev) => ({ ...prev, [field]: undefined, form: undefined }));
@@ -110,6 +155,12 @@ export function useBookingForm({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (createBooking.isPending || createBooking.isSuccess) return;
+    const selection = getBookingServiceSelection(serviceIds, services);
+    if (selection.issue) {
+      setErrors({ serviceIds: selection.issue });
+      return;
+    }
     // datetime-local carries wall time without a zone: pin it to the
     // browser zone here so the wire format is an unambiguous instant.
     // The validator and the service both reject zone-less strings.
@@ -119,7 +170,8 @@ export function useBookingForm({
       return;
     }
     const payload = {
-      serviceId,
+      serviceIds: [...serviceIds],
+      expectedSubtotal: selection.subtotal,
       scheduledAt: picked.toISOString(),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       fullName: guest ? contact.fullName : undefined,
@@ -144,6 +196,8 @@ export function useBookingForm({
     setErrors(EMPTY_ERRORS);
     createBooking.mutate(payload, {
       onSuccess: (data) => {
+        onCreated?.(data);
+        draft.removeServiceIds(data.booking.serviceIds);
         // Inline signup: the same submit minted a session, so land on the
         // account-side confirmation instead of the public tracking page.
         if (data.user) {
@@ -166,7 +220,12 @@ export function useBookingForm({
       },
       onError: (error) => {
         if (error instanceof BookingApiError) {
-          if (sessionExpired(error, buildBookingHref(serviceId))) return;
+          if (sessionExpired(error, buildBookingHref(serviceIds))) return;
+          if (error.status === 404 || error.status === 409) {
+            void queryClient.invalidateQueries({
+              queryKey: publicCatalogKeys.all,
+            });
+          }
           setErrors(error.errors);
           toast.error(
             "Không tạo được lịch hẹn",
@@ -181,8 +240,8 @@ export function useBookingForm({
   }
 
   return {
-    serviceId,
-    setServiceId,
+    serviceIds,
+    setServiceIds,
     scheduledAt,
     setScheduledAt,
     coords,
@@ -201,7 +260,7 @@ export function useBookingForm({
     setVehicle,
     errors,
     prefilled,
-    pending: createBooking.isPending,
+    pending: createBooking.isPending || createBooking.isSuccess,
     minSlot,
     clearError,
     handleMapAddress,

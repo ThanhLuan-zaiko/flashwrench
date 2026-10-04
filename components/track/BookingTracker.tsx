@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { BookingDuration } from "@/components/booking/BookingDuration";
 import { useBookingTracking } from "@/hooks/track";
 import { formatDateTime } from "@/lib/datetime/format";
 import { TrackAborted, TrackError, TrackLoading } from "./TrackFeedback";
@@ -73,7 +74,7 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
           {tracking.serviceName && (
             <div className="flex gap-2">
               <dt className="text-zinc-500 dark:text-zinc-400">Dịch vụ:</dt>
-              <dd className="font-medium text-zinc-900 dark:text-zinc-50">
+              <dd className="min-w-0 break-words font-medium text-zinc-900 dark:text-zinc-50">
                 {tracking.serviceName}
               </dd>
             </div>
@@ -82,13 +83,16 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
             <div className="flex gap-2">
               <dt className="text-zinc-500 dark:text-zinc-400">Giờ hẹn:</dt>
               <dd className="font-medium text-zinc-900 dark:text-zinc-50">
-                {formatDateTime(tracking.scheduledAt)}
+                {formatDateTime(tracking.scheduledAt, {
+                  timeZone: tracking.timezone,
+                })}
               </dd>
             </div>
           )}
         </dl>
       )}
 
+      <BookingDuration durationMin={tracking.durationMin ?? null} />
       <TrackStepper
         ariaLabel="Tiến trình đặt lịch"
         steps={BOOKING_STEPS}

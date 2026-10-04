@@ -4,12 +4,6 @@
 
 import { randomUUID } from "node:crypto";
 import type { PublicUser } from "@/lib/auth/user.types";
-import {
-  isActiveFlag,
-  isDeletedFlag,
-} from "@/lib/catalog/service-catalog.types";
-import { findCategoryRowById } from "@/lib/catalog/service-categories.repository";
-import { findServiceRowById } from "@/lib/catalog/services.repository";
 import { DEFAULT_TIME_ZONE } from "@/lib/datetime/timezone";
 import { autoDispatchBooking } from "@/lib/dispatch/auto-dispatch.service";
 import {
@@ -31,6 +25,7 @@ import type {
   CreatedBooking,
 } from "./booking.types";
 import { validateCreateBookingInput } from "./booking.validation";
+import { resolveBookingServices } from "./booking-catalog.service";
 
 export const BOOKING_INITIAL_STATUS = "pending";
 export const BOOKING_INITIAL_PAYMENT_STATUS = "unpaid";
@@ -50,35 +45,16 @@ export async function createCustomerBooking(
   }
   const value = checked.value;
 
-  const service = await findServiceRowById(value.serviceId);
-  if (!service || !isActiveFlag(service.is_active, true)) {
+  const catalog = await resolveBookingServices(value.serviceIds);
+  if (!catalog.ok) return catalog;
+  const { items, subtotal, durationMin } = catalog.data;
+  const serviceName = items.map((item) => item.serviceName).join(", ");
+  if (value.expectedSubtotal !== null && value.expectedSubtotal !== subtotal) {
     return fail(
-      404,
-      "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
+      409,
+      "Bảng giá vừa thay đổi. Vui lòng kiểm tra giá mới rồi xác nhận lại.",
     );
   }
-  if (isDeletedFlag(service.is_deleted)) {
-    return fail(
-      404,
-      "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
-    );
-  }
-  const category = service.category_id
-    ? await findCategoryRowById(service.category_id)
-    : null;
-  if (
-    !category ||
-    !isActiveFlag(category.is_active, true) ||
-    isDeletedFlag(category.is_deleted)
-  ) {
-    return fail(
-      404,
-      "Dịch vụ này không còn khả dụng. Vui lòng chọn dịch vụ khác.",
-    );
-  }
-
-  const serviceName = service.name ?? "";
-  const unitPrice = service.base_price ?? 0;
 
   let vehicleId: string | null = null;
   let vehiclePlate = value.vehiclePlate;
@@ -119,6 +95,8 @@ export async function createCustomerBooking(
     const conflict = await mechanicScheduleConflict(
       value.mechanicId,
       value.scheduledAt,
+      undefined,
+      durationMin,
     );
     if (conflict !== false) {
       return fail(
@@ -148,7 +126,7 @@ export async function createCustomerBooking(
     const redeemed = await redeemWallet({
       walletId,
       userId: customer.id,
-      subtotal: unitPrice,
+      subtotal,
       kind: "booking",
       bookingId,
     });
@@ -189,17 +167,16 @@ export async function createCustomerBooking(
       timezone,
       status: BOOKING_INITIAL_STATUS,
       paymentStatus: BOOKING_INITIAL_PAYMENT_STATUS,
-      subtotal: unitPrice,
+      subtotal,
       discount,
       couponCode: walletId,
-      total: unitPrice - discount,
+      total: subtotal - discount,
       notes: value.notes,
       monthBucket: monthKey(value.scheduledAt, timezone),
       createdAt: now,
       updatedAt: now,
-      serviceId: service.service_id,
-      serviceName,
-      unitPrice,
+      items,
+      durationMin,
       mechanicId,
       mechanicName,
     });
@@ -249,9 +226,15 @@ export async function createCustomerBooking(
       status: BOOKING_INITIAL_STATUS,
       scheduledAt: value.scheduledAt.toISOString(),
       timezone,
-      total: unitPrice - discount,
-      serviceId: service.service_id,
+      total: subtotal - discount,
+      subtotal,
+      discount,
+      travelFee: 0,
+      serviceId: value.serviceId,
+      serviceIds: value.serviceIds,
       serviceName,
+      items,
+      durationMin,
       vehiclePlate,
       address: value.address,
       lat: value.lat,

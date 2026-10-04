@@ -1,0 +1,3 @@
+export const BOOKING_MAX_SERVICES = 8;
+export const BOOKING_MAX_DURATION_MIN = 2880;
+export const BOOKING_DEFAULT_DURATION_MIN = 60;

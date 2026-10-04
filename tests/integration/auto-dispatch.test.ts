@@ -202,6 +202,40 @@ describe("autoDispatchBooking", () => {
     expect(outcome?.mechanicId).toBe(MECHANIC_OTHER_ID);
   });
 
+  test("uses the full bundle duration before offering a mechanic", async () => {
+    const at = FUTURE();
+    mechanicStubs.bookingById = {
+      ...unassignedRow(),
+      scheduled_at: at,
+      duration_min: 180,
+    };
+    seedCandidates();
+    const later = new Date(at.getTime() + 120 * 60000);
+    const otherId = "66666666-6666-4666-8666-666666666666";
+    mechanicStubs.workloadRowsInRange = [
+      {
+        mechanic_id: MECHANIC_ID,
+        scheduled_at: later,
+        booking_id: otherId,
+        status: "confirmed",
+        total: 100000,
+        vehicle_plate: "51A-1",
+        customer_name: "Test Customer",
+      },
+    ];
+    mechanicStubs.bookingRowsByIds = [
+      makeBookingRow({
+        booking_id: otherId,
+        mechanic_id: MECHANIC_ID,
+        status: "confirmed",
+        scheduled_at: later,
+      }),
+    ];
+    expect((await autoDispatchBooking(BOOKING_ID))?.mechanicId).toBe(
+      MECHANIC_OTHER_ID,
+    );
+  });
+
   test("a lost CAS claim stays quiet and publishes nothing", async () => {
     mechanicStubs.bookingById = unassignedRow();
     seedCandidates();

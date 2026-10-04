@@ -434,6 +434,7 @@ CREATE TABLE IF NOT EXISTS bookings_by_id (
   address           FROZEN<address_udt>,
   scheduled_at      TIMESTAMP, -- UTC instant; wall time lives in timezone
   timezone          TEXT,      -- IANA zone where the work happens (display + buckets)
+  duration_min      INT,
   status            TEXT,
   payment_status    TEXT,
   subtotal          BIGINT,
@@ -515,6 +516,8 @@ CREATE TABLE IF NOT EXISTS booking_items (
   quantity     INT,
   unit_price   BIGINT,
   line_total   BIGINT,
+  duration_min INT,
+  price_unit   TEXT,
   PRIMARY KEY ((booking_id), service_id)
 );
 

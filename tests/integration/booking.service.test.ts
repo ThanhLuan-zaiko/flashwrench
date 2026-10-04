@@ -94,8 +94,7 @@ describe("createCustomerBooking", () => {
       paymentStatus: "unpaid",
       subtotal: 199000,
       total: 199000,
-      serviceName: "Thay dau dong co",
-      unitPrice: 199000,
+      items: [{ serviceName: "Thay dau dong co", unitPrice: 199000 }],
     });
   });
 

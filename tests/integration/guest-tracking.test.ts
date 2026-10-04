@@ -45,6 +45,26 @@ beforeEach(() => {
 });
 
 describe("getPublicBookingTracking", () => {
+  test("shows every booked service on the public tracking page", async () => {
+    mechanicStubs.bookingById = makeBookingRow({
+      customer_id: null,
+      duration_min: 180,
+    });
+    mechanicStubs.itemRows = [
+      makeBookingItemRow({ service_name: "Thay dầu động cơ" }),
+      makeBookingItemRow({
+        service_id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        service_name: "Kiểm tra phanh",
+      }),
+    ];
+    const result = await getPublicBookingTracking(BOOKING_ID);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.serviceName).toContain("Thay dầu động cơ");
+    expect(result.data.serviceName).toContain("Kiểm tra phanh");
+    expect(result.data.durationMin).toBe(180);
+  });
+
   test("rejects a malformed id before reading storage", async () => {
     const result = await getPublicBookingTracking("not-a-uuid");
     expect(result.ok).toBe(false);

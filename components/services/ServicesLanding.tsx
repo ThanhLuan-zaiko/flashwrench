@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useMemo, useState } from "react";
-import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import {
@@ -11,11 +11,13 @@ import {
   useServiceCatalogRealtime,
 } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useBookingServiceSelection } from "@/hooks/useBookingServiceSelection";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
+import { getBookingServiceSelection } from "@/lib/booking/booking-service-selection";
+import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { PublicCatalogFilter } from "./PublicCatalogFilter";
-import { PublicCatalogPager } from "./PublicCatalogPager";
-import { PublicServiceCard } from "./PublicServiceCard";
+import { PublicCatalogResults } from "./PublicCatalogResults";
 import {
   filterPublicServices,
   PUBLIC_CATALOG_PAGE_SIZE,
@@ -23,18 +25,7 @@ import {
   resolveTabCategory,
 } from "./public-catalog-utils";
 import { ServicesAccountCta } from "./ServicesAccountCta";
-
-// Static skeleton ids keep React keys stable without array indexes.
-const SKELETON_IDS = [
-  "skeleton-1",
-  "skeleton-2",
-  "skeleton-3",
-  "skeleton-4",
-  "skeleton-5",
-  "skeleton-6",
-  "skeleton-7",
-  "skeleton-8",
-];
+import { ServicesSelectionBar } from "./ServicesSelectionBar";
 
 // Public /services landing: browse active prices and book. Admin edits on
 // /admin/services publish to the service-catalog topic; this screen
@@ -52,6 +43,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   const [query, setQuery] = useState("");
   const { page, firstPageHref, hrefFor } = useRoutePage();
   const catalog = usePublicCatalog();
+  const draft = useBookingServiceSelection();
   useServiceCatalogRealtime(true);
   const realtime = useRealtimeStatus();
   const live = realtime === "live";
@@ -61,6 +53,10 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
     [catalog.data],
   );
   const services = useMemo(() => catalog.data?.services ?? [], [catalog.data]);
+  const selection = useMemo(
+    () => getBookingServiceSelection(draft.serviceIds, services),
+    [draft.serviceIds, services],
+  );
   const activeCategory = useMemo(
     () => resolveTabCategory(categories, activeSlug),
     [categories, activeSlug],
@@ -87,18 +83,26 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   };
   // view.safePage is 0-based; the URL segment is 1-based.
   const pageHref = (zeroBased: number) => hrefFor(zeroBased + 1);
+  const reasonFor = (service: ServiceItem) =>
+    draft.serviceIds.includes(service.id)
+      ? null
+      : getBookingServiceSelection([...draft.serviceIds, service.id], services)
+          .issue;
 
   // Canonicalize: a typed /page/N beyond the last page rewrites itself to
   // the real last page once the catalog has loaded.
   useCanonicalizePage(view.pageCount, catalog.isSuccess);
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
+    <div
+      ref={rootRef}
+      className={`flex flex-col gap-6 md:gap-8 ${draft.serviceIds.length > 0 ? "pb-48 sm:pb-36" : ""}`}
+    >
       <BigTypeHeader
         level={1}
         eyebrow="Dịch vụ"
         title="Chọn dịch vụ, thợ tới nơi."
-        subtitle="Giá công khai, cập nhật ngay khi cửa hàng thay đổi. Chọn dịch vụ rồi tạo tài khoản miễn phí để đặt lịch."
+        subtitle="Chọn dịch vụ cần làm, rồi nhấn “Tiếp tục đặt lịch”. Một lịch hẹn cho cùng một xe, địa chỉ và giờ hẹn; không cần tài khoản."
       />
       <div className="flex flex-wrap items-center justify-between gap-2">
         <output
@@ -107,11 +111,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         >
           <span
             aria-hidden="true"
-            className={`h-2 w-2 rounded-full ${
-              live
-                ? "bg-zinc-900 dark:bg-white"
-                : "border border-zinc-400 dark:border-zinc-500"
-            }`}
+            className={`h-2 w-2 rounded-full ${live ? "bg-zinc-900 dark:bg-white" : "border border-zinc-400 dark:border-zinc-500"}`}
           />
           {live ? "Giá cập nhật trực tiếp" : "Đang nối lại giá trực tiếp…"}
         </output>
@@ -132,7 +132,6 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         searchId={searchId}
         onQuery={typeQuery}
       />
-
       <PromoBannerSection
         title="Ưu đãi cho khách đặt dịch vụ"
         subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
@@ -153,7 +152,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           <Link
             href="/services"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -161,71 +160,17 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         </div>
       )}
 
-      {catalog.isPending && (
-        <div
-          aria-busy="true"
-          className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
-        >
-          <p className="sr-only">Đang tải dịch vụ</p>
-          {SKELETON_IDS.map((skeletonId) => (
-            <div
-              key={skeletonId}
-              className="h-44 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
-            />
-          ))}
-        </div>
-      )}
-
-      {catalog.isError && (
-        <div
-          role="alert"
-          data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
-        >
-          <p className="font-semibold">Không tải được bảng giá.</p>
-          <p className="mt-1 text-xs">Vui lòng kiểm tra mạng rồi thử lại.</p>
-          <button
-            type="button"
-            onClick={() => void catalog.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
-          >
-            <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
-            Thử tải lại
-          </button>
-        </div>
-      )}
-
-      {catalog.isSuccess && !unknownSlug && view.total === 0 && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Chưa có dịch vụ phù hợp
-          </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Hãy thử từ khóa khác hoặc chọn loại hình khác.
-          </p>
-        </div>
-      )}
-
-      {catalog.isSuccess && !unknownSlug && view.total > 0 && (
-        <div className="flex flex-col gap-3 md:gap-4">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-            {view.pageItems.map((service) => (
-              <PublicServiceCard key={service.id} service={service} />
-            ))}
-          </div>
-          <PublicCatalogPager
-            page={view.safePage}
-            pageCount={view.pageCount}
-            start={view.start}
-            end={view.end}
-            total={view.total}
-            hrefFor={pageHref}
-          />
-        </div>
-      )}
+      <PublicCatalogResults
+        pending={catalog.isPending}
+        failed={catalog.isError}
+        ready={catalog.isSuccess && !unknownSlug}
+        view={view}
+        hrefFor={pageHref}
+        onRetry={() => void catalog.refetch()}
+        serviceIds={draft.serviceIds}
+        onToggle={draft.toggleService}
+        reasonFor={reasonFor}
+      />
 
       <section
         aria-label="Đặt lịch trong 1 phút"
@@ -237,12 +182,19 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
             Đã chọn được dịch vụ ưng ý?
           </h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Tạo tài khoản miễn phí, chọn khung giờ và địa điểm. Thợ xác nhận
-            trong vài phút.
+            Đặt nhanh một dịch vụ hoặc thêm nhiều dịch vụ vào cùng lịch hẹn. Tạo
+            tài khoản nếu bạn muốn lưu lịch sử và dùng voucher.
           </p>
         </div>
         <ServicesAccountCta />
       </section>
+      <ServicesSelectionBar
+        serviceIds={draft.serviceIds}
+        selection={selection}
+        ready={catalog.isSuccess}
+        onRemove={(id) => draft.toggleService(id)}
+        onClear={() => draft.setServiceIds([])}
+      />
     </div>
   );
 }

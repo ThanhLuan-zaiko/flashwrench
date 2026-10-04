@@ -1,4 +1,5 @@
 import { findUserById } from "@/lib/auth/user.repository";
+import { BOOKING_MAX_DURATION_MIN } from "@/lib/booking/booking-services.constants";
 import {
   deleteMechanicActiveJob,
   findBookingRowById,
@@ -116,12 +117,17 @@ export async function mechanicScheduleConflict(
   mechanicId: string,
   scheduledAt: Date,
   excludeBookingId?: string,
+  durationMin?: number | null,
 ): Promise<boolean | "overflow"> {
   const at = scheduledAt.getTime();
+  const durationMs = Math.max(
+    (durationMin ?? 0) * 60000,
+    DISPATCH_OVERLAP_WINDOW_MS,
+  );
   const rows = await listWorkloadRowsInRange(
     mechanicId,
-    new Date(at - DISPATCH_OVERLAP_WINDOW_MS),
-    new Date(at + DISPATCH_OVERLAP_WINDOW_MS),
+    new Date(at - BOOKING_MAX_DURATION_MIN * 60000),
+    new Date(at + durationMs),
     WORKLOAD_SCAN_LIMIT,
   );
   if (rows.length >= WORKLOAD_SCAN_LIMIT) return "overflow";
@@ -136,7 +142,11 @@ export async function mechanicScheduleConflict(
     if (!status || isTerminalBookingStatus(status)) return false;
     const other = detail.scheduled_at?.getTime();
     if (other === undefined || other === null) return false;
-    return Math.abs(other - at) <= DISPATCH_OVERLAP_WINDOW_MS;
+    const otherDurationMs = Math.max(
+      (detail.duration_min ?? 0) * 60000,
+      DISPATCH_OVERLAP_WINDOW_MS,
+    );
+    return other <= at + durationMs && at <= other + otherDurationMs;
   });
 }
 

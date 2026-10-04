@@ -18,7 +18,10 @@ function toServiceRow(row: Record<string, unknown>): ServiceRow {
       ? rawImages.filter((u): u is string => typeof u === "string")
       : null,
     description: (row.description as string | null) ?? null,
-    base_price: (row.base_price as number | null) ?? null,
+    base_price:
+      row.base_price === null || row.base_price === undefined
+        ? null
+        : Number(row.base_price),
     price_unit: (row.price_unit as string | null) ?? null,
     duration_min: (row.duration_min as number | null) ?? null,
     is_home_supported: (row.is_home_supported as boolean | null) ?? null,
@@ -38,7 +41,10 @@ function toByCategoryRow(row: Record<string, unknown>): ServiceByCategoryRow {
     service_id: String(row.service_id),
     name: (row.name as string | null) ?? null,
     slug: (row.slug as string | null) ?? null,
-    base_price: (row.base_price as number | null) ?? null,
+    base_price:
+      row.base_price === null || row.base_price === undefined
+        ? null
+        : Number(row.base_price),
     duration_min: (row.duration_min as number | null) ?? null,
     is_active: (row.is_active as boolean | null) ?? null,
     is_deleted: (row.is_deleted as boolean | null) ?? null,

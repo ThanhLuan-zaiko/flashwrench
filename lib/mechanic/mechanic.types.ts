@@ -64,8 +64,12 @@ export type MechanicBookingRow = {
   address: MechanicAddressUdt | null;
   scheduled_at: Date | null;
   timezone: string | null;
+  duration_min: number | null;
   status: string | null;
   payment_status: string | null;
+  subtotal: number | null;
+  discount: number | null;
+  travel_fee: number | null;
   total: number | null;
   notes: string | null;
   cancel_reason: string | null;
@@ -85,6 +89,8 @@ export type MechanicBookingItemRow = {
   quantity: number | null;
   unit_price: number | null;
   line_total: number | null;
+  duration_min: number | null;
+  price_unit: string | null;
 };
 
 export type MechanicStatusHistoryRow = {
@@ -135,6 +141,8 @@ export type MechanicBookingItem = {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  durationMin: number | null;
+  priceUnit: "per_job" | "per_hour" | "per_item";
 };
 
 export type MechanicBookingSummary = {
@@ -149,8 +157,12 @@ export type MechanicBookingSummary = {
   addressLng: number | null;
   scheduledAt: string | null;
   timezone: string | null;
+  durationMin: number | null;
   status: MechanicBookingStatus;
   paymentState: MechanicPaymentState;
+  subtotal: number;
+  discount: number;
+  travelFee: number;
   total: number;
   serviceNames: string[];
   notes: string;

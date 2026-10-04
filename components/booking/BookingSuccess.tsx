@@ -1,37 +1,61 @@
 import Link from "next/link";
 import { FiArrowRight, FiCheck } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
+import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
 import { formatDateTime } from "@/lib/datetime/format";
 import type { CreatedBooking } from "@/services/booking.api";
+import { BookingDuration } from "./BookingDuration";
 
 type BookingSuccessProps = {
   booking: CreatedBooking;
+  guest?: boolean;
 };
 
 // Confirmation after POST /api/bookings returns 201. Stays on /booking:
 // no redirect to auth or anywhere else, the job is done here. The slot
 // renders in the booking zone with its offset, so travelers see exactly
 // when the mechanic arrives where the work happens.
-export function BookingSuccess({ booking }: BookingSuccessProps) {
+export function BookingSuccess({
+  booking,
+  guest = false,
+}: BookingSuccessProps) {
   return (
     <section
       aria-label="Đặt lịch thành công"
       data-reveal
       className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
-      <p className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+      <h1 className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900">
           <FiCheck aria-hidden="true" className="h-4 w-4" />
         </span>
         Đặt lịch thành công!
-      </p>
+      </h1>
       <dl className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
         <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
           <dt className="font-medium text-zinc-500 dark:text-zinc-400">
             Dịch vụ
           </dt>
           <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
-            {booking.serviceName}
+            {booking.items?.length ? (
+              <ul className="flex flex-col gap-2">
+                {booking.items.map((item) => (
+                  <li
+                    key={item.serviceId}
+                    className="flex min-w-0 items-start justify-between gap-2"
+                  >
+                    <span className="min-w-0 break-words">
+                      {item.serviceName}
+                    </span>
+                    <span className="shrink-0">
+                      {formatVnd(item.lineTotal)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              booking.serviceName
+            )}
           </dd>
         </div>
         <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
@@ -52,14 +76,6 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
             {booking.vehiclePlate}
           </dd>
         </div>
-        <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
-          <dt className="font-medium text-zinc-500 dark:text-zinc-400">
-            Tạm tính
-          </dt>
-          <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
-            {formatVnd(booking.total)}
-          </dd>
-        </div>
         {booking.mechanicName && (
           <div className="rounded-xl bg-zinc-100 px-3 py-2.5 sm:col-span-2 dark:bg-zinc-900">
             <dt className="font-medium text-zinc-500 dark:text-zinc-400">
@@ -71,6 +87,13 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
           </div>
         )}
       </dl>
+      <BookingDuration durationMin={booking.durationMin ?? null} />
+      <VoucherTotals
+        subtotal={booking.subtotal ?? booking.total}
+        discount={booking.discount ?? 0}
+        travelFee={booking.travelFee ?? 0}
+        total={booking.total}
+      />
       <p className="text-xs text-zinc-500 dark:text-zinc-400">
         Mã đặt lịch: {booking.bookingId}. Thợ sẽ xác nhận qua thông tin liên hệ
         của bạn trong vài phút.
@@ -79,16 +102,16 @@ export function BookingSuccess({ booking }: BookingSuccessProps) {
         <Link
           href="/services"
           scroll={false}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
         >
           Đặt thêm dịch vụ
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>
         <Link
-          href="/account"
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          href={guest ? `/track/booking/${booking.bookingId}` : "/account"}
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
-          Xem tài khoản của tôi
+          {guest ? "Theo dõi lịch hẹn" : "Xem tài khoản của tôi"}
         </Link>
       </div>
     </section>

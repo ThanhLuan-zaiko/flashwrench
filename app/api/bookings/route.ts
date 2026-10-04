@@ -23,6 +23,7 @@ import {
 import { notifyBookingCreated } from "@/lib/mail/confirmation.service";
 import { mergeGuestCart } from "@/lib/orders/cart.service";
 import { publishBookingChange } from "@/lib/realtime/domain-publish";
+import { isRecord } from "@/lib/validation";
 
 // Signal only: subscribers refetch the real rows over HTTPS. A
 // preselected mechanic gets the job in their personal inbox, so their
@@ -93,6 +94,12 @@ export async function POST(request: Request) {
     );
   }
 
+  if (!isRecord(body)) {
+    return NextResponse.json(
+      { errors: { form: "Dữ liệu gửi lên không hợp lệ." } },
+      { status: 400 },
+    );
+  }
   const input = body as CreateBookingInput;
   const wantsAccount = user === null && input.createAccount === true;
   if (wantsAccount) {
@@ -139,7 +146,9 @@ export async function POST(request: Request) {
     }
 
     const result = await createCustomerBooking(user, {
-      serviceId: input.serviceId ?? "",
+      serviceId: input.serviceId,
+      serviceIds: input.serviceIds,
+      expectedSubtotal: input.expectedSubtotal,
       scheduledAt: input.scheduledAt ?? "",
       timeZone: input.timeZone,
       fullName: input.fullName,

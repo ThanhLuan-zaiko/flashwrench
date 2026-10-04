@@ -21,6 +21,7 @@ import type {
 } from "./mechanic.types";
 import {
   hasActiveBooking,
+  mechanicScheduleConflict,
   releaseMechanicIfIdle,
   releaseMechanicJob,
   releaseReservationIfUnclaimed,
@@ -186,6 +187,20 @@ export async function applyMechanicBookingAction(
   }
   if (!canApplyAction(action, current)) {
     return fieldError(400, { action: transitionError(action, current) });
+  }
+
+  if (action === "accept") {
+    const conflict = await mechanicScheduleConflict(
+      mechanicId,
+      detail.scheduled_at ?? new Date(),
+      bookingId,
+      detail.duration_min,
+    );
+    if (conflict !== false)
+      return formError(
+        409,
+        "Lịch hẹn này trùng một lịch hẹn khác. Vui lòng liên hệ điều phối để chọn lại khung giờ.",
+      );
   }
 
   const needsReservation = action === "start-travel" || action === "start-work";

@@ -89,6 +89,27 @@ describe("createGuestBookingWithAccount", () => {
     expect(result.data.booking.bookingId).toBe(okCreatedBooking().bookingId);
   });
 
+  test("keeps the complete bundle and quote during inline signup", async () => {
+    const ids = [
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+    ];
+    const result = await createGuestBookingWithAccount(
+      signupInput({
+        serviceId: undefined,
+        serviceIds: ids,
+        expectedSubtotal: 300000,
+      }),
+      "device",
+    );
+    expect(result.ok).toBe(true);
+    expect(authServiceMocks.registerUser).toHaveBeenCalledTimes(1);
+    expect(bookingServiceMocks.createCustomerBooking).toHaveBeenCalledTimes(1);
+    expect(
+      bookingServiceMocks.createCustomerBooking.mock.calls[0]?.[1],
+    ).toMatchObject({ serviceIds: ids, expectedSubtotal: 300000 });
+  });
+
   test("surfaces register conflicts without creating a booking", async () => {
     routeStubs.registerResult = {
       ok: false,

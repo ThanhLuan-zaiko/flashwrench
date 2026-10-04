@@ -2,9 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { FiAlertCircle, FiLoader, FiMapPin, FiUser, FiX } from "react-icons/fi";
+import { BookingDuration } from "@/components/booking/BookingDuration";
 import { ChatWithPeerButton } from "@/components/chat/ChatWithPeerButton";
 import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
+import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
 import { useMyBooking } from "@/hooks/booking";
 import { formatDateTime } from "@/lib/datetime/format";
 import { STATUS_LABELS } from "@/lib/mechanic/mechanic-status";
@@ -121,6 +123,7 @@ export function BookingDetailDialog({
                     withZoneSuffix: false,
                   })}
                 </p>
+                <BookingDuration durationMin={booking.durationMin} />
                 <p className="flex items-start gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
                   <FiMapPin
                     aria-hidden="true"
@@ -192,14 +195,12 @@ export function BookingDetailDialog({
                     </li>
                   ))}
                 </ul>
-                <div className="mt-1 flex items-center justify-between border-t border-zinc-200 pt-2 dark:border-zinc-800">
-                  <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                    Tổng cộng
-                  </span>
-                  <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                    {formatTotal(booking.total)}
-                  </span>
-                </div>
+                <VoucherTotals
+                  subtotal={booking.subtotal}
+                  discount={booking.discount}
+                  travelFee={booking.travelFee}
+                  total={booking.total}
+                />
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
                   {paymentStateLabel(booking.paymentState)}
                 </p>

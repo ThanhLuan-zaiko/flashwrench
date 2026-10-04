@@ -3,6 +3,7 @@ import type { AuthResult } from "@/lib/auth/user.types";
 import type { CreatedBooking } from "@/lib/booking/booking.types";
 import type { MechanicDirectoryItem } from "@/lib/mechanic/mechanic-directory.service";
 import { makePublicUser, makeSessionTokens } from "./auth.fixtures";
+import { makeBookingServiceSnapshot } from "./booking.fixtures";
 
 export function okAuthResult(): AuthResult {
   return {
@@ -34,8 +35,14 @@ export function okCreatedBooking(): CreatedBooking {
     scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     timezone: "Asia/Ho_Chi_Minh",
     total: 199000,
+    subtotal: 199000,
+    discount: 0,
+    travelFee: 0,
     serviceId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
     serviceName: "Thay dau dong co",
+    serviceIds: ["bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"],
+    items: [makeBookingServiceSnapshot()],
+    durationMin: 60,
     vehiclePlate: "51F-12345",
     address: "123 Nguyen Trai, Phuong 5, Quan 3, TP Ho Chi Minh",
     lat: 10.7769,

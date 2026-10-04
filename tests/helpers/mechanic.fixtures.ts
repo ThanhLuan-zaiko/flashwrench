@@ -55,8 +55,12 @@ export function makeBookingRow(
     },
     scheduled_at: new Date("2026-09-16T07:00:00.000Z"),
     timezone: "Asia/Ho_Chi_Minh",
+    duration_min: null,
     status: "pending",
     payment_status: "unpaid",
+    subtotal: 450000,
+    discount: 0,
+    travel_fee: 0,
     total: 450000,
     notes: null,
     cancel_reason: null,
@@ -81,6 +85,8 @@ export function makeBookingItemRow(
     quantity: 1,
     unit_price: 450000,
     line_total: 450000,
+    duration_min: null,
+    price_unit: null,
     ...overrides,
   };
 }

@@ -1,8 +1,22 @@
 // Shared shapes for the customer booking domain. The repository maps
 // these to raw CQL rows; the service maps rows to the created summary.
 
-export type CreateBookingInput = {
+import type { PriceUnit } from "@/lib/catalog/service-catalog.types";
+
+export type BookingServiceSnapshot = {
   serviceId: string;
+  serviceName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  durationMin: number;
+  priceUnit: PriceUnit;
+};
+
+export type CreateBookingInput = {
+  serviceId?: string;
+  serviceIds?: string[];
+  expectedSubtotal?: number;
   scheduledAt: string;
   timeZone?: string | null;
   // Guest contact trio: required only when no session exists; signed-in
@@ -36,6 +50,8 @@ export type CreateBookingInput = {
 
 export type NormalizedBookingInput = {
   serviceId: string;
+  serviceIds: string[];
+  expectedSubtotal: number | null;
   scheduledAt: Date;
   timeZone: string | null;
   fullName: string | null;
@@ -60,6 +76,7 @@ export type NormalizedBookingInput = {
 export type BookingFieldErrors = Partial<
   Record<
     | "serviceId"
+    | "serviceIds"
     | "scheduledAt"
     | "timeZone"
     | "fullName"
@@ -91,8 +108,14 @@ export type CreatedBooking = {
   scheduledAt: string;
   timezone: string | null;
   total: number;
+  subtotal: number;
+  discount: number;
+  travelFee: number;
   serviceId: string;
+  serviceIds: string[];
   serviceName: string;
+  items: BookingServiceSnapshot[];
+  durationMin: number;
   vehiclePlate: string;
   address: string;
   lat: number | null;
@@ -114,6 +137,7 @@ export type PublicBookingTracking = {
   bookingId: string;
   status: string;
   serviceName: string | null;
+  durationMin: number | null;
   scheduledAt: string | null;
   timezone: string | null;
   mechanicName: string | null;

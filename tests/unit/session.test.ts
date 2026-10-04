@@ -26,7 +26,14 @@ describe("access tokens", () => {
   test("rejects tampered tokens", async () => {
     process.env.AUTH_SECRET = TEST_SECRET;
     const token = await signAccessToken("user-1", 0);
-    const tampered = `${token.slice(0, -2)}ab`;
+    const signatureAt = token.lastIndexOf(".") + 1;
+    const replacement = token[signatureAt] === "a" ? "b" : "a";
+    const tampered = `${token.slice(0, signatureAt)}${replacement}${token.slice(signatureAt + 1)}`;
+    expect(
+      Buffer.from(tampered.slice(signatureAt), "base64url").equals(
+        Buffer.from(token.slice(signatureAt), "base64url"),
+      ),
+    ).toBe(false);
     expect(await verifyAccessToken(tampered)).toBeNull();
     expect(await verifyAccessToken("not-a-token")).toBeNull();
   });

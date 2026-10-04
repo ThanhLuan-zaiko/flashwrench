@@ -1,6 +1,8 @@
 "use client";
 
 import { FiClock, FiMapPin, FiPhone, FiTool, FiUser } from "react-icons/fi";
+import { BookingDuration } from "@/components/booking/BookingDuration";
+import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
 import type { BookingDetail } from "@/services/dispatch.api";
 import {
   DISPATCH_STATUS_LABELS,
@@ -50,6 +52,7 @@ export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
             <FiClock aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
             Hẹn {formatScheduleDateTime(booking.scheduledAt, booking.timezone)}
           </span>
+          <BookingDuration durationMin={booking.durationMin} />
           <span className="flex items-center gap-1.5">
             <FiTool aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
             Thợ phụ trách: {mechanicLabel(booking.mechanicName)}
@@ -113,14 +116,12 @@ export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
             </li>
           ))}
         </ul>
-        <p className="mt-2 flex items-center justify-between text-sm">
-          <span className="font-medium text-zinc-600 dark:text-zinc-400">
-            Tổng thu dự kiến
-          </span>
-          <span className="font-bold text-zinc-900 dark:text-zinc-50">
-            {formatVnd(booking.total)}
-          </span>
-        </p>
+        <VoucherTotals
+          subtotal={booking.subtotal}
+          discount={booking.discount}
+          travelFee={booking.travelFee}
+          total={booking.total}
+        />
       </div>
 
       <div>

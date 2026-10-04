@@ -57,6 +57,7 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 - **No Joins:** Do not attempt SQL-like joins. Denormalize data if necessary.
 - **Partition Keys:** Always choose partition keys carefully to ensure even data distribution across the cluster.
 - **Client:** Use a ScyllaDB/Cassandra compatible Node.js driver (e.g., `cassandra-driver` or a modern Bun-compatible alternative).
+- **BIGINT decoding:** `cassandra-driver` returns `BIGINT` prices as `Long` objects, which serialize to strings. Normalize them to JavaScript numbers in repository row mappers, preserve nulls, and reject unsafe/non-integer monetary values in services. Regression tests must exercise `types.Long`, not only numeric fixtures.
 - **Schema changes (non-destructive — the default):** `schema.cql` stays the source of truth for fresh setups, but the live database is migrated IN PLACE — never reset or drop existing data. Recipe:
   1. Edit `schema.cql` first so a fresh environment still builds correctly.
   2. Write a one-off idempotent script `scripts/migrate-<feature>.ts` modeled on `scripts/migrate-revenue.ts`: connect via `lib/db/client` (`scylla` client, picks up `SCYLLA_*` from `.env.local`), execute each `ALTER TABLE ... ADD <column>` / `CREATE TABLE IF NOT EXISTS ...`, and skip "already exists" errors so it is safe to re-run.

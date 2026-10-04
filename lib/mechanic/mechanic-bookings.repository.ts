@@ -13,7 +13,7 @@ const WORKLOAD_COLUMNS =
   "mechanic_id, scheduled_at, booking_id, status, total, vehicle_plate, customer_name";
 
 const BOOKING_COLUMNS =
-  "booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, zone_id, address, scheduled_at, timezone, status, payment_status, total, notes, cancel_reason, created_at, updated_at, vehicle_id, mechanic_name, month_bucket, payment_confirm_code, coupon_code";
+  "booking_id, customer_id, customer_name, customer_phone, vehicle_plate, vehicle_brand, vehicle_model, mechanic_id, zone_id, address, scheduled_at, timezone, duration_min, status, payment_status, subtotal, discount, travel_fee, total, notes, cancel_reason, created_at, updated_at, vehicle_id, mechanic_name, month_bucket, payment_confirm_code, coupon_code";
 
 type RawRow = Record<string, unknown>;
 
@@ -71,8 +71,12 @@ function toBookingRow(raw: RawRow): MechanicBookingRow {
     address: toAddress(raw.address),
     scheduled_at: toDateOrNull(raw.scheduled_at),
     timezone: toStringOrNull(raw.timezone),
+    duration_min: toNumberOrNull(raw.duration_min),
     status: toStringOrNull(raw.status),
     payment_status: toStringOrNull(raw.payment_status),
+    subtotal: toNumberOrNull(raw.subtotal),
+    discount: toNumberOrNull(raw.discount),
+    travel_fee: toNumberOrNull(raw.travel_fee),
     total: toNumberOrNull(raw.total),
     notes: toStringOrNull(raw.notes),
     cancel_reason: toStringOrNull(raw.cancel_reason),
@@ -94,6 +98,8 @@ function toItemRow(raw: RawRow): MechanicBookingItemRow {
     quantity: toNumberOrNull(raw.quantity),
     unit_price: toNumberOrNull(raw.unit_price),
     line_total: toNumberOrNull(raw.line_total),
+    duration_min: toNumberOrNull(raw.duration_min),
+    price_unit: toStringOrNull(raw.price_unit),
   };
 }
 
@@ -167,7 +173,7 @@ export async function listBookingItemRowsByBookingIds(
   const results = await Promise.all(
     bookingIds.map((bookingId) =>
       selectRows(
-        "SELECT booking_id, service_id, service_name, quantity, unit_price, line_total FROM booking_items WHERE booking_id = ?",
+        "SELECT booking_id, service_id, service_name, quantity, unit_price, line_total, duration_min, price_unit FROM booking_items WHERE booking_id = ?",
         [bookingId],
       ),
     ),

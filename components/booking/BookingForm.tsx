@@ -1,16 +1,17 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { WalletPicker } from "@/components/vouchers/WalletPicker";
+import { getBookingServiceSelection } from "@/lib/booking/booking-service-selection";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import type { CreateBookingResponse } from "@/services/booking.api";
 import { BookingDetailsSection } from "./BookingDetailsSection";
-import { BookingGuestContact } from "./BookingGuestContact";
-import { BookingGuestSignup } from "./BookingGuestSignup";
+import { BookingGuestSection } from "./BookingGuestSection";
 import { BookingMapSection } from "./BookingMapSection";
 import { BookingPrefillNotice } from "./BookingPrefillNotice";
 import { BookingReviewsSection } from "./BookingReviewsSection";
-import { BookingServiceGallery } from "./BookingServiceGallery";
+import { BookingServiceMedia } from "./BookingServiceMedia";
 import { BookingServiceSection } from "./BookingServiceSection";
 import { BookingSubmitButton } from "./BookingSubmitButton";
 import type { BookingPrefill } from "./booking-prefill";
@@ -20,9 +21,10 @@ import { useBookingForm } from "./useBookingForm";
 type BookingFormProps = {
   preselected: ServiceItem | null;
   services: ServiceItem[];
-  initialServiceId: string | null;
+  initialServiceIds: string[];
   prefill: BookingPrefill | null;
   guest: boolean;
+  onCreated: (response: CreateBookingResponse) => void;
 };
 
 // Booking form layout: stacked on mobile, map column plus one column of
@@ -33,23 +35,27 @@ type BookingFormProps = {
 export function BookingForm({
   preselected,
   services,
-  initialServiceId,
+  initialServiceIds,
   prefill,
   guest,
+  onCreated,
 }: BookingFormProps) {
+  const form = useBookingForm({
+    initialServiceIds,
+    services,
+    prefill,
+    guest,
+    onCreated,
+  });
   const {
-    serviceId,
-    setServiceId,
+    serviceIds,
+    setServiceIds,
     scheduledAt,
     setScheduledAt,
     coords,
     setCoords,
     mechanicId,
     setMechanicId,
-    contact,
-    setContact,
-    signup,
-    setSignup,
     address,
     setAddress,
     vehicle,
@@ -64,12 +70,20 @@ export function BookingForm({
     handleMapAddress,
     resetDetails,
     handleSubmit,
-  } = useBookingForm({ initialServiceId, prefill, guest });
-
-  const activeService = useMemo(
-    () => preselected ?? services.find((s) => s.id === serviceId) ?? null,
-    [preselected, services, serviceId],
+  } = form;
+  const [inspectedServiceId, setInspectedServiceId] = useState(
+    initialServiceIds[0] ?? "",
   );
+  const selection = useMemo(
+    () => getBookingServiceSelection(serviceIds, services),
+    [serviceIds, services],
+  );
+  const activeService = useMemo(() => {
+    const id = serviceIds.includes(inspectedServiceId)
+      ? inspectedServiceId
+      : serviceIds[0];
+    return selection.services.find((service) => service.id === id) ?? null;
+  }, [selection.services, serviceIds, inspectedServiceId]);
 
   return (
     <>
@@ -84,73 +98,32 @@ export function BookingForm({
             <FormAlert message={errors.form} />
           </div>
         )}
-
         {prefilled && (
           <div className="lg:col-span-2 xl:col-span-3">
             <BookingPrefillNotice onReset={resetDetails} />
           </div>
         )}
-
         <div className="lg:col-start-2">
           <BookingServiceSection
             preselected={preselected}
             services={services}
-            serviceId={serviceId}
-            error={errors.serviceId}
+            serviceIds={serviceIds}
+            error={errors.serviceIds ?? errors.serviceId}
             disabled={pending}
-            onServiceId={(v) => {
-              setServiceId(v);
-              clearError("serviceId");
-            }}
+            onServiceIds={setServiceIds}
+            onInspect={setInspectedServiceId}
           />
         </div>
 
         {/* Owns col 3 on xl and pins like the map: the row-span gives the
         sticky element tracks to travel through while scrolling. At lg the
         gallery shares col 2 with the fields, so it stays in normal flow. */}
-        <div className="lg:col-start-2 xl:col-start-3 xl:row-span-3 xl:self-start xl:sticky xl:top-20">
-          <BookingServiceGallery
-            key={activeService?.id ?? "none"}
-            service={activeService}
-          />
-        </div>
-
-        {guest && (
-          <div className="flex flex-col gap-4 lg:col-start-2">
-            <BookingGuestContact
-              values={contact}
-              errors={errors}
-              disabled={pending}
-              emailHint={
-                signup.enabled
-                  ? "Cũng là email đăng nhập cho tài khoản mới."
-                  : undefined
-              }
-              onChange={(field, v) => {
-                setContact((prev) => ({ ...prev, [field]: v }));
-                clearError(field);
-              }}
-            />
-            <BookingGuestSignup
-              values={signup}
-              errors={errors}
-              disabled={pending}
-              onToggle={(enabled) => {
-                setSignup((prev) => ({ ...prev, enabled }));
-                clearError("password");
-                clearError("confirmPassword");
-              }}
-              onPassword={(v) => {
-                setSignup((prev) => ({ ...prev, password: v }));
-                clearError("password");
-              }}
-              onConfirmPassword={(v) => {
-                setSignup((prev) => ({ ...prev, confirmPassword: v }));
-                clearError("confirmPassword");
-              }}
-            />
-          </div>
-        )}
+        <BookingServiceMedia
+          services={selection.services}
+          service={activeService}
+          onInspect={setInspectedServiceId}
+        />
+        {guest && <BookingGuestSection form={form} />}
 
         <div className="lg:col-start-1 lg:row-span-5 lg:self-start lg:sticky lg:top-20 xl:row-span-3">
           <BookingMapSection
@@ -164,7 +137,6 @@ export function BookingForm({
             onAddress={handleMapAddress}
           />
         </div>
-
         <div className="lg:col-start-2">
           <BookingDetailsSection
             scheduledAt={scheduledAt}
@@ -173,23 +145,22 @@ export function BookingForm({
             vehicle={vehicle}
             errors={errors}
             disabled={pending}
-            onScheduledAt={(v) => {
-              setScheduledAt(v);
+            onScheduledAt={(value) => {
+              setScheduledAt(value);
               clearError("scheduledAt");
             }}
-            onAddress={(field, v) => {
-              setAddress((prev) => ({ ...prev, [field]: v }));
+            onAddress={(field, value) => {
+              setAddress((previous) => ({ ...previous, [field]: value }));
               clearError(field);
             }}
-            onVehicle={(field, v) => {
-              setVehicle((prev) => ({ ...prev, [field]: v }));
+            onVehicle={(field, value) => {
+              setVehicle((previous) => ({ ...previous, [field]: value }));
               clearError(field);
             }}
           />
         </div>
-
         {!guest && (
-          <div className="lg:col-start-2 xl:col-start-3">
+          <div className="flex flex-col gap-2 lg:col-start-2 xl:col-start-3">
             {/* Remount on reset so the picker collapses back to the
             auto-dispatch default instead of staying open. */}
             <MechanicSection
@@ -199,22 +170,28 @@ export function BookingForm({
               value={mechanicId}
               error={errors.mechanicId}
               disabled={pending}
-              onChange={(v) => {
-                setMechanicId(v);
+              onChange={(value) => {
+                setMechanicId(value);
                 clearError("mechanicId");
               }}
             />
+            <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+              Thợ cần xác nhận toàn bộ hạng mục trong lịch hẹn. Thời gian làm
+              việc được kiểm tra theo tổng thời lượng.
+            </p>
           </div>
         )}
-
         {!guest && (
           <div className="flex flex-col gap-4 lg:col-start-2">
             <WalletPicker
               kind="booking"
-              subtotal={activeService?.basePrice ?? 0}
+              subtotal={selection.subtotal}
               value={walletId}
               error={errors.walletId}
-              disabled={pending}
+              disabled={
+                pending || serviceIds.length === 0 || selection.issue !== null
+              }
+              showTotals
               onChange={(next) => {
                 setWalletId(next);
                 clearError("walletId");
@@ -228,10 +205,13 @@ export function BookingForm({
         dense packing drop the button into an empty col-1 cell under the
         sticky map. start=2 + end=4 keeps it pinned to the right side. */}
         <div className="lg:col-start-2 xl:col-end-4">
-          <BookingSubmitButton pending={pending} />
+          <BookingSubmitButton
+            pending={pending}
+            disabled={serviceIds.length === 0 || selection.issue !== null}
+            serviceCount={serviceIds.length}
+          />
         </div>
       </form>
-
       <BookingReviewsSection
         service={activeService}
         lat={coords?.lat ?? null}

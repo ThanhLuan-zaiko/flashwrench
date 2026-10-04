@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { BookingEntry } from "@/components/booking/BookingEntry";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { getServerAccountSession } from "@/lib/auth/server-session";
+import {
+  type BookingServiceParams,
+  parseBookingServiceParams,
+} from "@/lib/booking/booking-service-selection";
 import { pageOg } from "@/lib/seo/site";
 
 const DESCRIPTION = "Xác nhận thông tin đặt lịch sửa xe lưu động FlashWrench.";
@@ -19,11 +23,9 @@ export const metadata: Metadata = {
 export default async function BookingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ serviceId?: string }>;
+  searchParams: Promise<BookingServiceParams>;
 }) {
-  const { serviceId } = await searchParams;
-  const trimmed = (serviceId ?? "").trim();
-  const normalized = trimmed.length > 0 ? trimmed : null;
+  const selection = parseBookingServiceParams(await searchParams);
 
   const session = await getServerAccountSession();
   const user = session.user;
@@ -33,7 +35,8 @@ export default async function BookingPage({
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14 xl:max-w-7xl">
         <BookingEntry
-          serviceId={normalized}
+          serviceIds={selection.serviceIds}
+          selectionError={selection.error}
           userName={user?.fullName ?? null}
           userContact={contact}
         />

@@ -108,7 +108,10 @@ export const scyllaMocks = {
       fakeExecute(query, params),
   ),
   batch: mock(
-    async (queries: { query: string; params: unknown[] }[]): Promise<void> => {
+    async (
+      queries: { query: string; params: unknown[] }[],
+      _options?: unknown,
+    ): Promise<void> => {
       if (dbState.failBatch) throw new Error("fake batch failure");
       for (const item of queries) {
         if (item.query.includes("INTO users_by_id")) {

@@ -1,19 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw, FiUser } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoTeaser } from "@/components/promotions/PromoTeaser";
 import { useLastBooking } from "@/hooks/booking";
-import { usePublicCatalog } from "@/hooks/public-catalog";
+import {
+  usePublicCatalog,
+  useServiceCatalogRealtime,
+} from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
+import {
+  parseBookingServiceParams,
+  readBookingServiceParams,
+} from "@/lib/booking/booking-service-selection";
+import type { CreateBookingResponse } from "@/services/booking.api";
 import { BookingForm } from "./BookingForm";
+import { BookingSuccess } from "./BookingSuccess";
 import { toBookingPrefill } from "./booking-prefill";
 
 type BookingEntryProps = {
-  serviceId: string | null;
+  serviceIds: string[];
+  selectionError: string | null;
   // Null identity = guest booking: the form collects the contact trio
   // instead of reading verified account fields.
   userName: string | null;
@@ -25,31 +36,53 @@ type BookingEntryProps = {
 // link instead of a history entry. Unknown service ids show guidance
 // back to /services instead of guessing another service.
 export function BookingEntry({
-  serviceId,
+  serviceIds,
+  selectionError,
   userName,
   userContact,
 }: BookingEntryProps) {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  const [created, setCreated] = useState<CreateBookingResponse | null>(null);
   const guest = userName === null;
+  const searchParams = useSearchParams();
+  const current = useMemo(
+    () => parseBookingServiceParams(readBookingServiceParams(searchParams)),
+    [searchParams],
+  );
   const catalog = usePublicCatalog();
+  useServiceCatalogRealtime(true);
   const lastBooking = useLastBooking(!guest);
-
   const selected = useMemo(() => {
-    if (!serviceId) return null;
+    if (current.serviceIds.length !== 1) return null;
     return (
-      catalog.data?.services.find((service) => service.id === serviceId) ?? null
+      catalog.data?.services.find(
+        (service) => service.id === current.serviceIds[0],
+      ) ?? null
     );
-  }, [catalog.data, serviceId]);
-
+  }, [catalog.data, current.serviceIds]);
   const prefill = useMemo(
     () => toBookingPrefill(lastBooking.data ?? null),
     [lastBooking.data],
   );
-
+  const message = selectionError ?? current.error;
   const unknownService =
-    catalog.isSuccess && serviceId !== null && selected === null;
+    catalog.isSuccess &&
+    current.serviceIds.some(
+      (id) => !catalog.data?.services.some((service) => service.id === id),
+    );
   const ready =
-    catalog.isSuccess && !unknownService && (guest || !lastBooking.isPending);
+    catalog.data !== undefined && !message && (guest || !lastBooking.isPending);
+
+  if (created) {
+    return (
+      <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
+        <BookingSuccess
+          booking={created.booking}
+          guest={guest && !created.user}
+        />
+      </div>
+    );
+  }
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
@@ -59,11 +92,10 @@ export function BookingEntry({
         title="Đặt lịch sửa xe tận nơi."
         subtitle={
           guest
-            ? "Không cần tài khoản — điền thông tin liên hệ, khung giờ, địa điểm và xe của bạn rồi xác nhận."
-            : "Bạn đã đăng nhập nên không cần đăng nhập lại. Điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
+            ? "Không cần tài khoản — chọn các dịch vụ, điền thông tin liên hệ, một khung giờ, địa điểm và xe của bạn rồi xác nhận."
+            : "Bạn đã đăng nhập nên không cần đăng nhập lại. Xem các dịch vụ đã chọn, điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
         }
       />
-
       <section
         aria-label={guest ? "Đặt lịch với tư cách khách" : "Tài khoản đặt lịch"}
         data-reveal
@@ -86,30 +118,28 @@ export function BookingEntry({
         </div>
         {guest ? (
           <Link
-            href={buildLoginHref(buildBookingHref(serviceId))}
-            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+            href={buildLoginHref(buildBookingHref(current.serviceIds))}
+            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
           >
             Đăng nhập
           </Link>
         ) : (
           <Link
             href="/account"
-            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
           >
             Quản lý tài khoản
           </Link>
         )}
       </section>
-
       <PromoTeaser audience="booking" />
 
       {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">
           <p className="sr-only">Đang tải dịch vụ đã chọn</p>
-          <div className="h-40 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900" />
+          <div className="h-40 rounded-2xl border border-zinc-200 bg-zinc-100 motion-safe:animate-pulse dark:border-zinc-800 dark:bg-zinc-900" />
         </div>
       )}
-
       {catalog.isError && (
         <div
           role="alert"
@@ -121,43 +151,46 @@ export function BookingEntry({
           <button
             type="button"
             onClick={() => void catalog.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử tải lại
           </button>
         </div>
       )}
-
-      {unknownService && (
+      {(unknownService || message) && (
         <div
           data-reveal
           className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
         >
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Dịch vụ này không còn khả dụng
+            {message
+              ? "Danh sách dịch vụ không hợp lệ"
+              : "Có dịch vụ không còn khả dụng"}
           </p>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Cửa hàng vừa thay đổi bảng giá. Hãy chọn một dịch vụ đang có.
+            {message ??
+              "Cửa hàng vừa thay đổi bảng giá. Hãy bỏ các dịch vụ không còn khả dụng bên dưới hoặc chọn lại."}
           </p>
           <Link
             href="/services"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
         </div>
       )}
-
       {ready && (
         <BookingForm
+          key={`${guest ? "guest" : "customer"}:${serviceIds.join(",")}`}
           preselected={selected}
           services={catalog.data?.services ?? []}
-          initialServiceId={serviceId}
+          initialServiceIds={serviceIds}
           prefill={prefill}
           guest={guest}
+          onCreated={setCreated}
         />
       )}
     </div>

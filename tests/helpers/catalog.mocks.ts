@@ -16,10 +16,12 @@ import type {
 export const catalogStubs = {
   categoryRows: [] as ServiceCategoryRow[],
   categoryById: null as ServiceCategoryRow | null,
+  categoriesById: new Map<string, ServiceCategoryRow | null>(),
   categorySlugOwner: null as string | null,
   categorySlugClaimed: true,
   serviceRows: [] as ServiceRow[],
   serviceById: null as ServiceRow | null,
+  servicesById: new Map<string, ServiceRow | null>(),
   serviceSlugOwner: null as string | null,
   serviceSlugClaimed: true,
   serviceByCategoryRows: [] as ServiceByCategoryRow[],
@@ -30,8 +32,10 @@ export const categoryRepoMocks = {
     async (): Promise<ServiceCategoryRow[]> => catalogStubs.categoryRows,
   ),
   findCategoryRowById: mock(
-    async (_categoryId: string): Promise<ServiceCategoryRow | null> =>
-      catalogStubs.categoryById,
+    async (categoryId: string): Promise<ServiceCategoryRow | null> =>
+      catalogStubs.categoriesById.has(categoryId)
+        ? (catalogStubs.categoriesById.get(categoryId) ?? null)
+        : catalogStubs.categoryById,
   ),
   findCategoryIdBySlug: mock(
     async (_slug: string): Promise<string | null> =>
@@ -71,8 +75,10 @@ export const catalogServiceRepoMocks = {
     async (): Promise<ServiceRow[]> => catalogStubs.serviceRows,
   ),
   findServiceRowById: mock(
-    async (_serviceId: string): Promise<ServiceRow | null> =>
-      catalogStubs.serviceById,
+    async (serviceId: string): Promise<ServiceRow | null> =>
+      catalogStubs.servicesById.has(serviceId)
+        ? (catalogStubs.servicesById.get(serviceId) ?? null)
+        : catalogStubs.serviceById,
   ),
   findServiceIdBySlug: mock(
     async (_slug: string): Promise<string | null> =>
@@ -122,10 +128,12 @@ export const catalogServiceRepoMocks = {
 export function resetCatalogMocks(): void {
   catalogStubs.categoryRows = [];
   catalogStubs.categoryById = null;
+  catalogStubs.categoriesById.clear();
   catalogStubs.categorySlugOwner = null;
   catalogStubs.categorySlugClaimed = true;
   catalogStubs.serviceRows = [];
   catalogStubs.serviceById = null;
+  catalogStubs.servicesById.clear();
   catalogStubs.serviceSlugOwner = null;
   catalogStubs.serviceSlugClaimed = true;
   catalogStubs.serviceByCategoryRows = [];

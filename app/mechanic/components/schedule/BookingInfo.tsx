@@ -1,7 +1,9 @@
 "use client";
 
 import { FiClock, FiMapPin, FiPhone, FiUser } from "react-icons/fi";
+import { BookingDuration } from "@/components/booking/BookingDuration";
 import { ChatWithPeerButton } from "@/components/chat/ChatWithPeerButton";
+import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
 import type { MechanicBookingDetail } from "@/services/mechanic.api";
 import {
   formatScheduleDateTime,
@@ -52,6 +54,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
             <FiClock aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
             Hẹn {formatScheduleDateTime(booking.scheduledAt, booking.timezone)}
           </span>
+          <BookingDuration durationMin={booking.durationMin} />
           {booking.notes && (
             <span className="rounded-xl bg-zinc-100 px-2.5 py-2 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
               Ghi chú: {booking.notes}
@@ -98,14 +101,17 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
             </li>
           ))}
         </ul>
-        <p className="mt-2 flex items-center justify-between text-sm">
-          <span className="font-medium text-zinc-600 dark:text-zinc-400">
-            Tổng thu dự kiến
-          </span>
-          <span className="font-bold text-zinc-900 dark:text-zinc-50">
-            {formatVnd(booking.total)}
-          </span>
-        </p>
+        <VoucherTotals
+          subtotal={booking.subtotal}
+          discount={booking.discount}
+          travelFee={booking.travelFee}
+          total={booking.total}
+        />
+        {booking.items.length > 1 && (
+          <p className="mt-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+            Chỉ nhận lịch hẹn khi bạn có thể thực hiện toàn bộ hạng mục đã chọn.
+          </p>
+        )}
       </div>
 
       <div>

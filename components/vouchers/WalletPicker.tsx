@@ -1,10 +1,12 @@
 "use client";
 
 import { useId, useMemo } from "react";
+import { FormAlert } from "@/components/auth/FormAlert";
 import { DropdownSelect } from "@/components/ui/DropdownSelect";
 import { useMyWallets } from "@/hooks/useVouchers";
 import type { VoucherWallet } from "@/lib/vouchers/voucher.types";
 import { clampVoucherDiscount } from "@/lib/vouchers/voucher-discount";
+import { VoucherTotals } from "./VoucherTotals";
 
 type WalletPickerProps = {
   kind: "order" | "booking";
@@ -12,6 +14,7 @@ type WalletPickerProps = {
   value: string | null;
   error?: string;
   disabled?: boolean;
+  showTotals?: boolean;
   onChange: (walletId: string | null) => void;
 };
 
@@ -35,6 +38,7 @@ export function WalletPicker({
   value,
   error,
   disabled,
+  showTotals = false,
   onChange,
 }: WalletPickerProps) {
   const labelId = useId();
@@ -56,14 +60,9 @@ export function WalletPicker({
         }) > 0,
     );
   }, [wallets.data, kind, subtotal]);
-
   const options = useMemo(
     () => [
-      {
-        value: "",
-        label: "Không dùng voucher",
-        hint: "Thanh toán đủ tiền",
-      },
+      { value: "", label: "Không dùng voucher", hint: "Thanh toán đủ tiền" },
       ...usable.map((wallet) => ({
         value: wallet.id,
         label: `${wallet.campaignName} — ${discountLabel(wallet, subtotal)}`,
@@ -75,22 +74,49 @@ export function WalletPicker({
     ],
     [usable, subtotal],
   );
+  const selected = usable.find((wallet) => wallet.id === value);
+  const discount = selected
+    ? clampVoucherDiscount({
+        discountType: selected.discountType,
+        discountValue: selected.discountValue,
+        maxDiscount: selected.maxDiscount,
+        subtotal,
+      })
+    : 0;
+  const message =
+    error ??
+    (value && !selected
+      ? "Voucher đã chọn không còn phù hợp. Vui lòng chọn lại."
+      : undefined);
+  const totals = showTotals ? (
+    <VoucherTotals subtotal={subtotal} discount={discount} />
+  ) : null;
 
   if (wallets.isPending) {
     return (
-      <p className="text-xs text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
-        Đang tải voucher…
-      </p>
+      <div className="flex flex-col gap-2">
+        <p className="text-xs text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+          Đang tải voucher…
+        </p>
+        {totals}
+      </div>
     );
   }
   if (wallets.isError || usable.length === 0) {
     return (
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-        Chưa có voucher nào dùng được cho đơn này.{" "}
-        <a href="/vouchers" className="font-semibold underline">
-          Xem ví voucher
-        </a>
-      </p>
+      <div className="flex flex-col gap-2">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Chưa có voucher nào dùng được cho đơn này.{" "}
+          <a
+            href="/vouchers"
+            className="inline-flex min-h-[44px] items-center rounded-lg font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500"
+          >
+            Xem ví voucher
+          </a>
+        </p>
+        {message && <FormAlert message={message} />}
+        {totals}
+      </div>
     );
   }
   return (
@@ -109,16 +135,10 @@ export function WalletPicker({
         options={options}
         placeholder="Chọn voucher…"
         disabled={disabled}
-        error={Boolean(error)}
+        error={Boolean(message)}
       />
-      {error && (
-        <p
-          role="alert"
-          className="text-xs font-medium text-red-600 dark:text-red-400"
-        >
-          {error}
-        </p>
-      )}
+      {message && <FormAlert message={message} />}
+      {totals}
     </div>
   );
 }

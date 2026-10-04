@@ -181,9 +181,14 @@ export async function getPublicBookingTracking(
     data: {
       bookingId: row.booking_id,
       status: row.status ?? "pending",
-      serviceName: items[0]?.serviceName ?? null,
+      serviceName:
+        items
+          .map((item) => item.serviceName)
+          .filter(Boolean)
+          .join(", ") || null,
       scheduledAt: toIso(row.scheduled_at),
       timezone: row.timezone,
+      durationMin: row.duration_min,
       mechanicName: row.mechanic_name,
       destination:
         row.address &&

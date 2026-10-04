@@ -32,6 +32,11 @@ export function toBookingItem(
     quantity: toNumberOr(row.quantity, 1),
     unitPrice: toNumberOr(row.unit_price),
     lineTotal: toNumberOr(row.line_total),
+    durationMin: row.duration_min ?? null,
+    priceUnit:
+      row.price_unit === "per_hour" || row.price_unit === "per_item"
+        ? row.price_unit
+        : "per_job",
   };
 }
 
@@ -79,9 +84,18 @@ export function toBookingSummary(parts: SummaryParts): MechanicBookingSummary {
     addressLng: detail?.address?.lng ?? null,
     scheduledAt: toIso(scheduledAt),
     timezone: detail?.timezone ?? null,
+    durationMin: detail?.duration_min ?? null,
     status,
     paymentState: toPaymentState(detail?.payment_status ?? null),
-    total: toNumberOr(workload.total ?? detail?.total),
+    subtotal: toNumberOr(
+      detail?.subtotal,
+      items.length > 0
+        ? items.reduce((sum, item) => sum + item.lineTotal, 0)
+        : toNumberOr(detail?.total),
+    ),
+    discount: toNumberOr(detail?.discount),
+    travelFee: toNumberOr(detail?.travel_fee),
+    total: toNumberOr(detail?.total ?? workload.total),
     serviceNames: items.map((item) => item.serviceName).filter(Boolean),
     notes: detail?.notes ?? "",
     createdAt: toIso(detail?.created_at ?? null),

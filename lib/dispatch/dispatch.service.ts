@@ -255,6 +255,7 @@ export async function applyDispatchAction(
       mechanicId,
       row.scheduled_at ?? new Date(),
       bookingId,
+      row.duration_min,
     );
     if (conflict !== false) {
       return fail(
