@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
 import { seedSessionUser } from "@/hooks/auth";
 import { useCreateBooking } from "@/hooks/booking";
@@ -31,6 +31,7 @@ import {
   emptyAddressValues,
   emptyVehicleValues,
 } from "./booking-prefill";
+import { focusFirstInvalid } from "./focus-first-invalid";
 import type { MapPoint } from "./MapPicker";
 
 const EMPTY_ERRORS: BookingFieldErrors = {};
@@ -96,6 +97,15 @@ export function useBookingForm({
   const [prefilled, setPrefilled] = useState(prefill !== null);
   const [walletId, setWalletId] = useState<string | null>(null);
   const minSlot = useMemo(() => minScheduled(), []);
+  const formRef = useRef<HTMLFormElement>(null);
+  // Bumped per rejected submit; the effect below scrolls/focuses the
+  // first flagged field since the confirm button lives in the aside.
+  const [invalidAttempt, setInvalidAttempt] = useState(0);
+
+  useEffect(() => {
+    if (invalidAttempt > 0 && formRef.current)
+      focusFirstInvalid(formRef.current);
+  }, [invalidAttempt]);
 
   useEffect(() => {
     if (initialServiceIds.length > 0) draft.setServiceIds(initialServiceIds);
@@ -159,6 +169,7 @@ export function useBookingForm({
     const selection = getBookingServiceSelection(serviceIds, services);
     if (selection.issue) {
       setErrors({ serviceIds: selection.issue });
+      setInvalidAttempt((count) => count + 1);
       return;
     }
     // datetime-local carries wall time without a zone: pin it to the
@@ -167,6 +178,7 @@ export function useBookingForm({
     const picked = new Date(scheduledAt);
     if (Number.isNaN(picked.getTime())) {
       setErrors({ scheduledAt: "Khung giờ không hợp lệ." });
+      setInvalidAttempt((count) => count + 1);
       return;
     }
     const payload = {
@@ -191,6 +203,7 @@ export function useBookingForm({
     const checked = validateCreateBookingInput(payload, { guest });
     if ("errors" in checked) {
       setErrors(checked.errors);
+      setInvalidAttempt((count) => count + 1);
       return;
     }
     setErrors(EMPTY_ERRORS);
@@ -227,12 +240,14 @@ export function useBookingForm({
             });
           }
           setErrors(error.errors);
+          setInvalidAttempt((count) => count + 1);
           toast.error(
             "Không tạo được lịch hẹn",
             error.errors.form ?? "Vui lòng kiểm tra lại thông tin.",
           );
         } else {
           setErrors({ form: "Không tạo được lịch hẹn. Vui lòng thử lại." });
+          setInvalidAttempt((count) => count + 1);
           toast.error("Không tạo được lịch hẹn", "Vui lòng thử lại sau.");
         }
       },
@@ -266,5 +281,6 @@ export function useBookingForm({
     handleMapAddress,
     resetDetails,
     handleSubmit,
+    formRef,
   };
 }

@@ -1,9 +1,6 @@
 import type { BookingFieldErrors } from "@/services/booking.api";
-import {
-  type AddressValues,
-  BookingAddressSection,
-} from "./BookingAddressSection";
 import { BookingScheduleSection } from "./BookingScheduleSection";
+import { BookingStep } from "./BookingStep";
 import {
   BookingVehicleSection,
   type VehicleValues,
@@ -12,30 +9,26 @@ import {
 type BookingDetailsSectionProps = {
   scheduledAt: string;
   min: string;
-  address: AddressValues;
   vehicle: VehicleValues;
   errors: BookingFieldErrors;
   disabled: boolean;
   onScheduledAt: (value: string) => void;
-  onAddress: (field: keyof AddressValues, value: string) => void;
   onVehicle: (field: keyof VehicleValues, value: string) => void;
 };
 
-// The typed half of the form: schedule, address and vehicle. Renders as
-// the middle column between the map and the mechanic picker on desktop.
+// Step 3 of the booking flow: the wished time slot and the vehicle the
+// mechanic prepares for. Location lives in step 2, next to the map.
 export function BookingDetailsSection({
   scheduledAt,
   min,
-  address,
   vehicle,
   errors,
   disabled,
   onScheduledAt,
-  onAddress,
   onVehicle,
 }: BookingDetailsSectionProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <BookingStep step={3} title="Thời gian và xe">
       <BookingScheduleSection
         value={scheduledAt}
         min={min}
@@ -43,18 +36,12 @@ export function BookingDetailsSection({
         disabled={disabled}
         onChange={onScheduledAt}
       />
-      <BookingAddressSection
-        values={address}
-        errors={errors}
-        disabled={disabled}
-        onChange={onAddress}
-      />
       <BookingVehicleSection
         values={vehicle}
         errors={errors}
         disabled={disabled}
         onChange={onVehicle}
       />
-    </div>
+    </BookingStep>
   );
 }

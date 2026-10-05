@@ -1,34 +1,30 @@
 "use client";
 
-import { SelectDropdown } from "@/app/admin/components/services/SelectDropdown";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { BookingServiceGallery } from "./BookingServiceGallery";
-import { toServiceSelectOptions } from "./service-select-options";
+import { BookingServiceSummary } from "./BookingServiceSummary";
 
 type BookingServiceMediaProps = {
-  services: ServiceItem[];
   service: ServiceItem | null;
-  onInspect: (id: string) => void;
+  multiple: boolean;
 };
 
+// In-flow preview panel inside step 1: the gallery and facts of the
+// service the customer last inspected. With several services the
+// per-line image toggles switch what this panel shows.
 export function BookingServiceMedia({
-  services,
   service,
-  onInspect,
+  multiple,
 }: BookingServiceMediaProps) {
   return (
-    <div className="flex flex-col gap-3 lg:col-start-2 xl:col-start-3 xl:row-span-3 xl:self-start xl:sticky xl:top-20">
-      {services.length > 1 && (
-        <SelectDropdown
-          label="Xem hình ảnh và đánh giá"
-          value={service?.id ?? ""}
-          options={toServiceSelectOptions(services)}
-          onChange={onInspect}
-          listLabel="Dịch vụ để xem chi tiết"
-          unitName="dịch vụ"
-        />
-      )}
+    <div className="flex min-w-0 flex-col gap-3">
       <BookingServiceGallery key={service?.id ?? "none"} service={service} />
+      {service && <BookingServiceSummary service={service} />}
+      {multiple && (
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+          Bấm biểu tượng ảnh ở từng dịch vụ để xem ảnh và đánh giá tương ứng.
+        </p>
+      )}
     </div>
   );
 }

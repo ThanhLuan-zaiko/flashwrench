@@ -27,7 +27,11 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
         <SiteLogo />
 
-        <div className="hidden min-w-0 flex-1 justify-center lg:flex">
+        {/* Seven labeled links plus the logo and a guest's
+        cart/theme/login controls need about 1,170px, so below xl the
+        inline nav collided with the controls. It therefore starts at
+        xl; narrower screens use the menu button instead. */}
+        <div className="hidden min-w-0 flex-1 justify-center xl:flex">
           <HeaderNav items={NAV_ITEMS} currentPath={activePath} />
         </div>
 
@@ -44,7 +48,7 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 lg:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 xl:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             {menuOpen ? (
               <FiX aria-hidden="true" className="h-6 w-6" />

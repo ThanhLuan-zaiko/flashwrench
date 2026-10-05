@@ -1,6 +1,6 @@
 "use client";
 
-import { FiX } from "react-icons/fi";
+import { FiImage, FiX } from "react-icons/fi";
 import {
   formatDuration,
   formatVnd,
@@ -12,6 +12,9 @@ import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 type SelectedServiceLinesProps = {
   serviceIds: readonly string[];
   services: readonly ServiceItem[];
+  // The service currently shown in the preview panel; marks the matching
+  // inspect toggle as pressed.
+  activeId?: string | null;
   disabled?: boolean;
   onRemove: (id: string) => void;
   onInspect?: (id: string) => void;
@@ -20,6 +23,7 @@ type SelectedServiceLinesProps = {
 export function SelectedServiceLines({
   serviceIds,
   services,
+  activeId,
   disabled,
   onRemove,
   onInspect,
@@ -32,23 +36,13 @@ export function SelectedServiceLines({
       {serviceIds.map((id) => {
         const service = services.find((item) => item.id === id);
         const name = service?.name ?? "Dịch vụ không còn khả dụng";
+        const inspecting = id === activeId;
         return (
           <li key={id} className="flex min-w-0 items-center gap-2 py-3">
             <div className="min-w-0 flex-1">
-              {onInspect && service ? (
-                <button
-                  type="button"
-                  onClick={() => onInspect(id)}
-                  aria-label={`Xem hình ảnh và đánh giá ${name}`}
-                  className="min-h-[44px] w-full break-words rounded-lg text-left text-sm font-semibold text-zinc-900 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-50"
-                >
-                  {name}
-                </button>
-              ) : (
-                <p className="break-words text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                  {name}
-                </p>
-              )}
+              <p className="break-words text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                {name}
+              </p>
               {service && (
                 <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
                   <span>
@@ -65,6 +59,21 @@ export function SelectedServiceLines({
                 </p>
               )}
             </div>
+            {onInspect && service && (
+              <button
+                type="button"
+                onClick={() => onInspect(id)}
+                aria-pressed={inspecting}
+                aria-label={`Xem hình ảnh và đánh giá ${name}`}
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 ${
+                  inspecting
+                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                    : "border-zinc-200 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                }`}
+              >
+                <FiImage aria-hidden="true" className="h-4 w-4" />
+              </button>
+            )}
             <button
               type="button"
               disabled={disabled}

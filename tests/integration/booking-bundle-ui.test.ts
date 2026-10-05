@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createElement, type ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { BookingDuration } from "@/components/booking/BookingDuration";
-import { BookingPriceSummary } from "@/components/booking/BookingPriceSummary";
 import { BookingSubmitButton } from "@/components/booking/BookingSubmitButton";
 import { BookingSuccess } from "@/components/booking/BookingSuccess";
 import { SelectedServiceLines } from "@/components/booking/SelectedServiceLines";
@@ -195,19 +194,6 @@ describe("multi-service booking interface", () => {
         }),
       ),
     ).toBe("");
-  });
-
-  test("discloses unit-based pricing and one visit's additional fees", () => {
-    const markup = render(
-      createElement(BookingPriceSummary, {
-        subtotal: 300000,
-        durationMin: 90,
-        unitPricing: true,
-      }),
-    );
-    expect(markup).toContain("300.000đ");
-    expect(markup).toContain("1 đơn vị");
-    expect(markup).toContain("cho cả lịch hẹn");
   });
 
   test("shows the subtotal, voucher and final price without multiplying the travel fee", () => {

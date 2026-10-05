@@ -52,14 +52,6 @@ export function BookingEntry({
   const catalog = usePublicCatalog();
   useServiceCatalogRealtime(true);
   const lastBooking = useLastBooking(!guest);
-  const selected = useMemo(() => {
-    if (current.serviceIds.length !== 1) return null;
-    return (
-      catalog.data?.services.find(
-        (service) => service.id === current.serviceIds[0],
-      ) ?? null
-    );
-  }, [catalog.data, current.serviceIds]);
   const prefill = useMemo(
     () => toBookingPrefill(lastBooking.data ?? null),
     [lastBooking.data],
@@ -185,7 +177,6 @@ export function BookingEntry({
       {ready && (
         <BookingForm
           key={`${guest ? "guest" : "customer"}:${serviceIds.join(",")}`}
-          preselected={selected}
           services={catalog.data?.services ?? []}
           initialServiceIds={serviceIds}
           prefill={prefill}

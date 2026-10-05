@@ -47,10 +47,8 @@ export function MechanicSection({
     items.find((item) => item.id === value)?.displayName ?? null;
 
   return (
-    <fieldset disabled={disabled} className="flex flex-col gap-2">
-      <legend className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-        Thợ sửa xe
-      </legend>
+    <fieldset disabled={disabled} className="flex min-w-0 flex-col gap-2">
+      <legend className="sr-only">Thợ sửa xe</legend>
 
       <label className={cardClasses(!pickerOpen)}>
         <input

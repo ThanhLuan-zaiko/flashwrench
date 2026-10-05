@@ -123,3 +123,7 @@ export function getBookingServiceSelection(
   }
   return { services, unavailableIds, subtotal, durationMin, issue };
 }
+
+export type BookingServiceSelection = ReturnType<
+  typeof getBookingServiceSelection
+>;

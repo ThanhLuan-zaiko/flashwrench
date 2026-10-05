@@ -1,45 +1,98 @@
-import {
-  formatDuration,
-  formatVnd,
-} from "@/app/admin/components/services/catalog-format";
+import { formatDuration } from "@/app/admin/components/services/catalog-format";
+import { FormAlert } from "@/components/auth/FormAlert";
+import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
+import { WalletPicker } from "@/components/vouchers/WalletPicker";
+import type { BookingServiceSelection } from "@/lib/booking/booking-service-selection";
+import type { BookingFieldErrors } from "@/services/booking.api";
+import { BookingSubmitButton } from "./BookingSubmitButton";
 
 type BookingPriceSummaryProps = {
-  subtotal: number;
-  durationMin: number;
-  unitPricing: boolean;
+  serviceIds: readonly string[];
+  selection: BookingServiceSelection;
+  guest: boolean;
+  walletId: string | null;
+  errors: BookingFieldErrors;
+  pending: boolean;
+  onWallet: (walletId: string | null) => void;
 };
 
+// Checkout-style summary aside, mirroring CheckoutSummary on /checkout:
+// running totals, the voucher picker and the confirm button in one card
+// that pins on `lg`. It is the only item in its grid column, so the
+// sticky pin can never slide it over another block. On mobile it lands
+// last, closing the stacked steps.
 export function BookingPriceSummary({
-  subtotal,
-  durationMin,
-  unitPricing,
+  serviceIds,
+  selection,
+  guest,
+  walletId,
+  errors,
+  pending,
+  onWallet,
 }: BookingPriceSummaryProps) {
+  const count = serviceIds.length;
+  const ready = count > 0 && selection.issue === null;
+  const unitPricing = selection.services.some(
+    (service) => service.priceUnit !== "per_job",
+  );
+  const hasErrors = Object.values(errors).some(Boolean);
+
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900">
-      <dl className="flex flex-col gap-1.5 text-sm">
-        <div className="flex items-center justify-between gap-3">
-          <dt className="text-zinc-600 dark:text-zinc-300">
-            Giá dịch vụ tạm tính
-          </dt>
-          <dd className="font-bold text-zinc-900 dark:text-zinc-50">
-            {formatVnd(subtotal)}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-3 text-xs">
-          <dt className="text-zinc-500 dark:text-zinc-400">
-            Tổng thời lượng dự kiến
-          </dt>
-          <dd className="font-semibold text-zinc-700 dark:text-zinc-200">
-            {formatDuration(durationMin)}
-          </dd>
-        </div>
-      </dl>
-      <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-        Chưa trừ voucher. Phụ tùng phát sinh và phí di chuyển được xác nhận
-        riêng cho cả lịch hẹn.
-        {unitPricing &&
-          " Dịch vụ tính theo giờ hoặc theo mục đang tạm tính cho 1 đơn vị."}
-      </p>
-    </div>
+    <aside
+      aria-label="Tóm tắt lịch hẹn"
+      className="flex min-w-0 flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 lg:sticky lg:top-20 dark:border-zinc-800 dark:bg-zinc-950"
+    >
+      <div>
+        <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+          Tóm tắt lịch hẹn
+        </h2>
+        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          {ready
+            ? `${count} dịch vụ · Khoảng ${formatDuration(selection.durationMin)}`
+            : count === 0
+              ? "Chọn ít nhất một dịch vụ ở bước 1 để xem tạm tính."
+              : "Hãy xử lý cảnh báo ở bước 1 để xem tạm tính."}
+        </p>
+      </div>
+      {ready &&
+        (guest ? (
+          <div className="flex flex-col gap-2">
+            <VoucherTotals subtotal={selection.subtotal} discount={0} />
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              Đăng nhập để dùng voucher trong ví của bạn.
+            </p>
+          </div>
+        ) : (
+          <WalletPicker
+            kind="booking"
+            subtotal={selection.subtotal}
+            value={walletId}
+            error={errors.walletId}
+            disabled={pending}
+            showTotals
+            onChange={onWallet}
+          />
+        ))}
+      {ready && (
+        <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+          Phụ tùng phát sinh và phí di chuyển được xác nhận riêng cho cả lịch
+          hẹn.
+          {unitPricing &&
+            " Dịch vụ tính theo giờ hoặc theo mục đang tạm tính cho 1 đơn vị."}
+        </p>
+      )}
+      {hasErrors && (
+        <FormAlert
+          message={
+            errors.form ?? "Vui lòng kiểm tra lại các ô được đánh dấu đỏ."
+          }
+        />
+      )}
+      <BookingSubmitButton
+        pending={pending}
+        disabled={!ready}
+        serviceCount={count}
+      />
+    </aside>
   );
 }

@@ -26,7 +26,7 @@ export function BookingGuestSection({ form }: { form: GuestFormState }) {
     clearError,
   } = form;
   return (
-    <div className="flex flex-col gap-4 lg:col-start-2">
+    <div className="flex flex-col gap-4">
       <BookingGuestContact
         values={contact}
         errors={errors}
