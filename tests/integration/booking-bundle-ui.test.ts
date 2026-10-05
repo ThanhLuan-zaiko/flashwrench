@@ -70,11 +70,13 @@ describe("multi-service booking interface", () => {
         selected: true,
         disabledReason: null,
         onToggle: noop,
+        onPreview: noop,
       }),
     );
     expect(markup).toContain('aria-pressed="true"');
     expect(markup).toContain("Đã thêm · Bỏ chọn");
-    expect(markup.match(/<button\b/g)).toHaveLength(1);
+    // Quick-view eye + the selection toggle.
+    expect(markup.match(/<button\b/g)).toHaveLength(2);
     expect(markup).not.toContain('href="/booking');
     expect(markup).not.toContain("Đặt dịch vụ");
     expect(markup).toContain("dark:border-zinc-100");
@@ -87,12 +89,16 @@ describe("multi-service booking interface", () => {
         selected: false,
         disabledReason: null,
         onToggle: noop,
+        onPreview: noop,
       }),
     );
     expect(markup).toContain('aria-pressed="false"');
     expect(markup).toContain("Thêm vào lịch hẹn");
     expect(markup).toContain('aria-label="Thêm Thay dầu động cơ vào lịch hẹn"');
-    expect(markup.match(/<button\b/g)).toHaveLength(1);
+    expect(markup).toContain(
+      'aria-label="Xem nhanh chi tiết Thay dầu động cơ"',
+    );
+    expect(markup.match(/<button\b/g)).toHaveLength(2);
     expect(markup).not.toContain('href="/booking');
     expect(markup).not.toContain("Đang kiểm tra đăng nhập");
   });
@@ -105,6 +111,7 @@ describe("multi-service booking interface", () => {
           selected,
           disabledReason: "Hãy đặt riêng dịch vụ này.",
           onToggle: noop,
+          onPreview: noop,
         }),
       );
     const unselected = renderCard(false);
@@ -128,6 +135,7 @@ describe("multi-service booking interface", () => {
             selected: true,
             disabledReason: null,
             onToggle: noop,
+            onPreview: noop,
           }),
         ),
         createElement(ServicesSelectionBar, {

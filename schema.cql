@@ -417,6 +417,43 @@ CREATE TABLE IF NOT EXISTS services_by_slug (
 -- payment_status = unpaid | partial | paid | refunded
 -- ============================================================================
 
+-- Booking intake tuning (single row, config_id = 'default').
+-- Admins move the lead-time window and the customer cancel cutoff with
+-- staffing instead of deploys. 0 means "no cap" for the optional knobs.
+CREATE TABLE IF NOT EXISTS booking_config (
+  config_id             TEXT PRIMARY KEY, -- constant 'default'
+  min_lead_days         INT,    -- earliest slot = now + this many days (0..14)
+  max_advance_days      INT,    -- latest slot = now + this many days (0 = no cap)
+  cancel_cutoff_hours   INT,    -- self-serve cancel stops this many hours before the slot (0 = anytime)
+  guest_booking_enabled BOOLEAN, -- guest intake allowed (null/absent row = enabled)
+  updated_at            TIMESTAMP,
+  updated_by            UUID
+);
+
+-- Storefront identity (single row, config_id = 'default'). Public read:
+-- hotline/address render in customer touchpoints (cancel note, contact).
+CREATE TABLE IF NOT EXISTS shop_profile (
+  config_id    TEXT PRIMARY KEY, -- constant 'default'
+  display_name TEXT,
+  hotline      TEXT,
+  address      TEXT,
+  updated_at   TIMESTAMP,
+  updated_by   UUID
+);
+
+-- Daily working window in the shop zone (single row, config_id =
+-- 'default'). Minutes since midnight (0..1439); booking intake rejects
+-- slots outside [opens_at_min, closes_at_min) when enabled.
+CREATE TABLE IF NOT EXISTS business_hours (
+  config_id     TEXT PRIMARY KEY, -- constant 'default'
+  enabled       BOOLEAN,
+  opens_at_min  INT,
+  closes_at_min INT,
+  timezone      TEXT,             -- IANA zone, default Asia/Ho_Chi_Minh
+  updated_at    TIMESTAMP,
+  updated_by    UUID
+);
+
 -- Query: single booking details (customer / vehicle / mechanic names denormalized)
 CREATE TABLE IF NOT EXISTS bookings_by_id (
   booking_id        UUID PRIMARY KEY,

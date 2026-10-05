@@ -12,13 +12,20 @@ import type {
   CreateBookingInput,
   NormalizedBookingInput,
 } from "./booking.types";
+import {
+  BOOKING_MIN_LEAD_DAYS,
+  normalizeScheduledAt,
+  type ScheduleWindowOptions,
+} from "./booking-schedule.validation";
 import { normalizeBookingServices } from "./booking-services.validation";
 import { normalizeBookingTimeZone } from "./booking-timezone.validation";
 import { normalizeWalletId } from "./booking-wallet.validation";
 
 // The slot is a customer wish — staff confirm the real time later — so
-// the only bound is enough lead time to arrange the visit (2 days).
-export const BOOKING_MIN_LEAD_DAYS = 2;
+// the only bound is the intake window in booking-schedule.validation.
+// The 2-day floor is the code default; admins retune it via
+// booking_config and the value reaches this validator through options.
+export { BOOKING_MIN_LEAD_DAYS };
 export const BOOKING_NAME_MAX = 100;
 export const BOOKING_ADDRESS_MIN = 10;
 export const BOOKING_ADDRESS_MAX = 300;
@@ -29,13 +36,6 @@ export const BOOKING_PLACE_MAX = 120;
 export const BOOKING_VEHICLE_TEXT_MAX = 60;
 
 const PLATE_PATTERN = /^[A-Z0-9][A-Z0-9.\-\s]*[A-Z0-9]$/i;
-
-// Wall-clock strings ("2026-09-17T09:00") parse in the SERVER zone, so a
-// UTC container would shift every booking by hours. Only instants with
-// an explicit designator (Z or ±hh:mm) are accepted; the form always
-// converts datetime-local through the browser zone before submitting.
-const ISO_WITH_OFFSET_PATTERN =
-  /T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:?\d{2})$/;
 
 function optionalText(
   value: unknown,
@@ -69,7 +69,7 @@ function optionalText(
 // messages: they are shown directly in the form.
 export function validateCreateBookingInput(
   input: CreateBookingInput,
-  options?: { guest?: boolean },
+  options?: { guest?: boolean } & ScheduleWindowOptions,
 ): { value: NormalizedBookingInput } | { errors: BookingFieldErrors } {
   const errors: BookingFieldErrors = {};
 
@@ -131,28 +131,11 @@ export function validateCreateBookingInput(
   );
   const serviceId = serviceIds[0] ?? "";
 
-  let scheduledAt: Date | null = null;
-  const rawScheduled =
-    typeof input.scheduledAt === "string" ? input.scheduledAt.trim() : "";
-  if (!rawScheduled) {
-    errors.scheduledAt = "Vui lòng chọn khung giờ.";
-  } else if (!ISO_WITH_OFFSET_PATTERN.test(rawScheduled)) {
-    errors.scheduledAt =
-      "Khung giờ thiếu múi giờ. Vui lòng đặt lại từ trang đặt lịch.";
-  } else {
-    const parsed = new Date(rawScheduled);
-    if (Number.isNaN(parsed.getTime())) {
-      errors.scheduledAt = "Khung giờ không hợp lệ.";
-    } else {
-      const earliest = Date.now() + BOOKING_MIN_LEAD_DAYS * 24 * 60 * 60 * 1000;
-      if (parsed.getTime() < earliest) {
-        errors.scheduledAt =
-          "Vui lòng đặt trước ít nhất 2 ngày để shop kịp liên hệ chốt lịch.";
-      } else {
-        scheduledAt = parsed;
-      }
-    }
-  }
+  const scheduledAt = normalizeScheduledAt(
+    input.scheduledAt,
+    options ?? {},
+    errors,
+  );
 
   const address =
     typeof input.address === "string"

@@ -7,13 +7,29 @@ import {
   resetRouteMocks,
   routeStubs,
 } from "../helpers/route-mocks";
+import {
+  bookingConfigRepoMocks,
+  businessHoursRepoMocks,
+  resetWorkspaceMocks,
+  workspaceStubs,
+} from "../helpers/workspace.mocks";
 
 // Inline-signup orchestration suite: the booking input is validated before
 // any account write, registerUser consumes the contact trio + password,
 // and the booking lands on the fresh user. Both domain services are
-// stubbed — this file guards the wiring, not their internals.
+// stubbed — this file guards the wiring, not their internals. The intake
+// policy tables are stubbed too so a local keyspace can't flip the
+// guest/hours knobs under the tests.
 mock.module("@/lib/auth/auth.service", () => authServiceMocks);
 mock.module("@/lib/booking/booking.service", () => bookingServiceMocks);
+mock.module(
+  "@/lib/booking/booking-config.repository",
+  () => bookingConfigRepoMocks,
+);
+mock.module(
+  "@/lib/shop/business-hours.repository",
+  () => businessHoursRepoMocks,
+);
 
 import { createGuestBookingWithAccount } from "@/lib/booking/booking-signup.service";
 
@@ -35,6 +51,7 @@ function signupInput(overrides?: Record<string, unknown>) {
 
 beforeEach(() => {
   resetRouteMocks();
+  resetWorkspaceMocks();
 });
 
 describe("createGuestBookingWithAccount", () => {
@@ -140,5 +157,25 @@ describe("createGuestBookingWithAccount", () => {
     expect(result).toMatchObject({ ok: false, status: 409 });
     if (result.ok) return;
     expect(result.errors.form).toContain("Thợ đã chọn");
+  });
+
+  // Intake policy gates guest signup before registerUser — a dangling
+  // account must never outlive a rejected booking attempt.
+  test("blocks guest signup when intake is closed for guests", async () => {
+    workspaceStubs.bookingConfigRow = {
+      config_id: "default",
+      min_lead_days: 2,
+      max_advance_days: 0,
+      cancel_cutoff_hours: 0,
+      guest_booking_enabled: false,
+      updated_at: null,
+      updated_by: null,
+    };
+
+    const result = await createGuestBookingWithAccount(signupInput(), "device");
+
+    expect(result).toMatchObject({ ok: false, status: 403 });
+    expect(authServiceMocks.registerUser).not.toHaveBeenCalled();
+    expect(bookingServiceMocks.createCustomerBooking).not.toHaveBeenCalled();
   });
 });

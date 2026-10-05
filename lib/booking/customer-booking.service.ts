@@ -10,6 +10,7 @@ import { publishBookingChange } from "@/lib/realtime/domain-publish";
 import { isUuid } from "@/lib/validation";
 import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
 import { restoreWalletForRef } from "@/lib/vouchers/voucher-spend.service";
+import { getBookingPolicy } from "./booking-config.service";
 import {
   mapBookingSummaries,
   readBookingDetail,
@@ -184,6 +185,20 @@ export async function cancelCustomerBooking(
   }
   if (!CANCELLABLE_STATUSES.has(current)) {
     return fail(400, "Đơn hàng ở trạng thái này không thể hủy.");
+  }
+
+  // Admin-tuned cutoff: past `scheduledAt - cutoff` the mechanic may already
+  // be on the way, so self-serve cancel closes. 0 disables the check.
+  const { cancelCutoffHours } = await getBookingPolicy();
+  if (cancelCutoffHours > 0 && row.scheduled_at) {
+    const cutoffAt =
+      row.scheduled_at.getTime() - cancelCutoffHours * 60 * 60 * 1000;
+    if (Date.now() > cutoffAt) {
+      return fail(
+        400,
+        `Đơn chỉ hủy được trước giờ hẹn ít nhất ${cancelCutoffHours} giờ. Gọi hotline nếu cần hỗ trợ.`,
+      );
+    }
   }
 
   const at = nextTransitionAt(row);

@@ -8,6 +8,10 @@ import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoTeaser } from "@/components/promotions/PromoTeaser";
 import { useLastBooking } from "@/hooks/booking";
 import {
+  useBookingConfigRealtime,
+  usePublicBookingConfig,
+} from "@/hooks/booking-config";
+import {
   usePublicCatalog,
   useServiceCatalogRealtime,
 } from "@/hooks/public-catalog";
@@ -51,6 +55,10 @@ export function BookingEntry({
   );
   const catalog = usePublicCatalog();
   useServiceCatalogRealtime(true);
+  // Guest intake is an admin knob; subscribe here too so the gate below
+  // reacts live even while the form itself is not mounted.
+  const bookingConfig = usePublicBookingConfig();
+  useBookingConfigRealtime(true);
   const lastBooking = useLastBooking(!guest);
   const prefill = useMemo(
     () => toBookingPrefill(lastBooking.data ?? null),
@@ -64,6 +72,10 @@ export function BookingEntry({
     );
   const ready =
     catalog.data !== undefined && !message && (guest || !lastBooking.isPending);
+  // Guests can keep browsing services, but submitting needs a sign-in
+  // while the shop has guest intake switched off.
+  const guestBlocked =
+    guest && bookingConfig.data?.guestBookingEnabled === false;
 
   if (created) {
     return (
@@ -174,7 +186,28 @@ export function BookingEntry({
           </Link>
         </div>
       )}
-      {ready && (
+      {ready && guestBlocked && (
+        <section
+          aria-label="Yêu cầu đăng nhập"
+          data-reveal
+          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
+        >
+          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+            Cửa hàng đang yêu cầu đăng nhập để đặt lịch
+          </p>
+          <p className="mx-auto mt-1 max-w-md text-xs text-zinc-500 dark:text-zinc-400">
+            Đăng nhập để tiếp tục — dịch vụ bạn đã chọn được giữ nguyên. Nếu cần
+            gấp, hãy gọi hotline để được hỗ trợ.
+          </p>
+          <Link
+            href={buildLoginHref(buildBookingHref(current.serviceIds))}
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+          >
+            Đăng nhập để đặt lịch
+          </Link>
+        </section>
+      )}
+      {ready && !guestBlocked && (
         <BookingForm
           key={`${guest ? "guest" : "customer"}:${serviceIds.join(",")}`}
           services={catalog.data?.services ?? []}

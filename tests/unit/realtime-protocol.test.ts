@@ -2,7 +2,9 @@ import { describe, expect, test } from "bun:test";
 import {
   ADMIN_USERS_TOPIC,
   BOOKING_ASSIGNED_EVENT_KIND,
+  BOOKING_CONFIG_TOPIC,
   BOOKING_CREATED_EVENT_KIND,
+  BUSINESS_HOURS_TOPIC,
   bookingChatTopic,
   bookingIdFromTopic,
   bookingTopic,
@@ -18,6 +20,7 @@ import {
   parseServerMessage,
   partTopic,
   SERVICE_CATALOG_TOPIC,
+  SHOP_PROFILE_TOPIC,
   STAFF_PASSWORDS_TOPIC,
   userTopic,
 } from "@/lib/realtime/protocol";
@@ -94,6 +97,25 @@ describe("realtime protocol", () => {
     expect(canPublish(ADMIN, SERVICE_CATALOG_TOPIC)).toBe(false);
     expect(canPublish(CUSTOMER, SERVICE_CATALOG_TOPIC)).toBe(false);
     expect(canPublish(null, SERVICE_CATALOG_TOPIC)).toBe(false);
+  });
+
+  test("opens the booking config topic to guests but never to publishers", () => {
+    expect(canSubscribe(null, BOOKING_CONFIG_TOPIC)).toBe(true);
+    expect(canSubscribe(CUSTOMER, BOOKING_CONFIG_TOPIC)).toBe(true);
+    expect(canSubscribe(ADMIN, BOOKING_CONFIG_TOPIC)).toBe(true);
+    expect(canPublish(ADMIN, BOOKING_CONFIG_TOPIC)).toBe(false);
+    expect(canPublish(CUSTOMER, BOOKING_CONFIG_TOPIC)).toBe(false);
+    expect(canPublish(null, BOOKING_CONFIG_TOPIC)).toBe(false);
+  });
+
+  test("opens the shop settings topics to guests but never to publishers", () => {
+    for (const topic of [SHOP_PROFILE_TOPIC, BUSINESS_HOURS_TOPIC]) {
+      expect(canSubscribe(null, topic)).toBe(true);
+      expect(canSubscribe(CUSTOMER, topic)).toBe(true);
+      expect(canSubscribe(ADMIN, topic)).toBe(true);
+      expect(canPublish(ADMIN, topic)).toBe(false);
+      expect(canPublish(CUSTOMER, topic)).toBe(false);
+    }
   });
 
   test("opens part feedback topics to guests but never to publishers", () => {

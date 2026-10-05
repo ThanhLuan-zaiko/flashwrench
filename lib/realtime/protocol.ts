@@ -10,6 +10,9 @@ export type RealtimeUser = { id: string; role: UserRole };
 export const STAFF_PASSWORDS_TOPIC = "staff-passwords";
 export const SERVICE_CATALOG_TOPIC = "service-catalog";
 export const PARTS_CATALOG_TOPIC = "parts-catalog";
+export const BOOKING_CONFIG_TOPIC = "booking-config";
+export const SHOP_PROFILE_TOPIC = "shop-profile";
+export const BUSINESS_HOURS_TOPIC = "business-hours";
 export const PROMOTIONS_TOPIC = "promotions";
 export const OPERATIONS_TOPIC = "operations";
 export const ADMIN_USERS_TOPIC = "admin-users";
@@ -180,6 +183,9 @@ type TopicKind =
   | "staff-passwords"
   | "service-catalog"
   | "parts-catalog"
+  | "booking-config"
+  | "shop-profile"
+  | "business-hours"
   | "promotions"
   | "operations"
   | "admin-users"
@@ -202,6 +208,9 @@ function topicKind(topic: string): TopicKind {
   if (topic === STAFF_PASSWORDS_TOPIC) return "staff-passwords";
   if (topic === SERVICE_CATALOG_TOPIC) return "service-catalog";
   if (topic === PARTS_CATALOG_TOPIC) return "parts-catalog";
+  if (topic === BOOKING_CONFIG_TOPIC) return "booking-config";
+  if (topic === SHOP_PROFILE_TOPIC) return "shop-profile";
+  if (topic === BUSINESS_HOURS_TOPIC) return "business-hours";
   if (topic === PROMOTIONS_TOPIC) return "promotions";
   if (topic === OPERATIONS_TOPIC) return "operations";
   if (topic === ADMIN_USERS_TOPIC) return "admin-users";
@@ -228,6 +237,9 @@ export function canSubscribe(
   if (
     kind === "service-catalog" ||
     kind === "parts-catalog" ||
+    kind === "booking-config" ||
+    kind === "shop-profile" ||
+    kind === "business-hours" ||
     kind === "promotions" ||
     kind === "mechanic-directory" ||
     kind === "part"

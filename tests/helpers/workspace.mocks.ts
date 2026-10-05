@@ -1,5 +1,9 @@
 import { mock } from "bun:test";
 import type {
+  BookingConfigRow,
+  SaveBookingConfigParams,
+} from "@/lib/booking/booking-config.repository";
+import type {
   BookingTravelPointRow,
   BookingTravelPointWrite,
 } from "@/lib/booking/booking-travel.repository";
@@ -29,6 +33,12 @@ import type {
   VehicleRow,
 } from "@/lib/vehicles/vehicle.repository";
 import { resetPaymentMocks } from "./payment.mocks";
+import {
+  businessHoursRepoMocks,
+  resetShopSettingsMocks,
+  shopProfileRepoMocks,
+  shopSettingsStubs,
+} from "./shop-settings.mocks";
 
 export {
   paymentRepoMocks,
@@ -42,6 +52,7 @@ export {
   makeVehicleRow,
   VEHICLE_ID,
 } from "./workspace.fixtures";
+export { businessHoursRepoMocks, shopProfileRepoMocks, shopSettingsStubs };
 
 export const workspaceStubs = {
   vehicleById: null as VehicleRow | null,
@@ -79,6 +90,7 @@ export const workspaceStubs = {
   insertedTravelPoints: [] as BookingTravelPointWrite[],
   dispatchRefPage: { rows: [], pageState: null } as StatusBookingPage,
   dispatchRefPages: [] as StatusBookingPage[],
+  bookingConfigRow: null as BookingConfigRow | null,
   profileInit: [] as MechanicProfileInitParams[],
   presenceUpdates: [] as MechanicPresenceUpdateParams[],
   published: [] as { topic: string; payload: unknown }[],
@@ -212,6 +224,16 @@ export const bookingTravelRepoMocks = {
   ),
 };
 
+export const bookingConfigRepoMocks = {
+  findBookingConfig: mock(
+    async (): Promise<BookingConfigRow | null> =>
+      workspaceStubs.bookingConfigRow,
+  ),
+  saveBookingConfig: mock(
+    async (_params: SaveBookingConfigParams): Promise<void> => undefined,
+  ),
+};
+
 export const dispatchRepoMocks = {
   listStatusBookingRefs: mock(
     async (
@@ -292,6 +314,8 @@ export function resetWorkspaceMocks(): void {
   workspaceStubs.insertedTravelPoints = [];
   workspaceStubs.dispatchRefPage = { rows: [], pageState: null };
   workspaceStubs.dispatchRefPages = [];
+  workspaceStubs.bookingConfigRow = null;
+  resetShopSettingsMocks();
   workspaceStubs.profileInit = [];
   workspaceStubs.presenceUpdates = [];
   workspaceStubs.published = [];
@@ -301,6 +325,7 @@ export function resetWorkspaceMocks(): void {
   for (const fn of Object.values(customerBookingsRepoMocks)) fn.mockClear();
   for (const fn of Object.values(bookingTravelRepoMocks)) fn.mockClear();
   for (const fn of Object.values(dispatchRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(bookingConfigRepoMocks)) fn.mockClear();
   for (const fn of Object.values(domainPublishMocks)) fn.mockClear();
   for (const fn of Object.values(realtimePublishMocks)) fn.mockClear();
   for (const fn of Object.values(mechanicAccountSyncMocks)) fn.mockClear();

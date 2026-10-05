@@ -123,6 +123,7 @@ type DateTimeProps = {
   id: string;
   value: string;
   min: string;
+  max?: string;
   onChange: (value: string) => void;
   error?: string;
   disabled?: boolean;
@@ -132,6 +133,7 @@ export function BookingDateTimeInput({
   id,
   value,
   min,
+  max,
   onChange,
   error,
   disabled,
@@ -142,6 +144,7 @@ export function BookingDateTimeInput({
       type="datetime-local"
       value={value}
       min={min}
+      max={max === "" ? undefined : max}
       onChange={(event) => onChange(event.target.value)}
       disabled={disabled}
       aria-invalid={Boolean(error)}

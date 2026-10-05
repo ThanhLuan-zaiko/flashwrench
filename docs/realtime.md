@@ -39,6 +39,7 @@ Server trả về `event` (`topic`, `payload`, `from`), `subscribed`,
 | Topic                    | Nghe                       | Gửi từ browser              |
 | ------------------------ | -------------------------- | --------------------------- |
 | `service-catalog`        | công khai (kể cả khách chưa đăng nhập) | server-only (route publish) |
+| `booking-config`         | công khai (form /booking của khách)    | server-only (route publish) |
 | `staff-passwords`        | admin                      | server-only (route publish) |
 | `user:{userId}`          | chính chủ hoặc admin       | server-only                 |
 | `booking:{id}`           | đã đăng nhập (v1, sẽ siết theo participant) | server-only |

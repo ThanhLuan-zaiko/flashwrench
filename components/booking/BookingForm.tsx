@@ -67,6 +67,10 @@ export function BookingForm({
     prefilled,
     pending,
     minSlot,
+    maxSlot,
+    leadDays,
+    maxDays,
+    hoursLabel,
     clearError,
     handleMapAddress,
     resetDetails,
@@ -126,6 +130,10 @@ export function BookingForm({
           <BookingDetailsSection
             scheduledAt={scheduledAt}
             min={minSlot}
+            max={maxSlot}
+            leadDays={leadDays}
+            maxDays={maxDays}
+            hoursLabel={hoursLabel}
             vehicle={vehicle}
             errors={errors}
             disabled={pending}

@@ -25,7 +25,6 @@ import { BookingApiError } from "@/services/booking.api";
 import type { MapAddressValues } from "@/services/geocode.api";
 import type { AddressValues } from "./BookingAddressSection";
 import type { VehicleValues } from "./BookingVehicleSection";
-import { defaultScheduled, minScheduled } from "./booking-datetime";
 import type { BookingDraft } from "./booking-draft";
 import {
   type BookingPrefill,
@@ -35,6 +34,7 @@ import {
 import { focusFirstInvalid } from "./focus-first-invalid";
 import type { MapPoint } from "./MapPicker";
 import { useBookingDraft } from "./useBookingDraft";
+import { useScheduleWindow } from "./useScheduleWindow";
 
 const EMPTY_ERRORS: BookingFieldErrors = {};
 
@@ -82,7 +82,20 @@ export function useBookingForm({
     password: "",
     confirmPassword: "",
   });
-  const [scheduledAt, setScheduledAt] = useState(defaultScheduled);
+  // Admin-tuned intake window (lead floor + advance cap): until the
+  // public config lands, the form behaves like the old hardcoded rules.
+  const {
+    scheduledAt,
+    minSlot,
+    maxSlot,
+    leadDays,
+    maxDays,
+    openWindow,
+    hoursLabel,
+    pick: setScheduledAt,
+    restore: restoreScheduledAt,
+    reset: resetSchedule,
+  } = useScheduleWindow();
   const [coords, setCoords] = useState<MapPoint | null>(
     prefill?.coords ?? null,
   );
@@ -99,7 +112,6 @@ export function useBookingForm({
   const [prefilled, setPrefilled] = useState(prefill !== null);
   const [walletId, setWalletId] = useState<string | null>(null);
   const [voucherCode, setVoucherCode] = useState("");
-  const minSlot = useMemo(() => minScheduled(), []);
   const formRef = useRef<HTMLFormElement>(null);
   // Bumped per rejected submit; the effect below scrolls/focuses the
   // first flagged field since the confirm button lives in the aside.
@@ -120,11 +132,7 @@ export function useBookingForm({
     values: draftValues,
     onRestore: (draft) => {
       if (guest) setContact(draft.contact);
-      // datetime-local strings compare lexicographically; a stale slot
-      // earlier than the allowed minimum keeps the fresh default.
-      if (draft.scheduledAt !== "" && draft.scheduledAt >= minSlot) {
-        setScheduledAt(draft.scheduledAt);
-      }
+      restoreScheduledAt(draft.scheduledAt);
       setCoords(draft.coords);
       setAddress(draft.address);
       setVehicle(draft.vehicle);
@@ -185,7 +193,7 @@ export function useBookingForm({
     setMechanicId(null);
     setAddress(emptyAddressValues());
     setVehicle(emptyVehicleValues());
-    setScheduledAt(defaultScheduled());
+    resetSchedule();
     setErrors(EMPTY_ERRORS);
     setPrefilled(false);
   }
@@ -227,7 +235,12 @@ export function useBookingForm({
       ...address,
       ...vehicle,
     };
-    const checked = validateCreateBookingInput(payload, { guest });
+    const checked = validateCreateBookingInput(payload, {
+      guest,
+      minLeadDays: leadDays,
+      maxAdvanceDays: maxDays,
+      openWindow,
+    });
     if ("errors" in checked) {
       setErrors(checked.errors);
       setInvalidAttempt((count) => count + 1);
@@ -309,6 +322,10 @@ export function useBookingForm({
     prefilled,
     pending: createBooking.isPending || createBooking.isSuccess,
     minSlot,
+    maxSlot,
+    leadDays,
+    maxDays,
+    hoursLabel,
     clearError,
     handleMapAddress,
     resetDetails,

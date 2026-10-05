@@ -4,6 +4,11 @@ import { useState } from "react";
 import { FiLoader } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { useCancelBooking } from "@/hooks/booking";
+import { usePublicBookingConfig } from "@/hooks/booking-config";
+import {
+  usePublicShopProfile,
+  useShopProfileRealtime,
+} from "@/hooks/shop-settings";
 import { useSessionExpired } from "@/hooks/useSessionExpired";
 import type { MechanicBookingStatus } from "@/lib/mechanic/mechanic.types";
 import { BookingApiError } from "@/services/booking.api";
@@ -14,14 +19,18 @@ const MAX_CANCEL_NOTE = 300;
 type BookingCancelSectionProps = {
   bookingId: string;
   status: MechanicBookingStatus;
+  scheduledAt: string | null;
 };
 
 // Customer self-cancel inside the booking detail dialog: two-step confirm
 // plus a mandatory reason (the server stores it on the shared timeline and
-// releases the assigned mechanic). Only pre-departure statuses qualify.
+// releases the assigned mechanic). Only pre-departure statuses qualify, and
+// an admin-tuned cutoff may close self-serve near the slot — the server
+// re-checks the live value on submit either way.
 export function BookingCancelSection({
   bookingId,
   status,
+  scheduledAt,
 }: BookingCancelSectionProps) {
   const [confirming, setConfirming] = useState(false);
   const [note, setNote] = useState("");
@@ -30,8 +39,37 @@ export function BookingCancelSection({
   const toast = useToast();
   const sessionExpired = useSessionExpired();
   const fieldId = `cancel-note-${bookingId}`;
+  const cutoffHours = usePublicBookingConfig().data?.cancelCutoffHours ?? 0;
+  // The cutoff message points at the configured hotline when the shop
+  // publishes one — falls back to plain text otherwise.
+  const hotline = usePublicShopProfile().data?.hotline ?? null;
+  useShopProfileRealtime(true);
+  const scheduledMs = scheduledAt ? new Date(scheduledAt).getTime() : null;
+  const cutoffPassed =
+    cutoffHours > 0 &&
+    scheduledMs !== null &&
+    Date.now() > scheduledMs - cutoffHours * 60 * 60 * 1000;
 
   if (!canCustomerCancelBooking(status)) return null;
+
+  if (cutoffPassed) {
+    return (
+      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        Lịch chỉ tự hủy được trước giờ hẹn ít nhất {cutoffHours} giờ.{" "}
+        {hotline ? (
+          <a
+            href={`tel:${hotline.replace(/\s/g, "")}`}
+            className="font-semibold text-zinc-700 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-200"
+          >
+            Gọi hotline {hotline}
+          </a>
+        ) : (
+          "Gọi hotline"
+        )}{" "}
+        nếu bạn cần hỗ trợ.
+      </p>
+    );
+  }
 
   const cancel = () => {
     const trimmed = note.trim().replace(/\s+/g, " ");

@@ -33,6 +33,8 @@ import {
   VOUCHER_WALLET_ID,
 } from "../helpers/voucher.fixtures";
 import {
+  bookingConfigRepoMocks,
+  businessHoursRepoMocks,
   domainPublishMocks,
   vehicleRepoMocks,
 } from "../helpers/workspace.mocks";
@@ -67,6 +69,14 @@ mock.module(
 );
 mock.module("@/lib/vouchers/voucher-realtime", () => voucherRealtimeMocks);
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module(
+  "@/lib/booking/booking-config.repository",
+  () => bookingConfigRepoMocks,
+);
+mock.module(
+  "@/lib/shop/business-hours.repository",
+  () => businessHoursRepoMocks,
+);
 
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 

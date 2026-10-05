@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
-import { makeUserRow } from "../helpers/auth.fixtures";
+import { makePublicUser, makeUserRow } from "../helpers/auth.fixtures";
 import { makeBookingInput } from "../helpers/booking.fixtures";
 import { makeCategoryRow, makeServiceRow } from "../helpers/catalog.fixtures";
 import {
@@ -25,10 +25,13 @@ import {
   userRepoMocks,
 } from "../helpers/service-mocks";
 import {
+  bookingConfigRepoMocks,
+  businessHoursRepoMocks,
   dispatchRepoMocks,
   domainPublishMocks,
   resetWorkspaceMocks,
   vehicleRepoMocks,
+  workspaceStubs,
 } from "../helpers/workspace.mocks";
 
 // Guest booking suite: same mock harness as booking.service.test.ts,
@@ -60,6 +63,14 @@ mock.module(
 );
 mock.module("@/lib/dispatch/dispatch.repository", () => dispatchRepoMocks);
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module(
+  "@/lib/booking/booking-config.repository",
+  () => bookingConfigRepoMocks,
+);
+mock.module(
+  "@/lib/shop/business-hours.repository",
+  () => businessHoursRepoMocks,
+);
 
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 
@@ -78,6 +89,52 @@ beforeEach(() => {
 });
 
 describe("guest bookings (customer = null)", () => {
+  test("stops guest intake when the admin toggle is off", async () => {
+    workspaceStubs.bookingConfigRow = {
+      config_id: "default",
+      min_lead_days: 2,
+      max_advance_days: 0,
+      cancel_cutoff_hours: 0,
+      guest_booking_enabled: false,
+      updated_at: null,
+      updated_by: null,
+    };
+
+    const result = await createCustomerBooking(
+      null,
+      makeBookingInput(GUEST_CONTACT),
+    );
+
+    expect(result).toMatchObject({ ok: false, status: 403 });
+    if (result.ok) return;
+    expect(result.errors.form).toContain("đăng nhập");
+    expect(bookingStubs.inserts).toHaveLength(0);
+    expect(catalogServiceRepoMocks.findServiceRowById).not.toHaveBeenCalled();
+  });
+
+  // A signed-in customer is unaffected — the toggle only gates the
+  // customer=null path.
+  test("still books signed-in customers while guest intake is off", async () => {
+    workspaceStubs.bookingConfigRow = {
+      config_id: "default",
+      min_lead_days: 2,
+      max_advance_days: 0,
+      cancel_cutoff_hours: 0,
+      guest_booking_enabled: false,
+      updated_at: null,
+      updated_by: null,
+    };
+
+    const result = await createCustomerBooking(
+      makePublicUser(),
+      makeBookingInput(),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(bookingStubs.inserts).toHaveLength(1);
+  });
+
   test("requires the contact trio before touching storage", async () => {
     const result = await createCustomerBooking(null, makeBookingInput());
 

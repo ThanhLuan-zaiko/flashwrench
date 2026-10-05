@@ -26,6 +26,8 @@ import {
   userRepoMocks,
 } from "../helpers/service-mocks";
 import {
+  bookingConfigRepoMocks,
+  businessHoursRepoMocks,
   dispatchRepoMocks,
   domainPublishMocks,
   resetWorkspaceMocks,
@@ -62,6 +64,14 @@ mock.module(
 );
 mock.module("@/lib/dispatch/dispatch.repository", () => dispatchRepoMocks);
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
+mock.module(
+  "@/lib/booking/booking-config.repository",
+  () => bookingConfigRepoMocks,
+);
+mock.module(
+  "@/lib/shop/business-hours.repository",
+  () => businessHoursRepoMocks,
+);
 
 import { createCustomerBooking } from "@/lib/booking/booking.service";
 

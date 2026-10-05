@@ -12,6 +12,10 @@ import {
 } from "@/lib/mechanic/mechanic-assignment.service";
 import { monthKey } from "@/lib/mechanic/mechanic-period";
 import { findMechanicProfileRow } from "@/lib/mechanic/mechanic-workspace.repository";
+import {
+  getBusinessHoursPolicy,
+  openWindowOf,
+} from "@/lib/shop/business-hours.service";
 import { findVehicleRowById } from "@/lib/vehicles/vehicle.repository";
 import { publishWalletChange } from "@/lib/vouchers/voucher-realtime";
 import {
@@ -26,6 +30,7 @@ import type {
 } from "./booking.types";
 import { validateCreateBookingInput } from "./booking.validation";
 import { resolveBookingServices } from "./booking-catalog.service";
+import { getBookingPolicy } from "./booking-config.service";
 
 export const BOOKING_INITIAL_STATUS = "pending";
 export const BOOKING_INITIAL_PAYMENT_STATUS = "unpaid";
@@ -39,7 +44,22 @@ export async function createCustomerBooking(
   raw: CreateBookingInput,
 ): Promise<BookingResult<CreatedBooking>> {
   const guest = customer === null;
-  const checked = validateCreateBookingInput(raw, { guest });
+  const policy = await getBookingPolicy();
+  // Guest intake is an admin knob: when it flips off, unauthenticated
+  // submits stop here before any account or booking write.
+  if (guest && !policy.guestBookingEnabled) {
+    return fail(
+      403,
+      "Cửa hàng hiện chỉ nhận đặt lịch sau khi đăng nhập. Vui lòng đăng nhập rồi đặt lại.",
+    );
+  }
+  const hours = await getBusinessHoursPolicy();
+  const checked = validateCreateBookingInput(raw, {
+    guest,
+    minLeadDays: policy.minLeadDays,
+    maxAdvanceDays: policy.maxAdvanceDays,
+    openWindow: openWindowOf(hours),
+  });
   if ("errors" in checked) {
     return { ok: false, status: 400, errors: checked.errors };
   }

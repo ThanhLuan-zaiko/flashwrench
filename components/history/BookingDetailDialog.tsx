@@ -231,6 +231,7 @@ export function BookingDetailDialog({
               <BookingCancelSection
                 bookingId={bookingId}
                 status={booking.status}
+                scheduledAt={booking.scheduledAt}
               />
             </div>
           )}

@@ -1,8 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { PublicCatalogPager } from "./PublicCatalogPager";
 import { PublicServiceCard } from "./PublicServiceCard";
 import type { PublicCatalogPage } from "./public-catalog-utils";
+import { ServiceQuickViewDialog } from "./ServiceQuickViewDialog";
 
 // Static skeleton ids keep React keys stable without array indexes.
 const SKELETON_IDS = [
@@ -39,6 +43,12 @@ export function PublicCatalogResults({
   onToggle,
   reasonFor,
 }: PublicCatalogResultsProps) {
+  // One shared quick-view per grid: the eye button on each card points the
+  // dialog at that service. If the service leaves the current page (e.g. a
+  // realtime catalog update) the lookup fails and the sheet closes itself.
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const preview = view.pageItems.find((s) => s.id === previewId) ?? null;
+
   return (
     <>
       {pending && (
@@ -96,6 +106,7 @@ export function PublicCatalogResults({
                 selected={serviceIds.includes(service.id)}
                 disabledReason={reasonFor(service)}
                 onToggle={() => onToggle(service.id)}
+                onPreview={() => setPreviewId(service.id)}
               />
             ))}
           </div>
@@ -108,6 +119,16 @@ export function PublicCatalogResults({
             hrefFor={hrefFor}
           />
         </div>
+      )}
+      {preview && (
+        <ServiceQuickViewDialog
+          key={preview.id}
+          service={preview}
+          selected={serviceIds.includes(preview.id)}
+          disabledReason={reasonFor(preview)}
+          onToggle={() => onToggle(preview.id)}
+          onClose={() => setPreviewId(null)}
+        />
       )}
     </>
   );

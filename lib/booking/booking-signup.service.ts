@@ -7,6 +7,10 @@
 // records under the same phone+email).
 import { registerUser } from "@/lib/auth/auth.service";
 import type { PublicUser, SessionTokens } from "@/lib/auth/user.types";
+import {
+  getBusinessHoursPolicy,
+  openWindowOf,
+} from "@/lib/shop/business-hours.service";
 import { createCustomerBooking } from "./booking.service";
 import type {
   BookingResult,
@@ -14,6 +18,7 @@ import type {
   CreatedBooking,
 } from "./booking.types";
 import { validateCreateBookingInput } from "./booking.validation";
+import { getBookingPolicy } from "./booking-config.service";
 
 export type GuestBookingSignup = {
   booking: CreatedBooking;
@@ -25,7 +30,25 @@ export async function createGuestBookingWithAccount(
   raw: CreateBookingInput,
   label: string,
 ): Promise<BookingResult<GuestBookingSignup>> {
-  const checked = validateCreateBookingInput(raw, { guest: true });
+  const policy = await getBookingPolicy();
+  // This path is a guest submitting with a signup checkbox — when guest
+  // intake is off, fail before registerUser mints a dangling account.
+  if (!policy.guestBookingEnabled) {
+    return {
+      ok: false,
+      status: 403,
+      errors: {
+        form: "Cửa hàng hiện chỉ nhận đặt lịch sau khi đăng nhập. Vui lòng đăng nhập rồi đặt lại.",
+      },
+    };
+  }
+  const hours = await getBusinessHoursPolicy();
+  const checked = validateCreateBookingInput(raw, {
+    guest: true,
+    minLeadDays: policy.minLeadDays,
+    maxAdvanceDays: policy.maxAdvanceDays,
+    openWindow: openWindowOf(hours),
+  });
   if ("errors" in checked) {
     return { ok: false, status: 400, errors: checked.errors };
   }

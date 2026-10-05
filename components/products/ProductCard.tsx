@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FiInfo, FiPackage } from "react-icons/fi";
+import { FiEye, FiInfo, FiPackage } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import type { PartItem } from "@/lib/parts/parts.types";
 import { ApplicableVoucherBadge } from "../vouchers/ApplicableVoucherBadge";
@@ -8,11 +8,13 @@ import { discountPercent, stockLabel } from "./products-utils";
 
 type ProductCardProps = {
   part: PartItem;
+  onPreview: () => void;
 };
 
 // One bento cell for a purchasable part: image, brand/SKU, price with a
-// compare-at strike and a stock badge. Links into the detail page.
-export function ProductCard({ part }: ProductCardProps) {
+// compare-at strike and a stock badge. Links into the detail page; the
+// eye opens an in-place quick view.
+export function ProductCard({ part, onPreview }: ProductCardProps) {
   const discount = discountPercent(part.price, part.comparePrice ?? 0);
   const href = `/products/${encodeURIComponent(part.slug)}`;
 
@@ -79,7 +81,19 @@ export function ProductCard({ part }: ProductCardProps) {
       </div>
       <div className="flex flex-col gap-2">
         <ApplicableVoucherBadge kind="order" subtotal={part.price} />
-        <AddToCartButton part={part} />
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onPreview}
+            aria-label={`Xem nhanh chi tiết ${part.name}`}
+            className="flex min-h-[44px] w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-600 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            <FiEye aria-hidden="true" className="h-4 w-4" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <AddToCartButton part={part} />
+          </div>
+        </div>
         <Link
           href={href}
           aria-label={`Xem chi tiết sản phẩm ${part.name}`}

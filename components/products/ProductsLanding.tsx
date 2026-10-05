@@ -11,10 +11,9 @@ import { usePartsCatalogRealtime, usePublicParts } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
-import { ProductCard } from "./ProductCard";
 import { ProductFilter } from "./ProductFilter";
 import { ProductsCartCta } from "./ProductsCartCta";
-import { ProductsPager } from "./ProductsPager";
+import { ProductsResults } from "./ProductsResults";
 import {
   filterPublicParts,
   PRODUCTS_PAGE_SIZE,
@@ -215,21 +214,7 @@ export function ProductsLanding() {
       )}
 
       {catalog.isSuccess && !unknownSlug && view.total > 0 && (
-        <div className="flex flex-col gap-3 md:gap-4">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-            {view.pageItems.map((part) => (
-              <ProductCard key={part.id} part={part} />
-            ))}
-          </div>
-          <ProductsPager
-            page={view.safePage}
-            pageCount={view.pageCount}
-            start={view.start}
-            end={view.end}
-            total={view.total}
-            hrefFor={pageHref}
-          />
-        </div>
+        <ProductsResults view={view} hrefFor={pageHref} />
       )}
 
       <ProductsCartCta isCustomer={showCartCta} />
