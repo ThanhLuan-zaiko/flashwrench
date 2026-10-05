@@ -16,6 +16,7 @@ function makeCampaign(overrides?: Partial<VoucherCampaign>): VoucherCampaign {
   return {
     id: "preview",
     code: "CHAO_MUNG",
+    redeemCode: "",
     slug: "chao-mung",
     name: "Chao mung",
     description: "",

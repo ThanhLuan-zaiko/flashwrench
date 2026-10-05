@@ -117,6 +117,47 @@ export async function countUserWalletsForCampaign(
   return count;
 }
 
+// Same by_user scan as countUserWalletsForCampaign, but returns the
+// matching wallet ids (any status) so callers can fan out to by_id.
+export async function listUserWalletIdsForCampaign(
+  userId: string,
+  campaignId: string,
+): Promise<string[]> {
+  const result = await scylla.execute(
+    "SELECT wallet_id, campaign_id FROM voucher_wallets_by_user WHERE user_id = ? LIMIT 500",
+    [userId],
+    { prepare: true },
+  );
+  const ids: string[] = [];
+  for (const raw of result.rows) {
+    const row = raw as unknown as WalletUserIndexRow;
+    // The driver returns uuid columns as Uuid objects, not strings.
+    if (row.campaign_id !== null && String(row.campaign_id) === campaignId) {
+      ids.push(String(row.wallet_id));
+    }
+  }
+  return ids;
+}
+
+// One by_user index read returning just (wallet, campaign) refs — callers
+// group by campaign before deciding which by_id rows are worth fetching.
+export async function listUserWalletRefs(
+  userId: string,
+): Promise<{ walletId: string; campaignId: string | null }[]> {
+  const result = await scylla.execute(
+    "SELECT wallet_id, campaign_id FROM voucher_wallets_by_user WHERE user_id = ? LIMIT 500",
+    [userId],
+    { prepare: true },
+  );
+  return result.rows.map((raw) => {
+    const row = raw as unknown as WalletUserIndexRow;
+    return {
+      walletId: String(row.wallet_id),
+      campaignId: row.campaign_id !== null ? String(row.campaign_id) : null,
+    };
+  });
+}
+
 // Active wallets still live under one campaign — the hard-delete guard.
 // Reads only the campaign partition of the audit index; status is a
 // regular column there, so the filter stays partition-scoped.

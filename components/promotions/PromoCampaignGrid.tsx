@@ -1,9 +1,12 @@
 "use client";
 
+import { useMe } from "@/hooks/auth";
+import { useClaimableCodes } from "@/hooks/useVoucherCode";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { usePublicCampaigns } from "@/hooks/useVouchers";
 import type { MyVoucherStats } from "@/services/vouchers.api";
 import { PromoCampaignCard } from "./PromoCampaignCard";
+import type { PromoCardRedeem } from "./PromoCardCode";
 import {
   type PromoAudience,
   promoAppliesTo,
@@ -21,6 +24,9 @@ type PromoCampaignGridProps = {
   ghost?: boolean;
   // Logged-in customer's rollup — feeds the milestone progress bars.
   stats?: MyVoucherStats | null;
+  // Also resolve typed redeem codes per card (customers see claimable
+  // codes, guests see a login teaser on coded campaigns).
+  showCodes?: boolean;
 };
 
 // Shelf grid listing promotions as individual cards — the carousel
@@ -34,8 +40,18 @@ export function PromoCampaignGrid({
   excludeIds,
   ghost = false,
   stats = null,
+  showCodes = false,
 }: PromoCampaignGridProps) {
   useVoucherRealtime(undefined, false);
+  const me = useMe();
+  const isCustomer = me.isSuccess && me.data?.role === "customer";
+  const codes = useClaimableCodes(null, showCodes && isCustomer);
+  const codeByCampaign = new Map(
+    (codes.isSuccess ? codes.data : []).map((item) => [
+      item.campaignId,
+      item.code,
+    ]),
+  );
   const campaigns = usePublicCampaigns(true);
   const items = (campaigns.data ?? []).filter(
     (campaign) =>
@@ -68,15 +84,26 @@ export function PromoCampaignGrid({
         </p>
       ) : (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
-          {items.map((campaign) => (
-            <li key={campaign.id}>
-              <PromoCampaignCard
-                campaign={campaign}
-                ghost={ghost}
-                progress={promoProgress(campaign.earn, stats)}
-              />
-            </li>
-          ))}
+          {items.map((campaign) => {
+            const code = codeByCampaign.get(campaign.id);
+            const redeem: PromoCardRedeem | undefined = !showCodes
+              ? undefined
+              : isCustomer && code
+                ? { status: "code", code }
+                : me.isSuccess && me.data === null && campaign.hasRedeemCode
+                  ? { status: "login" }
+                  : undefined;
+            return (
+              <li key={campaign.id}>
+                <PromoCampaignCard
+                  campaign={campaign}
+                  ghost={ghost}
+                  progress={promoProgress(campaign.earn, stats)}
+                  redeem={redeem}
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

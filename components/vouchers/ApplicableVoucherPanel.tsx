@@ -116,7 +116,7 @@ export function ApplicableVoucherPanel({
         {pick.count > 1 && ` · Còn ${pick.count - 1} phiếu khác trong ví`}
       </p>
       <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
-        Chọn phiếu ở bước thanh toán, hệ thống tự trừ vào tổng tiền.
+        Hệ thống tự áp phiếu tiết kiệm nhất khi bạn đặt lịch hoặc thanh toán.
       </p>
       <Link
         href="/vouchers"

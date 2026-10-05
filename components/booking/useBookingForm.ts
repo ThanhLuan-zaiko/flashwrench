@@ -26,6 +26,7 @@ import type { MapAddressValues } from "@/services/geocode.api";
 import type { AddressValues } from "./BookingAddressSection";
 import type { VehicleValues } from "./BookingVehicleSection";
 import { defaultScheduled, minScheduled } from "./booking-datetime";
+import type { BookingDraft } from "./booking-draft";
 import {
   type BookingPrefill,
   emptyAddressValues,
@@ -33,6 +34,7 @@ import {
 } from "./booking-prefill";
 import { focusFirstInvalid } from "./focus-first-invalid";
 import type { MapPoint } from "./MapPicker";
+import { useBookingDraft } from "./useBookingDraft";
 
 const EMPTY_ERRORS: BookingFieldErrors = {};
 
@@ -96,6 +98,7 @@ export function useBookingForm({
   const [errors, setErrors] = useState<BookingFieldErrors>(EMPTY_ERRORS);
   const [prefilled, setPrefilled] = useState(prefill !== null);
   const [walletId, setWalletId] = useState<string | null>(null);
+  const [voucherCode, setVoucherCode] = useState("");
   const minSlot = useMemo(() => minScheduled(), []);
   const formRef = useRef<HTMLFormElement>(null);
   // Bumped per rejected submit; the effect below scrolls/focuses the
@@ -106,6 +109,30 @@ export function useBookingForm({
     if (invalidAttempt > 0 && formRef.current)
       focusFirstInvalid(formRef.current);
   }, [invalidAttempt]);
+
+  // Signup and password state deliberately stay out of the draft — only
+  // plain form fields survive a reload.
+  const draftValues = useMemo<BookingDraft>(
+    () => ({ contact, scheduledAt, coords, address, vehicle, voucherCode }),
+    [contact, scheduledAt, coords, address, vehicle, voucherCode],
+  );
+  const { clearDraft } = useBookingDraft({
+    values: draftValues,
+    onRestore: (draft) => {
+      if (guest) setContact(draft.contact);
+      // datetime-local strings compare lexicographically; a stale slot
+      // earlier than the allowed minimum keeps the fresh default.
+      if (draft.scheduledAt !== "" && draft.scheduledAt >= minSlot) {
+        setScheduledAt(draft.scheduledAt);
+      }
+      setCoords(draft.coords);
+      setAddress(draft.address);
+      setVehicle(draft.vehicle);
+      setVoucherCode(draft.voucherCode);
+      // Shown values now come from the draft, not the last booking.
+      setPrefilled(false);
+    },
+  });
 
   useEffect(() => {
     if (initialServiceIds.length > 0) draft.setServiceIds(initialServiceIds);
@@ -209,6 +236,9 @@ export function useBookingForm({
     setErrors(EMPTY_ERRORS);
     createBooking.mutate(payload, {
       onSuccess: (data) => {
+        // Sent data must never come back as a draft — covers every
+        // success branch below.
+        clearDraft();
         onCreated?.(data);
         draft.removeServiceIds(data.booking.serviceIds);
         // Inline signup: the same submit minted a session, so land on the
@@ -265,6 +295,8 @@ export function useBookingForm({
     setMechanicId,
     walletId,
     setWalletId,
+    voucherCode,
+    setVoucherCode,
     contact,
     setContact,
     signup,

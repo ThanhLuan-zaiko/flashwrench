@@ -46,11 +46,13 @@ export function scopeLabel(scope: VoucherScope): string {
   return SCOPE_OPTIONS.find((option) => option.value === scope)?.label ?? scope;
 }
 
-// Short spec line for one row: "CHAOMUNG · -50.000đ · đã phát 12/100".
+// Short spec line for one row:
+// "CHAOMUNG · nhập GIAM50K · -50.000đ · đã phát 12/100".
 export function campaignSpecLine(campaign: VoucherCampaign): string {
   const granted =
     campaign.totalLimit > 0
       ? `${campaign.grantedCount}/${campaign.totalLimit}`
       : `${campaign.grantedCount}`;
-  return `${campaign.code} · ${discountLabel(campaign)} · đã phát ${granted}`;
+  const redeem = campaign.redeemCode ? ` · nhập ${campaign.redeemCode}` : "";
+  return `${campaign.code}${redeem} · ${discountLabel(campaign)} · đã phát ${granted}`;
 }

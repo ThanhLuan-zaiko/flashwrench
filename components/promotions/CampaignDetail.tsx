@@ -7,6 +7,7 @@ import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { usePublicCampaign } from "@/hooks/useVouchers";
 import { ProductGallery } from "../products/ProductGallery";
+import { CampaignRedeemCode } from "./CampaignRedeemCode";
 import { CampaignShareButton } from "./CampaignShareButton";
 import {
   promoConditionLabel,
@@ -162,6 +163,10 @@ export function CampaignDetail({ slug }: { slug: string }) {
                   </div>
                 )}
               </dl>
+              <CampaignRedeemCode
+                slug={campaign.slug}
+                hasRedeemCode={campaign.hasRedeemCode}
+              />
               <div className="flex flex-row gap-2">
                 {me.isPending ? (
                   <span

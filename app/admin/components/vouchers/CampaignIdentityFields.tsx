@@ -85,10 +85,11 @@ export function CampaignIdentityFields({
         </span>
         {codePreview && (
           <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Mã voucher:{" "}
+            Mã nội bộ:{" "}
             <span className="font-mono text-zinc-900 dark:text-zinc-100">
               {codePreview}
-            </span>
+            </span>{" "}
+            (khách không nhập mã này, hãy đặt Mã nhập tay)
           </span>
         )}
       </CampaignField>

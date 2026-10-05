@@ -21,6 +21,7 @@ function makeWallet(
     scope: "all",
     minOrder: 0,
     status: "active",
+    spendable: true,
     grantedAt: null,
     expiresAt: null,
     usedAt: null,
@@ -67,6 +68,16 @@ describe("pickBestWallet", () => {
     expect(ticketDiscountText(pick?.wallet as VoucherWallet, 30000)).toContain(
       "30.000",
     );
+  });
+
+  test("never picks an unspendable wallet", () => {
+    const wallets = [
+      makeWallet({ id: "w-dead", spendable: false }),
+      makeWallet({ id: "w-live", discountValue: 10000 }),
+    ];
+    const pick = pickBestWallet(wallets, "order", 200000);
+    expect(pick?.wallet.id).toBe("w-live");
+    expect(pick?.count).toBe(1);
   });
 
   test("labels free service tickets", () => {

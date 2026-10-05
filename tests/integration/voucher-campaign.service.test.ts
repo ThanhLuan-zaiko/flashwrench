@@ -6,6 +6,7 @@ import type { CreateCampaignInput } from "@/lib/vouchers/voucher.types";
 import {
   resetServiceMocks,
   voucherCampaignRepoMocks,
+  voucherRedeemCodeRepoMocks,
   voucherStubs,
   voucherWalletRepoMocks,
 } from "../helpers/service-mocks";
@@ -26,6 +27,10 @@ mock.module(
 mock.module(
   "@/lib/vouchers/voucher-wallet.repository",
   () => voucherWalletRepoMocks,
+);
+mock.module(
+  "@/lib/vouchers/voucher-redeem-code.repository",
+  () => voucherRedeemCodeRepoMocks,
 );
 
 import {

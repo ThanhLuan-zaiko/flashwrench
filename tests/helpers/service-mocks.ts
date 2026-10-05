@@ -84,6 +84,7 @@ export {
 export {
   voucherCampaignRepoMocks,
   voucherRealtimeMocks,
+  voucherRedeemCodeRepoMocks,
   voucherStubs,
   voucherWalletRepoMocks,
 } from "./voucher.mocks";

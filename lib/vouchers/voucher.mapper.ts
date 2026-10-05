@@ -14,7 +14,7 @@ function toIso(value: Date | null): string | null {
   return value ? new Date(value).toISOString() : null;
 }
 
-function toDiscountType(value: string | null): VoucherDiscountType {
+export function toDiscountType(value: string | null): VoucherDiscountType {
   if (value === "percent" || value === "fixed" || value === "free_service") {
     return value;
   }
@@ -44,6 +44,7 @@ export function toCampaign(row: CampaignRow): VoucherCampaign {
   return {
     id: row.campaign_id,
     code: row.code ?? "",
+    redeemCode: row.redeem_code ?? "",
     slug: row.slug ?? "",
     name: row.name ?? "",
     description: row.description ?? "",
@@ -94,16 +95,25 @@ export function toPublicCampaign(
     totalLimit: campaign.totalLimit,
     grantedCount: campaign.grantedCount,
     earn,
+    hasRedeemCode: Boolean(row.redeem_code),
   };
 }
 
 export function toWallet(
   row: WalletRow,
-  campaign?: {
-    scope: string | null;
-    min_order: number | null;
-  } | null,
+  campaign?: CampaignRow | null,
+  now: Date = new Date(),
 ): VoucherWallet {
+  const walletLive =
+    row.status === "active" && (!row.expires_at || row.expires_at > now);
+  // Mirrors walletDiscountFor in voucher-spend.service — is_deleted is
+  // deliberately unchecked there, so it stays unchecked here too.
+  const campaignLive =
+    campaign === undefined ||
+    (campaign !== null &&
+      campaign.is_active === true &&
+      (!campaign.start_at || campaign.start_at <= now) &&
+      (!campaign.end_at || campaign.end_at >= now));
   return {
     id: row.wallet_id,
     userId: row.user_id,
@@ -117,6 +127,7 @@ export function toWallet(
     scope: toScope(campaign?.scope ?? null),
     minOrder: campaign?.min_order ?? 0,
     status: toStatus(row.status),
+    spendable: walletLive && campaignLive,
     grantedAt: toIso(row.granted_at),
     expiresAt: toIso(row.expires_at),
     usedAt: toIso(row.used_at),

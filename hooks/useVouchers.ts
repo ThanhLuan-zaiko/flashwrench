@@ -22,6 +22,7 @@ import {
   toggleAdminCampaign,
   toggleAutoRule,
   updateAdminCampaign,
+  updateCampaignRedeemCode,
 } from "@/services/vouchers.api";
 
 export const voucherKeys = {
@@ -36,6 +37,8 @@ export const voucherKeys = {
     ["vouchers", "wallet-detail", walletId] as const,
   publicCampaign: (slug: string) =>
     ["vouchers", "public-campaign", slug] as const,
+  campaignCode: (slug: string) => ["vouchers", "campaign-code", slug] as const,
+  claimable: (kind: string) => ["vouchers", "claimable", kind] as const,
 };
 
 export function usePublicCampaign(slug: string, enabled = true) {
@@ -182,6 +185,23 @@ export function useGrantWallet() {
       void queryClient.invalidateQueries({ queryKey: [...voucherKeys.mine] });
       void queryClient.invalidateQueries({
         queryKey: [...voucherKeys.dispatch],
+      });
+    },
+  });
+}
+
+// Dispatchers editing a typed redeem code: the change ripples to every
+// campaign surface, including the claimable-code lists customers see at
+// booking/checkout, so all of them are invalidated on settle.
+export function useUpdateCampaignRedeemCode() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { id: string; redeemCode: string }) =>
+      updateCampaignRedeemCode(params.id, params.redeemCode),
+    onSettled: () => {
+      invalidateCampaignKeys(queryClient);
+      void queryClient.invalidateQueries({
+        queryKey: ["vouchers", "claimable"],
       });
     },
   });

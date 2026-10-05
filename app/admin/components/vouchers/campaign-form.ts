@@ -22,6 +22,7 @@ export type CampaignFormState = {
   endAt: string;
   allowDispatcherGrant: boolean;
   isActive: boolean;
+  redeemCode: string;
 };
 
 export const EMPTY_CAMPAIGN_FORM: CampaignFormState = {
@@ -40,6 +41,7 @@ export const EMPTY_CAMPAIGN_FORM: CampaignFormState = {
   endAt: "",
   allowDispatcherGrant: true,
   isActive: true,
+  redeemCode: "",
 };
 
 // ISO string -> "YYYY-MM-DDTHH:mm" for <input type="datetime-local">.
@@ -76,6 +78,7 @@ export function formFromCampaign(item: VoucherCampaign): CampaignFormState {
     endAt: toLocalInput(item.endAt),
     allowDispatcherGrant: item.allowDispatcherGrant,
     isActive: item.isActive,
+    redeemCode: item.redeemCode,
   };
 }
 
@@ -114,5 +117,6 @@ export function formToPayload(
     allowDispatcherGrant: form.allowDispatcherGrant,
     dispatcherMaxValue: Number(form.dispatcherMaxValue) || 0,
     isActive: form.isActive,
+    redeemCode: form.redeemCode.trim().toUpperCase(),
   };
 }

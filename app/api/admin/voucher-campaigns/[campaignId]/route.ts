@@ -44,6 +44,8 @@ function toInput(body: Record<string, unknown>): UpdateCampaignInput {
         ? 0
         : Number(body.dispatcherMaxValue),
     isActive: body.isActive === undefined ? true : (body.isActive as boolean),
+    redeemCode:
+      body.redeemCode === undefined ? undefined : String(body.redeemCode),
   };
 }
 

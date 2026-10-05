@@ -34,6 +34,25 @@ export const voucherStubs = {
   casRejected: false,
   // Overrides claimGrantSlot's computed outcome when set.
   grantSlotOutcome: null as GrantSlotOutcome | null,
+  // Redeem-code ownership: null means unclaimed, so claimRedeemCode wins.
+  redeemCodeOwner: null as string | null,
+  redeemCodeClaimed: true,
+  releasedRedeemCodes: [] as { code: string; campaignId: string }[],
+  // Typed-code claim lock: granted by default; each claim/release is
+  // recorded so tests can assert seq and cleanup.
+  claimLockGranted: true,
+  claimLocks: [] as {
+    campaignId: string;
+    userId: string;
+    seq: number;
+    walletId: string;
+    claimedAt: Date;
+  }[],
+  releasedClaimLocks: [] as {
+    campaignId: string;
+    userId: string;
+    seq: number;
+  }[],
   insertedWallets: [] as InsertWalletParams[],
   insertedCampaigns: [] as InsertCampaignParams[],
   deletedCampaigns: [] as {
@@ -140,6 +159,50 @@ export const voucherCampaignRepoMocks = {
   ),
 };
 
+export const voucherRedeemCodeRepoMocks = {
+  findCampaignIdByRedeemCode: mock(
+    async (_code: string): Promise<string | null> =>
+      voucherStubs.redeemCodeOwner,
+  ),
+  claimRedeemCode: mock(
+    async (_code: string, campaignId: string): Promise<boolean> => {
+      if (voucherStubs.redeemCodeOwner) {
+        return voucherStubs.redeemCodeOwner === campaignId;
+      }
+      if (!voucherStubs.redeemCodeClaimed) return false;
+      voucherStubs.redeemCodeOwner = campaignId;
+      return true;
+    },
+  ),
+  releaseRedeemCode: mock(
+    async (code: string, campaignId: string): Promise<boolean> => {
+      voucherStubs.releasedRedeemCodes.push({ code, campaignId });
+      if (voucherStubs.redeemCodeOwner === campaignId) {
+        voucherStubs.redeemCodeOwner = null;
+      }
+      return true;
+    },
+  ),
+  claimCodeClaimLock: mock(
+    async (params: {
+      campaignId: string;
+      userId: string;
+      seq: number;
+      walletId: string;
+      claimedAt: Date;
+    }): Promise<boolean> => {
+      if (!voucherStubs.claimLockGranted) return false;
+      voucherStubs.claimLocks.push(params);
+      return true;
+    },
+  ),
+  releaseCodeClaimLock: mock(
+    async (campaignId: string, userId: string, seq: number): Promise<void> => {
+      voucherStubs.releasedClaimLocks.push({ campaignId, userId, seq });
+    },
+  ),
+};
+
 export const voucherWalletRepoMocks = {
   findWalletRowById: mock(
     async (_walletId: string): Promise<WalletRow | null> =>
@@ -171,6 +234,21 @@ export const voucherWalletRepoMocks = {
   countUserWalletsForCampaign: mock(
     async (_userId: string, _campaignId: string): Promise<number> =>
       voucherStubs.userCampaignCount,
+  ),
+  listUserWalletIdsForCampaign: mock(
+    async (_userId: string, campaignId: string): Promise<string[]> =>
+      voucherStubs.walletRowsByUser
+        .filter((row) => row.campaign_id === campaignId)
+        .map((row) => row.wallet_id),
+  ),
+  listUserWalletRefs: mock(
+    async (
+      _userId: string,
+    ): Promise<{ walletId: string; campaignId: string | null }[]> =>
+      voucherStubs.walletRowsByUser.map((row) => ({
+        walletId: row.wallet_id,
+        campaignId: row.campaign_id,
+      })),
   ),
   countActiveWalletsForCampaign: mock(
     async (_campaignId: string): Promise<number> =>
@@ -250,12 +328,19 @@ export function resetVoucherMocks(): void {
   voucherStubs.campaignActiveWallets = 0;
   voucherStubs.casRejected = false;
   voucherStubs.grantSlotOutcome = null;
+  voucherStubs.redeemCodeOwner = null;
+  voucherStubs.redeemCodeClaimed = true;
+  voucherStubs.releasedRedeemCodes = [];
+  voucherStubs.claimLockGranted = true;
+  voucherStubs.claimLocks = [];
+  voucherStubs.releasedClaimLocks = [];
   voucherStubs.insertedWallets = [];
   voucherStubs.insertedCampaigns = [];
   voucherStubs.deletedCampaigns = [];
   voucherStubs.purgedCampaigns = [];
   voucherStubs.statusMarks = [];
   for (const fn of Object.values(voucherCampaignRepoMocks)) fn.mockClear();
+  for (const fn of Object.values(voucherRedeemCodeRepoMocks)) fn.mockClear();
   for (const fn of Object.values(voucherWalletRepoMocks)) fn.mockClear();
   for (const fn of Object.values(voucherRealtimeMocks)) fn.mockClear();
 }

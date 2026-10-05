@@ -1,6 +1,8 @@
 // Voucher campaign validation: codes, slugs, money, dates, dispatcher caps.
 import { describe, expect, test } from "bun:test";
 import {
+  isValidRedeemCode,
+  normalizeRedeemCode,
   normalizeVoucherCode,
   normalizeVoucherSlug,
   validateCampaignInput,
@@ -25,6 +27,26 @@ describe("voucherCodeFromSlug", () => {
   });
 });
 
+describe("normalizeRedeemCode", () => {
+  test("uppercases and strips spaces, dashes and underscores", () => {
+    expect(normalizeRedeemCode(" giam-50k ")).toBe("GIAM50K");
+    expect(normalizeRedeemCode("giam_50 k")).toBe("GIAM50K");
+  });
+});
+
+describe("isValidRedeemCode", () => {
+  test("accepts 4-20 letters and digits", () => {
+    expect(isValidRedeemCode("GIAM50K")).toBe(true);
+    expect(isValidRedeemCode("A1B2")).toBe(true);
+  });
+
+  test("rejects short, long and accented codes", () => {
+    expect(isValidRedeemCode("ABC")).toBe(false);
+    expect(isValidRedeemCode("A".repeat(21))).toBe(false);
+    expect(isValidRedeemCode("GIẢM50")).toBe(false);
+  });
+});
+
 describe("validateCampaignInput", () => {
   const base = {
     code: "CHAO_MUNG",
@@ -44,6 +66,7 @@ describe("validateCampaignInput", () => {
     allowDispatcherGrant: true,
     dispatcherMaxValue: 50000,
     isActive: true as const,
+    redeemCode: "",
   };
 
   test("accepts a valid campaign", () => {
@@ -87,6 +110,15 @@ describe("validateCampaignInput", () => {
       images: ["https://example.com/a.jpg"],
     });
     expect(badImage?.images).toBeDefined();
+  });
+
+  test("accepts empty and valid redeem codes, rejects bad ones", () => {
+    expect(validateCampaignInput({ ...base, redeemCode: "" })).toBeNull();
+    expect(
+      validateCampaignInput({ ...base, redeemCode: "GIAM50K" }),
+    ).toBeNull();
+    const bad = validateCampaignInput({ ...base, redeemCode: "AB" });
+    expect(bad?.redeemCode).toBeDefined();
   });
 
   test("caps the gallery at 5 media urls", () => {

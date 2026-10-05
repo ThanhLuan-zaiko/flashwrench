@@ -130,7 +130,7 @@ export function CampaignDialog({ dialog, onClose }: CampaignDialogProps) {
       <DialogPanel wide>
         <DialogHeader
           title={editing ? "Sửa chiến dịch" : "Thêm chiến dịch"}
-          hint="Voucher phát vào ví gắn tài khoản — slug và mã không đổi được sau khi tạo."
+          hint="Voucher phát vào ví gắn tài khoản. Slug và mã chiến dịch không đổi được sau khi tạo; mã nhập tay sửa được bất cứ lúc nào."
           onClose={guard.requestClose}
         />
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">

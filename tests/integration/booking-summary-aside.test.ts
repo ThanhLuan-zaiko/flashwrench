@@ -63,7 +63,9 @@ describe("booking summary aside", () => {
         walletId: null,
         errors: {},
         pending: false,
+        voucherCode: "",
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(markup).toContain("Tóm tắt lịch hẹn");
@@ -84,7 +86,9 @@ describe("booking summary aside", () => {
         walletId: null,
         errors: {},
         pending: false,
+        voucherCode: "",
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(empty).toContain("Chọn ít nhất một dịch vụ ở bước 1");
@@ -98,7 +102,9 @@ describe("booking summary aside", () => {
         walletId: null,
         errors: {},
         pending: false,
+        voucherCode: "",
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(issue).toContain("Hãy xử lý cảnh báo ở bước 1");
@@ -115,7 +121,9 @@ describe("booking summary aside", () => {
         walletId: null,
         errors: { vehiclePlate: "x" },
         pending: false,
+        voucherCode: "",
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(fieldError).toContain(
@@ -130,7 +138,9 @@ describe("booking summary aside", () => {
         walletId: null,
         errors: { form: "Khung giờ này đã kín." },
         pending: false,
+        voucherCode: "",
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(formError).toContain("Khung giờ này đã kín.");
@@ -145,7 +155,9 @@ describe("booking summary aside", () => {
         walletId: null,
         errors: {},
         pending: false,
+        voucherCode: "",
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(markup).toContain("Đang tải voucher");

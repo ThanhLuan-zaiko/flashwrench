@@ -1209,16 +1209,20 @@ CREATE TABLE IF NOT EXISTS complaints_by_user (
 ) WITH CLUSTERING ORDER BY (created_at DESC, complaint_id ASC);
 
 -- ============================================================================
--- 11b. VOUCHER WALLETS (account-bound promotions, no shared codes)
+-- 11b. VOUCHER WALLETS (account-bound promotions, optional typed redeem codes)
 -- discount_type = percent | fixed | free_service
 -- scope = order | booking | all
 -- wallet status = active | used | expired | revoked
--- Each wallet belongs to exactly one user_id: codes are never shared.
+-- Each wallet belongs to exactly one user_id: wallets are never shared.
+-- A campaign may optionally carry an admin-set redeem code that lets a
+-- signed-in customer claim one wallet by typing it; that wallet is still
+-- bound to their account.
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS voucher_campaigns_by_id (
   campaign_id            UUID PRIMARY KEY,
   code                   TEXT,
+  redeem_code            TEXT,
   slug                   TEXT,
   name                   TEXT,
   description            TEXT,
@@ -1255,6 +1259,27 @@ CREATE TABLE IF NOT EXISTS voucher_campaigns_by_code (
 CREATE TABLE IF NOT EXISTS voucher_campaigns_by_slug (
   slug        TEXT PRIMARY KEY,
   campaign_id UUID
+);
+
+-- Query: resolve a typed redeem code to its campaign. INSERT ... IF NOT
+-- EXISTS is the uniqueness claim; only campaigns with a redeem code can
+-- be claimed by typing it.
+CREATE TABLE IF NOT EXISTS voucher_campaigns_by_redeem_code (
+  redeem_code TEXT PRIMARY KEY,
+  campaign_id UUID
+);
+
+-- Short-lived claim locks for redeem codes: one row per (campaign, user,
+-- seq) written with INSERT ... IF NOT EXISTS USING TTL 600, where seq =
+-- wallets already owned + 1. Parallel claims race on the same seq, so a
+-- burst can never exceed per_user_limit; the TTL clears orphans.
+CREATE TABLE IF NOT EXISTS voucher_code_claims (
+  campaign_id UUID,
+  user_id     UUID,
+  seq         INT,
+  wallet_id   UUID,
+  claimed_at  TIMESTAMP,
+  PRIMARY KEY ((campaign_id, user_id), seq)
 );
 
 CREATE TABLE IF NOT EXISTS voucher_wallets_by_id (

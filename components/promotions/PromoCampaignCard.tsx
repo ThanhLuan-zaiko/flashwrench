@@ -6,6 +6,7 @@ import { FiArrowRight, FiGift, FiInfo } from "react-icons/fi";
 import { useProgressFill } from "@/hooks/useProgressFill";
 import type { PublicVoucherCampaign } from "@/lib/vouchers/voucher.types";
 import { campaignDetailHref } from "../vouchers/voucher-detail-href";
+import { PromoCardCode, type PromoCardRedeem } from "./PromoCardCode";
 import {
   type PromoProgress,
   promoConditionLabel,
@@ -29,10 +30,12 @@ export function PromoCampaignCard({
   campaign,
   ghost = false,
   progress = null,
+  redeem,
 }: {
   campaign: PublicVoucherCampaign;
   ghost?: boolean;
   progress?: PromoProgress | null;
+  redeem?: PromoCardRedeem;
 }) {
   const slots = slotsLabel(campaign);
   const fillRef = useProgressFill(progress?.ratio ?? 0);
@@ -108,6 +111,7 @@ export function PromoCampaignCard({
             </span>
           ) : null}
         </p>
+        {redeem && <PromoCardCode redeem={redeem} />}
         <Link
           href={campaignDetailHref(campaign.slug)}
           scroll={false}

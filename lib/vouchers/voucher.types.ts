@@ -9,6 +9,7 @@ export type WalletStatus = "active" | "used" | "expired" | "revoked";
 export type VoucherCampaign = {
   id: string;
   code: string;
+  redeemCode: string;
   slug: string;
   name: string;
   description: string;
@@ -46,6 +47,8 @@ export type VoucherEarnHint = {
 // Staff-only fields (code, grant limits, lifecycle flags, timestamps)
 // never leave the server on public endpoints. `earn` carries the active
 // rule triggers so surfaces can explain "how to get this".
+// `hasRedeemCode` only reports that a typed code exists — the code
+// itself never leaves the server on this payload.
 export type PublicVoucherCampaign = Pick<
   VoucherCampaign,
   | "id"
@@ -63,7 +66,7 @@ export type PublicVoucherCampaign = Pick<
   | "endAt"
   | "totalLimit"
   | "grantedCount"
-> & { earn: VoucherEarnHint[] };
+> & { earn: VoucherEarnHint[]; hasRedeemCode: boolean };
 
 export type VoucherWallet = {
   id: string;
@@ -80,6 +83,9 @@ export type VoucherWallet = {
   scope: VoucherScope;
   minOrder: number;
   status: WalletStatus;
+  // True when the wallet would pass redeem's subtotal-independent checks
+  // right now, so pickers only offer spendable wallets.
+  spendable: boolean;
   grantedAt: string | null;
   expiresAt: string | null;
   usedAt: string | null;
@@ -90,6 +96,7 @@ export type VoucherWallet = {
 export type CampaignRow = {
   campaign_id: string;
   code: string | null;
+  redeem_code: string | null;
   slug: string | null;
   name: string | null;
   description: string | null;
@@ -169,6 +176,7 @@ export type VoucherFieldErrors = Partial<
     | "campaignId"
     | "walletId"
     | "note"
+    | "redeemCode"
     | "orderId"
     | "bookingId"
     | "form",
@@ -214,6 +222,9 @@ export type CreateCampaignInput = {
   allowDispatcherGrant?: boolean;
   dispatcherMaxValue?: number;
   isActive?: boolean;
+  // Optional typed claim code. On update, undefined = keep the current
+  // code and "" = clear it.
+  redeemCode?: string;
 };
 
 export type UpdateCampaignInput = CreateCampaignInput;

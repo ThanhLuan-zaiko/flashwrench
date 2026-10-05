@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { VoucherCodeField } from "../vouchers/VoucherCodeField";
 import { WalletPicker } from "../vouchers/WalletPicker";
 
 type CheckoutExtrasProps = {
@@ -27,6 +29,8 @@ export function CheckoutExtras({
   onWallet,
   onNote,
 }: CheckoutExtrasProps) {
+  // Typed code text is local only — checkout has no draft to mirror it.
+  const [voucherCode, setVoucherCode] = useState("");
   return (
     <div>
       {!guest && (
@@ -37,6 +41,16 @@ export function CheckoutExtras({
           error={walletError}
           disabled={disabled}
           onChange={onWallet}
+          codeSlot={
+            <VoucherCodeField
+              kind="order"
+              subtotal={subtotal}
+              value={voucherCode}
+              onValueChange={setVoucherCode}
+              disabled={disabled}
+              onApplied={(wallet) => onWallet(wallet.id)}
+            />
+          }
         />
       )}
       {guest && (

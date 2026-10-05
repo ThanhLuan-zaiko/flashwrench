@@ -53,6 +53,27 @@ export function CampaignRuleFields({
         />
       </CampaignField>
       <CampaignField
+        id="campaign-redeem-code"
+        label="Mã nhập tay (không bắt buộc)"
+        error={fieldError(error, "redeemCode")}
+      >
+        <input
+          id="campaign-redeem-code"
+          value={form.redeemCode}
+          onChange={(e) => onSet("redeemCode", e.target.value.toUpperCase())}
+          placeholder="VD: GIAM50K"
+          autoCapitalize="characters"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={24}
+          className={`${CAMPAIGN_INPUT} font-mono uppercase`}
+        />
+        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          Khách đã đăng nhập gõ mã này ở bước đặt lịch hoặc thanh toán để nhận
+          voucher và dùng ngay. Để trống nếu chỉ phát tự động hoặc phát tay.
+        </span>
+      </CampaignField>
+      <CampaignField
         id="campaign-start"
         label="Bắt đầu"
         error={fieldError(error, "startAt")}

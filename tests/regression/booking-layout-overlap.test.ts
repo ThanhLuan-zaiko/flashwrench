@@ -83,9 +83,11 @@ describe("booking layout overlap", () => {
         selection: getBookingServiceSelection(ids, services),
         guest: true,
         walletId: null,
+        voucherCode: "",
         errors: {},
         pending: false,
         onWallet: noop,
+        onVoucherCode: noop,
       }),
     );
     expect(markup).toContain("lg:sticky");

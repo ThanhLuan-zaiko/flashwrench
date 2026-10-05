@@ -82,6 +82,7 @@ export function VouchersList() {
         excludeIds={ownedIds}
         ghost
         stats={stats.data ?? null}
+        showCodes
       />
       <WalletBoard />
     </div>

@@ -51,6 +51,7 @@ export function CampaignLivePreview({
     totalLimit: toNumber(form.totalLimit, 0),
     grantedCount: 0,
     earn: [],
+    hasRedeemCode: Boolean(form.redeemCode.trim()),
   };
   return (
     <div className="sm:col-span-2">

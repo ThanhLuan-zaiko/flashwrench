@@ -1,7 +1,9 @@
 import { formatDuration } from "@/app/admin/components/services/catalog-format";
 import { FormAlert } from "@/components/auth/FormAlert";
+import { VoucherCodeField } from "@/components/vouchers/VoucherCodeField";
 import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
 import { WalletPicker } from "@/components/vouchers/WalletPicker";
+import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
 import type { BookingServiceSelection } from "@/lib/booking/booking-service-selection";
 import type { BookingFieldErrors } from "@/services/booking.api";
 import { BookingSubmitButton } from "./BookingSubmitButton";
@@ -11,9 +13,11 @@ type BookingPriceSummaryProps = {
   selection: BookingServiceSelection;
   guest: boolean;
   walletId: string | null;
+  voucherCode: string;
   errors: BookingFieldErrors;
   pending: boolean;
   onWallet: (walletId: string | null) => void;
+  onVoucherCode: (value: string) => void;
 };
 
 // Checkout-style summary aside, mirroring CheckoutSummary on /checkout:
@@ -26,9 +30,11 @@ export function BookingPriceSummary({
   selection,
   guest,
   walletId,
+  voucherCode,
   errors,
   pending,
   onWallet,
+  onVoucherCode,
 }: BookingPriceSummaryProps) {
   const count = serviceIds.length;
   const ready = count > 0 && selection.issue === null;
@@ -56,11 +62,17 @@ export function BookingPriceSummary({
       </div>
       {ready &&
         (guest ? (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
+            <VoucherCodeField
+              kind="booking"
+              subtotal={selection.subtotal}
+              value={voucherCode}
+              onValueChange={onVoucherCode}
+              disabled={pending}
+              loginHref={buildLoginHref(buildBookingHref(serviceIds))}
+              onApplied={() => undefined}
+            />
             <VoucherTotals subtotal={selection.subtotal} discount={0} />
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-              Đăng nhập để dùng voucher trong ví của bạn.
-            </p>
           </div>
         ) : (
           <WalletPicker
@@ -71,6 +83,16 @@ export function BookingPriceSummary({
             disabled={pending}
             showTotals
             onChange={onWallet}
+            codeSlot={
+              <VoucherCodeField
+                kind="booking"
+                subtotal={selection.subtotal}
+                value={voucherCode}
+                onValueChange={onVoucherCode}
+                disabled={pending}
+                onApplied={(wallet) => onWallet(wallet.id)}
+              />
+            }
           />
         ))}
       {ready && (

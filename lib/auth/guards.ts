@@ -10,6 +10,10 @@ export const RATE_LIMITS = {
   // is capped harder than login. The per-address cooldown in the OTP service
   // covers the second axis.
   otp: { limit: 6, windowMs: 15 * 60 * 1000 },
+  // Redeem codes are short and guessable, so brute force is throttled on
+  // two axes: per IP (voucherCode) and per account (voucherCodeUser).
+  voucherCode: { limit: 30, windowMs: 10 * 60 * 1000 },
+  voucherCodeUser: { limit: 10, windowMs: 10 * 60 * 1000 },
 } as const;
 
 export const RATE_LIMIT_MESSAGE =
@@ -63,6 +67,34 @@ export async function enforceRequestGuards(
   try {
     const decision = await consumeRateLimit(
       rateLimitBucket(kind, clientIp(request), windowMs),
+      limit,
+      windowMs,
+    );
+    if (!decision.allowed) {
+      const response = NextResponse.json(
+        { errors: { form: RATE_LIMIT_MESSAGE } },
+        { status: 429 },
+      );
+      response.headers.set("Retry-After", String(decision.retryAfterSec));
+      return response;
+    }
+  } catch (error) {
+    // Fail open: a rate-limiter outage must not lock every user out.
+    console.error("[auth] rate limiter unavailable, allowing request", error);
+  }
+  return null;
+}
+
+// Per-account bucket for signed-in routes: rotating IPs cannot reset it.
+// Fails open like enforceRequestGuards.
+export async function enforceActorRateLimit(
+  kind: GuardKind,
+  actorId: string,
+): Promise<NextResponse | null> {
+  const { limit, windowMs } = RATE_LIMITS[kind];
+  try {
+    const decision = await consumeRateLimit(
+      `${kind}:user:${actorId}:${Math.floor(Date.now() / windowMs)}`,
       limit,
       windowMs,
     );

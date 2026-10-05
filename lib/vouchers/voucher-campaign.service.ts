@@ -30,6 +30,12 @@ import {
   updateCampaignRows,
 } from "./voucher-campaign.repository";
 import {
+  freeRedeemCode,
+  REDEEM_CODE_TAKEN,
+  reserveRedeemCode,
+} from "./voucher-campaign-code";
+import {
+  normalizeRedeemCode,
   normalizeVoucherSlug,
   parseOptionalDate,
   validateCampaignInput,
@@ -65,10 +71,12 @@ export async function createCampaign(
 ): Promise<VoucherResult<VoucherCampaign>> {
   const slug = normalizeVoucherSlug(raw.slug);
   const code = voucherCodeFromSlug(slug);
+  const redeemCode = normalizeRedeemCode(raw.redeemCode);
   const images = (raw.images ?? []).map((u) => u.trim()).filter(Boolean);
   const fieldErrors = validateCampaignInput({
     code,
     slug,
+    redeemCode,
     name: raw.name.trim(),
     description: (raw.description ?? "").trim(),
     images,
@@ -107,12 +115,18 @@ export async function createCampaign(
       slug: "Slug này sinh ra mã đã tồn tại. Chọn slug khác.",
     });
   }
+  if (redeemCode && !(await reserveRedeemCode(redeemCode, campaignId))) {
+    await releaseCampaignCode(code, campaignId);
+    await releaseCampaignSlug(slug, campaignId);
+    return failFields(409, { redeemCode: REDEEM_CODE_TAKEN });
+  }
   const claimed = await claimAssetsForOwner(
     raw.imageAssetIds ?? [],
     "promotion",
     campaignId,
   );
   if (!claimed.ok) {
+    await freeRedeemCode(redeemCode, campaignId);
     await releaseCampaignCode(code, campaignId);
     await releaseCampaignSlug(slug, campaignId);
     return failFields(claimed.status, claimed.errors);
@@ -121,6 +135,7 @@ export async function createCampaign(
     await insertCampaign({
       campaignId,
       code,
+      redeemCode: redeemCode || null,
       slug,
       name: raw.name.trim(),
       description: (raw.description ?? "").trim(),
@@ -142,6 +157,7 @@ export async function createCampaign(
       now,
     });
   } catch {
+    await freeRedeemCode(redeemCode, campaignId);
     await releaseCampaignCode(code, campaignId);
     await releaseCampaignSlug(slug, campaignId);
     throw new Error("Campaign insert failed.");
@@ -165,10 +181,16 @@ export async function updateCampaign(
     return failFields(400, { slug: "Không được đổi slug sau khi tạo." });
   }
   const code = existing.code ?? voucherCodeFromSlug(slug);
+  const previousRedeemCode = existing.redeem_code ?? "";
+  const nextRedeemCode =
+    raw.redeemCode === undefined
+      ? previousRedeemCode
+      : normalizeRedeemCode(raw.redeemCode);
   const images = (raw.images ?? []).map((u) => u.trim()).filter(Boolean);
   const fieldErrors = validateCampaignInput({
     code,
     slug,
+    redeemCode: nextRedeemCode,
     name: raw.name.trim(),
     description: (raw.description ?? "").trim(),
     images,
@@ -186,35 +208,52 @@ export async function updateCampaign(
     isActive: raw.isActive,
   });
   if (fieldErrors) return failFields(400, fieldErrors);
+  const newlyReserved =
+    nextRedeemCode !== "" && nextRedeemCode !== previousRedeemCode;
+  if (newlyReserved && !(await reserveRedeemCode(nextRedeemCode, campaignId))) {
+    return failFields(409, { redeemCode: REDEEM_CODE_TAKEN });
+  }
   const assetClaim = await claimAssetsForOwner(
     raw.imageAssetIds ?? [],
     "promotion",
     campaignId,
   );
-  if (!assetClaim.ok) return failFields(assetClaim.status, assetClaim.errors);
-  await updateCampaignRows({
-    campaignId,
-    code,
-    slug,
-    name: raw.name.trim(),
-    description: (raw.description ?? "").trim(),
-    imageUrl: images[0] ?? "",
-    images,
-    discountType: raw.discountType,
-    discountValue: Math.trunc(raw.discountValue),
-    maxDiscount: Math.trunc(raw.maxDiscount ?? 0),
-    minOrder: Math.trunc(raw.minOrder ?? 0),
-    scope: raw.scope ?? "all",
-    startAt: parseOptionalDate(raw.startAt),
-    endAt: parseOptionalDate(raw.endAt),
-    totalLimit: Math.trunc(raw.totalLimit ?? 0),
-    perUserLimit: Math.trunc(raw.perUserLimit ?? 1),
-    allowDispatcherGrant: raw.allowDispatcherGrant ?? false,
-    dispatcherMaxValue: Math.trunc(raw.dispatcherMaxValue ?? 0),
-    isActive: raw.isActive ?? true,
-    createdBy: existing.created_by ?? "",
-    now: new Date(),
-  });
+  if (!assetClaim.ok) {
+    if (newlyReserved) await freeRedeemCode(nextRedeemCode, campaignId);
+    return failFields(assetClaim.status, assetClaim.errors);
+  }
+  try {
+    await updateCampaignRows({
+      campaignId,
+      code,
+      redeemCode: nextRedeemCode || null,
+      slug,
+      name: raw.name.trim(),
+      description: (raw.description ?? "").trim(),
+      imageUrl: images[0] ?? "",
+      images,
+      discountType: raw.discountType,
+      discountValue: Math.trunc(raw.discountValue),
+      maxDiscount: Math.trunc(raw.maxDiscount ?? 0),
+      minOrder: Math.trunc(raw.minOrder ?? 0),
+      scope: raw.scope ?? "all",
+      startAt: parseOptionalDate(raw.startAt),
+      endAt: parseOptionalDate(raw.endAt),
+      totalLimit: Math.trunc(raw.totalLimit ?? 0),
+      perUserLimit: Math.trunc(raw.perUserLimit ?? 1),
+      allowDispatcherGrant: raw.allowDispatcherGrant ?? false,
+      dispatcherMaxValue: Math.trunc(raw.dispatcherMaxValue ?? 0),
+      isActive: raw.isActive ?? true,
+      createdBy: existing.created_by ?? "",
+      now: new Date(),
+    });
+  } catch (error) {
+    if (newlyReserved) await freeRedeemCode(nextRedeemCode, campaignId);
+    throw error;
+  }
+  if (previousRedeemCode && previousRedeemCode !== nextRedeemCode) {
+    await freeRedeemCode(previousRedeemCode, campaignId);
+  }
   await pruneOwnerAssets("promotion", campaignId, images).catch(
     () => undefined,
   );
@@ -294,6 +333,7 @@ export async function hardDeleteCampaignWithConfirm(
     code: existing.code ?? "",
     slug,
   });
+  await freeRedeemCode(existing.redeem_code, campaignId);
   await pruneOwnerAssets("promotion", campaignId, []).catch(() => undefined);
   return { ok: true, data: { id: campaignId } };
 }

@@ -135,6 +135,26 @@ export async function fetchDispatchCampaigns(): Promise<VoucherCampaign[]> {
   return body.campaigns;
 }
 
+export async function updateCampaignRedeemCode(
+  campaignId: string,
+  redeemCode: string,
+): Promise<VoucherCampaign> {
+  const response = await fetch(
+    `/api/dispatch/voucher-campaigns/${campaignId}/code`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ redeemCode }),
+    },
+  );
+  if (!response.ok) {
+    throw new AuthApiError(response.status, await readErrors(response));
+  }
+  const body = (await response.json()) as { campaign: VoucherCampaign };
+  return body.campaign;
+}
+
 export async function grantDispatchWallet(input: {
   campaignId: string;
   userId: string;

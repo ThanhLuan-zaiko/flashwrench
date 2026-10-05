@@ -1,6 +1,7 @@
 // Public visibility guard: only live campaigns reach customer ads.
 import { describe, expect, test } from "bun:test";
-import { isPublicVisible } from "@/lib/vouchers/voucher-public.service";
+import { toPublicCampaign } from "@/lib/vouchers/voucher.mapper";
+import { isPublicVisible } from "@/lib/vouchers/voucher-visibility";
 import { makeCampaignRow } from "../helpers/voucher.fixtures";
 
 const NOW = new Date("2026-10-03T00:00:00.000Z");
@@ -47,5 +48,21 @@ describe("isPublicVisible", () => {
         NOW,
       ),
     ).toBe(true);
+  });
+});
+
+describe("toPublicCampaign redeem code exposure", () => {
+  test("reports hasRedeemCode without leaking the code", () => {
+    const result = toPublicCampaign(
+      makeCampaignRow({ redeem_code: "GIAM50K" }),
+    );
+    expect(result.hasRedeemCode).toBe(true);
+    expect(JSON.stringify(result)).not.toContain("GIAM50K");
+    expect(JSON.stringify(result)).not.toContain("redeemCode");
+  });
+
+  test("reports false when the campaign has no code", () => {
+    const result = toPublicCampaign(makeCampaignRow());
+    expect(result.hasRedeemCode).toBe(false);
   });
 });

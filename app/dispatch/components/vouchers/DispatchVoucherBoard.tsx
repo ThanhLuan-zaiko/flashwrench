@@ -9,6 +9,7 @@ import {
   useGrantWallet,
   usePublicCampaigns,
 } from "@/hooks/useVouchers";
+import { CampaignCodeSection } from "./CampaignCodeSection";
 
 export function DispatchVoucherBoard() {
   useVoucherRealtime(undefined, true);
@@ -102,6 +103,7 @@ export function DispatchVoucherBoard() {
         Thu hồi voucher thực hiện ở bảng điều phối đơn khi phát hiện gian lận —
         điều phối chỉ thu hồi voucher mình đã phát, admin thu hồi mọi voucher.
       </p>
+      <CampaignCodeSection />
       <section aria-label="Khách đang thấy gì" className="flex flex-col gap-2">
         <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
           Khách đang thấy gì

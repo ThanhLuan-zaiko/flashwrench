@@ -6,31 +6,20 @@ import { listAutoRuleRows } from "./auto-rule.repository";
 import { AUTO_TRIGGERS, type AutoTrigger } from "./auto-rule.types";
 import { toPublicCampaign } from "./voucher.mapper";
 import type {
-  CampaignRow,
   PublicVoucherCampaign,
   VoucherEarnHint,
   VoucherResult,
 } from "./voucher.types";
-import { isDeletedFlag } from "./voucher.types";
 import {
   findCampaignIdBySlug,
   findCampaignRowById,
   listCampaignRows,
 } from "./voucher-campaign.repository";
+import { isPublicVisible } from "./voucher-visibility";
 
-export function isPublicVisible(
-  row: CampaignRow,
-  now: Date = new Date(),
-): boolean {
-  if (isDeletedFlag(row.is_deleted)) return false;
-  if (row.is_active !== true) return false;
-  if (row.start_at && now < row.start_at) return false;
-  if (row.end_at && now > row.end_at) return false;
-  const total = row.total_limit ?? 0;
-  const granted = row.granted_count ?? 0;
-  if (total > 0 && granted >= total) return false;
-  return true;
-}
+// The visibility rule itself is pure and lives in voucher-visibility so
+// services that skip the auto-rule repository can still share it.
+export { isPublicVisible } from "./voucher-visibility";
 
 // Active auto-rules grouped by campaign, reduced to the public essence —
 // trigger + threshold. A campaign with no rule earns nothing here; the

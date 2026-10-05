@@ -61,6 +61,8 @@ export function BookingForm({
     setVehicle,
     walletId,
     setWalletId,
+    voucherCode,
+    setVoucherCode,
     errors,
     prefilled,
     pending,
@@ -172,8 +174,10 @@ export function BookingForm({
           selection={selection}
           guest={guest}
           walletId={walletId}
+          voucherCode={voucherCode}
           errors={errors}
           pending={pending}
+          onVoucherCode={setVoucherCode}
           onWallet={(next) => {
             setWalletId(next);
             clearError("walletId");

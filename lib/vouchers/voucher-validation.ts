@@ -7,6 +7,7 @@ import type {
 
 const CODE_PATTERN = /^[A-Z0-9_-]{3,32}$/;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const REDEEM_CODE_PATTERN = /^[A-Z0-9]{4,20}$/;
 
 export function normalizeVoucherCode(raw: unknown): string {
   return String(raw ?? "")
@@ -25,6 +26,18 @@ export function normalizeVoucherSlug(raw: unknown): string {
 // inside CODE_PATTERN (3-32 chars) without a separate rule.
 export function voucherCodeFromSlug(slug: string): string {
   return slug.toUpperCase().replace(/-/g, "_");
+}
+
+// Typed claim codes are plain A-Z0-9: spaces, dashes and underscores a
+// customer may type are stripped before the format check.
+export function normalizeRedeemCode(raw: unknown): string {
+  return String(raw ?? "")
+    .toUpperCase()
+    .replace(/[\s_-]+/g, "");
+}
+
+export function isValidRedeemCode(code: string): boolean {
+  return REDEEM_CODE_PATTERN.test(code);
 }
 
 export function isDiscountType(value: unknown): value is VoucherDiscountType {
@@ -59,6 +72,7 @@ export function validateCampaignInput(input: {
   allowDispatcherGrant: unknown;
   dispatcherMaxValue: unknown;
   isActive: unknown;
+  redeemCode: string;
 }): VoucherFieldErrors | null {
   const errors: VoucherFieldErrors = {};
   if (!CODE_PATTERN.test(input.code)) {
@@ -130,6 +144,9 @@ export function validateCampaignInput(input: {
   }
   if (input.isActive !== undefined && typeof input.isActive !== "boolean") {
     errors.isActive = "Trạng thái không hợp lệ.";
+  }
+  if (input.redeemCode !== "" && !isValidRedeemCode(input.redeemCode)) {
+    errors.redeemCode = "Mã nhập tay gồm 4–20 chữ cái không dấu hoặc chữ số.";
   }
   return Object.keys(errors).length > 0 ? errors : null;
 }

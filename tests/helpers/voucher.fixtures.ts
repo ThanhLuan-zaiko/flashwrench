@@ -10,6 +10,7 @@ export function makeCampaignRow(overrides?: Partial<CampaignRow>): CampaignRow {
   return {
     campaign_id: VOUCHER_CAMPAIGN_ID,
     code: "CHAO_MUNG",
+    redeem_code: null,
     slug: "chao-mung",
     name: "Chao mung tai khoan moi",
     description: "",

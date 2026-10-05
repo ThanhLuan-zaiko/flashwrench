@@ -28,6 +28,7 @@ export function pickBestWallet(
   const usable = wallets.filter(
     (wallet) =>
       wallet.status === "active" &&
+      wallet.spendable &&
       (wallet.scope === "all" || wallet.scope === kind) &&
       subtotal >= wallet.minOrder &&
       discountFor(wallet, subtotal) > 0,

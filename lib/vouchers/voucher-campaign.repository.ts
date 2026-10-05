@@ -6,6 +6,7 @@ function toRow(raw: Record<string, unknown>): CampaignRow {
   return {
     campaign_id: String(raw.campaign_id),
     code: (raw.code as string | null) ?? null,
+    redeem_code: (raw.redeem_code as string | null) ?? null,
     slug: (raw.slug as string | null) ?? null,
     name: (raw.name as string | null) ?? null,
     description: (raw.description as string | null) ?? null,
@@ -38,7 +39,7 @@ function toRow(raw: Record<string, unknown>): CampaignRow {
 }
 
 const COLUMNS =
-  "campaign_id, code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, deleted_at, created_by, created_at, updated_at";
+  "campaign_id, code, redeem_code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, deleted_at, created_by, created_at, updated_at";
 
 export async function listCampaignRows(): Promise<CampaignRow[]> {
   const result = await scylla.execute(
@@ -90,6 +91,7 @@ export async function findCampaignIdBySlug(
 export type InsertCampaignParams = {
   campaignId: string;
   code: string;
+  redeemCode: string | null;
   slug: string;
   name: string;
   description: string;
@@ -118,10 +120,11 @@ export async function insertCampaign(
     [
       {
         query:
-          "INSERT INTO voucher_campaigns_by_id (campaign_id, code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, false, ?, ?, ?)",
+          "INSERT INTO voucher_campaigns_by_id (campaign_id, code, redeem_code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, false, ?, ?, ?)",
         params: [
           params.campaignId,
           params.code,
+          params.redeemCode,
           params.slug,
           params.name,
           params.description,
@@ -213,7 +216,7 @@ export async function updateCampaignRows(
   params: UpdateCampaignParams,
 ): Promise<void> {
   await scylla.execute(
-    "UPDATE voucher_campaigns_by_id SET name = ?, description = ?, image_url = ?, images = ?, discount_type = ?, discount_value = ?, max_discount = ?, min_order = ?, scope = ?, start_at = ?, end_at = ?, total_limit = ?, per_user_limit = ?, allow_dispatcher_grant = ?, dispatcher_max_value = ?, is_active = ?, updated_at = ? WHERE campaign_id = ?",
+    "UPDATE voucher_campaigns_by_id SET name = ?, description = ?, image_url = ?, images = ?, discount_type = ?, discount_value = ?, max_discount = ?, min_order = ?, scope = ?, start_at = ?, end_at = ?, total_limit = ?, per_user_limit = ?, allow_dispatcher_grant = ?, dispatcher_max_value = ?, is_active = ?, redeem_code = ?, updated_at = ? WHERE campaign_id = ?",
     [
       params.name,
       params.description,
@@ -231,9 +234,23 @@ export async function updateCampaignRows(
       params.allowDispatcherGrant,
       params.dispatcherMaxValue,
       params.isActive,
+      params.redeemCode,
       params.now,
       params.campaignId,
     ],
+    { prepare: true },
+  );
+}
+
+// Single-column write for the dispatcher redeem-code editor.
+export async function updateCampaignRedeemCode(
+  campaignId: string,
+  redeemCode: string | null,
+  now: Date,
+): Promise<void> {
+  await scylla.execute(
+    "UPDATE voucher_campaigns_by_id SET redeem_code = ?, updated_at = ? WHERE campaign_id = ?",
+    [redeemCode, now, campaignId],
     { prepare: true },
   );
 }
