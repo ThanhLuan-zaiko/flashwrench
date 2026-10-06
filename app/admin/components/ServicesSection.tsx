@@ -53,17 +53,23 @@ export function ServicesSection({ tab }: { tab: CatalogTab }) {
         subtitle="Quản lý loại hình sửa chữa và bảng giá áp dụng cho khách hàng trên toàn hệ thống."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        {overview.stats.map((stat) => (
-          <ServicesStatCard key={stat.id} stat={stat} />
+        {overview.stats.map((stat, index) => (
+          <ServicesStatCard
+            key={stat.id}
+            stat={stat}
+            tour={index === 0 ? "admin-services-stats" : undefined}
+          />
         ))}
         <BentoCard
           label="Quản lý danh mục"
+          tour="admin-services-board"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div
               role="tablist"
               aria-label="Chọn nhóm quản lý"
+              data-tour="admin-services-tabs"
               className="flex flex-wrap gap-1.5"
             >
               {CATALOG_TABS.map((t) => {

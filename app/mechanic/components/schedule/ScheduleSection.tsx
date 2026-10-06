@@ -70,6 +70,7 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
         <ScheduleStatCards bookings={bookings} loading={query.isPending} />
         <BentoCard
           label="Hàng đợi công việc"
+          tour="mech-schedule-queue"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -86,6 +87,7 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
               activeId={status}
               ariaLabel="Lọc đơn theo trạng thái"
               counts={counts}
+              tour="mech-schedule-tabs"
             />
           </div>
           <ScheduleBody

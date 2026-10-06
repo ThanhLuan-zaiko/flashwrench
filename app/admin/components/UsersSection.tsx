@@ -75,17 +75,23 @@ export function UsersSection({ tab }: { tab: UserTab }) {
         subtitle="Duyệt thợ, khóa tài khoản, quản lý nhân viên và xử lý khiếu nại tại một nơi duy nhất."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        {overview.stats.map((stat) => (
-          <UsersStatCard key={stat.id} stat={stat} />
+        {overview.stats.map((stat, index) => (
+          <UsersStatCard
+            key={stat.id}
+            stat={stat}
+            tour={index === 0 ? "admin-users-stats" : undefined}
+          />
         ))}
         <BentoCard
           label="Quản lý tài khoản"
+          tour="admin-users-board"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div
               role="tablist"
               aria-label="Chọn nhóm quản lý"
+              data-tour="admin-users-tabs"
               className="flex flex-wrap gap-1.5"
             >
               {USER_TABS.map((t) => {

@@ -19,8 +19,15 @@ type Kpi = {
 };
 
 // Four 1x1 stat cells: collected vs previous range, receipt count and the
-// average ticket. Delta icon flips direction with the sign.
-export function RevenueKpiGrid({ report }: { report: RevenueReport }) {
+// average ticket. Delta icon flips direction with the sign. `tour` anchors
+// the first cell for the workspace spotlight tours.
+export function RevenueKpiGrid({
+  report,
+  tour,
+}: {
+  report: RevenueReport;
+  tour?: string;
+}) {
   const delta = report.previous;
   const DeltaIcon =
     delta.percent === null
@@ -59,10 +66,14 @@ export function RevenueKpiGrid({ report }: { report: RevenueReport }) {
   ];
   return (
     <>
-      {kpis.map((kpi) => {
+      {kpis.map((kpi, index) => {
         const Icon = kpi.icon;
         return (
-          <BentoCard key={kpi.label} label={kpi.label}>
+          <BentoCard
+            key={kpi.label}
+            label={kpi.label}
+            tour={index === 0 ? tour : undefined}
+          >
             <p className="flex items-center gap-2.5">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
                 <Icon aria-hidden="true" className="h-5 w-5" />

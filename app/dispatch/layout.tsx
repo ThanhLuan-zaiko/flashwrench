@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { FiCompass } from "react-icons/fi";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
+import { TourProvider } from "@/components/tour/TourProvider";
 import { authenticateRequest } from "@/lib/auth/authorization";
 import { DispatchShell } from "./components/DispatchShell";
+import { DISPATCH_TOUR_STEPS } from "./components/tour/dispatch-tour.steps";
 
 // Server-side gate: only users with role "dispatcher" (or "admin", who can
 // preview every workspace) render anything under /dispatch. Non-logged-in
@@ -42,7 +44,9 @@ export default async function DispatchLayout({
 
   return (
     <>
-      <DispatchShell>{children}</DispatchShell>
+      <TourProvider steps={DISPATCH_TOUR_STEPS}>
+        <DispatchShell>{children}</DispatchShell>
+      </TourProvider>
       <SpeculationRules scope="dispatch" />
     </>
   );

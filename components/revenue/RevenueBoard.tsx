@@ -73,7 +73,11 @@ export function RevenueBoard({
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <RevenueRangeTabs basePath={basePath} active={range} />
+        <RevenueRangeTabs
+          basePath={basePath}
+          active={range}
+          tour="revenue-ranges"
+        />
       </div>
 
       {isPending && (
@@ -105,6 +109,7 @@ export function RevenueBoard({
             range={range}
             anchor={anchor}
             csvHref={csvHref(anchor)}
+            tour="revenue-toolbar"
             onAnchorChange={(next) => {
               onAnchorChange(next);
               if (page > 1) {
@@ -115,6 +120,7 @@ export function RevenueBoard({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
             <BentoCard
               label="Xu hướng doanh thu"
+              tour="revenue-trend"
               className="sm:col-span-2 lg:row-span-2"
             >
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -127,8 +133,12 @@ export function RevenueBoard({
                 />
               </div>
             </BentoCard>
-            <RevenueKpiGrid report={report} />
-            <BentoCard label="Doanh thu theo nguồn" className="sm:col-span-2">
+            <RevenueKpiGrid report={report} tour="revenue-kpis" />
+            <BentoCard
+              label="Doanh thu theo nguồn"
+              tour="revenue-mix-source"
+              className="sm:col-span-2"
+            >
               <RevenueMixChart
                 title="Theo nguồn"
                 kind="source"
@@ -138,6 +148,7 @@ export function RevenueBoard({
             </BentoCard>
             <BentoCard
               label="Doanh thu theo phương thức"
+              tour="revenue-mix-method"
               className="sm:col-span-2"
             >
               <RevenueMixChart
@@ -150,6 +161,7 @@ export function RevenueBoard({
             {staffSlices && report.byMechanic && (
               <BentoCard
                 label="Doanh thu theo thợ"
+                tour="revenue-mechanic"
                 className="sm:col-span-2 lg:col-span-4"
               >
                 <RevenueMixChart
@@ -162,6 +174,7 @@ export function RevenueBoard({
             )}
             <BentoCard
               label="Danh sách giao dịch"
+              tour="revenue-txns"
               className="sm:col-span-2 lg:col-span-4"
             >
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">

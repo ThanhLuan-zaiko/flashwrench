@@ -3,8 +3,10 @@
 import { usePathname } from "next/navigation";
 import { type ReactNode, useState } from "react";
 import { FiMenu } from "react-icons/fi";
+import { TourButton } from "@/components/tour/TourButton";
 import { AdminSidebar } from "./AdminSidebar";
 import { getAdminSection, sectionIdForPath } from "./admin-sections";
+import { ADMIN_TOUR_NAMES } from "./tour/admin-tour.steps";
 
 // Shell owns layout only: sidebar plus sticky section header plus
 // centered bento content column. No business logic here.
@@ -13,7 +15,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const section = getAdminSection(sectionIdForPath(pathname));
+  const sectionId = sectionIdForPath(pathname);
+  const section = getAdminSection(sectionId);
   const SectionIcon = section.icon;
 
   return (
@@ -55,6 +58,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
               />
               Trực tuyến
             </span>
+            <TourButton
+              tour={ADMIN_TOUR_NAMES[sectionId]}
+              ariaLabel={`Hướng dẫn ${section.label}`}
+            />
           </div>
         </div>
 

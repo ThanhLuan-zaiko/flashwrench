@@ -89,17 +89,23 @@ export function AdminVoucherBoard({ tab }: { tab: VoucherTab }) {
         level={1}
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <ServicesStatCard key={stat.id} stat={stat} />
+        {stats.map((stat, index) => (
+          <ServicesStatCard
+            key={stat.id}
+            stat={stat}
+            tour={index === 0 ? "admin-vouchers-stats" : undefined}
+          />
         ))}
         <BentoCard
           label="Quản lý chiến dịch"
+          tour="admin-vouchers-board"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div
               role="tablist"
               aria-label="Chọn nhóm chiến dịch"
+              data-tour="admin-vouchers-tabs"
               className="flex flex-wrap gap-1.5"
             >
               {VOUCHER_TABS.map((t) => {

@@ -58,6 +58,7 @@ export function SlaConfigCard() {
   return (
     <section
       aria-label="Cấu hình tự điều phối"
+      data-tour="admin-rescue-sla"
       className="rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">

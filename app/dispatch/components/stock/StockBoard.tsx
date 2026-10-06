@@ -47,7 +47,7 @@ export function StockBoard() {
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="grid grid-cols-1 gap-3 md:gap-4">
-        <BentoCard label="Tồn kho linh kiện">
+        <BentoCard label="Tồn kho linh kiện" tour="disp-stock-intro">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="min-w-0">
               <h2 className="text-base font-bold tracking-tight text-zinc-900 sm:text-lg dark:text-zinc-50">
@@ -73,7 +73,7 @@ export function StockBoard() {
           </div>
         </BentoCard>
 
-        <BentoCard label="Danh sách linh kiện">
+        <BentoCard label="Danh sách linh kiện" tour="disp-stock-list">
           {query.isPending && (
             <div
               className="mt-2 flex items-center justify-center py-8"

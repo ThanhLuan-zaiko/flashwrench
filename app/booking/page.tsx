@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { BookingEntry } from "@/components/booking/BookingEntry";
+import { BOOKING_TOUR_STEPS } from "@/components/booking/tour/booking-tour.steps";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
+import { TourProvider } from "@/components/tour/TourProvider";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 import {
   type BookingServiceParams,
@@ -34,12 +36,14 @@ export default async function BookingPage({
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14 xl:max-w-7xl">
-        <BookingEntry
-          serviceIds={selection.serviceIds}
-          selectionError={selection.error}
-          userName={user?.fullName ?? null}
-          userContact={contact}
-        />
+        <TourProvider steps={BOOKING_TOUR_STEPS}>
+          <BookingEntry
+            serviceIds={selection.serviceIds}
+            selectionError={selection.error}
+            userName={user?.fullName ?? null}
+            userContact={contact}
+          />
+        </TourProvider>
       </div>
       <SpeculationRules scope="booking" />
     </main>

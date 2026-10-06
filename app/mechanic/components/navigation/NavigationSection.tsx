@@ -104,7 +104,11 @@ export function NavigationSection() {
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-4">
-        <BentoCard label="Bản đồ điểm sửa" className="lg:col-span-3">
+        <BentoCard
+          label="Bản đồ điểm sửa"
+          tour="mech-map-board"
+          className="lg:col-span-3"
+        >
           <NavigationHeader
             loading={board.isPending}
             originLabel={origin?.label ?? null}
@@ -140,7 +144,7 @@ export function NavigationSection() {
             <OrderCollectPanel target={selected} />
           )}
         </BentoCard>
-        <BentoCard label="Đơn đang mở">
+        <BentoCard label="Đơn đang mở" tour="mech-map-list">
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Đơn đang mở
           </h3>

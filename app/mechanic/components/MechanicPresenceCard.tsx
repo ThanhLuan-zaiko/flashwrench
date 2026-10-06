@@ -119,7 +119,10 @@ export function MechanicPresenceCard({
   };
 
   return (
-    <div className="mt-4 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
+    <div
+      data-tour="mech-presence"
+      className="mt-4 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800"
+    >
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}

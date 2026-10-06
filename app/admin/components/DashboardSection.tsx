@@ -43,12 +43,13 @@ export function DashboardSection() {
           openRescues={data?.openRescues}
           onlineMechanics={data?.onlineMechanics}
         />
-        {DASHBOARD_STATS.map((stat) => (
+        {DASHBOARD_STATS.map((stat, index) => (
           <DashboardStatCard
             key={stat.id}
             stat={stat}
             value={statValues[stat.id]}
             isPending={dashboard.isPending}
+            tour={index === 0 ? "admin-dash-stats" : undefined}
           />
         ))}
         <DashboardActivityCard

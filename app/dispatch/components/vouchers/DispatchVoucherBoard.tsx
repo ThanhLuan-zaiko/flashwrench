@@ -40,6 +40,7 @@ export function DispatchVoucherBoard() {
     <div className="flex flex-col gap-4">
       <form
         onSubmit={handleGrant}
+        data-tour="disp-vouchers-grant"
         className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
       >
         <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
@@ -104,7 +105,11 @@ export function DispatchVoucherBoard() {
         điều phối chỉ thu hồi voucher mình đã phát, admin thu hồi mọi voucher.
       </p>
       <CampaignCodeSection />
-      <section aria-label="Khách đang thấy gì" className="flex flex-col gap-2">
+      <section
+        aria-label="Khách đang thấy gì"
+        data-tour="disp-vouchers-public"
+        className="flex flex-col gap-2"
+      >
         <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
           Khách đang thấy gì
         </h2>

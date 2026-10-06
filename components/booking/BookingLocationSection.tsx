@@ -32,6 +32,7 @@ export function BookingLocationSection({
   return (
     <BookingStep
       step={2}
+      tour="booking-location"
       title="Địa điểm sửa xe"
       description="Ghim vị trí trên bản đồ hoặc tìm địa chỉ — các ô bên dưới sẽ tự điền, bạn vẫn có thể sửa lại."
     >

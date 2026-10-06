@@ -37,7 +37,7 @@ export function RatingBreakdown({
   total: number;
 }) {
   return (
-    <BentoCard label="Phân bố đánh giá">
+    <BentoCard label="Phân bố đánh giá" tour="mech-stats-rating">
       <h3 className="flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         <FiStar aria-hidden="true" className="h-4 w-4" />
         Phân bố điểm sao

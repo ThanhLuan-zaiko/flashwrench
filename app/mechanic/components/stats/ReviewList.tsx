@@ -6,7 +6,7 @@ import { formatShortDate } from "../mechanic-format";
 // Latest customer reviews of this mechanic, newest first.
 export function ReviewList({ reviews }: { reviews: MechanicReviewItem[] }) {
   return (
-    <BentoCard label="Đánh giá mới nhất">
+    <BentoCard label="Đánh giá mới nhất" tour="mech-stats-reviews">
       <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Khách nói gì
       </h3>

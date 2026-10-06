@@ -126,7 +126,11 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
         {counters.map((stat) => {
           const Icon = stat.icon;
           return (
-            <BentoCard key={stat.id} label={stat.label}>
+            <BentoCard
+              key={stat.id}
+              label={stat.label}
+              tour={stat.id === "today" ? "mech-income-summary" : undefined}
+            >
               <p className="flex items-center gap-2.5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
                   <Icon aria-hidden="true" className="h-5 w-5" />
@@ -146,6 +150,7 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
         })}
         <BentoCard
           label="Lịch sử giao dịch"
+          tour="mech-income-history"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -164,6 +169,7 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
               activeId={state}
               ariaLabel="Lọc giao dịch theo trạng thái"
               counts={counts}
+              tour="mech-income-tabs"
             />
           </div>
           <IncomeHistory

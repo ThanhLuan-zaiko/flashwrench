@@ -18,6 +18,7 @@ export function DashboardHeroCard({
   return (
     <BentoCard
       label="Tổng quan vận hành"
+      tour="admin-dash-hero"
       className="flex flex-col justify-between sm:col-span-2 lg:row-span-2"
     >
       <div>

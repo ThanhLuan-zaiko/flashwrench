@@ -55,6 +55,7 @@ export function HomeCtaBand() {
             />
             <Link
               href="/rescue"
+              data-tour="rescue-cta"
               className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 motion-safe:active:scale-[0.99] dark:border-zinc-300 dark:text-zinc-800 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-900 dark:focus-visible:ring-offset-zinc-100"
             >
               <FiPhoneCall aria-hidden="true" className="h-4 w-4" />

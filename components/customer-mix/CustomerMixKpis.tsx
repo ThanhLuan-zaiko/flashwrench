@@ -14,7 +14,14 @@ type Kpi = {
 // Four 1x1 stat cells: created orders and verified sign-ins, each split
 // member vs guest. Signups ride on the member-login hint — they are the
 // guest-to-member conversion the whole report exists to show.
-export function CustomerMixKpis({ report }: { report: CustomerMixReport }) {
+export function CustomerMixKpis({
+  report,
+  tour,
+}: {
+  report: CustomerMixReport;
+  /** Spotlight-tour anchor; lands on the first KPI cell. */
+  tour?: string;
+}) {
   const t = report.totals;
   const orders = t.memberOrders + t.guestOrders;
   const kpis: Kpi[] = [
@@ -45,10 +52,14 @@ export function CustomerMixKpis({ report }: { report: CustomerMixReport }) {
   ];
   return (
     <>
-      {kpis.map((kpi) => {
+      {kpis.map((kpi, index) => {
         const Icon = kpi.icon;
         return (
-          <BentoCard key={kpi.label} label={kpi.label}>
+          <BentoCard
+            key={kpi.label}
+            label={kpi.label}
+            tour={index === 0 ? tour : undefined}
+          >
             <p className="flex items-center gap-2.5">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
                 <Icon aria-hidden="true" className="h-5 w-5" />

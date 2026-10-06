@@ -5,7 +5,9 @@ import Link from "next/link";
 import { FiArrowRight, FiCheck, FiUserPlus } from "react-icons/fi";
 import logoImage from "@/asset/flashwrench.png";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
+import { TourButton } from "@/components/tour/TourButton";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { HOME_TOUR_NAME } from "./tour/home-tour.steps";
 
 const TRUST_POINTS = ["Thợ đã xác thực", "Giá minh bạch", "Theo dõi tiến độ"];
 
@@ -46,27 +48,29 @@ export function HomeHero() {
           </p>
           <div
             data-reveal
-            className="mt-7 flex w-full flex-col gap-2 sm:w-auto sm:flex-row"
+            className="mt-7 flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap"
           >
-            <SmartCtaLink
-              guestHref="/booking"
-              authedHref="/booking"
-              guestLabel={
-                <>
-                  <FiUserPlus aria-hidden="true" className="h-4 w-4" />
-                  Đặt lịch ngay
-                </>
-              }
-              authedLabel={
-                <>
-                  <FiUserPlus aria-hidden="true" className="h-4 w-4" />
-                  Đặt lịch ngay
-                </>
-              }
-              guestAriaLabel="Đặt lịch ngay không cần tài khoản"
-              authedAriaLabel="Đặt lịch ngay"
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-            />
+            <span data-tour="booking-cta" className="flex w-full sm:w-auto">
+              <SmartCtaLink
+                guestHref="/booking"
+                authedHref="/booking"
+                guestLabel={
+                  <>
+                    <FiUserPlus aria-hidden="true" className="h-4 w-4" />
+                    Đặt lịch ngay
+                  </>
+                }
+                authedLabel={
+                  <>
+                    <FiUserPlus aria-hidden="true" className="h-4 w-4" />
+                    Đặt lịch ngay
+                  </>
+                }
+                guestAriaLabel="Đặt lịch ngay không cần tài khoản"
+                authedAriaLabel="Đặt lịch ngay"
+                className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+              />
+            </span>
             <Link
               href="#dich-vu"
               className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
@@ -74,6 +78,10 @@ export function HomeHero() {
               Xem dịch vụ
               <FiArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
+            <TourButton
+              tour={HOME_TOUR_NAME}
+              ariaLabel="Bắt đầu hướng dẫn đặt lịch"
+            />
           </div>
           <ul
             data-reveal

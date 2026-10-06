@@ -67,6 +67,7 @@ export function AdminOrdersBoard({ status }: { status: DispatchOrderTab }) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         <BentoCard
           label="Đơn linh kiện"
+          tour="admin-orders-intro"
           className="sm:col-span-2 lg:col-span-2"
         >
           <h2 className="text-base font-bold tracking-tight text-zinc-900 sm:text-lg dark:text-zinc-50">
@@ -86,7 +87,11 @@ export function AdminOrdersBoard({ status }: { status: DispatchOrderTab }) {
           </p>
         </BentoCard>
 
-        <BentoCard label="Bộ lọc tháng" className="sm:col-span-2 lg:col-span-2">
+        <BentoCard
+          label="Bộ lọc tháng"
+          tour="admin-orders-month"
+          className="sm:col-span-2 lg:col-span-2"
+        >
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="min-w-0 flex-1">
               <label

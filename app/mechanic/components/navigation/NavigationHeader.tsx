@@ -23,7 +23,10 @@ export function NavigationHeader({
   onShare,
 }: NavigationHeaderProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2">
+    <div
+      data-tour="mech-map-share"
+      className="flex flex-wrap items-center justify-between gap-2"
+    >
       <div>
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {loading ? "Đang tải bản đồ…" : `${jobCount} điểm cần tới`}

@@ -35,7 +35,11 @@ export function MonthlyChart({ monthly }: { monthly: MechanicMonthlyPoint[] }) {
   const totalRevenue = monthly.reduce((sum, point) => sum + point.revenue, 0);
 
   return (
-    <BentoCard label="Đơn hoàn thành theo tháng" className="sm:col-span-2">
+    <BentoCard
+      label="Đơn hoàn thành theo tháng"
+      tour="mech-stats-chart"
+      className="sm:col-span-2"
+    >
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">

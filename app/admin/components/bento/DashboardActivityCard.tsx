@@ -39,7 +39,11 @@ export function DashboardActivityCard({
   isError,
 }: DashboardActivityCardProps) {
   return (
-    <BentoCard label="Hoạt động gần đây" className="sm:col-span-2">
+    <BentoCard
+      label="Hoạt động gần đây"
+      tour="admin-dash-activity"
+      className="sm:col-span-2"
+    >
       <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900">
           <FiActivity aria-hidden="true" className="h-4 w-4" />

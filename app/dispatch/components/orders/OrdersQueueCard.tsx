@@ -77,7 +77,11 @@ export function OrdersQueueCard({
   };
 
   return (
-    <BentoCard label="Hàng đợi xử lý" className="sm:col-span-2 lg:col-span-4">
+    <BentoCard
+      label="Hàng đợi xử lý"
+      tour="orders-queue"
+      className="sm:col-span-2 lg:col-span-4"
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -92,6 +96,7 @@ export function OrdersQueueCard({
           activeId={status}
           ariaLabel="Lọc đơn theo trạng thái"
           onTabPrefetch={prefetchTab}
+          tour="orders-tabs"
         />
       </div>
 

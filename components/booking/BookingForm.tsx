@@ -149,6 +149,7 @@ export function BookingForm({
           {guest ? (
             <BookingStep
               step={4}
+              tour="booking-contact"
               title="Thông tin liên hệ"
               description="Cửa hàng và thợ dùng thông tin này để liên hệ về lịch hẹn."
             >
@@ -157,6 +158,7 @@ export function BookingForm({
           ) : (
             <BookingStep
               step={4}
+              tour="booking-contact"
               title="Thợ sửa xe"
               description="Thợ cần xác nhận toàn bộ hạng mục trong lịch hẹn. Thời gian làm việc được kiểm tra theo tổng thời lượng."
             >

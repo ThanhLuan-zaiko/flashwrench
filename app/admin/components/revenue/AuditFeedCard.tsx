@@ -33,6 +33,7 @@ export function AuditFeedCard({
   return (
     <BentoCard
       label="Nhật ký thanh toán"
+      tour="admin-audit"
       className="sm:col-span-2 lg:col-span-4"
     >
       <p className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">

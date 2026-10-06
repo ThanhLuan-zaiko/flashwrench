@@ -49,7 +49,10 @@ export function StepsBento() {
             Ba bước, xe lại lăn bánh.
           </h2>
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+        <div
+          data-tour="how-it-works"
+          className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
+        >
           {STEPS.map((step) => {
             const Icon = step.icon;
             return (

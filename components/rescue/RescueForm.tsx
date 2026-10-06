@@ -57,7 +57,7 @@ export function RescueForm({ form }: RescueFormProps) {
         </div>
       )}
 
-      <div className="lg:col-span-2">
+      <div className="lg:col-span-2" data-tour="rescue-contact">
         <RescueContactSection
           fullName={fullName}
           phone={phone}
@@ -81,7 +81,7 @@ export function RescueForm({ form }: RescueFormProps) {
         />
       </div>
 
-      <div>
+      <div data-tour="rescue-issue">
         <RescueIssueSection
           issueType={issueType}
           description={description}
@@ -98,7 +98,7 @@ export function RescueForm({ form }: RescueFormProps) {
         />
       </div>
 
-      <div className="lg:row-span-2">
+      <div className="lg:row-span-2" data-tour="rescue-location">
         <BookingMapSection
           lat={coords?.lat ?? null}
           lng={coords?.lng ?? null}
@@ -141,7 +141,10 @@ export function RescueForm({ form }: RescueFormProps) {
         />
       </div>
 
-      <div className="flex flex-col items-center lg:col-span-2">
+      <div
+        className="flex flex-col items-center lg:col-span-2"
+        data-tour="rescue-submit"
+      >
         <button
           type="submit"
           disabled={pending}

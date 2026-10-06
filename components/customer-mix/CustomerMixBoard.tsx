@@ -56,6 +56,7 @@ export function CustomerMixBoard({
           basePath={basePath}
           active={range}
           tabs={MIX_RANGE_TABS}
+          tour="mix-ranges"
         />
       </div>
 
@@ -88,10 +89,12 @@ export function CustomerMixBoard({
             range={range}
             anchor={anchor}
             onAnchorChange={onAnchorChange}
+            tour="mix-toolbar"
           />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
             <BentoCard
               label="Đơn tạo theo kênh"
+              tour="mix-channel"
               className="sm:col-span-2 lg:row-span-2"
             >
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -105,8 +108,12 @@ export function CustomerMixBoard({
                 />
               </div>
             </BentoCard>
-            <CustomerMixKpis report={report} />
-            <BentoCard label="Đơn theo loại" className="sm:col-span-2">
+            <CustomerMixKpis report={report} tour="mix-kpis" />
+            <BentoCard
+              label="Đơn theo loại"
+              tour="mix-split"
+              className="sm:col-span-2"
+            >
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Theo loại đơn — {report.label}
               </p>
@@ -117,7 +124,11 @@ export function CustomerMixBoard({
                 />
               </div>
             </BentoCard>
-            <BentoCard label="Đăng nhập theo kênh" className="sm:col-span-2">
+            <BentoCard
+              label="Đăng nhập theo kênh"
+              tour="mix-login"
+              className="sm:col-span-2"
+            >
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Đăng nhập — {report.label}
               </p>

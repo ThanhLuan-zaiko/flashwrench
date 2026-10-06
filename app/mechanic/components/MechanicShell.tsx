@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
+import { TourButton } from "@/components/tour/TourButton";
 import { useLogout, useMe } from "@/hooks/auth";
 import { useMechanicBookings, useMechanicInbox } from "@/hooks/mechanic";
 import { useRescueInbox } from "@/hooks/rescue-inbox";
@@ -13,6 +14,7 @@ import {
   getMechanicSection,
   type MechanicSectionId,
 } from "./mechanic-sections";
+import { MECHANIC_TOUR_NAMES } from "./tour/mechanic-tour.steps";
 
 function sectionIdForPath(pathname: string): MechanicSectionId {
   if (pathname.startsWith("/mechanic/schedule")) return "schedule";
@@ -37,7 +39,8 @@ export function MechanicShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const section = getMechanicSection(sectionIdForPath(pathname));
+  const sectionId = sectionIdForPath(pathname);
+  const section = getMechanicSection(sectionId);
   const SectionIcon = section.icon;
   const me = useMe();
   const logout = useLogout();
@@ -109,6 +112,10 @@ export function MechanicShell({ children }: { children: ReactNode }) {
                 {pendingCount} đơn chờ nhận
               </span>
             )}
+            <TourButton
+              tour={MECHANIC_TOUR_NAMES[sectionId]}
+              ariaLabel={`Hướng dẫn ${section.label}`}
+            />
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
               {getInitials(me.data?.fullName ?? "")}
             </span>

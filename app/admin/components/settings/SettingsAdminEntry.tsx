@@ -31,16 +31,32 @@ export function SettingsAdminEntry() {
         subtitle="Các tham số áp dụng ngay cho đơn mới — đơn đã đặt giữ nguyên trạng thái."
       />
       <SettingsNav />
-      <section id="overview" className="scroll-mt-36">
+      <section
+        id="overview"
+        data-tour="admin-settings-overview"
+        className="scroll-mt-36"
+      >
         <PolicySnapshotCard />
       </section>
-      <section id="booking" className="scroll-mt-36">
+      <section
+        id="booking"
+        data-tour="admin-settings-booking"
+        className="scroll-mt-36"
+      >
         <BookingPolicyCard />
       </section>
-      <section id="hours" className="scroll-mt-36">
+      <section
+        id="hours"
+        data-tour="admin-settings-hours"
+        className="scroll-mt-36"
+      >
         <BusinessHoursCard />
       </section>
-      <section id="shop" className="scroll-mt-36">
+      <section
+        id="shop"
+        data-tour="admin-settings-shop"
+        className="scroll-mt-36"
+      >
         <ShopProfileCard />
       </section>
     </div>

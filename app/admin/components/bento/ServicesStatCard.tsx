@@ -10,10 +10,16 @@ export type ServiceStat = {
 };
 
 // Compact 1x1 stat for the services overview row.
-export function ServicesStatCard({ stat }: { stat: ServiceStat }) {
+export function ServicesStatCard({
+  stat,
+  tour,
+}: {
+  stat: ServiceStat;
+  tour?: string;
+}) {
   const Icon = stat.icon;
   return (
-    <BentoCard label={stat.label}>
+    <BentoCard label={stat.label} tour={tour}>
       <p className="flex items-center gap-2.5">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
           <Icon aria-hidden="true" className="h-5 w-5" />

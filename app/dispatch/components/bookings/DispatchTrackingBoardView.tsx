@@ -61,7 +61,10 @@ export function DispatchTrackingBoardView({
 
   return (
     <div className="flex flex-col gap-4 md:gap-5">
-      <header className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-end sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950">
+      <header
+        data-tour="disp-board-intro"
+        className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-end sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      >
         <div>
           <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
             Bàn điều phối đơn hàng
@@ -71,7 +74,10 @@ export function DispatchTrackingBoardView({
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:items-end">
-          <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label
+            data-tour="disp-board-month"
+            className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+          >
             Tháng đặt lịch
             <input
               type="month"
@@ -87,6 +93,7 @@ export function DispatchTrackingBoardView({
             tabs={DISPATCH_TABS}
             activeId={status}
             ariaLabel="Lọc đơn theo trạng thái"
+            tour="disp-board-tabs"
           />
         </div>
       </header>
@@ -95,6 +102,7 @@ export function DispatchTrackingBoardView({
         <DispatchTrackingPanel booking={selected} />
         <section
           aria-label="Danh sách đơn điều phối"
+          data-tour="disp-board-queue"
           className="flex min-w-0 flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
         >
           <div className="relative">

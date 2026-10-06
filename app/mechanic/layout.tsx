@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { FiTool } from "react-icons/fi";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
+import { TourProvider } from "@/components/tour/TourProvider";
 import { authenticateRequest } from "@/lib/auth/authorization";
 import { MechanicShell } from "./components/MechanicShell";
+import { MECHANIC_TOUR_STEPS } from "./components/tour/mechanic-tour.steps";
 
 // Server-side gate: only users with role "mechanic" can render anything
 // under /mechanic. Non-logged-in users go to login, other roles get a 403
@@ -42,7 +44,9 @@ export default async function MechanicLayout({
 
   return (
     <>
-      <MechanicShell>{children}</MechanicShell>
+      <TourProvider steps={MECHANIC_TOUR_STEPS}>
+        <MechanicShell>{children}</MechanicShell>
+      </TourProvider>
       <SpeculationRules scope="mechanic" />
     </>
   );

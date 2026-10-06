@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw, FiUser } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoTeaser } from "@/components/promotions/PromoTeaser";
+import { TourButton } from "@/components/tour/TourButton";
 import { useLastBooking } from "@/hooks/booking";
 import {
   useBookingConfigRealtime,
@@ -25,6 +26,7 @@ import type { CreateBookingResponse } from "@/services/booking.api";
 import { BookingForm } from "./BookingForm";
 import { BookingSuccess } from "./BookingSuccess";
 import { toBookingPrefill } from "./booking-prefill";
+import { BOOKING_TOUR_NAME } from "./tour/booking-tour.steps";
 
 type BookingEntryProps = {
   serviceIds: string[];
@@ -100,6 +102,12 @@ export function BookingEntry({
             : "Bạn đã đăng nhập nên không cần đăng nhập lại. Xem các dịch vụ đã chọn, điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
         }
       />
+      <div data-reveal className="flex justify-center">
+        <TourButton
+          tour={BOOKING_TOUR_NAME}
+          ariaLabel="Bắt đầu hướng dẫn đặt lịch"
+        />
+      </div>
       <section
         aria-label={guest ? "Đặt lịch với tư cách khách" : "Tài khoản đặt lịch"}
         data-reveal

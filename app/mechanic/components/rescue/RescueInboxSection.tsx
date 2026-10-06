@@ -15,7 +15,11 @@ export function RescueInboxSection() {
   if (inbox.isError || items.length === 0) return null;
 
   return (
-    <section aria-label="Cứu hộ được giao" className="flex flex-col gap-3">
+    <section
+      aria-label="Cứu hộ được giao"
+      data-tour="mech-rescue-inbox"
+      className="flex flex-col gap-3"
+    >
       <p className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         <FiLifeBuoy aria-hidden="true" className="h-4 w-4" />
         Cứu hộ cần bạn ({items.length})

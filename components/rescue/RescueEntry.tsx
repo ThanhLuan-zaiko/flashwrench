@@ -2,11 +2,13 @@
 
 import { FiClock, FiPhone, FiShield } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { TourButton } from "@/components/tour/TourButton";
 import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { RescueForm } from "./RescueForm";
 import { RescueSuccess } from "./RescueSuccess";
 import { RESCUE_HOTLINE, RESCUE_STEPS } from "./rescue-constants";
+import { RESCUE_TOUR_NAME } from "./tour/rescue-tour.steps";
 import { useRescueForm } from "./useRescueForm";
 
 const SAFETY_NOTES = [
@@ -46,6 +48,13 @@ export function RescueEntry() {
             : "Không cần đăng nhập. Điền tên, số điện thoại, vị trí xe và sự cố — thợ trực gọi lại trong vài phút."
         }
       />
+
+      <div data-reveal className="flex justify-center">
+        <TourButton
+          tour={RESCUE_TOUR_NAME}
+          ariaLabel="Bắt đầu hướng dẫn gửi yêu cầu cứu hộ"
+        />
+      </div>
 
       {form.created ? (
         <RescueSuccess
@@ -92,6 +101,7 @@ export function RescueEntry() {
       <section
         aria-label="Lưu ý an toàn"
         data-reveal
+        data-tour="rescue-safety"
         className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4"
       >
         {SAFETY_NOTES.map((note) => {

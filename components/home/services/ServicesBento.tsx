@@ -27,7 +27,10 @@ export function ServicesBento() {
             Mọi bệnh của xe, một nơi chữa.
           </h2>
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+        <div
+          data-tour="services"
+          className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
+        >
           <RescueHeroCard />
           <ServiceMiniCard
             title="Bảo dưỡng tại nhà"

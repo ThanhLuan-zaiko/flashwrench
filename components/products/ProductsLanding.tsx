@@ -6,6 +6,7 @@ import { useId, useMemo, useState } from "react";
 import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
+import { TourButton } from "@/components/tour/TourButton";
 import { useMe } from "@/hooks/auth";
 import { usePartsCatalogRealtime, usePublicParts } from "@/hooks/products";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
@@ -20,6 +21,7 @@ import {
   paginateParts,
   resolveCategoryBySlug,
 } from "./products-utils";
+import { PRODUCTS_TOUR_NAME } from "./tour/products-tour.steps";
 
 // Static skeleton ids keep React keys stable without array indexes.
 const SKELETON_IDS = [
@@ -104,6 +106,12 @@ export function ProductsLanding() {
         title="Linh kiện chính hãng, giao tận nơi."
         subtitle="Giá công khai, tồn kho cập nhật trực tiếp. Thêm vào giỏ và đặt hàng trong vài bước."
       />
+      <div data-reveal className="flex justify-center">
+        <TourButton
+          tour={PRODUCTS_TOUR_NAME}
+          ariaLabel="Bắt đầu hướng dẫn mua linh kiện"
+        />
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <output
           aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}

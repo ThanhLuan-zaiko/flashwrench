@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { RescueEntry } from "@/components/rescue/RescueEntry";
+import { RESCUE_TOUR_STEPS } from "@/components/rescue/tour/rescue-tour.steps";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
+import { TourProvider } from "@/components/tour/TourProvider";
 import { pageOg } from "@/lib/seo/site";
 
 const DESCRIPTION =
@@ -19,7 +21,9 @@ export default function RescuePage() {
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14 xl:max-w-7xl">
-        <RescueEntry />
+        <TourProvider steps={RESCUE_TOUR_STEPS}>
+          <RescueEntry />
+        </TourProvider>
       </div>
       <SpeculationRules scope="rescue" />
     </main>

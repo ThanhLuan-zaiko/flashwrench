@@ -37,7 +37,11 @@ export function ProductFilter({
   onQuery,
 }: ProductFilterProps) {
   return (
-    <div data-reveal className="flex flex-col gap-2.5">
+    <div
+      data-reveal
+      data-tour="products-filter"
+      className="flex flex-col gap-2.5"
+    >
       <div
         role="tablist"
         aria-label="Lọc theo danh mục"

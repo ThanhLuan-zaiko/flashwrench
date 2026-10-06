@@ -10,6 +10,8 @@ type RevenueToolbarProps = {
   /** CSV export URL; reports without a CSV endpoint omit the button. */
   csvHref?: string;
   onAnchorChange: (anchor: string) => void;
+  /** Spotlight-tour anchor; renders as `data-tour` on the toolbar. */
+  tour?: string;
 };
 
 const BUTTON_CLASSES =
@@ -22,10 +24,11 @@ export function RevenueToolbar({
   anchor,
   csvHref,
   onAnchorChange,
+  tour,
 }: RevenueToolbarProps) {
   const isToday = anchor === todayAnchor();
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div data-tour={tour} className="flex flex-wrap items-center gap-2">
       <button
         type="button"
         aria-label="Kỳ trước"

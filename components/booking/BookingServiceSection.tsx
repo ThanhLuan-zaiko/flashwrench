@@ -55,6 +55,7 @@ export function BookingServiceSection({
   return (
     <BookingStep
       step={1}
+      tour="booking-services"
       title={`Dịch vụ đã chọn (${serviceIds.length})`}
       description={`Cùng một xe, một địa chỉ và một khung giờ. Tối đa ${BOOKING_MAX_SERVICES} dịch vụ.`}
     >

@@ -20,7 +20,10 @@ export function ProductsResults({ view, hrefFor }: ProductsResultsProps) {
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+      <div
+        data-tour="products-grid"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
+      >
         {view.pageItems.map((part) => (
           <ProductCard
             key={part.id}

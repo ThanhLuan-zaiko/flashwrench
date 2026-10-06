@@ -4,7 +4,11 @@ import { SETTINGS_SECTIONS } from "./settings-sections";
 // they keep working before hydration and stay accessible.
 export function SettingsNav() {
   return (
-    <nav aria-label="Mục cài đặt" className="flex flex-wrap gap-2">
+    <nav
+      aria-label="Mục cài đặt"
+      data-tour="admin-settings-nav"
+      className="flex flex-wrap gap-2"
+    >
       {SETTINGS_SECTIONS.map((section) => (
         <a
           key={section.id}

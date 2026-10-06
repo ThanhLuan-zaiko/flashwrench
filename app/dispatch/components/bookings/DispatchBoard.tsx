@@ -88,9 +88,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
     />
   );
 
-  if (!known) {
-    return <PageBounce />;
-  }
+  if (!known) return <PageBounce />;
 
   if (trackingStatus) {
     return (
@@ -135,6 +133,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         <BentoCard
           label="Bàn điều phối đơn hàng"
+          tour="disp-board-intro"
           className="sm:col-span-2 lg:col-span-2"
         >
           <h2 className="text-base font-bold tracking-tight text-zinc-900 sm:text-lg dark:text-zinc-50">
@@ -154,7 +153,11 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
           </p>
         </BentoCard>
 
-        <BentoCard label="Bộ lọc tháng" className="sm:col-span-2 lg:col-span-2">
+        <BentoCard
+          label="Bộ lọc tháng"
+          tour="disp-board-month"
+          className="sm:col-span-2 lg:col-span-2"
+        >
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="min-w-0 flex-1">
               <label
@@ -197,6 +200,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
 
         <BentoCard
           label="Hàng đợi điều phối"
+          tour="disp-board-queue"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -213,6 +217,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
               tabs={DISPATCH_TABS}
               activeId={status}
               ariaLabel="Lọc đơn theo trạng thái"
+              tour="disp-board-tabs"
             />
           </div>
           <DispatchQueue

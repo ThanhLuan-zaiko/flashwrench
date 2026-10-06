@@ -5,6 +5,8 @@ type BentoCardProps = {
   className?: string;
   label?: string;
   interactive?: boolean;
+  /** Spotlight-tour anchor; renders as `data-tour` on the card root. */
+  tour?: string;
 };
 
 // Shared bento surface: uniform radius, border, palette.
@@ -15,11 +17,13 @@ export function BentoCard({
   className = "",
   label,
   interactive = false,
+  tour,
 }: BentoCardProps) {
   return (
     <section
       aria-label={label}
       data-reveal
+      data-tour={tour}
       className={`rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${
         interactive
           ? "motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:scale-[1.01] motion-safe:active:scale-[0.99]"

@@ -10,6 +10,7 @@ export function ProductsCartCta({ isCustomer }: { isCustomer: boolean }) {
     <section
       aria-label="Giỏ hàng của bạn"
       data-reveal
+      data-tour="products-cart-cta"
       className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:col-span-2 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div>

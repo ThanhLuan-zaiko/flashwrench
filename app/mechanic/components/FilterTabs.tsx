@@ -19,6 +19,8 @@ type FilterTabsProps = {
   ariaLabel: string;
   counts?: Record<string, number>;
   onTabPrefetch?: (tabId: string) => void;
+  /** Spotlight-tour anchor; renders as `data-tour` on the tab strip. */
+  tour?: string;
 };
 
 // Scrollable pill strip shared by the mechanic workspace filters. One URL
@@ -34,6 +36,7 @@ export function FilterTabs({
   ariaLabel,
   counts,
   onTabPrefetch,
+  tour,
 }: FilterTabsProps) {
   const itemRefs = useRef(new Map<string, HTMLAnchorElement>());
 
@@ -47,6 +50,7 @@ export function FilterTabs({
     <div
       role="tablist"
       aria-label={ariaLabel}
+      data-tour={tour}
       className={`flex gap-2 overflow-x-auto pb-1 ${SCROLLBAR_CLASSES}`}
     >
       {tabs.map((tab) => {

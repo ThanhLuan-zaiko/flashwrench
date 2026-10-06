@@ -13,7 +13,11 @@ const FLAG_LABELS: Record<FraudFlagKind, string> = {
 // Rows are informational — investigating stays a human decision.
 export function FraudFlagsCard({ flags }: { flags: FraudFlag[] }) {
   return (
-    <BentoCard label="Dấu hiệu bất thường" className="sm:col-span-2">
+    <BentoCard
+      label="Dấu hiệu bất thường"
+      tour="admin-fraud"
+      className="sm:col-span-2"
+    >
       <p className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         <FiAlertTriangle aria-hidden="true" className="h-4 w-4" />
         Dấu hiệu bất thường

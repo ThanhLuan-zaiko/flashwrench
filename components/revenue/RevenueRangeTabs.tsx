@@ -8,6 +8,8 @@ type RevenueRangeTabsProps = {
   basePath: string;
   active: RevenueRange;
   tabs?: readonly RangeTab[];
+  /** Spotlight-tour anchor; renders as `data-tour` on the nav. */
+  tour?: string;
 };
 
 // One URL per range so a switch is a fast cached navigation, never a
@@ -17,9 +19,14 @@ export function RevenueRangeTabs({
   basePath,
   active,
   tabs = REVENUE_RANGE_TABS,
+  tour,
 }: RevenueRangeTabsProps) {
   return (
-    <nav aria-label="Khoảng báo cáo" className="flex flex-wrap gap-1.5">
+    <nav
+      aria-label="Khoảng báo cáo"
+      data-tour={tour}
+      className="flex flex-wrap gap-1.5"
+    >
       {tabs.map((tab) => {
         const isActive = tab.id === active;
         return (

@@ -36,7 +36,7 @@ export function BookingDetailsSection({
   onVehicle,
 }: BookingDetailsSectionProps) {
   return (
-    <BookingStep step={3} title="Thời gian và xe">
+    <BookingStep step={3} tour="booking-details" title="Thời gian và xe">
       <BookingScheduleSection
         value={scheduledAt}
         min={min}

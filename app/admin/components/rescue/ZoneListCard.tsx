@@ -16,6 +16,7 @@ export function ZoneListCard() {
   return (
     <section
       aria-label="Vùng phục vụ"
+      data-tour="admin-rescue-zones"
       className="rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div className="flex items-center justify-between gap-2">

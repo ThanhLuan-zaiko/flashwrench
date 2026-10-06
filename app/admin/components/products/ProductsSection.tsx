@@ -48,17 +48,23 @@ export function ProductsSection({ tab }: { tab: ProductTab }) {
         subtitle="Quản lý danh mục và sản phẩm đang bán cho khách hàng trên toàn hệ thống."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        {overview.stats.map((stat) => (
-          <ServicesStatCard key={stat.id} stat={stat} />
+        {overview.stats.map((stat, index) => (
+          <ServicesStatCard
+            key={stat.id}
+            stat={stat}
+            tour={index === 0 ? "admin-products-stats" : undefined}
+          />
         ))}
         <BentoCard
           label="Quản lý cửa hàng"
+          tour="admin-products-board"
           className="sm:col-span-2 lg:col-span-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div
               role="tablist"
               aria-label="Chọn nhóm quản lý"
+              data-tour="admin-products-tabs"
               className="flex flex-wrap gap-1.5"
             >
               {PRODUCT_TABS.map((t) => {

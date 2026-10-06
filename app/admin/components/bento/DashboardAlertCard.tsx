@@ -38,7 +38,11 @@ export function DashboardAlertCard({
     },
   ];
   return (
-    <BentoCard label="Cảnh báo hệ thống" className="sm:col-span-2">
+    <BentoCard
+      label="Cảnh báo hệ thống"
+      tour="admin-dash-alerts"
+      className="sm:col-span-2"
+    >
       <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900">
           <FiAlertCircle aria-hidden="true" className="h-4 w-4" />

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
+import { TourButton } from "@/components/tour/TourButton";
 import { useLogout, useMe } from "@/hooks/auth";
 import { useDispatchOperations } from "@/hooks/dispatch";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
@@ -13,6 +14,7 @@ import {
   type DispatchSectionId,
   getDispatchSection,
 } from "./dispatch-sections";
+import { DISPATCH_TOUR_NAMES } from "./tour/dispatch-tour.steps";
 
 function sectionIdForPath(pathname: string): DispatchSectionId {
   if (pathname.startsWith("/dispatch/rescue")) return "rescue";
@@ -41,7 +43,8 @@ export function DispatchShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const section = getDispatchSection(sectionIdForPath(pathname));
+  const sectionId = sectionIdForPath(pathname);
+  const section = getDispatchSection(sectionId);
   const SectionIcon = section.icon;
   const me = useMe();
   const logout = useLogout();
@@ -110,6 +113,10 @@ export function DispatchShell({ children }: { children: ReactNode }) {
               />
               {realtime === "live" ? "Trực tiếp" : "Mất kết nối realtime"}
             </span>
+            <TourButton
+              tour={DISPATCH_TOUR_NAMES[sectionId]}
+              ariaLabel={`Hướng dẫn ${section.label}`}
+            />
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
               {getInitials(me.data?.fullName ?? "")}
             </span>

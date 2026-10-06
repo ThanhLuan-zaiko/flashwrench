@@ -4,6 +4,9 @@ type BookingStepProps = {
   step: number;
   title: string;
   description?: string;
+  // Optional page-guide anchor: renders `data-tour` on the section so the
+  // booking tour can spotlight this step.
+  tour?: string;
   children: ReactNode;
 };
 
@@ -14,12 +17,14 @@ export function BookingStep({
   step,
   title,
   description,
+  tour,
   children,
 }: BookingStepProps) {
   const headingId = useId();
   return (
     <section
       aria-labelledby={headingId}
+      data-tour={tour}
       className="flex min-w-0 flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div className="flex items-start gap-3">
