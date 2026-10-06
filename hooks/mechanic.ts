@@ -19,6 +19,7 @@ import type {
 } from "@/services/mechanic.api";
 import {
   bookingActionRequest,
+  deliverOrderRequest,
   fetchMechanicBooking,
   fetchMechanicBookings,
   fetchMechanicIncome,
@@ -26,6 +27,7 @@ import {
   fetchMechanicStats,
   fetchNavigationBoard,
   issueBookingPaymentCodeRequest,
+  issueOrderPaymentCodeRequest,
   recordBookingPaymentRequest,
   updateMechanicLocationRequest,
   updateMechanicPresenceRequest,
@@ -227,6 +229,38 @@ export function useIssueBookingPaymentCode() {
   return useMutation({
     mutationFn: (bookingId: string) =>
       issueBookingPaymentCodeRequest(bookingId),
+  });
+}
+
+// Courier-COD variants for delivery orders on the navigation board: issue
+// rotates the code (the customer banner pops immediately), deliver submits
+// it and settles the order — one invalidation refresh drops the pin and
+// flips every payment-dependent view.
+export function useIssueOrderPaymentCode() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (orderId: string) => issueOrderPaymentCodeRequest(orderId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+    },
+  });
+}
+
+export function useDeliverOrder() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      orderId,
+      confirmCode,
+      note,
+    }: {
+      orderId: string;
+      confirmCode: string;
+      note?: string;
+    }) => deliverOrderRequest(orderId, { confirmCode, note }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: mechanicKeys.all });
+    },
   });
 }
 

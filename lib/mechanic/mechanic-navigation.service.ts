@@ -181,6 +181,8 @@ export async function getNavigationBoard(
       serviceNames: (itemsByBooking.get(row.booking_id) ?? [])
         .map((item) => item.serviceName)
         .filter((name) => name.length > 0),
+      codAmount: null,
+      codeIssued: false,
     });
   }
 

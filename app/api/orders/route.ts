@@ -7,8 +7,8 @@ import {
 } from "@/lib/http/workspace-route";
 import { notifyOrderCreated } from "@/lib/mail/confirmation.service";
 import { checkoutCart, checkoutGuestCart } from "@/lib/orders/checkout.service";
-import { listMyOrders } from "@/lib/orders/orders.service";
 import type { CheckoutInput } from "@/lib/orders/orders.types";
+import { listMyOrders } from "@/lib/orders/orders-read.service";
 import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 

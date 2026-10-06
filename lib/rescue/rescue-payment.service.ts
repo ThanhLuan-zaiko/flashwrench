@@ -15,6 +15,7 @@ import {
   type BookingPaymentMethod,
 } from "@/lib/payments/booking-payment.types";
 import { verifyCashConfirmCode } from "@/lib/payments/payment-code.service";
+import { clearPaymentPrompt } from "@/lib/payments/payment-prompt.service";
 import { publishRescueChange } from "@/lib/realtime/domain-publish";
 import { projectReceipt } from "@/lib/revenue/revenue.service";
 import { isRecord, isUuid, numericInput } from "@/lib/validation";
@@ -258,6 +259,7 @@ export async function recordRescuePayment(
       method: receipt.method,
       paidAt: receipt.paidAt,
     });
+    await clearPaymentPrompt(customerId, "emergency", requestId);
     await publishRescueChange(
       "rescue-updated",
       requestId,

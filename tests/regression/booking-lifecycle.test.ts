@@ -23,6 +23,7 @@ import {
   customerBookingsRepoMocks,
   dispatchRepoMocks,
   domainPublishMocks,
+  paymentPromptRepoMocks,
   paymentRepoMocks,
   resetWorkspaceMocks,
   revenueServiceMocks,
@@ -95,6 +96,10 @@ mock.module("@/lib/booking/review.repository", () => reviewRepoMocks);
 mock.module(
   "@/lib/payments/booking-payment.repository",
   () => paymentRepoMocks,
+);
+mock.module(
+  "@/lib/payments/payment-prompt.repository",
+  () => paymentPromptRepoMocks,
 );
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 mock.module("@/lib/revenue/revenue.service", () => revenueServiceMocks);

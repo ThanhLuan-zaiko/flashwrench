@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { LazyAccountLockGuard } from "@/components/auth/LazyAccountLockGuard";
 import { LazyChatFab } from "@/components/chat/LazyChatFab";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { LazyPaymentPromptBanner } from "@/components/payments/LazyPaymentPromptBanner";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
 import { ToastProvider } from "@/components/toast/ToastProvider";
@@ -49,6 +50,7 @@ export default async function RootLayout({
             <LazyAccountLockGuard />
             <LazyChatFab />
             <SiteHeader />
+            <LazyPaymentPromptBanner />
             <div className="flex flex-1 flex-col">{children}</div>
           </ToastProvider>
         </QueryProvider>

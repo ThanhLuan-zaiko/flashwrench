@@ -13,6 +13,7 @@ import { MapPanel } from "./MapPanel";
 import { NavigationHeader } from "./NavigationHeader";
 import { NavigationList } from "./NavigationList";
 import { googleDirectionsUrl } from "./navigation-directions";
+import { OrderCollectPanel } from "./OrderCollectPanel";
 import { useTravelRouteSharing } from "./useTravelRouteSharing";
 
 // Bento root for navigation: an embedded live map of the current job,
@@ -134,6 +135,9 @@ export function NavigationSection() {
                 Chỉ đường
               </a>
             </div>
+          )}
+          {selected?.kind === "order" && selected.codAmount !== null && (
+            <OrderCollectPanel target={selected} />
           )}
         </BentoCard>
         <BentoCard label="Đơn đang mở">

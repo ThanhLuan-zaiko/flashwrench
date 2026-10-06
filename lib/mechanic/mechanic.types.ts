@@ -258,6 +258,10 @@ export type MechanicNavigationTarget = {
   distanceKm: number;
   etaMin: number;
   serviceNames: string[];
+  /** COD amount still owed — delivery orders only; null when prepaid. */
+  codAmount: number | null;
+  /** Whether a customer confirm code is currently live for the order. */
+  codeIssued: boolean;
 };
 
 export type MechanicJobType = "booking" | "emergency" | "order" | "none";

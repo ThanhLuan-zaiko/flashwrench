@@ -116,6 +116,21 @@ export function OrderTracker({ orderId }: { orderId: string }) {
           mechanic={courier ? { lat: courier.lat, lng: courier.lng } : null}
         />
       )}
+
+      {tracking.paymentConfirmCode && (
+        <div className="rounded-xl border border-zinc-300 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Mã xác nhận thanh toán tiền mặt
+          </p>
+          <p className="mt-1 font-mono text-lg font-semibold tracking-[0.3em] text-zinc-900 dark:text-zinc-50">
+            {tracking.paymentConfirmCode}
+          </p>
+          <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">
+            Đọc mã này cho người giao hàng khi thanh toán — mã biến mất sau khi
+            đơn được thanh toán.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

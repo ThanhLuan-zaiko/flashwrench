@@ -108,6 +108,8 @@ export async function getPublicOrderTracking(
       trackingCode: row.tracking_code,
       destination,
       courier,
+      paymentConfirmCode:
+        row.payment_status === "unpaid" ? row.payment_confirm_code : null,
       updatedAt: row.updated_at?.toISOString() ?? null,
     },
   };

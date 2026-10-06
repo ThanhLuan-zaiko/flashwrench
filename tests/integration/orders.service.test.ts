@@ -5,6 +5,7 @@ import {
   makeOrderRow,
   makePartRow,
 } from "../helpers/parts.fixtures";
+import { paymentPromptRepoMocks } from "../helpers/payment.mocks";
 import {
   autoGrantServiceMocks,
   autoGrantStubs,
@@ -37,6 +38,10 @@ mock.module(
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/orders/order-revenue", () => orderRevenueMocks);
 mock.module("@/lib/vouchers/auto-grant.service", () => autoGrantServiceMocks);
+mock.module(
+  "@/lib/payments/payment-prompt.repository",
+  () => paymentPromptRepoMocks,
+);
 
 import { cancelMyOrder, updateOrderStatus } from "@/lib/orders/orders.service";
 

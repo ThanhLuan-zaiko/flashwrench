@@ -6,12 +6,12 @@ import {
   validateReturnInput,
 } from "./order-return";
 import { findOrderRowById, listOrderHistoryRows } from "./orders.repository";
-import { loadOrderDetail } from "./orders.service";
 import type {
   OrderDetail,
   OrderFieldErrors,
   OrdersResult,
 } from "./orders.types";
+import { loadOrderDetail } from "./orders-read.service";
 import {
   insertOrderHistory,
   saveOrderReturnRequest,

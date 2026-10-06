@@ -4,6 +4,7 @@ import {
   makeOrderItemRow,
   makeOrderRow,
 } from "../helpers/parts.fixtures";
+import { paymentPromptRepoMocks } from "../helpers/payment.mocks";
 import {
   orderDeliveryRepoMocks,
   orderRepoMocks,
@@ -32,6 +33,10 @@ mock.module(
 );
 mock.module("@/lib/auth/user.repository", () => userRepoMocks);
 mock.module("@/lib/orders/order-revenue", () => orderRevenueMocks);
+mock.module(
+  "@/lib/payments/payment-prompt.repository",
+  () => paymentPromptRepoMocks,
+);
 
 import { requestOrderReturn } from "@/lib/orders/order-return.service";
 import { updateOrderStatus } from "@/lib/orders/orders.service";

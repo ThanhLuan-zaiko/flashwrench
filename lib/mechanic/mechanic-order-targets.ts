@@ -43,6 +43,11 @@ export function orderNavigationTargets(
       distanceKm,
       etaMin: origin ? estimateEtaMin(distanceKm) : 0,
       serviceNames: ["Giao linh kiện"],
+      codAmount:
+        order.payment_method === "cod" && order.payment_status === "unpaid"
+          ? (order.total ?? 0)
+          : null,
+      codeIssued: Boolean(order.payment_confirm_code),
     });
   }
   return targets;

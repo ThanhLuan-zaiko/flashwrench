@@ -179,6 +179,7 @@ export type OrderRow = {
   return_decision_note: string | null;
   return_decided_by: string | null;
   return_decided_at: Date | null;
+  payment_confirm_code: string | null;
 };
 
 export type OrderItemRow = {
@@ -252,6 +253,12 @@ export type OrderDetail = OrderSummary & {
   items: OrderItem[];
   history: OrderHistoryEntry[];
   returnRequest: OrderReturnRequest | null;
+  /**
+   * Cash confirmation code the customer dictates to the courier. Only
+   * populated on the customer-facing read while payment is outstanding;
+   * staff and courier views keep it null by design.
+   */
+  paymentConfirmCode: string | null;
 };
 
 export type OrderHistoryEntry = {

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import {
   FiAlertCircle,
   FiLifeBuoy,
@@ -36,6 +37,22 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
   const query = useMyRescues();
   useMyRescuesRealtime(Boolean(customerId));
   const items = query.data?.items ?? [];
+
+  // Same deep-link contract as the booking tab: the payment banner sends
+  // ?request=<id> and the rescue dialog (with the confirm code) opens on
+  // its own. Closing it strips the param so it stays closed.
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const deepRequest = searchParams.get("request");
+  useEffect(() => {
+    if (deepRequest) setSelectedId(deepRequest);
+  }, [deepRequest]);
+
+  const closeDialog = useCallback(() => {
+    setSelectedId(null);
+    if (deepRequest) router.replace(pathname, { scroll: false });
+  }, [deepRequest, pathname, router]);
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
@@ -158,10 +175,7 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
       </section>
 
       {selectedId && (
-        <HistoryRescueDialog
-          requestId={selectedId}
-          onClose={() => setSelectedId(null)}
-        />
+        <HistoryRescueDialog requestId={selectedId} onClose={closeDialog} />
       )}
     </div>
   );

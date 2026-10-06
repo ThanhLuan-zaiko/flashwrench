@@ -5,11 +5,9 @@ import {
   readJsonObject,
 } from "@/lib/http/workspace-route";
 import { collectCounterPayment } from "@/lib/orders/order-payment.service";
-import {
-  getOrderForStaff,
-  updateOrderStatus,
-} from "@/lib/orders/orders.service";
+import { updateOrderStatus } from "@/lib/orders/orders.service";
 import type { CourierConfigInput } from "@/lib/orders/orders.types";
+import { getOrderForStaff } from "@/lib/orders/orders-read.service";
 import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 

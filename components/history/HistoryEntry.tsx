@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PageBounce } from "@/components/pagination/PageBounce";
 import { bookingKeys, useMyBookings } from "@/hooks/booking";
@@ -22,6 +22,8 @@ type HistoryEntryProps = {
 // bounces to the list root.
 export function HistoryEntry({ customerId }: HistoryEntryProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { page, firstPageHref, hrefFor } = useRoutePage();
   const index = page - 1;
   const [search, setSearch] = useState("");
@@ -99,6 +101,22 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
     Boolean(customerId),
   );
 
+  // The payment banner deep-links here with ?booking=<id> so the confirm
+  // code dialog opens on its own. Closing it strips the param so the
+  // dialog does not reopen on the next render.
+  const deepBooking = searchParams.get("booking");
+  useEffect(() => {
+    if (deepBooking) {
+      setSelectedId(deepBooking);
+      setDetailId(deepBooking);
+    }
+  }, [deepBooking]);
+
+  const closeDetail = useCallback(() => {
+    setDetailId(null);
+    if (deepBooking) router.replace(pathname, { scroll: false });
+  }, [deepBooking, pathname, router]);
+
   function handleSearch(value: string) {
     setSearch(value);
   }
@@ -141,10 +159,7 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
       </div>
 
       {detailId && (
-        <BookingDetailDialog
-          bookingId={detailId}
-          onClose={() => setDetailId(null)}
-        />
+        <BookingDetailDialog bookingId={detailId} onClose={closeDetail} />
       )}
     </div>
   );

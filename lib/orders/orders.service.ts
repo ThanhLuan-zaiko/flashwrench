@@ -2,6 +2,7 @@ import type { UserRole } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
 import { restockForOrder } from "@/lib/parts/parts-lifecycle.service";
+import { clearPaymentPrompt } from "@/lib/payments/payment-prompt.service";
 import { handleVoucherOrderTransition } from "@/lib/vouchers/auto-grant.service";
 import {
   type ResolvedCourier,
@@ -9,12 +10,10 @@ import {
 } from "./order-courier.service";
 import { projectOrderReceipts, refundOrderReceipts } from "./order-revenue";
 import { refundOrderWallet } from "./order-wallet-restore";
-import { toOrderDetail, toOrderSummary } from "./orders.mapper";
+import { toOrderSummary } from "./orders.mapper";
 import {
   findOrderRowById,
-  listOrderHistoryRows,
   listOrderItemRows,
-  listOrderRowsByCustomer,
   listOrderRowsByStatus,
 } from "./orders.repository";
 import {
@@ -36,6 +35,7 @@ import {
   markOrderPaymentStatus,
   updateOrderCourierStatus,
 } from "./orders-delivery.repository";
+import { loadOrderDetail } from "./orders-read.service";
 import { fail, failFields } from "./orders-result";
 import {
   insertOrderHistory,
@@ -45,48 +45,6 @@ import {
 
 const ORDERS_CURSOR_SCOPE = "dispatch-orders";
 const ORDERS_PAGE_LIMIT = 20;
-
-export async function listMyOrders(
-  customerId: string,
-): Promise<OrdersResult<OrderSummary[]>> {
-  const rows = await listOrderRowsByCustomer(customerId);
-  return { ok: true, data: rows.map(toOrderSummary) };
-}
-
-export async function loadOrderDetail(
-  orderId: string,
-): Promise<OrderDetail | null> {
-  const row = await findOrderRowById(orderId);
-  if (!row) return null;
-  const [items, history] = await Promise.all([
-    listOrderItemRows(orderId),
-    listOrderHistoryRows(orderId),
-  ]);
-  return toOrderDetail(row, items, history);
-}
-
-// Owner read: customers only ever see their own orders.
-export async function getMyOrder(
-  customerId: string,
-  orderId: string,
-): Promise<OrdersResult<OrderDetail>> {
-  const row = await findOrderRowById(orderId);
-  if (!row) return fail(404, "Không tìm thấy đơn hàng.");
-  if (row.customer_id !== customerId) {
-    return fail(403, "Đơn hàng này không thuộc tài khoản của bạn.");
-  }
-  const detail = await loadOrderDetail(orderId);
-  if (!detail) return fail(404, "Không tìm thấy đơn hàng.");
-  return { ok: true, data: detail };
-}
-
-export async function getOrderForStaff(
-  orderId: string,
-): Promise<OrdersResult<OrderDetail>> {
-  const detail = await loadOrderDetail(orderId);
-  if (!detail) return fail(404, "Không tìm thấy đơn hàng.");
-  return { ok: true, data: detail };
-}
 
 // Customer cancel: only while the order is still pending. Items go back
 // into stock and the history row records who cancelled.
@@ -212,6 +170,21 @@ export async function updateOrderStatus(
       note: "Nhập lý do hủy đơn — khách hàng sẽ thấy thông báo này.",
     });
   }
+  // Mechanic-courier COD deliveries must settle through the collect path so
+  // the customer's confirm code is verified — a bare "delivered" click here
+  // would auto-mark the order paid without the customer present.
+  if (
+    nextStatus === "delivered" &&
+    from === "shipping" &&
+    row.courier_type === "mechanic" &&
+    row.payment_method === "cod" &&
+    row.payment_status === "unpaid"
+  ) {
+    return fail(
+      400,
+      "Đơn COD do thợ giao phải thu tiền bằng mã xác nhận của khách.",
+    );
+  }
   let resolvedCourier: ResolvedCourier | null = null;
   if (nextStatus === "shipping") {
     const resolved = await resolveCourierConfig(courier, orderId);
@@ -239,7 +212,10 @@ export async function updateOrderStatus(
   return { ok: true, data: detail };
 }
 
-async function applyStatusChange(
+// Exported for the courier collect path (order-courier-collect.service):
+// mechanic-courier COD delivery settles through the same transition as
+// the staff "delivered" button so all projections stay identical.
+export async function applyStatusChange(
   row: OrderRow,
   nextStatus: OrderStatus,
   changedBy: string,
@@ -297,6 +273,8 @@ async function applyStatusChange(
     } else {
       await refundOrderReceipts(row.order_id, changedBy);
     }
+    // Settled or refunded: any customer-facing payment prompt is dead.
+    await clearPaymentPrompt(row.customer_id, "order", row.order_id);
   }
   // A mock-paid order can still be cancelled while pending: the money is
   // simulated, so cancelling flips its payment rows straight to refunded.

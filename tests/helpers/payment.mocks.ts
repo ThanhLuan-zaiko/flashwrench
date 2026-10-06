@@ -6,11 +6,70 @@ import type {
   PaymentRow,
   PaymentWrite,
 } from "@/lib/payments/booking-payment.repository";
+import type { PaymentPromptRow } from "@/lib/payments/payment-prompt.types";
 import type {
   AuditEventWrite,
   ReceiptProjectionWrite,
 } from "@/lib/revenue/revenue.types";
 import { workspaceStubs } from "./workspace.mocks";
+
+// In-memory stand-in for payment_prompts_by_customer: the service layer
+// still decides when to upsert/clear; tests assert on the captured rows.
+export const paymentPromptStubs = {
+  rows: [] as PaymentPromptRow[],
+};
+
+export const paymentPromptRepoMocks = {
+  putPaymentPrompt: mock(
+    async (input: {
+      customerId: string;
+      refType: string;
+      refId: string;
+      title: string;
+      amountDue: number;
+      issuedAt: Date;
+    }): Promise<void> => {
+      paymentPromptStubs.rows = [
+        ...paymentPromptStubs.rows.filter(
+          (row) =>
+            !(
+              row.customer_id === input.customerId &&
+              row.ref_type === input.refType &&
+              row.ref_id === input.refId
+            ),
+        ),
+        {
+          customer_id: input.customerId,
+          ref_type: input.refType,
+          ref_id: input.refId,
+          title: input.title,
+          amount_due: input.amountDue,
+          issued_at: input.issuedAt,
+        },
+      ];
+    },
+  ),
+  deletePaymentPrompt: mock(
+    async (
+      customerId: string,
+      refType: string,
+      refId: string,
+    ): Promise<void> => {
+      paymentPromptStubs.rows = paymentPromptStubs.rows.filter(
+        (row) =>
+          !(
+            row.customer_id === customerId &&
+            row.ref_type === refType &&
+            row.ref_id === refId
+          ),
+      );
+    },
+  ),
+  listPaymentPromptRows: mock(
+    async (customerId: string): Promise<PaymentPromptRow[]> =>
+      paymentPromptStubs.rows.filter((row) => row.customer_id === customerId),
+  ),
+};
 
 export const paymentRepoMocks = {
   findPaymentRowById: mock(
@@ -88,6 +147,8 @@ export const rescuePaymentRepoMocks = {
 };
 
 export function resetPaymentMocks(): void {
+  paymentPromptStubs.rows = [];
+  for (const fn of Object.values(paymentPromptRepoMocks)) fn.mockClear();
   workspaceStubs.paymentById = null;
   workspaceStubs.paymentRowsById.clear();
   workspaceStubs.paymentRefIds = [];

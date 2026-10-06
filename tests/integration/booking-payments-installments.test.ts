@@ -14,6 +14,7 @@ import {
 import {
   domainPublishMocks,
   makePaymentReceiptRow,
+  paymentPromptRepoMocks,
   paymentRepoMocks,
   resetWorkspaceMocks,
   revenueServiceMocks,
@@ -40,6 +41,10 @@ mock.module("@/lib/rescue/rescue-workflow.repository", () => ({
 }));
 mock.module("@/lib/realtime/domain-publish", () => domainPublishMocks);
 mock.module("@/lib/revenue/revenue.service", () => revenueServiceMocks);
+mock.module(
+  "@/lib/payments/payment-prompt.repository",
+  () => paymentPromptRepoMocks,
+);
 
 import { recordBookingPayment } from "@/lib/payments/booking-payment.service";
 

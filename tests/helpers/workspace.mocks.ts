@@ -41,6 +41,8 @@ import {
 } from "./shop-settings.mocks";
 
 export {
+  paymentPromptRepoMocks,
+  paymentPromptStubs,
   paymentRepoMocks,
   rescuePaymentRepoMocks,
   revenueServiceMocks,

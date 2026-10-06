@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FiCheckCircle, FiCreditCard, FiHome } from "react-icons/fi";
+import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import type { OrderDetail } from "@/lib/orders/orders.types";
 import { MockPaymentDialog } from "./MockPaymentDialog";
 import {
@@ -81,6 +82,14 @@ export function OrderPaymentSection({
             Bạn sẽ thanh toán khi nhận hàng.
           </p>
         )}
+
+      {/* Courier COD: once the mechanic issues a code the customer reads it
+      back at the door — the only way cash collection gets recorded. */}
+      {order.paymentConfirmCode && (
+        <div className="mt-3">
+          <PaymentCodeCard code={order.paymentConfirmCode} />
+        </div>
+      )}
 
       {mockPayable && (
         <div className="mt-3 flex flex-col gap-2">

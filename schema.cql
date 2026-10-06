@@ -830,7 +830,8 @@ CREATE TABLE IF NOT EXISTS orders_by_id (
   return_decision     TEXT,
   return_decision_note TEXT,
   return_decided_by   UUID,
-  return_decided_at   TIMESTAMP
+  return_decided_at   TIMESTAMP,
+  payment_confirm_code TEXT -- same cash-collection guard as bookings (courier COD at handover)
 );
 
 -- Query: my orders
@@ -990,6 +991,20 @@ CREATE TABLE IF NOT EXISTS payment_audit_by_day (
   detail     TEXT,
   PRIMARY KEY ((bucket), event_at, event_id)
 ) WITH CLUSTERING ORDER BY (event_at DESC, event_id ASC);
+
+-- Query: "payment confirmation waiting" banner for one customer.
+-- A row is written when a collector issues the cash confirm code on a
+-- booking/rescue/order and deleted when the balance settles; the site-wide
+-- banner reads this single partition instead of scanning history tables.
+CREATE TABLE IF NOT EXISTS payment_prompts_by_customer (
+  customer_id UUID,
+  ref_type    TEXT, -- booking | emergency | order
+  ref_id      UUID,
+  title       TEXT, -- short banner label, e.g. 'Sửa xe · 59A1-23456'
+  amount_due  BIGINT, -- VND outstanding at issue time
+  issued_at   TIMESTAMP,
+  PRIMARY KEY ((customer_id), ref_type, ref_id)
+) WITH CLUSTERING ORDER BY (ref_type ASC, ref_id ASC);
 
 -- ============================================================================
 -- 10. REVIEWS (mechanics / services / parts)

@@ -140,6 +140,30 @@ export function issueBookingPaymentCodeRequest(
   );
 }
 
+// Courier COD: rotate the customer-facing confirm code for a delivery the
+// mechanic is carrying. Same contract as the booking variant — the code
+// itself never comes back, the customer reads it on their side.
+export function issueOrderPaymentCodeRequest(
+  orderId: string,
+): Promise<{ issued: boolean }> {
+  return apiRequest<{ issued: boolean }>(
+    `/api/mechanic/orders/${encodeURIComponent(orderId)}/payment-code`,
+    { method: "POST" },
+  );
+}
+
+// Courier COD handover: echo the customer's code and settle the order to
+// delivered + paid in one request.
+export function deliverOrderRequest(
+  orderId: string,
+  input: { confirmCode: string; note?: string },
+): Promise<{ order: unknown }> {
+  return apiRequest<{ order: unknown }>(
+    `/api/mechanic/orders/${encodeURIComponent(orderId)}/deliver`,
+    { method: "POST", body: JSON.stringify(input) },
+  );
+}
+
 export function fetchMechanicStats(): Promise<{
   stats: MechanicStats;
   monthly: MechanicMonthlyPoint[];

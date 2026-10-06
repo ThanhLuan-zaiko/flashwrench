@@ -22,6 +22,7 @@ import {
   type BookingPaymentMethod,
 } from "./booking-payment.types";
 import { verifyCashConfirmCode } from "./payment-code.service";
+import { clearPaymentPrompt } from "./payment-prompt.service";
 
 type PaymentTotals = {
   received: number;
@@ -53,9 +54,8 @@ function toPayment(row: PaymentRow, totals: PaymentTotals): BookingPayment {
   };
 }
 
-function isValidDate(value: Date | null): value is Date {
-  return value instanceof Date && !Number.isNaN(value.getTime());
-}
+const isValidDate = (value: Date | null): value is Date =>
+  value instanceof Date && !Number.isNaN(value.getTime());
 
 function writeFromRow(row: PaymentRow): PaymentWrite {
   return {
@@ -211,6 +211,7 @@ export async function recordBookingPayment(
       return fail(409, "Đơn này đã có giao dịch thanh toán khác.");
     }
     await projectBookingPayment(writeFromRow(receipt));
+    await clearPaymentPrompt(customerId, "booking", bookingId);
     await publishBookingChange(
       "payment-recorded",
       bookingId,
@@ -283,6 +284,9 @@ export async function recordBookingPayment(
       method: receipt.method ?? method,
       paidAt: receipt.paid_at ?? at,
     });
+    if (after.paymentStatus === "paid") {
+      await clearPaymentPrompt(customerId, "booking", bookingId);
+    }
     await publishBookingChange(
       "payment-recorded",
       bookingId,

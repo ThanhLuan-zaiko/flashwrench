@@ -5,7 +5,8 @@ import {
   readJsonObject,
 } from "@/lib/http/workspace-route";
 import { requestOrderReturn } from "@/lib/orders/order-return.service";
-import { cancelMyOrder, getMyOrder } from "@/lib/orders/orders.service";
+import { cancelMyOrder } from "@/lib/orders/orders.service";
+import { getMyOrder } from "@/lib/orders/orders-read.service";
 import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 

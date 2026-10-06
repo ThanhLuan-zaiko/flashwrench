@@ -132,6 +132,7 @@ export function makeOrderRow(overrides?: Partial<OrderRow>): OrderRow {
     month_bucket: "2026-01",
     created_at: new Date("2026-01-05T00:00:00.000Z"),
     updated_at: new Date("2026-01-05T00:00:00.000Z"),
+    payment_confirm_code: null,
     return_reason: null,
     return_images: null,
     return_requested_at: null,

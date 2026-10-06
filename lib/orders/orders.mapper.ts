@@ -61,6 +61,7 @@ export function toOrderDetail(
   row: OrderRow,
   items: OrderItemRow[],
   history: OrderHistoryRow[],
+  exposePaymentCode = false,
 ): OrderDetail {
   return {
     ...toOrderSummary(row),
@@ -72,6 +73,10 @@ export function toOrderDetail(
     items: items.map(toOrderItem),
     history: history.map(toHistoryEntry),
     returnRequest: toReturnRequest(row),
+    paymentConfirmCode:
+      exposePaymentCode && row.payment_status === "unpaid"
+        ? row.payment_confirm_code
+        : null,
   };
 }
 

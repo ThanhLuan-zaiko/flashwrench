@@ -7,7 +7,7 @@ import type {
 } from "./orders.types";
 
 export const ORDER_COLUMNS =
-  "order_id, customer_id, customer_name, customer_phone, customer_email, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at, return_reason, return_images, return_requested_at, return_decision, return_decision_note, return_decided_by, return_decided_at";
+  "order_id, customer_id, customer_name, customer_phone, customer_email, shipping_address, status, payment_status, payment_method, fulfillment_type, courier_type, courier_id, courier_name, tracking_code, subtotal, shipping_fee, discount, total, coupon_code, note, month_bucket, created_at, updated_at, return_reason, return_images, return_requested_at, return_decision, return_decision_note, return_decided_by, return_decided_at, payment_confirm_code";
 
 function toAddressSnapshot(raw: unknown): AddressSnapshot | null {
   if (!raw || typeof raw !== "object") return null;
@@ -57,6 +57,7 @@ export function toOrderRow(row: Record<string, unknown>): OrderRow {
       ? String(row.return_decided_by)
       : null,
     return_decided_at: (row.return_decided_at as Date | null) ?? null,
+    payment_confirm_code: (row.payment_confirm_code as string | null) ?? null,
   };
 }
 

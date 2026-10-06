@@ -127,6 +127,20 @@ export async function markOrderPaymentStatus(params: {
   await scylla.batch(statements, { prepare: true });
 }
 
+// Rotate the customer-facing cash confirmation code on a courier COD
+// order. Plain UPDATE: the latest code always wins, old codes die.
+export async function setOrderPaymentCode(
+  orderId: string,
+  code: string | null,
+  updatedAt: Date,
+): Promise<void> {
+  await scylla.execute(
+    "UPDATE orders_by_id SET payment_confirm_code = ?, updated_at = ? WHERE order_id = ?",
+    [code, updatedAt, orderId],
+    { prepare: true },
+  );
+}
+
 // Courier GPS breadcrumb while an order is shipping; the customer map
 // reads this partition plus the courier's live mechanic_locations row.
 export async function insertOrderTravelPoint(params: {

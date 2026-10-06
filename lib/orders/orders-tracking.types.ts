@@ -37,5 +37,8 @@ export type PublicOrderTracking = {
   trackingCode: string | null;
   destination: { lat: number; lng: number } | null;
   courier: { lat: number; lng: number; updatedAt: string | null } | null;
+  // Courier-COD confirm code, present only while cash is still owed — the
+  // tracking link is the capability, same rule as public booking tracking.
+  paymentConfirmCode: string | null;
   updatedAt: string | null;
 };
