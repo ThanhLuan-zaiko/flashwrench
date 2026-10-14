@@ -7,8 +7,7 @@ import {
 import { requestOrderReturn } from "@/lib/orders/order-return.service";
 import { cancelMyOrder } from "@/lib/orders/orders.service";
 import { getMyOrder } from "@/lib/orders/orders-read.service";
-import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { publishOrderChange } from "@/lib/realtime/domain-publish";
 
 export async function GET(
   _request: Request,
@@ -67,14 +66,11 @@ export async function PATCH(
         { errors: result.errors },
         { status: result.status },
       );
-    void publishRealtimeEvent(OPERATIONS_TOPIC, {
-      kind: "orders-updated",
-      updatedAt: new Date().toISOString(),
-    });
-    void publishRealtimeEvent(userTopic(user.id), {
-      kind: "order-updated",
+    void publishOrderChange(
       orderId,
-    });
+      result.data.status,
+      result.data.customerId,
+    );
     return NextResponse.json({ order: result.data });
   } catch {
     return NextResponse.json(

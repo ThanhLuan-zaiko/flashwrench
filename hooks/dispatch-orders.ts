@@ -1,7 +1,11 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { OPERATIONS_TOPIC, parseDomainEvent } from "@/lib/realtime/protocol";
+import {
+  OPERATIONS_TOPIC,
+  PARTS_CATALOG_TOPIC,
+  parseDomainEvent,
+} from "@/lib/realtime/protocol";
 import type {
   CounterSalePayload,
   CourierConfigInput,
@@ -70,7 +74,8 @@ export function useDispatchOrderInvoice(orderId: string | null) {
 }
 
 export function useDispatchParts() {
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: dispatchOrderKeys.stock,
     queryFn: () => fetchDispatchParts(),
     staleTime: 15 * 1000,
@@ -78,6 +83,22 @@ export function useDispatchParts() {
     retry: false,
     refetchOnWindowFocus: true,
   });
+  // Stock is edited from multiple dispatcher tabs (stock board, POS dialog,
+  // admin parts). The parts-catalog topic fans out every edit, so the board
+  // refreshes live instead of waiting for manual reload.
+  useRealtimeTopic(PARTS_CATALOG_TOPIC, {
+    onEvent: () => {
+      void queryClient.invalidateQueries({
+        queryKey: dispatchOrderKeys.stock,
+      });
+    },
+    onReconnect: () => {
+      void queryClient.invalidateQueries({
+        queryKey: dispatchOrderKeys.stock,
+      });
+    },
+  });
+  return query;
 }
 
 // Order events ride the shared operations topic; any orders-updated event

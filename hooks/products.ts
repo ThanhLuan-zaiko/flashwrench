@@ -35,16 +35,24 @@ export function usePublicPart(slug: string) {
 }
 
 // Invalidate the shop catalog whenever the admin publishes a change or
-// staff adjusts stock. Events carry only a refresh signal.
+// staff adjusts stock. Events carry only a refresh signal. Invalidating
+// the list prefix also busts detail queries (prefix match), but bust both
+// explicitly so a future exact:true can never leave /products/[slug] stale.
 export function usePartsCatalogRealtime(enabled = true) {
   const queryClient = useQueryClient();
   useRealtimeTopic(PARTS_CATALOG_TOPIC, {
     enabled,
     onEvent: () => {
       void queryClient.invalidateQueries({ queryKey: productsKeys.all });
+      void queryClient.invalidateQueries({
+        queryKey: ["public-parts", "detail"],
+      });
     },
     onReconnect: () => {
       void queryClient.invalidateQueries({ queryKey: productsKeys.all });
+      void queryClient.invalidateQueries({
+        queryKey: ["public-parts", "detail"],
+      });
     },
   });
 }

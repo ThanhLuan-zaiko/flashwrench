@@ -3,6 +3,7 @@ import { findBookingRowById } from "@/lib/mechanic/mechanic-bookings.repository"
 import {
   bookingIdFromTopic,
   canSubscribe,
+  isPublicTrackTopic,
   type RealtimeUser,
 } from "./protocol";
 
@@ -19,6 +20,10 @@ export async function authorizeTopic(
   topic: string,
 ): Promise<boolean> {
   if (!canSubscribe(user, topic)) return false;
+  // Guest tracking signals are public: the unguessable id is the
+  // capability (same as the public HTTP tracking endpoints). No DB
+  // lookup so logged-out guests stay subscribed behind the tunnel.
+  if (isPublicTrackTopic(topic)) return true;
   const bookingId = bookingIdFromTopic(topic);
   if (!bookingId) return true;
   if (!user) return false;

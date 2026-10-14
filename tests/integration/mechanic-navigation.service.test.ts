@@ -144,7 +144,8 @@ describe("saveMechanicLocation", () => {
       lat: 10.775,
       lng: 106.701,
     });
-    expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(0);
+    // Live GPS: en_route moves fan out so tracking maps move instantly.
+    expect(domainPublishMocks.publishBookingChange.mock.calls.length).toBe(1);
   });
 
   test("does not record route points after the booking leaves en_route", async () => {

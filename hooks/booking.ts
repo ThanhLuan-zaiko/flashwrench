@@ -6,6 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { bookingTrackTopic, parseDomainEvent } from "@/lib/realtime/protocol";
 import type {
   BookingReviewPayload,
   CreateBookingInput,
@@ -22,6 +23,7 @@ import {
 import type { MechanicsQuery } from "@/services/mechanics.api";
 import { fetchAvailableMechanics } from "@/services/mechanics.api";
 import { reviewKeys } from "./reviews";
+import { useRealtimeTopic } from "./useRealtimeTopic";
 
 export const bookingKeys = {
   all: ["bookings"] as const,
@@ -136,7 +138,8 @@ export function useCancelBooking() {
 }
 
 export function useBookingTravelPoints(bookingId: string | null, live = false) {
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: bookingKeys.travelTrack(bookingId ?? ""),
     queryFn: () => fetchBookingTravelPoints(bookingId as string),
     enabled: bookingId !== null,
@@ -145,6 +148,26 @@ export function useBookingTravelPoints(bookingId: string | null, live = false) {
     retry: 1,
     refetchInterval: live ? 15 * 1000 : false,
   });
+  // GPS saves now fan out booking-updated on the public track topic:
+  // the trail polyline refreshes instantly, poll stays as fallback.
+  useRealtimeTopic(bookingId ? bookingTrackTopic(bookingId) : "", {
+    enabled: Boolean(bookingId) && live,
+    onEvent: (payload) => {
+      const event = parseDomainEvent(payload);
+      if (event?.kind !== "booking-updated") return;
+      if (event.bookingId && event.bookingId !== bookingId) return;
+      void queryClient.invalidateQueries({
+        queryKey: bookingKeys.travelTrack(bookingId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!bookingId) return;
+      void queryClient.invalidateQueries({
+        queryKey: bookingKeys.travelTrack(bookingId),
+      });
+    },
+  });
+  return query;
 }
 
 // Bookable mechanics for the picker. Short cache: availability flips the

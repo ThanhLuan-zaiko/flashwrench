@@ -180,36 +180,44 @@ describe("realtime gateway", () => {
   });
 
   test("denies cross-origin upgrades and allows same-host ones", async () => {
-    const crossOrigin = await fetch(`${base}/ws`, {
-      headers: { Origin: "https://evil.example" },
-    });
-    expect(crossOrigin.status).toBe(403);
-
-    const crossScheme = await fetch(`${base}/ws`, {
-      headers: { Origin: "https://127.0.0.1:3000" },
-    });
-    expect(crossScheme.status).toBe(403);
-
-    const sameHost = await fetch(`${base}/ws`, {
-      headers: { Origin: "http://127.0.0.1:3000" },
-    });
-    expect(sameHost.status).toBe(400);
-
-    const noOrigin = await fetch(`${base}/ws`);
-    expect(noOrigin.status).toBe(400);
-
-    process.env.REALTIME_ALLOWED_ORIGINS = "https://app.example.com";
+    const savedAllowlist = process.env.REALTIME_ALLOWED_ORIGINS;
+    delete process.env.REALTIME_ALLOWED_ORIGINS;
     try {
-      const listed = await fetch(`${base}/ws`, {
-        headers: { Origin: "https://app.example.com" },
+      const crossOrigin = await fetch(`${base}/ws`, {
+        headers: { Origin: "https://evil.example" },
       });
-      expect(listed.status).toBe(400);
-      const unlisted = await fetch(`${base}/ws`, {
+      expect(crossOrigin.status).toBe(403);
+
+      const crossScheme = await fetch(`${base}/ws`, {
+        headers: { Origin: "https://127.0.0.1:3000" },
+      });
+      expect(crossScheme.status).toBe(403);
+
+      const sameHost = await fetch(`${base}/ws`, {
         headers: { Origin: "http://127.0.0.1:3000" },
       });
-      expect(unlisted.status).toBe(403);
+      expect(sameHost.status).toBe(400);
+
+      const noOrigin = await fetch(`${base}/ws`);
+      expect(noOrigin.status).toBe(400);
+
+      process.env.REALTIME_ALLOWED_ORIGINS = "https://app.example.com";
+      try {
+        const listed = await fetch(`${base}/ws`, {
+          headers: { Origin: "https://app.example.com" },
+        });
+        expect(listed.status).toBe(400);
+        const unlisted = await fetch(`${base}/ws`, {
+          headers: { Origin: "http://127.0.0.1:3000" },
+        });
+        expect(unlisted.status).toBe(403);
+      } finally {
+        delete process.env.REALTIME_ALLOWED_ORIGINS;
+      }
     } finally {
-      delete process.env.REALTIME_ALLOWED_ORIGINS;
+      if (savedAllowlist === undefined)
+        delete process.env.REALTIME_ALLOWED_ORIGINS;
+      else process.env.REALTIME_ALLOWED_ORIGINS = savedAllowlist;
     }
   });
 

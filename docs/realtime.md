@@ -45,6 +45,9 @@ Server trả về `event` (`topic`, `payload`, `from`), `subscribed`,
 | `booking:{id}`           | đã đăng nhập (v1, sẽ siết theo participant) | server-only |
 | `booking:{id}:chat`      | đã đăng nhập (v1, như trên) | đã đăng nhập               |
 | `part:{partId}`          | công khai (trang sản phẩm mở cho khách) | server-only (route publish) |
+| `booking-track:{id}`     | công khai — id khó đoán là capability (như endpoint track HTTP) | server-only |
+| `order:{id}`             | công khai — như trên       | server-only                 |
+| `rescue:{id}`            | công khai — như trên       | server-only                 |
 | `emergency:zone:{zoneId}`| thợ / điều phối / admin    | thợ / điều phối / admin     |
 | topic lạ                 | từ chối                    | từ chối                     |
 
@@ -153,5 +156,6 @@ sau mỗi thay đổi thành công).
 | -------------------------- | --------------------------- | ------------------------------ |
 | `REALTIME_PORT`            | `3001`                      | port gateway                   |
 | `REALTIME_PUBLISH_URL`     | `http://127.0.0.1:3001/publish` | Next gọi sang gateway      |
-| `NEXT_PUBLIC_REALTIME_URL` | `ws://127.0.0.1:3001/ws`    | browser kết nối                |
+| `NEXT_PUBLIC_REALTIME_URL` | `ws://127.0.0.1:3001/ws`    | browser kết nối — inline lúc build, đổi xong phải `bun run build` lại |
+| `REALTIME_ALLOWED_ORIGINS` | trống = same-host           | allowlist Origin cho `/ws`; sau tunnel đặt origin HTTPS của site |
 | `REALTIME_SECRET`          | = `AUTH_SECRET`             | chỉ đặt riêng khi tách host    |

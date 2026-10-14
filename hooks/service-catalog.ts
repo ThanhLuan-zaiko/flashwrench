@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { SERVICE_CATALOG_TOPIC } from "@/lib/realtime/protocol";
 import type {
   CreateCategoryInput,
   CreateServiceInput,
@@ -21,6 +22,7 @@ import {
   updateCategoryRequest,
   updateServiceRequest,
 } from "@/services/service-catalog.api";
+import { useRealtimeTopic } from "./useRealtimeTopic";
 
 export const catalogKeys = {
   all: ["catalog"] as const,
@@ -63,6 +65,22 @@ function useInvalidateCatalog() {
   return () => {
     void queryClient.invalidateQueries({ queryKey: catalogKeys.all });
   };
+}
+
+// Admin↔admin live: service edits publish service-catalog, so a second
+// admin tab refreshes without reload. Writer tab already invalidates via
+// onSuccess; this covers every other tab.
+export function useCatalogRealtime(enabled = true) {
+  const queryClient = useQueryClient();
+  useRealtimeTopic(SERVICE_CATALOG_TOPIC, {
+    enabled,
+    onEvent: () => {
+      void queryClient.invalidateQueries({ queryKey: catalogKeys.all });
+    },
+    onReconnect: () => {
+      void queryClient.invalidateQueries({ queryKey: catalogKeys.all });
+    },
+  });
 }
 
 export function useCreateCategory() {

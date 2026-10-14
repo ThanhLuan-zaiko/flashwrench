@@ -1,6 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRealtimeTopic } from "@/hooks/useRealtimeTopic";
+import {
+  bookingTrackTopic,
+  orderTopic,
+  parseDomainEvent,
+} from "@/lib/realtime/protocol";
 import { fetchBookingTracking, fetchOrderTracking } from "@/services/track.api";
 
 export const trackKeys = {
@@ -16,10 +22,13 @@ const BOOKING_TERMINAL_STATUSES = new Set([
 ]);
 const ORDER_TERMINAL_STATUSES = new Set(["delivered", "cancelled", "refunded"]);
 
-// Guest booking tracking: polls the public endpoint until the booking
-// lands in a terminal state, then stops.
+// Guest booking tracking: live over the public booking-track topic (the
+// unguessable id is the capability, same as the HTTP endpoint) with the
+// 15s poll kept as a safety net for missed socket events or a down
+// gateway. Stops both once the booking lands in a terminal state.
 export function useBookingTracking(bookingId: string | null) {
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: trackKeys.booking(bookingId ?? ""),
     queryFn: () => fetchBookingTracking(bookingId as string),
     enabled: Boolean(bookingId),
@@ -34,12 +43,31 @@ export function useBookingTracking(bookingId: string | null) {
     },
     refetchOnWindowFocus: true,
   });
+  useRealtimeTopic(bookingId ? bookingTrackTopic(bookingId) : "", {
+    enabled: Boolean(bookingId),
+    onEvent: (payload) => {
+      const event = parseDomainEvent(payload);
+      if (!event) return;
+      if (event.bookingId && event.bookingId !== bookingId) return;
+      void queryClient.invalidateQueries({
+        queryKey: trackKeys.booking(bookingId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!bookingId) return;
+      void queryClient.invalidateQueries({
+        queryKey: trackKeys.booking(bookingId),
+      });
+    },
+  });
+  return query;
 }
 
-// Guest order tracking: same contract — poll while the order moves,
-// stop when it is delivered, cancelled, or refunded.
+// Guest order tracking: same contract — live over the public order topic,
+// poll as fallback, stop when delivered, cancelled, or refunded.
 export function useOrderTracking(orderId: string | null) {
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: trackKeys.order(orderId ?? ""),
     queryFn: () => fetchOrderTracking(orderId as string),
     enabled: Boolean(orderId),
@@ -52,4 +80,22 @@ export function useOrderTracking(orderId: string | null) {
     },
     refetchOnWindowFocus: true,
   });
+  useRealtimeTopic(orderId ? orderTopic(orderId) : "", {
+    enabled: Boolean(orderId),
+    onEvent: (payload) => {
+      const event = parseDomainEvent(payload);
+      if (!event) return;
+      if (event.orderId && event.orderId !== orderId) return;
+      void queryClient.invalidateQueries({
+        queryKey: trackKeys.order(orderId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!orderId) return;
+      void queryClient.invalidateQueries({
+        queryKey: trackKeys.order(orderId),
+      });
+    },
+  });
+  return query;
 }

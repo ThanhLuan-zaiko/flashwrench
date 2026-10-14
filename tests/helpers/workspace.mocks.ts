@@ -18,14 +18,6 @@ import type {
   MechanicProfileInitParams,
 } from "@/lib/mechanic/mechanic-profile.repository";
 import type {
-  PaymentRow,
-  PaymentWrite,
-} from "@/lib/payments/booking-payment.repository";
-import type {
-  AuditEventWrite,
-  ReceiptProjectionWrite,
-} from "@/lib/revenue/revenue.types";
-import type {
   MaintenanceInsertParams,
   MaintenancePageResult,
   VehicleInsertParams,
@@ -34,11 +26,17 @@ import type {
 } from "@/lib/vehicles/vehicle.repository";
 import { resetPaymentMocks } from "./payment.mocks";
 import {
+  domainPublishMocks,
+  mechanicAccountSyncMocks,
+  realtimePublishMocks,
+} from "./publish.mocks";
+import {
   businessHoursRepoMocks,
   resetShopSettingsMocks,
   shopProfileRepoMocks,
   shopSettingsStubs,
 } from "./shop-settings.mocks";
+import { workspaceStubs } from "./workspace-stubs";
 
 export {
   paymentPromptRepoMocks,
@@ -48,55 +46,19 @@ export {
   revenueServiceMocks,
 } from "./payment.mocks";
 export {
+  domainPublishMocks,
+  mechanicAccountSyncMocks,
+  realtimePublishMocks,
+} from "./publish.mocks";
+export {
   makeMaintenanceRow,
   makePaymentReceiptRow,
   makeReviewBookingRow,
   makeVehicleRow,
   VEHICLE_ID,
 } from "./workspace.fixtures";
+export { workspaceStubs } from "./workspace-stubs";
 export { businessHoursRepoMocks, shopProfileRepoMocks, shopSettingsStubs };
-
-export const workspaceStubs = {
-  vehicleById: null as VehicleRow | null,
-  vehicleRowsById: new Map<string, VehicleRow>(),
-  vehicleWriteFails: false,
-  vehicleIdsByOwner: {
-    vehicleIds: [] as string[],
-    pageState: null,
-  } as VehiclePageResult,
-  plateClaimed: true,
-  releasedPlates: [] as string[],
-  insertedVehicles: [] as VehicleInsertParams[],
-  updatedVehicles: [] as unknown[],
-  maintenancePage: { rows: [], pageState: null } as MaintenancePageResult,
-  maintenanceInserts: [] as MaintenanceInsertParams[],
-  reviewByBooking: null as BookingReviewRow | null,
-  reviewReadQueue: [] as (BookingReviewRow | null)[],
-  reviewClaimed: true,
-  reviewWrites: [] as BookingReviewWrite[],
-  paymentById: null as PaymentRow | null,
-  paymentRowsById: new Map<string, PaymentRow>(),
-  paymentRefIds: [] as string[],
-  paymentClaimed: true,
-  paymentStatusClaimed: true,
-  paymentWrites: [] as PaymentWrite[],
-  paymentStatusClaims: 0,
-  paymentCodeSets: [] as { bookingId: string; code: string | null }[],
-  rescuePaymentClaimed: true,
-  rescuePaymentCodeSets: [] as { requestId: string; code: string | null }[],
-  receiptProjections: [] as ReceiptProjectionWrite[],
-  auditEvents: [] as AuditEventWrite[],
-  customerBookingPage: { rows: [], pageState: null } as CustomerBookingPage,
-  customerBookingPages: [] as CustomerBookingPage[],
-  bookingTravelPoints: [] as BookingTravelPointRow[],
-  insertedTravelPoints: [] as BookingTravelPointWrite[],
-  dispatchRefPage: { rows: [], pageState: null } as StatusBookingPage,
-  dispatchRefPages: [] as StatusBookingPage[],
-  bookingConfigRow: null as BookingConfigRow | null,
-  profileInit: [] as MechanicProfileInitParams[],
-  presenceUpdates: [] as MechanicPresenceUpdateParams[],
-  published: [] as { topic: string; payload: unknown }[],
-};
 
 export const vehicleRepoMocks = {
   findVehicleRowById: mock(
@@ -245,52 +207,6 @@ export const dispatchRepoMocks = {
       _pageState?: string | null,
     ): Promise<StatusBookingPage> =>
       workspaceStubs.dispatchRefPages.shift() ?? workspaceStubs.dispatchRefPage,
-  ),
-};
-
-export const domainPublishMocks = {
-  publishBookingChange: mock(
-    async (
-      _kind: string,
-      _bookingId: string,
-      _status: string,
-      _customerId: string | null,
-      _mechanicIds: (string | null)[],
-    ): Promise<void> => {
-      workspaceStubs.published.push({
-        topic: "*",
-        payload: { kind: _kind, bookingId: _bookingId },
-      });
-    },
-  ),
-  publishRescueChange: mock(
-    async (
-      _kind: string,
-      _requestId: string,
-      _status: string,
-      _customerId: string | null,
-      _mechanicIds: (string | null)[],
-      _zoneId: string | null,
-    ): Promise<void> => {
-      workspaceStubs.published.push({
-        topic: "*",
-        payload: { kind: _kind, rescueId: _requestId },
-      });
-    },
-  ),
-};
-
-export const realtimePublishMocks = {
-  publishRealtimeEvent: mock(
-    async (topic: string, payload: unknown): Promise<void> => {
-      workspaceStubs.published.push({ topic, payload });
-    },
-  ),
-};
-
-export const mechanicAccountSyncMocks = {
-  syncMechanicAccount: mock(
-    async (_mechanicId: string): Promise<void> => undefined,
   ),
 };
 

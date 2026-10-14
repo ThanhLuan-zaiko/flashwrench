@@ -68,7 +68,8 @@ export function useDispatchBookingTrack(
   bookingId: string | null,
   live = false,
 ) {
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: dispatchKeys.travelTrack(bookingId ?? ""),
     queryFn: () => fetchDispatchBookingTrack(bookingId as string),
     enabled: Boolean(bookingId),
@@ -78,6 +79,22 @@ export function useDispatchBookingTrack(
     refetchInterval: live ? 15 * 1000 : false,
     refetchOnWindowFocus: true,
   });
+  // GPS saves fan out on bookingTopic + operations: trail refreshes live.
+  useRealtimeTopic(bookingId ? bookingTopic(bookingId) : "", {
+    enabled: Boolean(bookingId) && live,
+    onEvent: () => {
+      void queryClient.invalidateQueries({
+        queryKey: dispatchKeys.travelTrack(bookingId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!bookingId) return;
+      void queryClient.invalidateQueries({
+        queryKey: dispatchKeys.travelTrack(bookingId),
+      });
+    },
+  });
+  return query;
 }
 
 // Shared operations feed: every booking mutation publishes a domain event

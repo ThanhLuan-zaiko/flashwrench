@@ -1,7 +1,11 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { parseDomainEvent, userTopic } from "@/lib/realtime/protocol";
+import {
+  parseDomainEvent,
+  rescueTopic,
+  userTopic,
+} from "@/lib/realtime/protocol";
 import type { CreateRescueInput } from "@/services/rescue.api";
 import {
   cancelRescueRequest,
@@ -47,9 +51,12 @@ export function useMyRescues() {
 }
 
 // Customer-side detail: own rescue facts plus its status timeline.
+// Subscribes to the public rescue topic as well so the map keeps moving
+// even when the user-topic socket is missed.
 export function useMyRescueDetail(requestId: string | null) {
+  const queryClient = useQueryClient();
   const me = useMe();
-  return useQuery({
+  const query = useQuery({
     queryKey: rescueKeys.mineDetail(requestId ?? ""),
     queryFn: () => fetchMyRescueDetail(requestId as string),
     enabled: me.data?.role === "customer" && Boolean(requestId),
@@ -59,12 +66,32 @@ export function useMyRescueDetail(requestId: string | null) {
     refetchInterval: 15 * 1000,
     refetchOnWindowFocus: true,
   });
+  useRealtimeTopic(requestId ? rescueTopic(requestId) : "", {
+    enabled: Boolean(requestId),
+    onEvent: (payload) => {
+      const event = parseDomainEvent(payload);
+      if (!event?.kind.startsWith("rescue-")) return;
+      if (event.rescueId && event.rescueId !== requestId) return;
+      void queryClient.invalidateQueries({
+        queryKey: rescueKeys.mineDetail(requestId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!requestId) return;
+      void queryClient.invalidateQueries({
+        queryKey: rescueKeys.mineDetail(requestId),
+      });
+    },
+  });
+  return query;
 }
 
-// Guest tracking on the success panel: polls the public endpoint until
+// Guest tracking on the success panel: live over the public rescue topic
+// (unguessable id is the capability) with polling kept as fallback until
 // the rescue reaches a terminal state, then stops.
 export function useRescueTracking(requestId: string | null) {
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: rescueKeys.track(requestId ?? ""),
     queryFn: () => fetchRescueTracking(requestId as string),
     enabled: Boolean(requestId),
@@ -79,6 +106,24 @@ export function useRescueTracking(requestId: string | null) {
     },
     refetchOnWindowFocus: true,
   });
+  useRealtimeTopic(requestId ? rescueTopic(requestId) : "", {
+    enabled: Boolean(requestId),
+    onEvent: (payload) => {
+      const event = parseDomainEvent(payload);
+      if (!event?.kind.startsWith("rescue-")) return;
+      if (event.rescueId && event.rescueId !== requestId) return;
+      void queryClient.invalidateQueries({
+        queryKey: rescueKeys.track(requestId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!requestId) return;
+      void queryClient.invalidateQueries({
+        queryKey: rescueKeys.track(requestId),
+      });
+    },
+  });
+  return query;
 }
 
 // Customer self-cancel before the mechanic departs. Success invalidates

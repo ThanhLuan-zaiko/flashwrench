@@ -8,8 +8,7 @@ import { collectCounterPayment } from "@/lib/orders/order-payment.service";
 import { updateOrderStatus } from "@/lib/orders/orders.service";
 import type { CourierConfigInput } from "@/lib/orders/orders.types";
 import { getOrderForStaff } from "@/lib/orders/orders-read.service";
-import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { publishOrderChange } from "@/lib/realtime/domain-publish";
 
 export async function GET(
   _request: Request,
@@ -81,16 +80,11 @@ export async function PATCH(
           { errors: collected.errors },
           { status: collected.status },
         );
-      void publishRealtimeEvent(OPERATIONS_TOPIC, {
-        kind: "orders-updated",
-        updatedAt: new Date().toISOString(),
-      });
-      if (collected.data.order.customerId) {
-        void publishRealtimeEvent(userTopic(collected.data.order.customerId), {
-          kind: "order-updated",
-          orderId,
-        });
-      }
+      void publishOrderChange(
+        orderId,
+        collected.data.order.status,
+        collected.data.order.customerId,
+      );
       return NextResponse.json({
         order: collected.data.order,
         payment: {
@@ -111,16 +105,11 @@ export async function PATCH(
         { errors: result.errors },
         { status: result.status },
       );
-    void publishRealtimeEvent(OPERATIONS_TOPIC, {
-      kind: "orders-updated",
-      updatedAt: new Date().toISOString(),
-    });
-    if (result.data.customerId) {
-      void publishRealtimeEvent(userTopic(result.data.customerId), {
-        kind: "order-updated",
-        orderId,
-      });
-    }
+    void publishOrderChange(
+      orderId,
+      result.data.status,
+      result.data.customerId,
+    );
     return NextResponse.json({ order: result.data });
   } catch {
     return NextResponse.json(

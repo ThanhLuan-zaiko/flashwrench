@@ -6,8 +6,7 @@
 import { randomUUID } from "node:crypto";
 import type { PublicUser } from "@/lib/auth/user.types";
 import { verifyCashConfirmCode } from "@/lib/payments/payment-code.service";
-import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { publishOrderChange } from "@/lib/realtime/domain-publish";
 import { recordAuditEvent } from "@/lib/revenue/revenue.service";
 import { isRecord, isUuid } from "@/lib/validation";
 import { findOrderRowById } from "./orders.repository";
@@ -82,16 +81,7 @@ export async function collectOrderDelivery(
     detail: "courier COD collected with customer confirm code",
     at: now,
   });
-  await publishRealtimeEvent(OPERATIONS_TOPIC, {
-    kind: "orders-updated",
-    updatedAt: now.toISOString(),
-  });
-  if (row.customer_id) {
-    await publishRealtimeEvent(userTopic(row.customer_id), {
-      kind: "order-updated",
-      orderId,
-    });
-  }
+  await publishOrderChange(orderId, "delivered", row.customer_id);
   const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };

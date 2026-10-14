@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import { FiLoader } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
+import { useMe } from "@/hooks/auth";
 import { useChatMessages, useChatThread, useMarkChatRead } from "@/hooks/chat";
+import { useChatRealtime } from "@/hooks/useChatRealtime";
 import { ChatBookingCard } from "./ChatBookingCard";
 import { ChatComposer } from "./ChatComposer";
 import { ChatMessageBubble } from "./ChatMessageBubble";
@@ -17,6 +19,10 @@ export function ChatConversation({ threadId }: ChatConversationProps) {
   const messages = useChatMessages(threadId, true);
   const detail = useChatThread(threadId, true);
   const markRead = useMarkChatRead(threadId);
+  const me = useMe();
+  // Direct subscription so the open conversation stays live even if the
+  // global FAB is delayed/unmounted; shared socket dedupes the topic.
+  useChatRealtime(me.data?.id ?? null);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   // Pages arrive newest-first; flatten + reverse once for display order.

@@ -7,7 +7,11 @@ import {
   FiPackage,
   FiPauseCircle,
 } from "react-icons/fi";
-import { useAdminPartCategories, useAdminParts } from "@/hooks/admin-parts";
+import {
+  useAdminPartCategories,
+  useAdminParts,
+  useAdminPartsRealtime,
+} from "@/hooks/admin-parts";
 import type { ServiceStat } from "../bento/ServicesStatCard";
 
 // Live overview: one query per aggregate (deleted included), derived live
@@ -15,6 +19,7 @@ import type { ServiceStat } from "../bento/ServicesStatCard";
 export function useProductsOverview(categoryFilter: string) {
   const categoriesQuery = useAdminPartCategories(true);
   const partsQuery = useAdminParts({ includeDeleted: true });
+  useAdminPartsRealtime(true);
 
   const categories = useMemo(
     () => categoriesQuery.data?.categories ?? [],

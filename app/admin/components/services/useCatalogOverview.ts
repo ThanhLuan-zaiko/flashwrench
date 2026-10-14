@@ -8,6 +8,7 @@ import {
   FiPauseCircle,
 } from "react-icons/fi";
 import {
+  useCatalogRealtime,
   useCatalogServices,
   useServiceCategories,
 } from "@/hooks/service-catalog";
@@ -18,6 +19,7 @@ import type { ServiceStat } from "../bento/ServicesStatCard";
 export function useCatalogOverview(categoryFilter: string) {
   const categoriesQuery = useServiceCategories(true);
   const servicesQuery = useCatalogServices({ includeDeleted: true });
+  useCatalogRealtime(true);
 
   const categories = useMemo(
     () => categoriesQuery.data?.categories ?? [],

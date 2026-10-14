@@ -64,6 +64,9 @@ export function useChatMessages(threadId: string | null, enabled: boolean) {
     getNextPageParam: (last) => last.nextCursor,
     enabled: enabled && !!threadId,
     staleTime: 10_000,
+    // Realtime first, poll as safety net when the gateway is down.
+    refetchInterval: enabled && threadId ? 15_000 : false,
+    refetchOnWindowFocus: true,
   });
 }
 

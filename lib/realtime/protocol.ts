@@ -39,12 +39,36 @@ export function bookingChatTopic(bookingId: string): string {
   return `booking:${bookingId}:chat`;
 }
 
+export function orderTopic(orderId: string): string {
+  return `order:${orderId}`;
+}
+
+export function rescueTopic(requestId: string): string {
+  return `rescue:${requestId}`;
+}
+
+export function bookingTrackTopic(bookingId: string): string {
+  return `booking-track:${bookingId}`;
+}
+
 export function emergencyZoneTopic(zoneId: string): string {
   return `emergency:zone:${zoneId}`;
 }
 
 export function bookingIdFromTopic(topic: string): string | null {
   return /^booking:([a-z0-9_-]+)(?::chat)?$/.exec(topic)?.[1] ?? null;
+}
+
+export function orderIdFromTopic(topic: string): string | null {
+  return /^order:([a-z0-9_-]+)$/.exec(topic)?.[1] ?? null;
+}
+
+export function rescueIdFromTopic(topic: string): string | null {
+  return /^rescue:([a-z0-9_-]+)$/.exec(topic)?.[1] ?? null;
+}
+
+export function bookingTrackIdFromTopic(topic: string): string | null {
+  return /^booking-track:([a-z0-9_-]+)$/.exec(topic)?.[1] ?? null;
 }
 
 // Inbox event kinds delivered on `user:{mechanicId}` when a customer
@@ -195,6 +219,9 @@ type TopicKind =
   | "part"
   | "booking"
   | "booking-chat"
+  | "booking-track"
+  | "order"
+  | "rescue"
   | "emergency-zone"
   | "unknown";
 
@@ -202,6 +229,9 @@ const USER_TOPIC_PATTERN = /^user:[a-z0-9_-]+$/;
 const PART_TOPIC_PATTERN = /^part:[a-z0-9_-]+$/;
 const BOOKING_TOPIC_PATTERN = /^booking:[a-z0-9_-]+$/;
 const BOOKING_CHAT_TOPIC_PATTERN = /^booking:[a-z0-9_-]+:chat$/;
+const BOOKING_TRACK_TOPIC_PATTERN = /^booking-track:[a-z0-9_-]+$/;
+const ORDER_TOPIC_PATTERN = /^order:[a-z0-9_-]+$/;
+const RESCUE_TOPIC_PATTERN = /^rescue:[a-z0-9_-]+$/;
 const EMERGENCY_ZONE_TOPIC_PATTERN = /^emergency:zone:[a-z0-9_-]+$/;
 
 function topicKind(topic: string): TopicKind {
@@ -219,15 +249,30 @@ function topicKind(topic: string): TopicKind {
   if (USER_TOPIC_PATTERN.test(topic)) return "user";
   if (PART_TOPIC_PATTERN.test(topic)) return "part";
   if (BOOKING_CHAT_TOPIC_PATTERN.test(topic)) return "booking-chat";
+  if (BOOKING_TRACK_TOPIC_PATTERN.test(topic)) return "booking-track";
+  if (ORDER_TOPIC_PATTERN.test(topic)) return "order";
+  if (RESCUE_TOPIC_PATTERN.test(topic)) return "rescue";
   if (BOOKING_TOPIC_PATTERN.test(topic)) return "booking";
   if (EMERGENCY_ZONE_TOPIC_PATTERN.test(topic)) return "emergency-zone";
   return "unknown";
+}
+
+// Public tracking signals for guest /track pages. The unguessable entity
+// id in the topic name is the capability (same contract as the public
+// HTTP tracking endpoints); payloads carry only kind + ids + status,
+// never customer identity, so guests may listen without logging in.
+export function isPublicTrackTopic(topic: string): boolean {
+  const kind = topicKind(topic);
+  return kind === "booking-track" || kind === "order" || kind === "rescue";
 }
 
 // Who may listen. Booking topics are coarse in v1 (any logged-in user);
 // tighten with a participant lookup when booking tracking lands.
 // The service catalog is public so guests on /services see price updates
 // without logging in; events carry only a refresh signal, never secrets.
+// Guest tracking topics (booking-track/order/rescue) are public for the
+// same reason: the unguessable id is the capability, matching the public
+// HTTP tracking endpoints, and payloads carry only kind + ids + status.
 export function canSubscribe(
   user: RealtimeUser | null,
   topic: string,
@@ -242,7 +287,10 @@ export function canSubscribe(
     kind === "business-hours" ||
     kind === "promotions" ||
     kind === "mechanic-directory" ||
-    kind === "part"
+    kind === "part" ||
+    kind === "booking-track" ||
+    kind === "order" ||
+    kind === "rescue"
   )
     return true;
   if (!user) return false;

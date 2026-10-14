@@ -12,10 +12,9 @@ import type { OrdersResult } from "@/lib/orders/orders.types";
 import { setOrderPaymentCode } from "@/lib/orders/orders-delivery.repository";
 import {
   publishBookingChange,
+  publishOrderChange,
   publishRescueChange,
 } from "@/lib/realtime/domain-publish";
-import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
 import { setRescuePaymentCode } from "@/lib/rescue/rescue-payment.repository";
 import { findRescueRowById } from "@/lib/rescue/rescue-workflow.repository";
 import { recordAuditEvent } from "@/lib/revenue/revenue.service";
@@ -206,15 +205,6 @@ export async function issueOrderPaymentCode(
     detail: null,
     at: now,
   });
-  await publishRealtimeEvent(OPERATIONS_TOPIC, {
-    kind: "orders-updated",
-    updatedAt: now.toISOString(),
-  });
-  if (row.customer_id) {
-    await publishRealtimeEvent(userTopic(row.customer_id), {
-      kind: "order-updated",
-      orderId,
-    });
-  }
+  await publishOrderChange(orderId, row.status ?? "shipping", row.customer_id);
   return { ok: true, data: { issued: true } };
 }

@@ -2,7 +2,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CheckoutInput } from "@/lib/orders/orders.types";
-import { userTopic } from "@/lib/realtime/protocol";
+import {
+  orderTopic,
+  parseDomainEvent,
+  userTopic,
+} from "@/lib/realtime/protocol";
 import {
   cancelOrderRequest,
   checkoutRequest,
@@ -49,9 +53,11 @@ export function useMyOrder(orderId: string | null) {
 }
 
 // Live courier position + breadcrumb trail for a shipping order.
+// Poll kept as fallback; the public order topic gives instant refresh.
 export function useMyOrderTrack(orderId: string | null) {
   const me = useMe();
-  return useQuery({
+  const queryClient = useQueryClient();
+  const query = useQuery({
     queryKey: orderKeys.track(orderId ?? ""),
     queryFn: () => fetchMyOrderTrack(orderId as string),
     enabled: me.data?.role === "customer" && Boolean(orderId),
@@ -60,6 +66,27 @@ export function useMyOrderTrack(orderId: string | null) {
     retry: false,
     refetchInterval: 15 * 1000,
   });
+  useRealtimeTopic(orderId ? orderTopic(orderId) : "", {
+    enabled: Boolean(orderId) && me.data?.role === "customer",
+    onEvent: (payload) => {
+      const event = parseDomainEvent(payload);
+      if (event?.kind !== "order-updated") return;
+      if (event.orderId && event.orderId !== orderId) return;
+      void queryClient.invalidateQueries({
+        queryKey: orderKeys.track(orderId as string),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: orderKeys.detail(orderId as string),
+      });
+    },
+    onReconnect: () => {
+      if (!orderId) return;
+      void queryClient.invalidateQueries({
+        queryKey: orderKeys.track(orderId),
+      });
+    },
+  });
+  return query;
 }
 
 // Order status events arrive on the customer's own user topic; refresh
@@ -71,13 +98,9 @@ export function useMyOrdersRealtime(enabled = true) {
   useRealtimeTopic(userId ? userTopic(userId) : "", {
     enabled: enabled && Boolean(userId),
     onEvent: (payload) => {
-      if (
-        typeof payload === "object" &&
-        payload !== null &&
-        (payload as { kind?: unknown }).kind === "order-updated"
-      ) {
-        void queryClient.invalidateQueries({ queryKey: orderKeys.all });
-      }
+      const event = parseDomainEvent(payload);
+      if (event?.kind !== "order-updated") return;
+      void queryClient.invalidateQueries({ queryKey: orderKeys.all });
     },
     onReconnect: () => {
       void queryClient.invalidateQueries({ queryKey: orderKeys.all });

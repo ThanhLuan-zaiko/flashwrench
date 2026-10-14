@@ -5,8 +5,7 @@ import {
   readJsonObject,
 } from "@/lib/http/workspace-route";
 import { payOrderOnlineMock } from "@/lib/orders/order-payment.service";
-import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { publishOrderChange } from "@/lib/realtime/domain-publish";
 
 // Simulated online payment: customers settle their own order via
 // { action: "pay" }. The gateway is a mock — success is immediate and the
@@ -35,14 +34,7 @@ export async function POST(
         { errors: result.errors },
         { status: result.status },
       );
-    void publishRealtimeEvent(OPERATIONS_TOPIC, {
-      kind: "orders-updated",
-      updatedAt: new Date().toISOString(),
-    });
-    void publishRealtimeEvent(userTopic(user.id), {
-      kind: "order-updated",
-      orderId,
-    });
+    void publishOrderChange(orderId, result.data.order.status, user.id);
     return NextResponse.json({
       order: result.data.order,
       payment: {

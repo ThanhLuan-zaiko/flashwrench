@@ -9,8 +9,7 @@ import { notifyOrderCreated } from "@/lib/mail/confirmation.service";
 import { checkoutCart, checkoutGuestCart } from "@/lib/orders/checkout.service";
 import type { CheckoutInput } from "@/lib/orders/orders.types";
 import { listMyOrders } from "@/lib/orders/orders-read.service";
-import { OPERATIONS_TOPIC, userTopic } from "@/lib/realtime/protocol";
-import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { publishOrderChange } from "@/lib/realtime/domain-publish";
 
 // My orders: customers list and read their own purchases only.
 export async function GET() {
@@ -101,16 +100,11 @@ export async function POST(request: Request) {
         { errors: result.errors },
         { status: result.status },
       );
-    void publishRealtimeEvent(OPERATIONS_TOPIC, {
-      kind: "orders-updated",
-      updatedAt: new Date().toISOString(),
-    });
-    if (shopper.user) {
-      void publishRealtimeEvent(userTopic(shopper.user.id), {
-        kind: "order-updated",
-        orderId: result.data.id,
-      });
-    }
+    void publishOrderChange(
+      result.data.id,
+      result.data.status,
+      result.data.customerId,
+    );
     // Courtesy copy of the tracking link: fire-and-forget, a mail outage
     // must never fail a checkout that already persisted.
     notifyOrderCreated(result.data);

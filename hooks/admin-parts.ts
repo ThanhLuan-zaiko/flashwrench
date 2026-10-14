@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { PARTS_CATALOG_TOPIC } from "@/lib/realtime/protocol";
 import type {
   CreatePartCategoryInput,
   CreatePartInput,
@@ -23,6 +24,7 @@ import {
   updatePartCategoryRequest,
   updatePartRequest,
 } from "@/services/admin-parts.api";
+import { useRealtimeTopic } from "./useRealtimeTopic";
 
 export const adminPartsKeys = {
   all: ["admin-parts"] as const,
@@ -65,6 +67,20 @@ function useInvalidateAdminParts() {
   return () => {
     void queryClient.invalidateQueries({ queryKey: adminPartsKeys.all });
   };
+}
+
+// Admin↔dispatch live: part edits publish parts-catalog.
+export function useAdminPartsRealtime(enabled = true) {
+  const queryClient = useQueryClient();
+  useRealtimeTopic(PARTS_CATALOG_TOPIC, {
+    enabled,
+    onEvent: () => {
+      void queryClient.invalidateQueries({ queryKey: adminPartsKeys.all });
+    },
+    onReconnect: () => {
+      void queryClient.invalidateQueries({ queryKey: adminPartsKeys.all });
+    },
+  });
 }
 
 export function useCreatePartCategory() {

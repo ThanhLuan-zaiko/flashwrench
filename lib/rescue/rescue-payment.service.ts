@@ -166,6 +166,20 @@ export async function recordRescuePayment(
       receipt.status === "paid" &&
       receipt.method === method
     ) {
+      // Idempotent replay (retry/double-tap): still fan out so payment
+      // prompts and guest trackers catch up even if the first broadcast
+      // was missed.
+      await clearPaymentPrompt(row.customer_id, "emergency", requestId).catch(
+        () => undefined,
+      );
+      await publishRescueChange(
+        "rescue-updated",
+        requestId,
+        "completed",
+        row.customer_id,
+        [row.assigned_mechanic_id],
+        row.zone_id,
+      ).catch(() => undefined);
       return {
         ok: true,
         data: {

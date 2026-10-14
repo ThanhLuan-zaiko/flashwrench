@@ -21,6 +21,7 @@ import { validateAutoRuleInput } from "./auto-rule-validation";
 import type { CampaignRow } from "./voucher.types";
 import { isDeletedFlag } from "./voucher.types";
 import { findCampaignRowById } from "./voucher-campaign.repository";
+import { publishCampaignChange } from "./voucher-realtime";
 import { dispatcherCapAllows } from "./voucher-wallet.service";
 
 type Actor = { id: string; role: UserRole };
@@ -129,6 +130,9 @@ export async function createAutoRule(
   });
   const row = await findAutoRuleRowById(ruleId);
   if (!row) return fail(500, "Không tạo được quy tắc.");
+  // Rules drive the voucher board: fan out so other dispatcher tabs refresh
+  // live instead of waiting for manual reload.
+  await publishCampaignChange(campaign.campaign_id).catch(() => undefined);
   return { ok: true, data: toAutoRule(row, campaign) };
 }
 
@@ -155,6 +159,9 @@ export async function toggleAutoRule(
   await setAutoRuleActive(ruleId, isActive);
   const next = await findAutoRuleRowById(ruleId);
   if (!next) return fail(500, "Không đổi được trạng thái quy tắc.");
+  if (next.campaign_id) {
+    await publishCampaignChange(next.campaign_id).catch(() => undefined);
+  }
   return { ok: true, data: toAutoRule(next, campaign) };
 }
 
