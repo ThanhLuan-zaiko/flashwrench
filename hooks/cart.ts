@@ -1,6 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { publishCrossTabEvent } from "@/lib/cross-tab/cross-tab.bus";
+import { CART_CHANGED_EVENT } from "@/lib/cross-tab/cross-tab.protocol";
 import type { CartView } from "@/lib/orders/orders.types";
 import {
   addToCartRequest,
@@ -38,8 +40,10 @@ function useCartMutation<TVariables>(
     mutationFn: fn,
     onSuccess: (data) => {
       // The server returns the whole cart view; write it straight into
-      // the cache so every consumer updates in one render.
+      // the cache so every consumer updates in one render. Other tabs
+      // share the same cart partition, so they refetch theirs too.
       queryClient.setQueryData(cartKeys.all, data);
+      publishCrossTabEvent(CART_CHANGED_EVENT);
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: cartKeys.all });

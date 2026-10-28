@@ -8,13 +8,16 @@ import type { GuestRecordType } from "@/lib/guest-access/guest-access.types";
 import {
   fetchGuestInvoice,
   fetchGuestRecords,
+  fetchRecentGuestRecords,
   requestOtpRequest,
   requestOtpVerify,
 } from "@/services/guest-access.api";
+import { useMe } from "./auth";
 
 export const guestAccessKeys = {
   all: ["guest-access"] as const,
   records: ["guest-access", "records"] as const,
+  recent: ["guest-access", "recent"] as const,
   invoice: (type: GuestRecordType, id: string) =>
     ["guest-access", "invoice", { type, id }] as const,
 };
@@ -68,5 +71,22 @@ export function useGuestInvoice(
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: false,
+  });
+}
+
+// Header "your jobs" menu: what this browser filed without an account. Only
+// anonymous visitors fetch it — customers read their account history. Focus
+// refetch is on so a tab opened before (or without) the cross-tab signal
+// still catches up the moment the visitor switches back to it.
+export function useRecentGuestRecords() {
+  const me = useMe();
+  return useQuery({
+    queryKey: guestAccessKeys.recent,
+    queryFn: fetchRecentGuestRecords,
+    enabled: me.isSuccess && me.data === null,
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: true,
   });
 }

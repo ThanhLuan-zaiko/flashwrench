@@ -178,6 +178,19 @@ CREATE TABLE IF NOT EXISTS guest_records_by_email (
   PRIMARY KEY ((email), created_at, record_type, record_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, record_type ASC, record_id ASC);
 
+-- Browser-keyed index of anonymous jobs: one partition per fw_gid guest token,
+-- so every tab of the browser that filed a booking, rescue or parts order can
+-- list it again without an OTP round-trip. Rows are written with a TTL equal
+-- to the fw_gid cookie lifetime; claimed records are filtered on read by
+-- their customer_id, exactly like guest_records_by_email.
+CREATE TABLE IF NOT EXISTS guest_records_by_gid (
+  guest_id    UUID,
+  created_at  TIMESTAMP,
+  record_type TEXT, -- booking | rescue | order
+  record_id   UUID,
+  PRIMARY KEY ((guest_id), created_at, record_type, record_id)
+) WITH CLUSTERING ORDER BY (created_at DESC, record_type ASC, record_id ASC);
+
 -- Auth sessions: rotating opaque refresh tokens. The (user_id, family_id)
 -- partition is derived from the refresh token itself: one single-partition read.
 CREATE TABLE IF NOT EXISTS refresh_sessions (

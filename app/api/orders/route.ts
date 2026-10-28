@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
 import { resolveShopper, staleSessionResponse } from "@/lib/auth/shopper";
+import { linkGuestRecordToBrowser } from "@/lib/guest-records/guest-records.route";
 import {
   mutationOriginError,
   readJsonObject,
@@ -108,7 +109,11 @@ export async function POST(request: Request) {
     // Courtesy copy of the tracking link: fire-and-forget, a mail outage
     // must never fail a checkout that already persisted.
     notifyOrderCreated(result.data);
-    return NextResponse.json({ order: result.data }, { status: 201 });
+    const response = NextResponse.json({ order: result.data }, { status: 201 });
+    // Guest checkouts already run on the fw_gid cart partition; index the
+    // order under the same token so other tabs can find it again.
+    if (shopper.user) return response;
+    return linkGuestRecordToBrowser(response, "order", result.data.id);
   } catch {
     return NextResponse.json(
       { errors: { form: "Không đặt được đơn hàng. Vui lòng thử lại sau." } },

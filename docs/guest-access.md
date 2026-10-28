@@ -132,7 +132,62 @@ Vài điểm vận hành:
   `null` cho tới khi có route tương ứng.
 - **Chưa có ETA trên booking.** `eta_min` mới chỉ có ở `emergency_by_id`.
 
-## 8. Bản đồ mã nguồn
+## 9. Nhiều tab trên cùng trình duyệt
+
+### Vấn đề
+
+Đơn của khách vãng lai lưu với `customer_id = null` và trước đây **không gắn với
+trình duyệt**. Khách đặt lịch ở tab A rồi mở tab B thì tab B không biết đơn đó
+tồn tại; bản nháp và danh sách dịch vụ đã chọn nằm trong `sessionStorage` nên
+cũng không sang được tab B. Tab B đang mở `/checkout` cũ có thể bấm đặt lại một
+giỏ hàng vừa bị tab A dùng hết.
+
+### Hướng xử lý
+
+1. **Chỉ mục theo trình duyệt (`guest_records_by_gid`).** Mỗi booking / cứu hộ /
+   đơn linh kiện của khách vãng lai được ghi thêm một dòng theo cookie `fw_gid`
+   (cookie httpOnly sẵn có của giỏ hàng, UUID khó đoán). Nếu khách chưa có cookie
+   thì route tạo mới. Dòng có TTL bằng tuổi cookie (30 ngày). Việc ghi là
+   best-effort: lỗi chỉ mục không làm hỏng response 201.
+2. **`GET /api/guest-access/recent`** trả tối đa 10 đơn gần nhất của trình duyệt,
+   mới nhất trước. Người đã đăng nhập luôn nhận danh sách rỗng; đơn đã được claim
+   vào tài khoản bị lọc theo `customer_id` giống luồng OTP.
+3. **Menu "Đơn của bạn" trên header** (`GuestRecordsMenu`) chỉ hiện cho khách
+   chưa đăng nhập khi có ít nhất một đơn. Badge đếm số đơn còn đang xử lý; dòng
+   cứu hộ chưa có trang theo dõi công khai nên dẫn về `/lookup`. Query bật
+   `refetchOnWindowFocus` nên chuyển sang tab cũ là tự cập nhật.
+4. **Đồng bộ giữa các tab (`BroadcastChannel`).** Khi đặt lịch, gửi cứu hộ, thanh
+   toán hay sửa giỏ hàng thành công, tab đó phát một sự kiện trên kênh
+   `flashwrench-sync`. Các tab còn lại làm mới cache (đơn gần đây, giỏ hàng, lịch
+   sử), bỏ các dịch vụ vừa đặt khỏi danh sách đang chọn để tránh đặt trùng, và
+   hiện toast giải thích. Trình duyệt không có `BroadcastChannel` dùng sự kiện
+   `storage` của `localStorage` thay thế. Sự kiện chỉ là tín hiệu: tab nhận luôn
+   tải lại dữ liệu thật qua HTTPS.
+
+### Migration
+
+```bash
+bun run scripts/migrate-guest-records.ts
+```
+
+Không destructive, chạy lại an toàn. Không backfill: đơn tạo trước khi có tính
+năng này vẫn tìm được qua link email hoặc `/lookup`.
+
+### Ranh giới
+
+- Cookie `fw_gid` bị xoá khi khách đăng ký hoặc đăng nhập (giỏ hàng được gộp vào
+  tài khoản), nên menu biến mất đúng lúc lịch sử chuyển sang tài khoản. Đơn cũ
+  của trình duyệt khi đó vẫn tìm lại được qua `/lookup`.
+- Trình duyệt khác hoặc chế độ ẩn danh không thấy đơn của nhau — khi đó vẫn dùng
+  `/lookup`.
+- Máy dùng chung: người dùng tiếp trình duyệt đó trong thời hạn cookie sẽ thấy
+  menu và mở được link theo dõi — tương đương lịch sử duyệt web vốn đã chứa các
+  link `/track/...` này. Menu chỉ đọc, không lộ thêm dữ liệu nào ngoài tóm tắt
+  mà `/lookup` hiển thị.
+- Bản nháp form vẫn cố ý giữ trong `sessionStorage` (theo từng tab) vì chứa thông
+  tin cá nhân đang gõ dở.
+
+## 10. Bản đồ mã nguồn
 
 | Lớp | File |
 |---|---|
@@ -153,4 +208,8 @@ Vài điểm vận hành:
 | API | `app/api/auth/otp/*`, `app/api/guest-access/*` |
 | Client | `services/guest-access.api.ts`, `hooks/guest-access.ts` |
 | UI | `app/lookup/page.tsx`, `components/guest-access/*` |
-| Test | `tests/unit/otp-code.test.ts`, `tests/unit/otp-validation.test.ts`, `tests/unit/guest-access-token.test.ts`, `tests/unit/invoice-pdf.test.ts`, `tests/integration/otp.service.test.ts`, `tests/integration/guest-access.service.test.ts`, `tests/integration/guest-invoice.service.test.ts` |
+| Chỉ mục theo trình duyệt | `lib/guest-records/*`, `app/api/guest-access/recent/route.ts`, `scripts/migrate-guest-records.ts` |
+| Tóm tắt đơn dùng chung | `lib/guest-access/guest-record-summaries.ts` |
+| Đồng bộ nhiều tab | `lib/cross-tab/*`, `hooks/useCrossTabSync.ts`, `components/providers/LazyCrossTabSync.tsx` |
+| Menu header | `components/layout/GuestRecordsMenu.tsx`, `components/layout/GuestRecordMenuItem.tsx` |
+| Test | `tests/unit/cross-tab-protocol.test.ts`, `tests/unit/cross-tab-bus.test.ts`, `tests/unit/guest-records-menu.test.ts`, `tests/integration/guest-records.service.test.ts`, `tests/integration/guest-records.routes.test.ts`, `tests/integration/guest-records.create-routes.test.ts`, `tests/unit/otp-code.test.ts`, `tests/unit/otp-validation.test.ts`, `tests/unit/guest-access-token.test.ts`, `tests/unit/invoice-pdf.test.ts`, `tests/integration/otp.service.test.ts`, `tests/integration/guest-access.service.test.ts`, `tests/integration/guest-invoice.service.test.ts` |

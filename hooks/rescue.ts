@@ -1,6 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { publishCrossTabEvent } from "@/lib/cross-tab/cross-tab.bus";
+import { recordCreatedEvent } from "@/lib/cross-tab/cross-tab.protocol";
 import {
   parseDomainEvent,
   rescueTopic,
@@ -15,6 +17,7 @@ import {
   fetchRescueTracking,
 } from "@/services/rescue.api";
 import { useMe } from "./auth";
+import { guestAccessKeys } from "./guest-access";
 import { useRealtimeTopic } from "./useRealtimeTopic";
 
 export const rescueKeys = {
@@ -30,9 +33,18 @@ export const rescueKeys = {
 // server-stored row first, so the form waits for 201 then shows the
 // confirmation panel with the hotline hint.
 export function useCreateRescue() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateRescueInput) => createRescueRequest(payload),
     retry: false,
+    // The confirmation panel lives only in this tab; the signal lets every
+    // other tab list the request in its header menu right away.
+    onSuccess: (data) => {
+      void queryClient.invalidateQueries({ queryKey: guestAccessKeys.recent });
+      publishCrossTabEvent(
+        recordCreatedEvent("rescue", data.request.requestId),
+      );
+    },
   });
 }
 

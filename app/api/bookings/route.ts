@@ -15,6 +15,7 @@ import type {
 } from "@/lib/booking/booking.types";
 import { createGuestBookingWithAccount } from "@/lib/booking/booking-signup.service";
 import { listCustomerBookings } from "@/lib/booking/customer-booking.service";
+import { linkGuestRecordToBrowser } from "@/lib/guest-records/guest-records.route";
 import {
   mutationOriginError,
   resultResponse,
@@ -185,7 +186,11 @@ export async function POST(request: Request) {
       user?.email ?? input.email,
       user?.fullName ?? input.fullName,
     );
-    return NextResponse.json({ booking }, { status: 201 });
+    const response = NextResponse.json({ booking }, { status: 201 });
+    // Guests hold no account history: tie the booking to this browser so
+    // every other tab can list it from the header.
+    if (user) return response;
+    return linkGuestRecordToBrowser(response, "booking", booking.bookingId);
   } catch {
     return NextResponse.json(
       { errors: { form: "Không tạo được lịch hẹn. Vui lòng thử lại sau." } },

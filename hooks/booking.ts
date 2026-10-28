@@ -6,6 +6,8 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { publishCrossTabEvent } from "@/lib/cross-tab/cross-tab.bus";
+import { recordCreatedEvent } from "@/lib/cross-tab/cross-tab.protocol";
 import { bookingTrackTopic, parseDomainEvent } from "@/lib/realtime/protocol";
 import type {
   BookingReviewPayload,
@@ -22,6 +24,7 @@ import {
 } from "@/services/booking.api";
 import type { MechanicsQuery } from "@/services/mechanics.api";
 import { fetchAvailableMechanics } from "@/services/mechanics.api";
+import { guestAccessKeys } from "./guest-access";
 import { reviewKeys } from "./reviews";
 import { useRealtimeTopic } from "./useRealtimeTopic";
 
@@ -47,9 +50,19 @@ export function useCreateBooking() {
     mutationFn: (payload: CreateBookingInput) => createBookingRequest(payload),
     retry: false,
     // The saved snapshot and customer history change when a booking lands.
-    onSuccess: () => {
+    // Other tabs of this browser hear about it too, so they refresh their
+    // guest history and drop the booked services from their own selection.
+    onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: bookingKeys.last });
       void queryClient.invalidateQueries({ queryKey: bookingKeys.mine });
+      void queryClient.invalidateQueries({ queryKey: guestAccessKeys.recent });
+      publishCrossTabEvent(
+        recordCreatedEvent(
+          "booking",
+          data.booking.bookingId,
+          data.booking.serviceIds,
+        ),
+      );
     },
   });
 }

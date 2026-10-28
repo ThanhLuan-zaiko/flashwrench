@@ -5,6 +5,7 @@ import { LazyAccountLockGuard } from "@/components/auth/LazyAccountLockGuard";
 import { LazyChatFab } from "@/components/chat/LazyChatFab";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LazyPaymentPromptBanner } from "@/components/payments/LazyPaymentPromptBanner";
+import { LazyCrossTabSync } from "@/components/providers/LazyCrossTabSync";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
 import { ToastProvider } from "@/components/toast/ToastProvider";
@@ -47,6 +48,7 @@ export default async function RootLayout({
         <ThemeInitScript />
         <QueryProvider initialSession={session}>
           <ToastProvider>
+            <LazyCrossTabSync />
             <LazyAccountLockGuard />
             <LazyChatFab />
             <SiteHeader />

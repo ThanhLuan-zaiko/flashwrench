@@ -1,6 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { publishCrossTabEvent } from "@/lib/cross-tab/cross-tab.bus";
+import { recordCreatedEvent } from "@/lib/cross-tab/cross-tab.protocol";
 import type { CheckoutInput } from "@/lib/orders/orders.types";
 import {
   orderTopic,
@@ -18,6 +20,7 @@ import {
 } from "@/services/orders.api";
 import { useMe } from "./auth";
 import { cartKeys } from "./cart";
+import { guestAccessKeys } from "./guest-access";
 import { useRealtimeTopic } from "./useRealtimeTopic";
 
 export const orderKeys = {
@@ -112,9 +115,13 @@ export function useCheckout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: CheckoutInput) => checkoutRequest(payload),
-    onSuccess: () => {
+    // Other tabs refetch their cart too, so a stale checkout page there
+    // cannot submit the cart this order just consumed.
+    onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: orderKeys.all });
       void queryClient.invalidateQueries({ queryKey: cartKeys.all });
+      void queryClient.invalidateQueries({ queryKey: guestAccessKeys.recent });
+      publishCrossTabEvent(recordCreatedEvent("order", data.order.id));
     },
   });
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest, requireRole } from "@/lib/auth/authorization";
+import { linkGuestRecordToBrowser } from "@/lib/guest-records/guest-records.route";
 import {
   mutationOriginError,
   readJsonObject,
@@ -63,7 +64,14 @@ export async function POST(request: Request) {
     // Courtesy copy of the confirmation: fire-and-forget, a mail outage
     // must never fail a rescue that already persisted.
     notifyRescueCreated(result.data, input.email);
-    return NextResponse.json({ request: result.data }, { status: 201 });
+    const response = NextResponse.json(
+      { request: result.data },
+      { status: 201 },
+    );
+    // Anonymous requesters keep the request reachable from every tab of
+    // this browser, not only the one showing the confirmation panel.
+    if (customer) return response;
+    return linkGuestRecordToBrowser(response, "rescue", result.data.requestId);
   } catch {
     return NextResponse.json(
       {

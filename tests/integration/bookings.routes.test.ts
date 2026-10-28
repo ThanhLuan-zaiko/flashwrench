@@ -7,6 +7,10 @@ import {
 } from "../helpers/auth.fixtures";
 import { makeBookingInput } from "../helpers/booking.fixtures";
 import {
+  guestRecordsRouteMocks,
+  resetGuestRecordsMocks,
+} from "../helpers/guest-records.mocks";
+import {
   authorizationMocks,
   bookingServiceMocks,
   customerBookingServiceMocks,
@@ -26,6 +30,10 @@ mock.module(
   () => customerBookingServiceMocks,
 );
 mock.module("@/lib/realtime/publish", () => realtimePublishMocks);
+mock.module(
+  "@/lib/guest-records/guest-records.route",
+  () => guestRecordsRouteMocks,
+);
 
 import {
   GET as bookingsGet,
@@ -34,6 +42,7 @@ import {
 
 beforeEach(() => {
   resetRouteMocks();
+  resetGuestRecordsMocks();
 });
 
 describe("POST /api/bookings", () => {
@@ -91,6 +100,47 @@ describe("POST /api/bookings", () => {
       fullName: "Tran Thi Be",
       email: "be@example.com",
     });
+  });
+
+  // Guests hold no account history, so the booking is tied to this
+  // browser's fw_gid token: every other tab can then list it.
+  test("links a guest booking to the browser", async () => {
+    routeStubs.bookingUser = null;
+    const res = await bookingsPost(
+      postJsonRequest("/api/bookings", makeBookingInput()),
+    );
+    expect(res.status).toBe(201);
+    const [, recordType, recordId] =
+      guestRecordsRouteMocks.linkGuestRecordToBrowser.mock.calls[0] ?? [];
+    expect(recordType).toBe("booking");
+    expect(recordId).toBe(okCreatedBooking().bookingId);
+  });
+
+  test("never links a signed-in customer's booking to the browser", async () => {
+    routeStubs.bookingUser = makePublicUser();
+    const res = await bookingsPost(
+      postJsonRequest("/api/bookings", makeBookingInput()),
+    );
+    expect(res.status).toBe(201);
+    expect(
+      guestRecordsRouteMocks.linkGuestRecordToBrowser,
+    ).not.toHaveBeenCalled();
+  });
+
+  test("does not link a booking the service rejected", async () => {
+    routeStubs.bookingUser = null;
+    routeStubs.bookingCreateResult = {
+      ok: false,
+      status: 409,
+      errors: { form: "Khung giờ này vừa có người đặt." },
+    };
+    const res = await bookingsPost(
+      postJsonRequest("/api/bookings", makeBookingInput()),
+    );
+    expect(res.status).toBe(409);
+    expect(
+      guestRecordsRouteMocks.linkGuestRecordToBrowser,
+    ).not.toHaveBeenCalled();
   });
 
   test("returns 201 with the created booking on success", async () => {

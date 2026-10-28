@@ -7,8 +7,14 @@ import type {
   GuestRecordList,
   GuestRecordType,
 } from "@/lib/guest-access/guest-access.types";
+import type { RecentGuestRecords } from "@/lib/guest-records/guest-records.types";
 
-export type { GuestInvoice, GuestRecordList, GuestRecordType };
+export type {
+  GuestInvoice,
+  GuestRecordList,
+  GuestRecordType,
+  RecentGuestRecords,
+};
 
 export const OTP_PURPOSE_GUEST_ACCESS = "guest_access";
 
@@ -99,4 +105,10 @@ export async function fetchGuestInvoice(
   return request<GuestInvoice>(
     `/api/guest-access/invoice?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`,
   );
+}
+
+// Jobs this browser filed anonymously, keyed by the fw_gid cookie. No OTP
+// involved: signed-in callers and fresh visitors both get an empty list.
+export async function fetchRecentGuestRecords(): Promise<RecentGuestRecords> {
+  return request<RecentGuestRecords>("/api/guest-access/recent");
 }
