@@ -160,10 +160,7 @@ describe("listRecentGuestRecords", () => {
   });
 
   test("dedupes a job indexed twice", async () => {
-    guestRecordsStubs.refs = [
-      ref("order", ORDER_ID),
-      ref("order", ORDER_ID),
-    ];
+    guestRecordsStubs.refs = [ref("order", ORDER_ID), ref("order", ORDER_ID)];
     orderStubs.orderById = makeOrderRow({
       order_id: ORDER_ID,
       customer_id: null,
