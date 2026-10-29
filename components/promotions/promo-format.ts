@@ -26,6 +26,51 @@ export function promoDiscountLabel(campaign: {
   return `Giảm ${formatPromoVnd(campaign.discountValue)}`;
 }
 
+export type PromoValueParts = {
+  value: string;
+  unit: string;
+};
+
+// Big-number split for the spotlight: the headline figure on its own line
+// and a short caption beside it ("30%" + "Giảm", "Miễn phí" + "Công sửa").
+export function promoValueParts(campaign: {
+  discountType: VoucherCampaign["discountType"];
+  discountValue: number;
+}): PromoValueParts {
+  if (campaign.discountType === "percent") {
+    return { value: `${campaign.discountValue}%`, unit: "Giảm" };
+  }
+  if (campaign.discountType === "free_service") {
+    return { value: "Miễn phí", unit: "Công sửa" };
+  }
+  return { value: formatPromoVnd(campaign.discountValue), unit: "Giảm ngay" };
+}
+
+// One-line value for compact thumbnails, without the percent cap.
+export function promoShortLabel(campaign: {
+  discountType: VoucherCampaign["discountType"];
+  discountValue: number;
+}): string {
+  if (campaign.discountType === "free_service") return "Miễn phí công";
+  const { value } = promoValueParts(campaign);
+  return `Giảm ${value}`;
+}
+
+// Terms line under the figure: minimum order, percent cap, expiry.
+export function promoTermsLabel(campaign: {
+  discountType: VoucherCampaign["discountType"];
+  maxDiscount: number;
+  minOrder: number;
+  endAt: string | null;
+}): string {
+  const parts = [promoConditionLabel(campaign)];
+  if (campaign.discountType === "percent" && Number(campaign.maxDiscount) > 0) {
+    parts.push(`Tối đa ${formatPromoVnd(campaign.maxDiscount)}`);
+  }
+  parts.push(promoExpiryLabel(campaign));
+  return parts.join(" · ");
+}
+
 export function promoScopeLabel(scope: VoucherScope): string {
   if (scope === "order") return "Áp dụng cho đơn linh kiện";
   if (scope === "booking") return "Áp dụng cho lịch sửa xe";

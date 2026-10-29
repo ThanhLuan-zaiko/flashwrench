@@ -75,6 +75,7 @@ export function VouchersList() {
             : "Các chương trình còn suất — bấm xem chi tiết rồi tạo tài khoản để được phát khi đủ điều kiện."
         }
         excludeIds={ownedIds}
+        showAllLink={false}
       />
       <PromoCampaignGrid
         title={hasWallets ? "Cách nhận ưu đãi" : "Tất cả ưu đãi đang chạy"}
