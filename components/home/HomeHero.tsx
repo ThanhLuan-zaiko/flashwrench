@@ -66,11 +66,11 @@ export function HomeHero() {
             {TRUST_POINTS.map((point) => (
               <li
                 key={point}
-                className="flex items-center gap-1.5 text-sm font-medium text-zinc-600"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-300"
               >
                 <FiCheck
                   aria-hidden="true"
-                  className="h-4 w-4 text-[#1E3A5F]"
+                  className="h-4 w-4 shrink-0 text-[#1E3A5F] dark:text-zinc-100"
                 />
                 {point}
               </li>

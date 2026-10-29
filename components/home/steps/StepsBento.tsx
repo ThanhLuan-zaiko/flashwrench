@@ -32,9 +32,9 @@ const STOPS: Stop[] = [
   },
 ];
 
-// Route-style process: four numbered stops on one horizontal line at every
-// width, so the sequence reads left to right even on a phone. The closing
-// navy card carries the sign-up action.
+// Route-style process: four numbered stops. Phones get a 2x2 grid so each
+// hint keeps a readable line length; from `sm` up the stops sit on one
+// horizontal route line. The closing navy card carries the sign-up action.
 export function StepsBento() {
   const rootRef = useBentoReveal<HTMLElement>();
 
@@ -51,11 +51,11 @@ export function StepsBento() {
         </div>
         <ol
           data-tour="how-it-works"
-          className="relative mt-8 grid grid-cols-4 gap-2 sm:gap-4"
+          className="relative mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-4"
         >
           <span
             aria-hidden="true"
-            className="absolute top-[15px] left-4 h-0.5 w-[calc(100%-2rem)] bg-[#1E3A5F] sm:top-[17px]"
+            className="absolute top-[17px] left-4 hidden h-0.5 w-[calc(100%-2rem)] bg-[#1E3A5F] sm:block"
           />
           {STOPS.map((stop) => (
             <li key={stop.numeral} data-reveal className="relative min-w-0">

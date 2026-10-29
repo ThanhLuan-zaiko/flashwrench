@@ -8,10 +8,8 @@ import { HomeProductsBento } from "@/components/home/products/HomeProductsBento"
 import { ServicesBento } from "@/components/home/services/ServicesBento";
 import { StepsBento } from "@/components/home/steps/StepsBento";
 import { TestimonialsBento } from "@/components/home/testimonials/TestimonialsBento";
-import { HOME_TOUR_STEPS } from "@/components/home/tour/home-tour.steps";
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
-import { TourProvider } from "@/components/tour/TourProvider";
 import {
   listHomeProducts,
   listHomeServices,
@@ -43,23 +41,21 @@ export default async function HomePage() {
     listLandingReviews(),
   ]);
   return (
-    <TourProvider steps={HOME_TOUR_STEPS}>
-      <main
-        className={`flex flex-1 flex-col bg-white font-[family-name:var(--font-home)] dark:bg-zinc-950 ${homeFont.variable}`}
-      >
-        <HomeHero />
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <PromoBannerSection />
-        </div>
-        <ServicesBento services={services} />
-        <HomeProductsBento items={products} />
-        <StepsBento />
-        <HomePriceSection services={services} />
-        <MechanicsBento items={mechanics} />
-        <TestimonialsBento realItems={realReviews} />
-        <HomeCtaBand />
-        <SpeculationRules scope="home" />
-      </main>
-    </TourProvider>
+    <main
+      className={`flex flex-1 flex-col bg-white font-[family-name:var(--font-home)] dark:bg-zinc-950 ${homeFont.variable}`}
+    >
+      <HomeHero />
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <PromoBannerSection />
+      </div>
+      <ServicesBento services={services} />
+      <HomeProductsBento items={products} />
+      <StepsBento />
+      <HomePriceSection services={services} />
+      <MechanicsBento items={mechanics} />
+      <TestimonialsBento realItems={realReviews} />
+      <HomeCtaBand />
+      <SpeculationRules scope="home" />
+    </main>
   );
 }
