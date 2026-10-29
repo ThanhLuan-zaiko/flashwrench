@@ -1,102 +1,101 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight, FiCheck, FiUserPlus } from "react-icons/fi";
-import logoImage from "@/asset/flashwrench.png";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { TourButton } from "@/components/tour/TourButton";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { HomeHeroTicket } from "./HomeHeroTicket";
 import { HOME_TOUR_NAME } from "./tour/home-tour.steps";
 
 const TRUST_POINTS = ["Thợ đã xác thực", "Giá minh bạch", "Theo dõi tiến độ"];
 
-// Split hero: mascot on the right and copy on the left at lg, falling back
-// to a centered stack (mascot on top) below it. Hierarchy comes from type
-// size only, monochrome surfaces per skill rule 7.
+// Navy brand panel: copy and the primary booking action on the left, a
+// status preview on the right. Orange is reserved for the booking button.
 export function HomeHero() {
   const rootRef = useBentoReveal<HTMLElement>();
 
   return (
-    <section ref={rootRef} aria-label="Giới thiệu FlashWrench">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-8 px-4 pt-12 pb-10 text-center sm:px-6 md:pt-20 md:pb-14 lg:flex-row-reverse lg:gap-12 lg:text-left">
-        <Image
-          data-reveal
-          src={logoImage}
-          alt=""
-          priority
-          className="h-24 w-auto shrink-0 sm:h-28 md:h-32 lg:h-56 xl:h-64"
-        />
-        <div className="flex flex-col items-center lg:flex-1 lg:items-start">
-          <p data-reveal>
-            <span className="rounded-full border border-zinc-200 px-3 py-1 text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:border-zinc-800 dark:text-zinc-400">
-              FlashWrench · Sửa xe lưu động
-            </span>
-          </p>
-          <h1
-            data-reveal
-            className="mt-5 max-w-4xl text-5xl font-bold tracking-tight text-balance text-zinc-900 sm:text-6xl lg:text-7xl dark:text-zinc-50"
-          >
-            Sửa xe tận nơi, khỏi lo dọc đường.
-          </h1>
-          <p
-            data-reveal
-            className="mt-4 max-w-xl text-sm text-balance text-zinc-600 sm:text-base dark:text-zinc-400"
-          >
-            Đặt thợ lưu động, cứu hộ khẩn cấp 24/7 với bảng giá minh bạch. Theo
-            dõi tiến độ theo thời gian thực.
-          </p>
-          <div
-            data-reveal
-            className="mt-7 flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap"
-          >
-            <span data-tour="booking-cta" className="flex w-full sm:w-auto">
-              <SmartCtaLink
-                guestHref="/booking"
-                authedHref="/booking"
-                guestLabel={
-                  <>
-                    <FiUserPlus aria-hidden="true" className="h-4 w-4" />
-                    Đặt lịch ngay
-                  </>
-                }
-                authedLabel={
-                  <>
-                    <FiUserPlus aria-hidden="true" className="h-4 w-4" />
-                    Đặt lịch ngay
-                  </>
-                }
-                guestAriaLabel="Đặt lịch ngay không cần tài khoản"
-                authedAriaLabel="Đặt lịch ngay"
-                className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-              />
-            </span>
-            <Link
-              href="#dich-vu"
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+    <section
+      ref={rootRef}
+      aria-label="Giới thiệu FlashWrench"
+      className="px-4 pt-4 sm:px-6 md:pt-8"
+    >
+      <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl bg-[#1E3A5F] px-6 py-10 text-white sm:px-10 md:py-14 lg:px-14 lg:py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            <p data-reveal>
+              <span className="rounded-full border border-white/20 px-3 py-1 text-[11px] font-semibold tracking-wide text-zinc-200 uppercase">
+                FlashWrench · Sửa xe lưu động
+              </span>
+            </p>
+            <h1
+              data-reveal
+              className="mt-5 max-w-3xl text-4xl font-bold tracking-tight text-balance text-white sm:text-5xl lg:text-6xl"
             >
-              Xem dịch vụ
-              <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-            <TourButton
-              tour={HOME_TOUR_NAME}
-              ariaLabel="Bắt đầu hướng dẫn đặt lịch"
-            />
-          </div>
-          <ul
-            data-reveal
-            className="mt-8 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
-          >
-            {TRUST_POINTS.map((point) => (
-              <li
-                key={point}
-                className="flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300"
+              Sửa xe tận nơi, khỏi lo dọc đường.
+            </h1>
+            <p
+              data-reveal
+              className="mt-4 max-w-xl text-base text-balance text-zinc-200"
+            >
+              Đặt thợ lưu động, cứu hộ khẩn cấp 24/7 với bảng giá minh bạch.
+              Theo dõi tiến độ theo thời gian thực.
+            </p>
+            <div
+              data-reveal
+              className="mt-8 flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap"
+            >
+              <span data-tour="booking-cta" className="flex w-full sm:w-auto">
+                <SmartCtaLink
+                  guestHref="/booking"
+                  authedHref="/booking"
+                  guestLabel={
+                    <>
+                      <FiUserPlus aria-hidden="true" className="h-4 w-4" />
+                      Đặt lịch ngay
+                    </>
+                  }
+                  authedLabel={
+                    <>
+                      <FiUserPlus aria-hidden="true" className="h-4 w-4" />
+                      Đặt lịch ngay
+                    </>
+                  }
+                  guestAriaLabel="Đặt lịch ngay không cần tài khoản"
+                  authedAriaLabel="Đặt lịch ngay"
+                  className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-6 py-3 text-sm font-semibold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99]"
+                />
+              </span>
+              <Link
+                href="#dich-vu"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-white/40 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-[0.99]"
               >
-                <FiCheck aria-hidden="true" className="h-3.5 w-3.5" />
-                {point}
-              </li>
-            ))}
-          </ul>
+                Xem dịch vụ
+                <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+              <TourButton
+                tour={HOME_TOUR_NAME}
+                ariaLabel="Bắt đầu hướng dẫn đặt lịch"
+                variant="inverse"
+              />
+            </div>
+            <ul
+              data-reveal
+              className="mt-8 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
+            >
+              {TRUST_POINTS.map((point) => (
+                <li
+                  key={point}
+                  className="flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs font-medium text-zinc-200"
+                >
+                  <FiCheck aria-hidden="true" className="h-3.5 w-3.5" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <HomeHeroTicket />
         </div>
       </div>
     </section>

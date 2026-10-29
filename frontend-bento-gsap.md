@@ -28,8 +28,11 @@ Always respect these from `AGENTS.md`:
 - Pure Tailwind only. `app/globals.css` stays exactly 2 lines.
   No custom CSS files, no `@keyframes`, no `@theme` tokens.
 - No `style={{}}` for static styling. All static styling is Tailwind.
-- Monochrome palette only: white, zinc scale, black + `dark:` variants.
-  No accent hues except explicitly requested semantic states.
+- Neutral palette: white, zinc scale, black + `dark:` variants.
+  Customer screens add the brand palette: navy `#1E3A5F` surfaces and
+  orange `#F97316` for the one primary action per screen only (see
+  `AGENTS.md` Section 6). Staff portals stay monochrome. No other
+  accent hues except explicitly requested semantic states.
   Approved: validation errors in red (`text-red-600 dark:text-red-400`,
   alert boxes like `components/auth/FormAlert.tsx`); toasts carry a
   colored left edge plus matching icon (success green, error red,
@@ -251,7 +254,8 @@ Rules:
 - Scale the canvas for `devicePixelRatio`, and re-draw on
   resize (`ResizeObserver`) and on `dark` class changes so the
   chart stays crisp and readable in both themes.
-- Colors come from the monochrome palette only (zinc scale).
+- Colors come from the zinc scale plus the brand palette in
+  `AGENTS.md` Section 6 (navy and orange).
   Resolve theme-aware colors at draw time; never hardcode
   accent hues.
 - The allowed-motion limits in 4.3 still apply: max 0.6s,

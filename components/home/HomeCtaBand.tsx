@@ -17,7 +17,7 @@ export function HomeCtaBand() {
       <div className="mx-auto w-full max-w-6xl px-4 pb-14 sm:px-6 md:pb-24">
         <div
           data-reveal
-          className="flex flex-col items-start gap-6 rounded-3xl bg-zinc-900 px-6 py-8 md:flex-row md:items-center md:gap-10 md:px-10 md:py-12 dark:bg-zinc-100"
+          className="flex flex-col items-start gap-6 rounded-3xl bg-[#1E3A5F] px-6 py-8 md:flex-row md:items-center md:gap-10 md:px-10 md:py-12"
         >
           <Image
             src={logoImage}
@@ -25,10 +25,10 @@ export function HomeCtaBand() {
             className="h-16 w-auto shrink-0 md:h-20"
           />
           <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-bold tracking-tight text-balance text-white sm:text-3xl dark:text-zinc-900">
+            <h2 className="text-2xl font-bold tracking-tight text-balance text-white sm:text-3xl">
               Hỏng xe giữa đường? FlashWrench tới tận nơi.
             </h2>
-            <p className="mt-2 max-w-xl text-sm text-zinc-300 sm:text-base dark:text-zinc-600">
+            <p className="mt-2 max-w-xl text-base text-zinc-200">
               Đặt thợ trong một phút, hoặc gọi cứu hộ khẩn cấp bất kể ngày đêm.
               Giá chốt trước khi thợ xuất phát.
             </p>
@@ -51,12 +51,12 @@ export function HomeCtaBand() {
               }
               guestAriaLabel="Đặt lịch ngay không cần tài khoản"
               authedAriaLabel="Đặt lịch ngay"
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 motion-safe:active:scale-[0.99] dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-700 dark:focus-visible:ring-zinc-900 dark:focus-visible:ring-offset-zinc-100"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-semibold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99]"
             />
             <Link
               href="/rescue"
               data-tour="rescue-cta"
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-zinc-100 transition-colors duration-200 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 motion-safe:active:scale-[0.99] dark:border-zinc-300 dark:text-zinc-800 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-900 dark:focus-visible:ring-offset-zinc-100"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-white/40 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99]"
             >
               <FiPhoneCall aria-hidden="true" className="h-4 w-4" />
               Cứu hộ khẩn cấp
