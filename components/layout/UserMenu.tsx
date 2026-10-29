@@ -21,7 +21,7 @@ function getInitials(fullName: string): string {
   return `${first}${last}`.toUpperCase();
 }
 
-export function UserMenu() {
+export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
   const router = useRouter();
   const toast = useToast();
   const me = useMe();
@@ -66,7 +66,11 @@ export function UserMenu() {
       <>
         <Link
           href={LOGIN_HREF}
-          className="hidden items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+          className={
+            onNavy
+              ? "hidden items-center gap-1.5 rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-[0.98] sm:flex"
+              : "hidden items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+          }
         >
           <FiLogIn aria-hidden="true" className="h-4 w-4 shrink-0" />
           {LOGIN_LABEL}
@@ -74,7 +78,11 @@ export function UserMenu() {
         <Link
           href={LOGIN_HREF}
           aria-label={LOGIN_LABEL}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 sm:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className={
+            onNavy
+              ? "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-100 transition-colors duration-200 hover:bg-white/10 sm:hidden"
+              : "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 sm:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
+          }
         >
           <FiUser aria-hidden="true" className="h-5 w-5" />
         </Link>
@@ -109,7 +117,11 @@ export function UserMenu() {
         aria-expanded={open}
         aria-label={open ? "Đóng menu tài khoản" : "Mở menu tài khoản"}
         title={user.fullName}
-        className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-zinc-300 bg-zinc-100 text-sm font-bold text-zinc-800 transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        className={
+          onNavy
+            ? "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/40 bg-white/10 text-sm font-bold text-white transition-all duration-200 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95"
+            : "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-zinc-300 bg-zinc-100 text-sm font-bold text-zinc-800 transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        }
       >
         {user.avatarUrl ? (
           // biome-ignore lint/performance/noImgElement: dynamic cropped upload served immutable; next/image optimizer hop needs sharp for zero benefit.

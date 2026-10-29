@@ -24,12 +24,22 @@ function MechanicShowcaseCard({ item }: { item: ShowcaseMechanic }) {
       className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 text-sm font-bold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
-        >
-          {initialsOf(item.displayName)}
-        </span>
+        {item.avatarUrl ? (
+          // biome-ignore lint/performance/noImgElement: user avatar served immutable from media storage; next/image optimizer hop adds no value here.
+          <img
+            src={item.avatarUrl}
+            alt=""
+            loading="lazy"
+            className="h-12 w-12 shrink-0 rounded-full border border-zinc-200 object-cover dark:border-zinc-800"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 text-sm font-bold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+          >
+            {initialsOf(item.displayName)}
+          </span>
+        )}
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {item.displayName}

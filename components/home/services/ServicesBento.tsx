@@ -1,15 +1,16 @@
 "use client";
 
-import { FiBatteryCharging, FiDisc, FiSettings, FiTool } from "react-icons/fi";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { BookingWideCard } from "./BookingWideCard";
-import { PriceWideCard } from "./PriceWideCard";
+import { HomeServiceCard } from "./HomeServiceCard";
 import { RescueHeroCard } from "./RescueHeroCard";
-import { ServiceMiniCard } from "./ServiceMiniCard";
 
-// Seven cells on lg: rescue hero 2x2 on the left, four 1x1 services on
-// the right, then the price and booking wides on a full bottom row.
-export function ServicesBento() {
+// Six cells on lg: rescue hero 2x2 on the left, up to four real catalog
+// services on the right, then the full-width booking card. Prices live in
+// the receipt section below. Phones get one column per pair so photos stay
+// large.
+export function ServicesBento({ services }: { services: ServiceItem[] }) {
   const rootRef = useBentoReveal<HTMLElement>();
 
   return (
@@ -25,7 +26,7 @@ export function ServicesBento() {
             Dịch vụ
           </p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-balance text-zinc-900 sm:text-4xl dark:text-zinc-50">
-            Mọi bệnh của xe, một nơi chữa.
+            Một cuộc gọi, mọi việc xe cần.
           </h2>
           <p className="mt-3 text-base text-zinc-600 dark:text-zinc-400">
             Từ bảo dưỡng định kỳ đến cứu hộ giữa đường, thợ tới tận nơi và báo
@@ -37,27 +38,9 @@ export function ServicesBento() {
           className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
         >
           <RescueHeroCard />
-          <ServiceMiniCard
-            title="Bảo dưỡng tại nhà"
-            hint="Thay dầu, lọc gió, kiểm tra tổng quát."
-            icon={FiSettings}
-          />
-          <ServiceMiniCard
-            title="Sửa chữa lưu động"
-            hint="Phanh, treo, hệ thống làm mát."
-            icon={FiTool}
-          />
-          <ServiceMiniCard
-            title="Thay lốp và cân bằng"
-            hint="Lốp mới, vá lốp và cân bằng động tại chỗ."
-            icon={FiDisc}
-          />
-          <ServiceMiniCard
-            title="Ắc quy và hệ thống điện"
-            hint="Kiểm tra, thay ắc quy và sửa đèn, điện."
-            icon={FiBatteryCharging}
-          />
-          <PriceWideCard />
+          {services.map((service) => (
+            <HomeServiceCard key={service.id} service={service} />
+          ))}
           <BookingWideCard />
         </div>
       </div>

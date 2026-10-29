@@ -2,8 +2,7 @@ import { Stars } from "@/components/feedback/Stars";
 import { reviewTargetLabel } from "@/components/home/home-card-utils";
 import type { LandingReview } from "@/lib/home/landing-reviews.service";
 
-// One real review from reviews_by_target. The muted surface separates it
-// from the curated quote cards below; the footer names what was reviewed.
+// One real review from reviews_by_target. The footer names what was reviewed.
 export function RealReviewCard({ review }: { review: LandingReview }) {
   return (
     <li

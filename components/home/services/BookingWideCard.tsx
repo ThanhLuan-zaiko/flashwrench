@@ -8,7 +8,7 @@ export function BookingWideCard() {
     <section
       aria-label="Đặt lịch trong 1 phút"
       data-reveal
-      className="flex flex-col justify-between gap-5 rounded-2xl border border-zinc-200 bg-white p-5 sm:col-span-2 md:p-7 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col justify-between gap-5 rounded-2xl border border-zinc-200 bg-white p-5 sm:col-span-2 md:p-7 lg:col-span-4 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div>
         <h3 className="flex items-center gap-3 text-base font-semibold text-zinc-900 dark:text-zinc-50">

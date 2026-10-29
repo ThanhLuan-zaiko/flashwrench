@@ -18,25 +18,20 @@ export const SHOWCASE_SCAN_MULTIPLIER = 4;
 export type ShowcaseMechanic = {
   id: string;
   displayName: string;
+  avatarUrl: string | null;
   skills: string[];
   ratingAvg: number;
   ratingCount: number;
   completedJobs: number;
 };
 
-export type ShowcaseCandidate = {
-  id: string;
-  displayName: string;
-  skills: string[];
-  ratingAvg: number;
-  ratingCount: number;
-  completedJobs: number;
-};
+export type ShowcaseCandidate = ShowcaseMechanic;
 
 function normalizeRow(row: ShowcaseMechanicRow): ShowcaseCandidate {
   return {
     id: row.mechanic_id,
     displayName: row.display_name?.trim() || SHOWCASE_NAME_FALLBACK,
+    avatarUrl: null,
     skills: (row.skills ?? []).map((skill) => skill.trim()).filter(Boolean),
     ratingAvg: row.rating_avg ?? 0,
     ratingCount: row.rating_count ?? 0,
@@ -66,7 +61,8 @@ export function selectShowcaseMechanics(
 }
 
 // The scan does not filter accounts, so shortlisted ids get one cheap
-// users_by_id read each to keep deactivated accounts off the home page.
+// users_by_id read each to keep deactivated accounts off the home page. The
+// same read supplies the mechanic's avatar, so photos cost no extra query.
 async function withActiveAccounts(
   candidates: ShowcaseCandidate[],
 ): Promise<ShowcaseCandidate[]> {
@@ -74,7 +70,7 @@ async function withActiveAccounts(
     candidates.map(async (candidate) => {
       const user = await findUserById(candidate.id);
       return user?.role === "mechanic" && user.status === "active"
-        ? candidate
+        ? { ...candidate, avatarUrl: user.avatar_url ?? null }
         : null;
     }),
   );

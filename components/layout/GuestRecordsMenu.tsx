@@ -18,7 +18,7 @@ import {
 // of the same browser reads the same fw_gid-keyed list, so a booking placed
 // in one tab is one click away in every other. Hidden for signed-in users
 // (their history lives under /account) and while there is nothing to show.
-export function GuestRecordsMenu() {
+export function GuestRecordsMenu({ onNavy = false }: { onNavy?: boolean }) {
   const me = useMe();
   const recent = useRecentGuestRecords();
   const [open, setOpen] = useState(false);
@@ -39,7 +39,11 @@ export function GuestRecordsMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={guestMenuLabel(activeCount, open)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className={
+          onNavy
+            ? "relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-100 transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95"
+            : "relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        }
       >
         <FiClipboard aria-hidden="true" className="h-5 w-5" />
         {activeCount > 0 && (
