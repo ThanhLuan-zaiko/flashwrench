@@ -17,9 +17,16 @@ const securityHeaders = [
   },
 ];
 
+// Dev-only allowance for the public hostname (e.g. a Cloudflare tunnel), so the
+// dev server serves its own assets to that origin instead of blocking them.
+const siteHostname = process.env.NEXT_PUBLIC_SITE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SITE_URL).hostname
+  : undefined;
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   output: "standalone",
+  allowedDevOrigins: siteHostname ? [siteHostname] : undefined,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
