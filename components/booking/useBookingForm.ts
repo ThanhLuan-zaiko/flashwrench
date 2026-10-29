@@ -319,6 +319,7 @@ export function useBookingForm({
     vehicle,
     setVehicle,
     errors,
+    invalidAttempt,
     prefilled,
     pending: createBooking.isPending || createBooking.isSuccess,
     minSlot,

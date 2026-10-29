@@ -7,6 +7,10 @@ import { FiArrowRight } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import {
+  BRAND_NAVY_SURFACE,
+  BRAND_PRIMARY_BUTTON,
+} from "@/components/ui/brand";
+import {
   usePublicCatalog,
   useServiceCatalogRealtime,
 } from "@/hooks/public-catalog";
@@ -111,7 +115,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         >
           <span
             aria-hidden="true"
-            className={`h-2 w-2 rounded-full ${live ? "bg-zinc-900 dark:bg-white" : "border border-zinc-400 dark:border-zinc-500"}`}
+            className={`h-2 w-2 rounded-full ${live ? "bg-[#1E3A5F] dark:bg-white" : "border border-zinc-400 dark:border-zinc-500"}`}
           />
           {live ? "Giá cập nhật trực tiếp" : "Đang nối lại giá trực tiếp…"}
         </output>
@@ -132,6 +136,24 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         searchId={searchId}
         onQuery={typeQuery}
       />
+      <Link
+        href="/rescue"
+        prefetch
+        data-reveal
+        className={`flex items-center justify-between gap-3 px-5 py-4 transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 sm:px-6 ${BRAND_NAVY_SURFACE}`}
+      >
+        <span className="flex flex-col gap-0.5">
+          <span className="text-[11px] font-semibold tracking-[0.1em] text-zinc-300 uppercase">
+            Hỏng xe giữa đường?
+          </span>
+          <span className="text-lg font-extrabold sm:text-xl">
+            Gọi cứu hộ 24/7
+          </span>
+        </span>
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#1E3A5F]">
+          <FiArrowRight aria-hidden="true" className="h-5 w-5" />
+        </span>
+      </Link>
       <PromoBannerSection
         title="Ưu đãi cho khách đặt dịch vụ"
         subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
@@ -152,7 +174,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           <Link
             href="/services"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+            className={`mx-auto mt-4 w-fit ${BRAND_PRIMARY_BUTTON}`}
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -175,13 +197,13 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
       <section
         aria-label="Đặt lịch trong 1 phút"
         data-reveal
-        className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:col-span-2 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+        className={`flex flex-col justify-between gap-5 p-5 md:flex-row md:items-center md:p-7 ${BRAND_NAVY_SURFACE}`}
       >
-        <div>
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+        <div className="max-w-xl">
+          <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
             Đã chọn được dịch vụ ưng ý?
           </h2>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-sm text-zinc-200">
             Đặt nhanh một dịch vụ hoặc thêm nhiều dịch vụ vào cùng lịch hẹn. Tạo
             tài khoản nếu bạn muốn lưu lịch sử và dùng voucher.
           </p>

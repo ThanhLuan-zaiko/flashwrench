@@ -171,7 +171,7 @@ export function CheckoutPage() {
         cartView.items.length > 0 && (
           <form
             onSubmit={submit}
-            className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-6"
+            className="grid grid-cols-1 gap-4 max-md:pb-24 md:grid-cols-5 md:gap-6"
           >
             <div
               data-reveal

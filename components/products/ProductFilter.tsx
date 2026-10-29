@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiSearch } from "react-icons/fi";
+import { BRAND_CHIP_ACTIVE, BRAND_CHIP_IDLE } from "@/components/ui/brand";
 import type { PartCategoryItem } from "@/lib/parts/parts.types";
 
 type ProductFilterProps = {
@@ -17,13 +18,11 @@ function tabHref(slug: string | null): string {
 }
 
 const PILL_CLASSES =
-  "flex min-h-[44px] items-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99]";
+  "flex min-h-[44px] items-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-100 motion-safe:active:scale-[0.99]";
 
-const ACTIVE_PILL_CLASSES =
-  "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900";
+const ACTIVE_PILL_CLASSES = BRAND_CHIP_ACTIVE;
 
-const IDLE_PILL_CLASSES =
-  "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+const IDLE_PILL_CLASSES = BRAND_CHIP_IDLE;
 
 // Category tabs are real links with one URL per tab (?cat=<slug>) so a
 // filtered shelf stays shareable and the back button works. The landing
@@ -92,7 +91,7 @@ export function ProductFilter({
           onChange={(event) => onQuery(event.target.value)}
           placeholder="Tìm theo tên, hãng hoặc mã linh kiện…"
           autoComplete="off"
-          className="h-11 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-sm text-zinc-800 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="h-12 w-full rounded-2xl border border-zinc-300 bg-white pr-3 pl-10 text-[15px] text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
         />
       </div>
     </div>

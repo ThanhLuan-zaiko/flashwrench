@@ -74,7 +74,7 @@ describe("multi-service booking interface", () => {
       }),
     );
     expect(markup).toContain('aria-pressed="true"');
-    expect(markup).toContain("Đã thêm · Bỏ chọn");
+    expect(markup).toContain("Đã chọn");
     // Quick-view eye + the selection toggle.
     expect(markup.match(/<button\b/g)).toHaveLength(2);
     expect(markup).not.toContain('href="/booking');
@@ -93,7 +93,7 @@ describe("multi-service booking interface", () => {
       }),
     );
     expect(markup).toContain('aria-pressed="false"');
-    expect(markup).toContain("Thêm vào lịch hẹn");
+    expect(markup).toContain("Chọn</button>");
     expect(markup).toContain('aria-label="Thêm Thay dầu động cơ vào lịch hẹn"');
     expect(markup).toContain(
       'aria-label="Xem nhanh chi tiết Thay dầu động cơ"',

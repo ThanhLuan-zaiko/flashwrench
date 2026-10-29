@@ -49,7 +49,7 @@ export function RescueEntry() {
         }
       />
 
-      <div data-reveal className="flex justify-center">
+      <div data-reveal className="flex">
         <TourButton
           tour={RESCUE_TOUR_NAME}
           ariaLabel="Bắt đầu hướng dẫn gửi yêu cầu cứu hộ"

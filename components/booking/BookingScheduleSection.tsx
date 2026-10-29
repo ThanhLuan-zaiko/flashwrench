@@ -1,4 +1,5 @@
-import { BookingDateTimeInput, BookingField } from "./BookingFormFields";
+import { BookingField } from "./BookingFormFields";
+import { BookingSlotPicker } from "./BookingSlotPicker";
 
 type BookingScheduleSectionProps = {
   value: string;
@@ -13,7 +14,8 @@ type BookingScheduleSectionProps = {
   onChange: (value: string) => void;
 };
 
-// Schedule step: one datetime input bounded by the admin-tuned intake
+// Schedule step: day pills and hourly slots (native datetime input as the
+// fallback) bounded by the admin-tuned intake
 // window (lead floor + advance cap + working hours). The slot is a wish
 // staff confirm later — matching the service validation.
 export function BookingScheduleSection({
@@ -41,11 +43,11 @@ export function BookingScheduleSection({
       error={error}
       hint={`${floor}${cap}${hours}. Shop sẽ liên hệ chốt lại giờ cụ thể.`}
     >
-      <BookingDateTimeInput
-        id="scheduledAt"
+      <BookingSlotPicker
         value={value}
         min={min}
         max={max}
+        hoursLabel={hoursLabel}
         onChange={onChange}
         error={error}
         disabled={disabled}

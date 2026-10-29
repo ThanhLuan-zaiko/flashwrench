@@ -128,7 +128,7 @@ export function BookingServiceGallery({ service }: BookingServiceGalleryProps) {
                     aria-current={i === index}
                     className={`block h-14 w-14 overflow-hidden rounded-lg border-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
                       i === index
-                        ? "border-zinc-900 dark:border-zinc-100"
+                        ? "border-[#1E3A5F] dark:border-zinc-100"
                         : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
                     }`}
                   >

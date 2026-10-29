@@ -1,21 +1,30 @@
 "use client";
 
 import { FiLoader, FiShoppingCart } from "react-icons/fi";
+import {
+  BRAND_PRIMARY_BUTTON,
+  BRAND_SOLID_BUTTON,
+} from "@/components/ui/brand";
 import { useMe } from "@/hooks/auth";
 import { useAddToCart } from "@/hooks/cart";
 import type { PartItem } from "@/lib/parts/parts.types";
 
 type AddToCartButtonProps = {
   part: PartItem;
+  // "primary": the orange main action on a product detail or quick view.
+  // "solid": navy, for the many cards of a catalog grid.
+  emphasis?: "primary" | "solid";
 };
-
-const BUTTON_CLASSES =
-  "flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950";
 
 // Add-to-cart for customers AND guests: the guest cart lives under the
 // fw_gid token minted on this first mutation, so no login detour. Staff
 // roles see a disabled button since the cart is a shopping surface.
-export function AddToCartButton({ part }: AddToCartButtonProps) {
+export function AddToCartButton({
+  part,
+  emphasis = "solid",
+}: AddToCartButtonProps) {
+  const BUTTON_CLASSES =
+    emphasis === "primary" ? BRAND_PRIMARY_BUTTON : BRAND_SOLID_BUTTON;
   const me = useMe();
   const addToCart = useAddToCart();
   const outOfStock = part.stockQty <= 0;

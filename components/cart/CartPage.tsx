@@ -50,7 +50,7 @@ export function CartPage() {
           </p>
           <Link
             href="/products"
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
           >
             Quay lại cửa hàng
           </Link>
@@ -97,7 +97,7 @@ export function CartPage() {
             </p>
             <Link
               href="/products"
-              className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+              className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
             >
               Xem sản phẩm
             </Link>
@@ -130,7 +130,7 @@ export function CartPage() {
                 <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   Tạm tính ({cartView.itemCount} sản phẩm)
                 </p>
-                <p className="mt-1 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                <p className="mt-1 text-3xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                   {formatVnd(cartView.subtotal)}
                 </p>
                 <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
@@ -152,7 +152,7 @@ export function CartPage() {
                   onClick={(event) => {
                     if (hasUnavailable) event.preventDefault();
                   }}
-                  className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950 ${
+                  className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 ${
                     hasUnavailable ? "pointer-events-none opacity-50" : ""
                   }`}
                 >

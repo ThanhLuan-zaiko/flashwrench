@@ -106,7 +106,7 @@ export function ProductsLanding() {
         title="Linh kiện chính hãng, giao tận nơi."
         subtitle="Giá công khai, tồn kho cập nhật trực tiếp. Thêm vào giỏ và đặt hàng trong vài bước."
       />
-      <div data-reveal className="flex justify-center">
+      <div data-reveal className="flex">
         <TourButton
           tour={PRODUCTS_TOUR_NAME}
           ariaLabel="Bắt đầu hướng dẫn mua linh kiện"
@@ -121,7 +121,7 @@ export function ProductsLanding() {
             aria-hidden="true"
             className={`h-2 w-2 rounded-full ${
               live
-                ? "bg-zinc-900 dark:bg-white"
+                ? "bg-[#1E3A5F] dark:bg-white"
                 : "border border-zinc-400 dark:border-zinc-500"
             }`}
           />
@@ -165,7 +165,7 @@ export function ProductsLanding() {
           <Link
             href="/products"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
           >
             Xem tất cả sản phẩm
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

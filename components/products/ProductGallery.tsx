@@ -116,7 +116,7 @@ function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
                 onClick={() => goTo(position)}
                 className={`w-full overflow-hidden rounded-xl border transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
                   position === index
-                    ? "border-zinc-900 ring-1 ring-zinc-900 dark:border-zinc-100 dark:ring-zinc-100"
+                    ? "border-[#1E3A5F] ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:ring-zinc-100"
                     : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
                 }`}
               >

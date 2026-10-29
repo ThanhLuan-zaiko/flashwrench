@@ -83,6 +83,7 @@ export function AdminVoucherBoard({ tab }: { tab: VoucherTab }) {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
+        tone="mono"
         eyebrow="Ưu đãi voucher"
         title="Voucher đúng người, đúng lúc."
         subtitle="Admin tạo và giám sát chiến dịch; điều phối phát trong hạn mức, mọi thay đổi tự cập nhật qua websocket."

@@ -5,18 +5,39 @@ type VoucherTotalsProps = {
   discount: number;
   travelFee?: number;
   total?: number;
+  // "brand": receipt look for customer screens (dashed rule, big navy
+  // total). "mono": the plain bordered list staff portals keep.
+  tone?: "brand" | "mono";
 };
+
+const TONE = {
+  brand: {
+    box: "rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900",
+    totalRow:
+      "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 text-sm dark:border-zinc-600",
+    total:
+      "text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50",
+  },
+  mono: {
+    box: "rounded-xl border border-zinc-200 p-3 dark:border-zinc-800",
+    totalRow:
+      "flex items-center justify-between gap-3 border-t border-zinc-200 pt-2 text-sm dark:border-zinc-800",
+    total: "font-bold text-zinc-900 dark:text-zinc-50",
+  },
+} as const;
 
 export function VoucherTotals({
   subtotal,
   discount,
   travelFee = 0,
   total,
+  tone = "brand",
 }: VoucherTotalsProps) {
+  const styles = TONE[tone];
   return (
     <dl
       aria-label="Tạm tính sau voucher"
-      className="flex flex-col gap-1.5 rounded-xl border border-zinc-200 p-3 text-xs dark:border-zinc-800"
+      className={`flex flex-col gap-1.5 text-xs ${styles.box}`}
     >
       <div className="flex items-center justify-between gap-3">
         <dt className="text-zinc-500 dark:text-zinc-400">Giá dịch vụ</dt>
@@ -38,11 +59,11 @@ export function VoucherTotals({
           </dd>
         </div>
       )}
-      <div className="flex items-center justify-between gap-3 border-t border-zinc-200 pt-2 text-sm dark:border-zinc-800">
+      <div className={styles.totalRow}>
         <dt className="font-semibold text-zinc-900 dark:text-zinc-50">
           Tổng tạm tính
         </dt>
-        <dd className="font-bold text-zinc-900 dark:text-zinc-50">
+        <dd className={styles.total}>
           {formatVnd(total ?? Math.max(0, subtotal - discount + travelFee))}
         </dd>
       </div>

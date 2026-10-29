@@ -85,7 +85,7 @@ export function ProductQuickViewDialog({
               className="flex flex-col gap-2"
             >
               <p className="flex flex-wrap items-baseline gap-2">
-                <span className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                <span className="text-3xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                   {formatVnd(part.price)}
                 </span>
                 {discount > 0 && part.comparePrice !== null && (
@@ -178,7 +178,7 @@ export function ProductQuickViewDialog({
         </div>
 
         <div className="flex flex-col gap-2 border-t border-zinc-200 bg-white px-5 py-3 dark:border-zinc-800 dark:bg-zinc-950">
-          <AddToCartButton part={part} />
+          <AddToCartButton part={part} emphasis="primary" />
           <Link
             href={detailHref}
             aria-label={`Xem trang chi tiết ${part.name}`}

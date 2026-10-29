@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
 import type { ReactNode } from "react";
 import { LazyAccountLockGuard } from "@/components/auth/LazyAccountLockGuard";
 import { LazyChatFab } from "@/components/chat/LazyChatFab";
@@ -14,9 +14,12 @@ import { getServerAccountSession } from "@/lib/auth/server-session";
 import { baseMetadata } from "@/lib/seo/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Site-wide brand face (first shipped on the homepage). The Vietnamese
+// subset covers the full diacritics used across the UI copy.
+const brandFont = Be_Vietnam_Pro({
+  variable: "--font-brand",
+  subsets: ["vietnamese", "latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 // Site-wide defaults: metadataBase makes OG/Twitter image URLs absolute,
@@ -42,9 +45,9 @@ export default async function RootLayout({
     <html
       lang="vi"
       suppressHydrationWarning
-      className={`${geistSans.variable} h-full antialiased ${SCROLLBAR_CLASSES}`}
+      className={`${brandFont.variable} h-full antialiased ${SCROLLBAR_CLASSES}`}
     >
-      <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+      <body className="flex min-h-full flex-col bg-white font-[family-name:var(--font-brand)] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeInitScript />
         <QueryProvider initialSession={session}>
           <ToastProvider>

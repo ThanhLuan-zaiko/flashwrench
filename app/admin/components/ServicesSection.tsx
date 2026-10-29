@@ -48,6 +48,7 @@ export function ServicesSection({ tab }: { tab: CatalogTab }) {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
+        tone="mono"
         eyebrow="Cấu hình dịch vụ"
         title="Giá rõ, bật tắt gọn."
         subtitle="Quản lý loại hình sửa chữa và bảng giá áp dụng cho khách hàng trên toàn hệ thống."

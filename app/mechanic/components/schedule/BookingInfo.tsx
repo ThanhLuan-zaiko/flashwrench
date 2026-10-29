@@ -102,6 +102,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
           ))}
         </ul>
         <VoucherTotals
+          tone="mono"
           subtotal={booking.subtotal}
           discount={booking.discount}
           travelFee={booking.travelFee}

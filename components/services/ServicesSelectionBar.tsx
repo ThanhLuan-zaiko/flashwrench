@@ -8,6 +8,7 @@ import {
 } from "@/app/admin/components/services/catalog-format";
 import { FormAlert } from "@/components/auth/FormAlert";
 import { SelectedServiceLines } from "@/components/booking/SelectedServiceLines";
+import { BRAND_PRIMARY_BUTTON } from "@/components/ui/brand";
 import { buildBookingHref } from "@/lib/auth/auth-redirect";
 import type { getBookingServiceSelection } from "@/lib/booking/booking-service-selection";
 
@@ -19,8 +20,8 @@ type ServicesSelectionBarProps = {
   onClear: () => void;
 };
 
-const CONTINUE_CLASSES =
-  "flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200";
+// The bar's continue button is the screen's single orange action.
+const CONTINUE_CLASSES = `${BRAND_PRIMARY_BUTTON} shrink-0`;
 
 export function ServicesSelectionBar({
   serviceIds,
@@ -41,11 +42,18 @@ export function ServicesSelectionBar({
           <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
             Đã chọn {serviceIds.length} dịch vụ
           </h2>
-          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-            {ready
-              ? `Tạm tính ${formatVnd(selection.subtotal)} · Khoảng ${formatDuration(selection.durationMin)}`
-              : "Đang kiểm tra danh sách đã chọn…"}
-          </p>
+          {ready ? (
+            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="text-xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+                {formatVnd(selection.subtotal)}
+              </span>
+              Tạm tính · Khoảng {formatDuration(selection.durationMin)}
+            </p>
+          ) : (
+            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+              Đang kiểm tra danh sách đã chọn…
+            </p>
+          )}
           <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
             Một xe · Một địa chỉ · Một khung giờ
           </p>

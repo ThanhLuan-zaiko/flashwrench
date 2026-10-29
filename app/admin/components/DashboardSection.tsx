@@ -33,6 +33,7 @@ export function DashboardSection() {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
+        tone="mono"
         eyebrow="FlashWrench · Quản trị"
         title="Vận hành trong tầm mắt."
         subtitle="Mọi lịch đặt, cứu hộ và thợ xe gói gọn trong một dashboard duy nhất."

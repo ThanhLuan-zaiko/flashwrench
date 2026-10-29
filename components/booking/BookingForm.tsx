@@ -12,9 +12,11 @@ import { BookingPriceSummary } from "./BookingPriceSummary";
 import { BookingReviewsSection } from "./BookingReviewsSection";
 import { BookingServiceSection } from "./BookingServiceSection";
 import { BookingStep } from "./BookingStep";
+import { BookingWizardBar, BookingWizardProgress } from "./BookingWizardNav";
 import type { BookingPrefill } from "./booking-prefill";
 import { MechanicSection } from "./MechanicSection";
 import { useBookingForm } from "./useBookingForm";
+import { useBookingWizard } from "./useBookingWizard";
 
 type BookingFormProps = {
   services: ServiceItem[];
@@ -24,14 +26,16 @@ type BookingFormProps = {
   onCreated: (response: CreateBookingResponse) => void;
 };
 
-// Checkout-style layout mirroring /checkout: numbered step cards in one
+// Desktop: checkout-style layout mirroring /checkout, numbered step cards in one
 // column, a summary aside in the other. The aside is the only item in
 // its column, so pinning it can never slide it over another block —
 // sticky grid items travel through the whole grid container, not just
 // their row span. On mobile the steps stack and the summary closes the
 // flow. State and submit live in `useBookingForm`. Guests get a contact
 // step and skip the mechanic picker — the directory API is account-only,
-// so guest bookings always auto-dispatch.
+// so guest bookings always auto-dispatch. Phones and tablets walk the same
+// steps one at a time (useBookingWizard) with a pinned back/continue bar;
+// the summary and confirm button appear on the last step.
 export function BookingForm({
   services,
   initialServiceIds,
@@ -64,6 +68,7 @@ export function BookingForm({
     voucherCode,
     setVoucherCode,
     errors,
+    invalidAttempt,
     prefilled,
     pending,
     minSlot,
@@ -77,6 +82,17 @@ export function BookingForm({
     handleSubmit,
     formRef,
   } = form;
+  const stepLabels = [
+    "Dịch vụ",
+    "Vị trí",
+    "Thời gian và xe",
+    guest ? "Liên hệ" : "Chọn thợ",
+  ] as const;
+  const wizard = useBookingWizard(stepLabels.length, formRef, invalidAttempt);
+  // Off-step sections stay mounted (values and errors survive) but are
+  // hidden below lg, where only the current step shows.
+  const stepClass = (index: number) =>
+    wizard.step === index ? "min-w-0" : "min-w-0 max-lg:hidden";
   const [inspectedServiceId, setInspectedServiceId] = useState(
     initialServiceIds[0] ?? "",
   );
@@ -98,106 +114,125 @@ export function BookingForm({
         onSubmit={handleSubmit}
         noValidate
         aria-label="Đặt lịch sửa xe"
-        className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-6"
+        className="grid scroll-mt-20 grid-cols-1 gap-4 max-lg:pb-24 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-6"
       >
         <div className="flex min-w-0 flex-col gap-4">
+          <BookingWizardProgress step={wizard.step} labels={stepLabels} />
           {prefilled && <BookingPrefillNotice onReset={resetDetails} />}
-          <BookingServiceSection
-            services={services}
+          <div data-booking-step={0} className={stepClass(0)}>
+            <BookingServiceSection
+              services={services}
+              serviceIds={serviceIds}
+              selection={selection}
+              activeService={activeService}
+              error={errors.serviceIds ?? errors.serviceId}
+              disabled={pending}
+              onServiceIds={setServiceIds}
+              onInspect={setInspectedServiceId}
+            />
+          </div>
+          <div data-booking-step={1} className={stepClass(1)}>
+            <BookingLocationSection
+              coords={coords}
+              address={address}
+              errors={errors}
+              disabled={pending}
+              onCoords={(point) => {
+                setCoords(point);
+                clearError("location");
+              }}
+              onMapAddress={handleMapAddress}
+              onAddress={(field, value) => {
+                setAddress((previous) => ({ ...previous, [field]: value }));
+                clearError(field);
+              }}
+            />
+          </div>
+          <div data-booking-step={2} className={stepClass(2)}>
+            <BookingDetailsSection
+              scheduledAt={scheduledAt}
+              min={minSlot}
+              max={maxSlot}
+              leadDays={leadDays}
+              maxDays={maxDays}
+              hoursLabel={hoursLabel}
+              vehicle={vehicle}
+              errors={errors}
+              disabled={pending}
+              onScheduledAt={(value) => {
+                setScheduledAt(value);
+                clearError("scheduledAt");
+              }}
+              onVehicle={(field, value) => {
+                setVehicle((previous) => ({ ...previous, [field]: value }));
+                clearError(field);
+              }}
+            />
+          </div>
+          <div data-booking-step={3} className={stepClass(3)}>
+            {guest ? (
+              <BookingStep
+                step={4}
+                tour="booking-contact"
+                title="Thông tin liên hệ"
+                description="Cửa hàng và thợ dùng thông tin này để liên hệ về lịch hẹn."
+              >
+                <BookingGuestSection form={form} />
+              </BookingStep>
+            ) : (
+              <BookingStep
+                step={4}
+                tour="booking-contact"
+                title="Thợ sửa xe"
+                description="Thợ cần xác nhận toàn bộ hạng mục trong lịch hẹn. Thời gian làm việc được kiểm tra theo tổng thời lượng."
+              >
+                {/* Remount on reset so the picker collapses back to the
+              auto-dispatch default instead of staying open. */}
+                <MechanicSection
+                  key={prefilled ? "saved" : "fresh"}
+                  lat={coords?.lat ?? null}
+                  lng={coords?.lng ?? null}
+                  value={mechanicId}
+                  error={errors.mechanicId}
+                  disabled={pending}
+                  onChange={(value) => {
+                    setMechanicId(value);
+                    clearError("mechanicId");
+                  }}
+                />
+              </BookingStep>
+            )}
+          </div>
+        </div>
+        <div className={wizard.isLast ? "min-w-0" : "min-w-0 max-lg:hidden"}>
+          <BookingPriceSummary
             serviceIds={serviceIds}
             selection={selection}
-            activeService={activeService}
-            error={errors.serviceIds ?? errors.serviceId}
-            disabled={pending}
-            onServiceIds={setServiceIds}
-            onInspect={setInspectedServiceId}
-          />
-          <BookingLocationSection
-            coords={coords}
-            address={address}
+            guest={guest}
+            walletId={walletId}
+            voucherCode={voucherCode}
             errors={errors}
-            disabled={pending}
-            onCoords={(point) => {
-              setCoords(point);
-              clearError("location");
-            }}
-            onMapAddress={handleMapAddress}
-            onAddress={(field, value) => {
-              setAddress((previous) => ({ ...previous, [field]: value }));
-              clearError(field);
+            pending={pending}
+            onVoucherCode={setVoucherCode}
+            onWallet={(next) => {
+              setWalletId(next);
+              clearError("walletId");
             }}
           />
-          <BookingDetailsSection
-            scheduledAt={scheduledAt}
-            min={minSlot}
-            max={maxSlot}
-            leadDays={leadDays}
-            maxDays={maxDays}
-            hoursLabel={hoursLabel}
-            vehicle={vehicle}
-            errors={errors}
-            disabled={pending}
-            onScheduledAt={(value) => {
-              setScheduledAt(value);
-              clearError("scheduledAt");
-            }}
-            onVehicle={(field, value) => {
-              setVehicle((previous) => ({ ...previous, [field]: value }));
-              clearError(field);
-            }}
-          />
-          {guest ? (
-            <BookingStep
-              step={4}
-              tour="booking-contact"
-              title="Thông tin liên hệ"
-              description="Cửa hàng và thợ dùng thông tin này để liên hệ về lịch hẹn."
-            >
-              <BookingGuestSection form={form} />
-            </BookingStep>
-          ) : (
-            <BookingStep
-              step={4}
-              tour="booking-contact"
-              title="Thợ sửa xe"
-              description="Thợ cần xác nhận toàn bộ hạng mục trong lịch hẹn. Thời gian làm việc được kiểm tra theo tổng thời lượng."
-            >
-              {/* Remount on reset so the picker collapses back to the
-              auto-dispatch default instead of staying open. */}
-              <MechanicSection
-                key={prefilled ? "saved" : "fresh"}
-                lat={coords?.lat ?? null}
-                lng={coords?.lng ?? null}
-                value={mechanicId}
-                error={errors.mechanicId}
-                disabled={pending}
-                onChange={(value) => {
-                  setMechanicId(value);
-                  clearError("mechanicId");
-                }}
-              />
-            </BookingStep>
-          )}
         </div>
-        <BookingPriceSummary
-          serviceIds={serviceIds}
-          selection={selection}
-          guest={guest}
-          walletId={walletId}
-          voucherCode={voucherCode}
-          errors={errors}
-          pending={pending}
-          onVoucherCode={setVoucherCode}
-          onWallet={(next) => {
-            setWalletId(next);
-            clearError("walletId");
-          }}
-        />
       </form>
-      <BookingReviewsSection
-        service={activeService}
-        lat={coords?.lat ?? null}
-        lng={coords?.lng ?? null}
+      <div className={wizard.step === 0 ? "" : "max-lg:hidden"}>
+        <BookingReviewsSection
+          service={activeService}
+          lat={coords?.lat ?? null}
+          lng={coords?.lng ?? null}
+        />
+      </div>
+      <BookingWizardBar
+        step={wizard.step}
+        labels={stepLabels}
+        onPrev={wizard.prev}
+        onNext={wizard.next}
       />
     </>
   );

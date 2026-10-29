@@ -70,6 +70,7 @@ export function UsersSection({ tab }: { tab: UserTab }) {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
+        tone="mono"
         eyebrow="Quản lý người dùng"
         title="Đúng người, đúng việc."
         subtitle="Duyệt thợ, khóa tài khoản, quản lý nhân viên và xử lý khiếu nại tại một nơi duy nhất."

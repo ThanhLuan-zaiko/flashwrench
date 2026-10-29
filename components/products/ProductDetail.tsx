@@ -84,7 +84,7 @@ export function ProductDetail({ slug }: { slug: string }) {
                 <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
                   {part.categoryName} · {part.brand}
                 </p>
-                <h1 className="mt-1 text-2xl font-bold tracking-tight text-balance text-zinc-900 md:text-3xl dark:text-zinc-50">
+                <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-balance text-[#1E3A5F] md:text-4xl dark:text-zinc-50">
                   {part.name}
                 </h1>
                 <p className="mt-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -128,7 +128,7 @@ export function ProductDetail({ slug }: { slug: string }) {
                 </p>
               )}
 
-              <AddToCartButton part={part} />
+              <AddToCartButton part={part} emphasis="primary" />
               <ApplicableVoucherPanel kind="order" subtotal={part.price} />
             </div>
           </div>

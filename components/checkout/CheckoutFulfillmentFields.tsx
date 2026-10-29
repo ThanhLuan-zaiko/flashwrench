@@ -70,9 +70,9 @@ export function CheckoutFulfillmentFields({
               disabled={disabled}
               onClick={() => onFulfillment(option.value)}
               aria-pressed={active}
-              className={`flex min-h-[44px] items-start gap-2.5 rounded-xl border px-3.5 py-3 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
+              className={`flex min-h-[44px] items-start gap-2.5 rounded-2xl border px-3.5 py-3 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:opacity-60 motion-safe:active:scale-[0.99] ${
                 active
-                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                  ? "border-[#1E3A5F] bg-white text-zinc-900 ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-50 dark:ring-zinc-100"
                   : "border-zinc-300 text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
               }`}
             >
@@ -82,7 +82,7 @@ export function CheckoutFulfillmentFields({
                 <span
                   className={`mt-0.5 text-xs ${
                     active
-                      ? "text-zinc-300 dark:text-zinc-600"
+                      ? "text-zinc-600 dark:text-zinc-400"
                       : "text-zinc-500 dark:text-zinc-400"
                   }`}
                 >

@@ -56,7 +56,7 @@ export function ProductCard({ part, onPreview }: ProductCardProps) {
           </p>
         )}
         <p className="mt-3 flex flex-wrap items-baseline gap-1.5">
-          <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <span className="text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
             {formatVnd(part.price)}
           </span>
           {discount > 0 && part.comparePrice !== null && (

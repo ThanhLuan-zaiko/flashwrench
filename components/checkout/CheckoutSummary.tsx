@@ -56,7 +56,7 @@ export function CheckoutSummary({
     <aside
       data-reveal
       aria-label="Tóm tắt đơn hàng"
-      className="flex h-fit flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 md:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex h-fit flex-col gap-3 rounded-3xl border border-zinc-200 bg-zinc-50 p-5 md:col-span-2 dark:border-zinc-800 dark:bg-zinc-900"
     >
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Đơn hàng ({cart.itemCount} sản phẩm)
@@ -102,11 +102,11 @@ export function CheckoutSummary({
           </span>
         </div>
       )}
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between border-t border-dashed border-zinc-400 pt-3 dark:border-zinc-600">
         <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
           Tổng thanh toán
         </span>
-        <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <span className="text-3xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
           {formatVnd(payable)}
         </span>
       </div>
@@ -122,19 +122,23 @@ export function CheckoutSummary({
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
         {paymentHint(fulfillment, paymentMethod)}
       </p>
-      <button
-        type="submit"
-        disabled={submitting}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
-      >
-        {submitting && (
-          <FiLoader
-            aria-hidden="true"
-            className="h-4 w-4 motion-safe:animate-spin"
-          />
-        )}
-        Xác nhận đặt hàng
-      </button>
+      {/* Pinned to the bottom edge on phones so the order total and the
+      single orange action stay in reach while scrolling the form. */}
+      <div className="max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:border-t max-md:border-zinc-200 max-md:bg-white max-md:px-4 max-md:pt-3 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] dark:max-md:border-zinc-800 dark:max-md:bg-zinc-950">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="flex min-h-[52px] w-full items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-base font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+        >
+          {submitting && (
+            <FiLoader
+              aria-hidden="true"
+              className="h-4 w-4 motion-safe:animate-spin"
+            />
+          )}
+          Đặt hàng · {formatVnd(payable)}
+        </button>
+      </div>
       <Link
         href="/cart"
         className="flex items-center justify-center gap-1.5 text-xs font-semibold text-zinc-600 transition-colors duration-200 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"

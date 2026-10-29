@@ -79,9 +79,9 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
                 aria-hidden="true"
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                   done
-                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                    ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
                     : active
-                      ? "border-zinc-900 dark:border-white"
+                      ? "border-[#1E3A5F] dark:border-white"
                       : "border-zinc-300 dark:border-zinc-700"
                 }`}
               >

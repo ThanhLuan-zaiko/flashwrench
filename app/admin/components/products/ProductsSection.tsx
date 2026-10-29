@@ -43,6 +43,7 @@ export function ProductsSection({ tab }: { tab: ProductTab }) {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
+        tone="mono"
         eyebrow="Quản lý sản phẩm"
         title="Linh kiện rõ, kho gọn."
         subtitle="Quản lý danh mục và sản phẩm đang bán cho khách hàng trên toàn hệ thống."

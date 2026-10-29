@@ -17,7 +17,7 @@ type MechanicSectionProps = {
 function cardClasses(active: boolean): string {
   return `flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors duration-200 ${
     active
-      ? "border-zinc-900 bg-zinc-100 dark:border-white dark:bg-zinc-900"
+      ? "border-[#1E3A5F] bg-zinc-50 ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:bg-zinc-900 dark:ring-zinc-100"
       : "border-zinc-300 dark:border-zinc-700"
   }`;
 }
