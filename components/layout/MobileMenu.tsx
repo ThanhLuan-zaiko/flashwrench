@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { MobileMenuAuth } from "./MobileMenuAuth";
 import { isNavActive } from "./nav-active";
 import type { NavItem } from "./site-header.types";
@@ -72,6 +73,12 @@ export function MobileMenu({
                 : "motion-safe:translate-y-2 motion-safe:opacity-0"
             }`}
           >
+            <div className="mb-2 flex items-center justify-between sm:hidden">
+              <span className="px-3 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                Giao diện sáng / tối
+              </span>
+              <ThemeToggle />
+            </div>
             <MobileMenuAuth onNavigate={onNavigate} />
           </div>
         </div>

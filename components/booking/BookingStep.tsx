@@ -25,25 +25,25 @@ export function BookingStep({
     <section
       aria-labelledby={headingId}
       data-tour={tour}
-      className="flex min-w-0 flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-4 md:p-6 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex min-w-0 flex-col gap-3 sm:gap-4 sm:rounded-3xl sm:border sm:border-zinc-200 sm:bg-white sm:p-4 md:p-6 dark:sm:border-zinc-800 dark:sm:bg-zinc-950"
     >
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-900"
+          className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-xs font-bold text-white sm:flex dark:bg-zinc-100 dark:text-zinc-900"
         >
           {step}
         </span>
         <div className="min-w-0">
           <h2
             id={headingId}
-            className="text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50"
+            className="text-xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50"
           >
             <span className="sr-only">Bước {step}: </span>
             {title}
           </h2>
           {description && (
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 hidden text-xs text-zinc-500 sm:block dark:text-zinc-400">
               {description}
             </p>
           )}

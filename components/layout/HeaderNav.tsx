@@ -14,7 +14,7 @@ export function HeaderNav({
 }: HeaderNavProps & { onNavy?: boolean }) {
   return (
     <nav aria-label="Điều hướng chính" className="hidden min-w-0 xl:block">
-      <ul className="flex items-center gap-2">
+      <ul className="flex items-center gap-0.5 2xl:gap-2">
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = isNavActive(currentPath, item.href);
@@ -27,13 +27,16 @@ export function HeaderNav({
                   onNavy
                     ? isActive
                       ? "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-white/15 px-4 py-2.5 text-sm font-semibold text-white"
-                      : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium text-zinc-200 transition-colors duration-200 hover:bg-white/10 hover:text-white"
+                      : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm 2xl:px-4 2xl:py-2.5 font-medium text-zinc-200 transition-colors duration-200 hover:bg-white/10 hover:text-white"
                     : isActive
                       ? "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2.5 text-sm font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-white"
-                      : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                      : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm 2xl:px-4 2xl:py-2.5 font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
                 }
               >
-                <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                <Icon
+                  aria-hidden="true"
+                  className="hidden h-4 w-4 shrink-0 2xl:block"
+                />
                 {item.label}
               </Link>
             </li>

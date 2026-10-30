@@ -60,7 +60,10 @@ export function BookingWizardBar({
 }: BookingWizardBarProps) {
   const isLast = step === labels.length - 1;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden dark:border-zinc-800 dark:bg-zinc-950">
+    <div
+      data-dock-bar="phone"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden dark:border-zinc-800 dark:bg-zinc-950"
+    >
       <div className="mx-auto flex max-w-3xl gap-2.5">
         <button
           type="button"
@@ -76,7 +79,9 @@ export function BookingWizardBar({
             onClick={onNext}
             className={`${BRAND_PRIMARY_BUTTON} min-w-0 flex-1`}
           >
-            <span className="truncate">Tiếp tục: {labels[step + 1]}</span>
+            <span className="truncate">
+              Tiếp tục: {labels[step + 1].toLocaleLowerCase("vi")}
+            </span>
             <FiArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
           </button>
         )}

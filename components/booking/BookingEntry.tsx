@@ -91,18 +91,22 @@ export function BookingEntry({
   }
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
-        eyebrow="Đặt lịch"
-        title="Đặt lịch sửa xe tận nơi."
-        subtitle={
-          guest
-            ? "Không cần tài khoản — chọn các dịch vụ, điền thông tin liên hệ, một khung giờ, địa điểm và xe của bạn rồi xác nhận."
-            : "Bạn đã đăng nhập nên không cần đăng nhập lại. Xem các dịch vụ đã chọn, điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
-        }
-      />
-      <div data-reveal className="flex">
+    <div ref={rootRef} className="flex flex-col gap-4 sm:gap-6 md:gap-8">
+      {/* Phones go straight into the wizard (the task bar names the
+      screen); the intro, account card and promo show from sm up. */}
+      <div className="hidden sm:block">
+        <BigTypeHeader
+          level={1}
+          eyebrow="Đặt lịch"
+          title="Đặt lịch sửa xe tận nơi."
+          subtitle={
+            guest
+              ? "Không cần tài khoản — chọn các dịch vụ, điền thông tin liên hệ, một khung giờ, địa điểm và xe của bạn rồi xác nhận."
+              : "Bạn đã đăng nhập nên không cần đăng nhập lại. Xem các dịch vụ đã chọn, điền khung giờ, địa điểm và thông tin xe rồi xác nhận."
+          }
+        />
+      </div>
+      <div data-reveal className="hidden sm:flex">
         <TourButton
           tour={BOOKING_TOUR_NAME}
           ariaLabel="Bắt đầu hướng dẫn đặt lịch"
@@ -111,7 +115,7 @@ export function BookingEntry({
       <section
         aria-label={guest ? "Đặt lịch với tư cách khách" : "Tài khoản đặt lịch"}
         data-reveal
-        className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+        className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 max-sm:hidden sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
       >
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
@@ -144,7 +148,9 @@ export function BookingEntry({
           </Link>
         )}
       </section>
-      <PromoTeaser audience="booking" />
+      <div className="hidden sm:block">
+        <PromoTeaser audience="booking" />
+      </div>
 
       {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">

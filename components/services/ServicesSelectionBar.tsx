@@ -23,6 +23,8 @@ type ServicesSelectionBarProps = {
 // The bar's continue button is the screen's single orange action.
 const CONTINUE_CLASSES = `${BRAND_PRIMARY_BUTTON} shrink-0`;
 
+// Docked to the bottom edge on phones (count + subtotal left, orange
+// continue right); a floating card with the editable list from sm up.
 export function ServicesSelectionBar({
   serviceIds,
   selection,
@@ -35,28 +37,28 @@ export function ServicesSelectionBar({
   return (
     <section
       aria-label="Lịch hẹn đã chọn"
-      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-6xl flex-col gap-2 rounded-2xl border border-zinc-300 bg-white p-3 sm:inset-x-6 sm:bottom-[max(1rem,env(safe-area-inset-bottom))] sm:p-4 dark:border-zinc-700 dark:bg-zinc-950"
+      data-dock-bar
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-6xl flex-col gap-2 border-t border-zinc-200 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:inset-x-6 sm:bottom-[max(1rem,env(safe-area-inset-bottom))] sm:rounded-2xl sm:border sm:border-zinc-300 sm:p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:dark:border-zinc-700"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div aria-live="polite" className="min-w-0">
-          <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-            Đã chọn {serviceIds.length} dịch vụ
+          <h2 className="text-[11px] text-zinc-500 sm:text-sm sm:font-bold sm:text-zinc-900 dark:text-zinc-400 sm:dark:text-zinc-50">
+            {serviceIds.length} dịch vụ đã chọn
           </h2>
           {ready ? (
-            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
-              <span className="text-xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+            <p className="flex flex-wrap items-baseline gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] sm:text-xl dark:text-zinc-50">
                 {formatVnd(selection.subtotal)}
               </span>
-              Tạm tính · Khoảng {formatDuration(selection.durationMin)}
+              <span className="hidden sm:inline">
+                Tạm tính · Khoảng {formatDuration(selection.durationMin)}
+              </span>
             </p>
           ) : (
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
               Đang kiểm tra danh sách đã chọn…
             </p>
           )}
-          <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-            Một xe · Một địa chỉ · Một khung giờ
-          </p>
         </div>
         {canContinue ? (
           <Link
@@ -65,7 +67,10 @@ export function ServicesSelectionBar({
             className={CONTINUE_CLASSES}
           >
             Tiếp tục đặt lịch
-            <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+            <FiArrowRight
+              aria-hidden="true"
+              className="hidden h-4 w-4 sm:block"
+            />
           </Link>
         ) : (
           <button type="button" disabled className={CONTINUE_CLASSES}>
@@ -74,7 +79,7 @@ export function ServicesSelectionBar({
         )}
       </div>
       {ready && selection.issue && <FormAlert message={selection.issue} />}
-      <div className="flex items-start gap-2 border-t border-zinc-200 dark:border-zinc-800">
+      <div className="hidden items-start gap-2 border-t border-zinc-200 sm:flex dark:border-zinc-800">
         <details className="group min-w-0 flex-1">
           <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 rounded-lg text-xs font-semibold text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-200">
             Xem và chỉnh danh sách

@@ -24,7 +24,7 @@ type PublicServiceCardProps = {
 };
 
 const TOGGLE_BASE =
-  "flex min-h-[44px] min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-bold motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] sm:flex-none sm:px-4";
+  "flex min-h-9 min-w-0 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-bold sm:min-h-[44px] sm:gap-1.5 sm:rounded-xl sm:text-sm motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] sm:flex-none sm:px-4";
 const TOGGLE_ON =
   "border-[#1E3A5F] bg-[#1E3A5F] text-white hover:bg-[#0F1E33] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white";
 const TOGGLE_OFF =
@@ -47,9 +47,15 @@ export function PublicServiceCard({
     <article
       data-reveal
       aria-label={service.name}
-      className={`flex min-w-0 gap-3.5 rounded-3xl border bg-white p-3 sm:p-3.5 dark:bg-zinc-950 ${selected ? "border-[#1E3A5F] ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:ring-zinc-100" : "border-zinc-200 dark:border-zinc-800"}`}
+      className={`flex min-w-0 gap-3 rounded-2xl border bg-white p-3 sm:gap-3.5 sm:rounded-3xl sm:p-3.5 dark:bg-zinc-950 ${selected ? "border-[#1E3A5F] ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:ring-zinc-100" : "border-zinc-200 dark:border-zinc-800"}`}
     >
-      <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-zinc-100 sm:h-28 sm:w-28 dark:bg-zinc-900">
+      <button
+        type="button"
+        onClick={onPreview}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-100 sm:h-28 sm:w-28 sm:rounded-2xl dark:bg-zinc-900"
+      >
         {service.imageUrl ? (
           // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
           <img
@@ -63,23 +69,23 @@ export function PublicServiceCard({
             <FiTool aria-hidden="true" className="h-8 w-8" />
           </span>
         )}
-      </div>
+      </button>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="truncate text-[11px] font-semibold tracking-[0.08em] text-zinc-600 uppercase dark:text-zinc-400">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
+        <p className="truncate text-[10px] font-semibold tracking-[0.08em] text-[#1E3A5F] uppercase sm:text-[11px] dark:text-zinc-400">
           {service.categoryName}
         </p>
-        <h3 className="break-words text-base leading-snug font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <h3 className="break-words text-sm leading-snug font-bold tracking-tight text-zinc-900 sm:text-base dark:text-zinc-50">
           {service.name}
         </h3>
-        <p className="flex flex-wrap items-baseline gap-x-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+        <p className="flex flex-wrap items-baseline gap-x-1 text-[11px] text-zinc-500 sm:gap-x-1.5 sm:text-xs dark:text-zinc-400">
           từ
-          <span className="text-xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+          <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] sm:text-xl dark:text-zinc-50">
             {formatVnd(service.basePrice)}
           </span>
-          {PRICE_UNIT_LABELS[service.priceUnit]}
+          · {PRICE_UNIT_LABELS[service.priceUnit]}
         </p>
-        <p className="flex flex-wrap items-center gap-1 text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
+        <p className="hidden flex-wrap items-center gap-1 text-[11px] font-medium text-zinc-600 sm:flex dark:text-zinc-400">
           <span className={BADGE}>
             <FiClock aria-hidden="true" className="h-3 w-3" />
             {formatDuration(service.durationMin)}
@@ -97,7 +103,7 @@ export function PublicServiceCard({
             </span>
           )}
         </p>
-        <div className="mt-1.5 flex gap-2">
+        <div className="mt-1.5 flex gap-2 sm:mt-1.5">
           <button
             type="button"
             aria-pressed={selected}
@@ -111,9 +117,15 @@ export function PublicServiceCard({
             className={`${TOGGLE_BASE} ${selected ? TOGGLE_ON : TOGGLE_OFF}`}
           >
             {selected ? (
-              <FiCheck aria-hidden="true" className="h-4 w-4 shrink-0" />
+              <FiCheck
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
+              />
             ) : (
-              <FiPlus aria-hidden="true" className="h-4 w-4 shrink-0" />
+              <FiPlus
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
+              />
             )}
             {selected ? "Đã chọn" : "Chọn"}
           </button>
@@ -121,7 +133,7 @@ export function PublicServiceCard({
             type="button"
             onClick={onPreview}
             aria-label={`Xem nhanh chi tiết ${service.name}`}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 sm:flex text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiEye aria-hidden="true" className="h-4 w-4" />
           </button>
@@ -131,7 +143,9 @@ export function PublicServiceCard({
             {disabledReason}
           </p>
         )}
-        <ApplicableVoucherBadge kind="booking" subtotal={service.basePrice} />
+        <div className="hidden sm:block">
+          <ApplicableVoucherBadge kind="booking" subtotal={service.basePrice} />
+        </div>
       </div>
     </article>
   );

@@ -7,4 +7,7 @@ const CHAT_FLOAT_Z = "z-[60]";
 
 export const CHAT_PANEL_CLASSES = `fixed bottom-24 right-4 ${CHAT_FLOAT_Z} flex h-[min(560px,calc(100dvh-11rem))] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900 sm:right-5`;
 
-export const CHAT_FAB_CLASSES = `fixed bottom-5 right-5 ${CHAT_FLOAT_Z} flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900`;
+// A docked bottom action bar (marked `data-dock-bar`) lifts the launcher
+// above it so the bar's primary button is never covered. Bars marked
+// `data-dock-bar="phone"` are hidden from lg up, so the lift stops there.
+export const CHAT_FAB_CLASSES = `fixed bottom-5 right-5 [body:has([data-dock-bar])_&]:bottom-24 sm:[body:has([data-dock-bar])_&]:bottom-44 lg:[body:has([data-dock-bar=phone])_&]:bottom-5 ${CHAT_FLOAT_Z} flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900`;

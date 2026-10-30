@@ -45,11 +45,13 @@ export default async function LoginPage({
 
   return (
     <AuthCard
-      title="Chào mừng trở lại"
-      subtitle="Đăng nhập để đặt lịch sửa xe, theo dõi tiến độ và quản lý xe của bạn."
+      eyebrow="Đăng nhập"
+      title="Chào mừng bạn quay lại."
+      subtitle="Theo dõi lịch sửa, đơn hàng và voucher trong một tài khoản."
       footerText="Chưa có tài khoản?"
       footerLinkHref={buildRegisterHref(safeNext)}
-      footerLinkLabel="Đăng ký ngay"
+      footerLinkLabel="Tạo tài khoản miễn phí"
+      perks={["Voucher tự phát khi đủ điều kiện", "Lưu lịch sử sửa xe"]}
     >
       <div className="flex flex-col gap-4">
         {forceLoggedOut ? (

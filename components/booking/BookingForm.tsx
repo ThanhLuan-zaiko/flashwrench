@@ -6,12 +6,12 @@ import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import type { CreateBookingResponse } from "@/services/booking.api";
 import { BookingDetailsSection } from "./BookingDetailsSection";
 import { BookingGuestSection } from "./BookingGuestSection";
-import { BookingLocationSection } from "./BookingLocationSection";
 import { BookingPrefillNotice } from "./BookingPrefillNotice";
 import { BookingPriceSummary } from "./BookingPriceSummary";
 import { BookingReviewsSection } from "./BookingReviewsSection";
 import { BookingServiceSection } from "./BookingServiceSection";
 import { BookingStep } from "./BookingStep";
+import { BookingWhereWhenStep } from "./BookingWhereWhenStep";
 import { BookingWizardBar, BookingWizardProgress } from "./BookingWizardNav";
 import type { BookingPrefill } from "./booking-prefill";
 import { MechanicSection } from "./MechanicSection";
@@ -53,14 +53,9 @@ export function BookingForm({
   const {
     serviceIds,
     setServiceIds,
-    scheduledAt,
-    setScheduledAt,
     coords,
-    setCoords,
     mechanicId,
     setMechanicId,
-    address,
-    setAddress,
     vehicle,
     setVehicle,
     walletId,
@@ -71,22 +66,16 @@ export function BookingForm({
     invalidAttempt,
     prefilled,
     pending,
-    minSlot,
-    maxSlot,
-    leadDays,
-    maxDays,
-    hoursLabel,
     clearError,
-    handleMapAddress,
     resetDetails,
     handleSubmit,
     formRef,
   } = form;
   const stepLabels = [
     "Dịch vụ",
-    "Vị trí",
-    "Thời gian và xe",
+    "Vị trí và thời gian",
     guest ? "Liên hệ" : "Chọn thợ",
+    "Xe và xác nhận",
   ] as const;
   const wizard = useBookingWizard(stepLabels.length, formRef, invalidAttempt);
   // Off-step sections stay mounted (values and errors survive) but are
@@ -132,44 +121,9 @@ export function BookingForm({
             />
           </div>
           <div data-booking-step={1} className={stepClass(1)}>
-            <BookingLocationSection
-              coords={coords}
-              address={address}
-              errors={errors}
-              disabled={pending}
-              onCoords={(point) => {
-                setCoords(point);
-                clearError("location");
-              }}
-              onMapAddress={handleMapAddress}
-              onAddress={(field, value) => {
-                setAddress((previous) => ({ ...previous, [field]: value }));
-                clearError(field);
-              }}
-            />
+            <BookingWhereWhenStep form={form} selection={selection} />
           </div>
           <div data-booking-step={2} className={stepClass(2)}>
-            <BookingDetailsSection
-              scheduledAt={scheduledAt}
-              min={minSlot}
-              max={maxSlot}
-              leadDays={leadDays}
-              maxDays={maxDays}
-              hoursLabel={hoursLabel}
-              vehicle={vehicle}
-              errors={errors}
-              disabled={pending}
-              onScheduledAt={(value) => {
-                setScheduledAt(value);
-                clearError("scheduledAt");
-              }}
-              onVehicle={(field, value) => {
-                setVehicle((previous) => ({ ...previous, [field]: value }));
-                clearError(field);
-              }}
-            />
-          </div>
-          <div data-booking-step={3} className={stepClass(3)}>
             {guest ? (
               <BookingStep
                 step={4}
@@ -202,6 +156,17 @@ export function BookingForm({
                 />
               </BookingStep>
             )}
+          </div>
+          <div data-booking-step={3} className={stepClass(3)}>
+            <BookingDetailsSection
+              vehicle={vehicle}
+              errors={errors}
+              disabled={pending}
+              onVehicle={(field, value) => {
+                setVehicle((previous) => ({ ...previous, [field]: value }));
+                clearError(field);
+              }}
+            />
           </div>
         </div>
         <div className={wizard.isLast ? "min-w-0" : "min-w-0 max-lg:hidden"}>

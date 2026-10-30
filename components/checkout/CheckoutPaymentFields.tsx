@@ -9,6 +9,7 @@ import {
   type OrderPaymentMethod,
   paymentMethodsFor,
 } from "@/lib/payments/order-payment.types";
+import { CHECKOUT_SECTION_TITLE, checkoutOptionClasses } from "./checkout-ui";
 
 type CheckoutPaymentFieldsProps = {
   fulfillment: FulfillmentType;
@@ -50,10 +51,8 @@ export function CheckoutPaymentFields({
 }: CheckoutPaymentFieldsProps) {
   const options = paymentMethodsFor(fulfillment);
   return (
-    <fieldset className="flex flex-col gap-3">
-      <legend className="mb-1.5 text-sm font-medium text-zinc-800 dark:text-zinc-200">
-        Phương thức thanh toán
-      </legend>
+    <fieldset className="flex flex-col gap-2.5">
+      <legend className={`mb-2.5 ${CHECKOUT_SECTION_TITLE}`}>Thanh toán</legend>
       <div className="grid grid-cols-1 gap-2">
         {options.map((method) => {
           const active = paymentMethod === method;
@@ -65,22 +64,29 @@ export function CheckoutPaymentFields({
               disabled={disabled}
               onClick={() => onPaymentMethod(method)}
               aria-pressed={active}
-              className={`flex min-h-[44px] items-start gap-2.5 rounded-2xl border px-3.5 py-3 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:opacity-60 motion-safe:active:scale-[0.99] ${
-                active
-                  ? "border-[#1E3A5F] bg-white text-zinc-900 ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-50 dark:ring-zinc-100"
-                  : "border-zinc-300 text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
-              }`}
+              className={`flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2 text-left ${checkoutOptionClasses(active)}`}
             >
-              <Icon aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
-              <span className="flex flex-col">
-                <span className="text-sm font-semibold">{label}</span>
-                <span
-                  className={`mt-0.5 text-xs ${
-                    active
-                      ? "text-zinc-600 dark:text-zinc-400"
-                      : "text-zinc-500 dark:text-zinc-400"
-                  }`}
-                >
+              <span
+                aria-hidden="true"
+                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                  active
+                    ? "border-[#1E3A5F] dark:border-zinc-100"
+                    : "border-zinc-400 dark:border-zinc-600"
+                }`}
+              >
+                {active && (
+                  <span className="h-2 w-2 rounded-full bg-[#1E3A5F] dark:bg-zinc-100" />
+                )}
+              </span>
+              <Icon
+                aria-hidden="true"
+                className="hidden h-4 w-4 shrink-0 sm:block"
+              />
+              <span className="flex min-w-0 flex-col">
+                <span className="text-[13px] font-semibold sm:text-sm">
+                  {label}
+                </span>
+                <span className="mt-0.5 hidden text-xs text-zinc-500 sm:block dark:text-zinc-400">
                   {hint}
                 </span>
               </span>

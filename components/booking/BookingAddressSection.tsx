@@ -1,9 +1,5 @@
 import type { BookingFieldErrors } from "@/services/booking.api";
-import {
-  BookingField,
-  BookingTextArea,
-  BookingTextInput,
-} from "./BookingFormFields";
+import { BookingField, BookingTextInput } from "./BookingFormFields";
 
 export type AddressValues = {
   address: string;
@@ -29,69 +25,84 @@ export function BookingAddressSection({
   onChange,
 }: BookingAddressSectionProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <BookingField
         id="address"
-        label="Địa chỉ sửa xe"
+        label="Địa chỉ chi tiết"
         required
         error={errors.address}
-        hint="Số nhà, đường, phường/xã để thợ tìm đúng chỗ."
       >
-        <BookingTextArea
+        <BookingTextInput
           id="address"
           value={values.address}
           onChange={(v) => onChange("address", v)}
-          placeholder="Ví dụ: 123 Nguyễn Trãi, Phường 5, Quận 3, TP Hồ Chí Minh"
+          placeholder="Ví dụ: 12 Nguyễn Hữu Thọ, Quận 7"
           error={errors.address}
           disabled={disabled}
         />
       </BookingField>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <BookingField
-          id="province"
-          label="Tỉnh/Thành phố"
-          error={errors.province}
-        >
-          <BookingTextInput
+      {/* Optional structured parts: the map fills them, so they stay
+      collapsed unless one of them carries an error. */}
+      <details
+        open={Boolean(
+          errors.province || errors.district || errors.ward || errors.street,
+        )}
+        className="group"
+      >
+        <summary className="flex min-h-9 cursor-pointer list-none items-center text-xs font-semibold text-zinc-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-300">
+          Chi tiết địa chỉ (không bắt buộc)
+        </summary>
+        <div className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2">
+          <BookingField
             id="province"
-            value={values.province}
-            onChange={(v) => onChange("province", v)}
-            placeholder="TP Hồ Chí Minh"
+            label="Tỉnh/Thành phố"
             error={errors.province}
-            disabled={disabled}
-          />
-        </BookingField>
-        <BookingField id="district" label="Quận/Huyện" error={errors.district}>
-          <BookingTextInput
+          >
+            <BookingTextInput
+              id="province"
+              value={values.province}
+              onChange={(v) => onChange("province", v)}
+              placeholder="TP Hồ Chí Minh"
+              error={errors.province}
+              disabled={disabled}
+            />
+          </BookingField>
+          <BookingField
             id="district"
-            value={values.district}
-            onChange={(v) => onChange("district", v)}
-            placeholder="Quận 3"
+            label="Quận/Huyện"
             error={errors.district}
-            disabled={disabled}
-          />
-        </BookingField>
-        <BookingField id="ward" label="Phường/Xã" error={errors.ward}>
-          <BookingTextInput
-            id="ward"
-            value={values.ward}
-            onChange={(v) => onChange("ward", v)}
-            placeholder="Phường 5"
-            error={errors.ward}
-            disabled={disabled}
-          />
-        </BookingField>
-        <BookingField id="street" label="Số nhà/Đường" error={errors.street}>
-          <BookingTextInput
-            id="street"
-            value={values.street}
-            onChange={(v) => onChange("street", v)}
-            placeholder="123 Nguyễn Trãi"
-            error={errors.street}
-            disabled={disabled}
-          />
-        </BookingField>
-      </div>
+          >
+            <BookingTextInput
+              id="district"
+              value={values.district}
+              onChange={(v) => onChange("district", v)}
+              placeholder="Quận 3"
+              error={errors.district}
+              disabled={disabled}
+            />
+          </BookingField>
+          <BookingField id="ward" label="Phường/Xã" error={errors.ward}>
+            <BookingTextInput
+              id="ward"
+              value={values.ward}
+              onChange={(v) => onChange("ward", v)}
+              placeholder="Phường 5"
+              error={errors.ward}
+              disabled={disabled}
+            />
+          </BookingField>
+          <BookingField id="street" label="Số nhà/Đường" error={errors.street}>
+            <BookingTextInput
+              id="street"
+              value={values.street}
+              onChange={(v) => onChange("street", v)}
+              placeholder="123 Nguyễn Trãi"
+              error={errors.street}
+              disabled={disabled}
+            />
+          </BookingField>
+        </div>
+      </details>
     </div>
   );
 }

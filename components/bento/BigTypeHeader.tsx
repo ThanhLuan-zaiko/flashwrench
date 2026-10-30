@@ -23,14 +23,14 @@ export function BigTypeHeader({
   if (tone === "brand") {
     return (
       <div data-reveal className="w-full max-w-3xl">
-        <p className="text-xs font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
+        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase sm:text-xs dark:text-zinc-400">
           {eyebrow}
         </p>
-        <TitleTag className="mt-3 text-4xl leading-[1.05] font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:text-5xl lg:text-6xl dark:text-zinc-50">
+        <TitleTag className="mt-2 text-[30px] leading-[1.05] font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:mt-3 sm:text-5xl lg:text-6xl dark:text-zinc-50">
           {title}
         </TitleTag>
         {subtitle && (
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-pretty text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-pretty text-zinc-600 sm:mt-4 sm:text-base dark:text-zinc-400">
             {subtitle}
           </p>
         )}

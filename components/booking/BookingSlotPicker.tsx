@@ -21,7 +21,7 @@ type BookingSlotPickerProps = {
 };
 
 const PILL =
-  "flex min-h-[44px] items-center justify-center rounded-2xl border font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:focus-visible:ring-zinc-100";
+  "flex min-h-[44px] items-center justify-center rounded-xl border font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:focus-visible:ring-zinc-100";
 
 // Day pills plus hourly slot buttons over the same datetime-local value
 // the form validates. Any other time stays reachable through the native
@@ -57,7 +57,9 @@ export function BookingSlotPicker({
 
   return (
     <div className="flex flex-col gap-3">
-      <fieldset className="m-0 grid min-w-0 grid-cols-4 gap-2 border-0 p-0 sm:grid-cols-7">
+      {/* One scrolling row on phones (four days in view), a 7-up grid
+      from sm. */}
+      <fieldset className="m-0 -mx-4 flex min-w-0 gap-2 overflow-x-auto border-0 px-4 py-0 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-7 sm:overflow-visible sm:px-0">
         <legend className="sr-only">Chọn ngày</legend>
         {days.map((day) => {
           const active = day.value === current.day;
@@ -70,7 +72,7 @@ export function BookingSlotPicker({
               aria-pressed={active}
               disabled={disabled || empty}
               onClick={() => pickDay(day.value)}
-              className={`${PILL} flex-col gap-0.5 py-2 ${active ? BRAND_CHIP_ACTIVE : BRAND_CHIP_IDLE}`}
+              className={`${PILL} w-[calc((100vw-3.5rem)/4)] shrink-0 flex-col gap-0.5 py-2 sm:w-auto ${active ? BRAND_CHIP_ACTIVE : BRAND_CHIP_IDLE}`}
             >
               <span className="text-[11px] font-semibold">{day.weekday}</span>
               <span className="text-lg leading-none">{day.day}</span>

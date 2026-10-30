@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { CartLink } from "./CartLink";
 import { GuestRecordsMenu } from "./GuestRecordsMenu";
 import { HeaderNav } from "./HeaderNav";
-import { usesNavyHeader } from "./header-tone";
+import { usesNavyHeader, usesTaskBar } from "./header-tone";
 import { MobileMenu } from "./MobileMenu";
 import { SiteLogo } from "./SiteLogo";
 import { NAV_ITEMS } from "./site-header.constants";
@@ -23,17 +23,18 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
   const pathname = usePathname();
   const activePath = currentPath ?? pathname ?? "/";
   const onNavy = usesNavyHeader(activePath);
+  const taskRoute = usesTaskBar(activePath);
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header
-      className={
+      className={`${
         onNavy
           ? "sticky top-0 z-50 border-b border-white/10 bg-[#1E3A5F]"
           : "sticky top-0 z-50 border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950"
-      }
+      } ${taskRoute ? "max-sm:hidden" : ""}`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
+      <div className="mx-auto flex h-12 max-w-7xl sm:h-16 items-center justify-between gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
         <SiteLogo onNavy={onNavy} />
 
         {/* Seven labeled links plus the logo and a guest's
@@ -53,9 +54,12 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
 
           <CartLink onNavy={onNavy} />
 
-          <ThemeToggle onNavy={onNavy} />
-
-          <UserMenu onNavy={onNavy} />
+          {/* Phones keep only cart + menu; theme and account live in the
+          mobile menu there. */}
+          <div className="hidden sm:contents">
+            <ThemeToggle onNavy={onNavy} />
+            <UserMenu onNavy={onNavy} />
+          </div>
 
           <button
             type="button"

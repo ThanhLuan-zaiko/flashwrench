@@ -75,8 +75,12 @@ describe("multi-service booking interface", () => {
     );
     expect(markup).toContain('aria-pressed="true"');
     expect(markup).toContain("Đã chọn");
-    // Quick-view eye + the selection toggle.
-    expect(markup.match(/<button\b/g)).toHaveLength(2);
+    // Cover tap (quick view on phones, hidden from assistive tech), the
+    // quick-view eye and the selection toggle.
+    expect(markup.match(/<button\b/g)).toHaveLength(3);
+    expect(
+      markup.match(/<button[^>]*tabindex="-1"[^>]*aria-hidden="true"/g),
+    ).toHaveLength(1);
     expect(markup).not.toContain('href="/booking');
     expect(markup).not.toContain("Đặt dịch vụ");
     expect(markup).toContain("dark:border-zinc-100");
@@ -98,7 +102,7 @@ describe("multi-service booking interface", () => {
     expect(markup).toContain(
       'aria-label="Xem nhanh chi tiết Thay dầu động cơ"',
     );
-    expect(markup.match(/<button\b/g)).toHaveLength(2);
+    expect(markup.match(/<button\b/g)).toHaveLength(3);
     expect(markup).not.toContain('href="/booking');
     expect(markup).not.toContain("Đang kiểm tra đăng nhập");
   });
@@ -147,7 +151,7 @@ describe("multi-service booking interface", () => {
         }),
       ),
     );
-    expect(markup).toContain("Đã chọn 2 dịch vụ");
+    expect(markup).toContain("2 dịch vụ đã chọn");
     expect(markup).toContain("300.000đ");
     expect(markup).toContain("90 phút");
     expect(markup).toContain(buildBookingHref(ids));
@@ -168,7 +172,7 @@ describe("multi-service booking interface", () => {
         onClear: noop,
       }),
     );
-    expect(markup).toContain("Đã chọn 1 dịch vụ");
+    expect(markup).toContain("1 dịch vụ đã chọn");
     expect(markup).toContain("199.000đ");
     expect(markup).toContain(buildBookingHref(FIRST_ID));
     expect(markup.match(/href="\/booking[^"]*"/g)).toHaveLength(1);

@@ -100,15 +100,17 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   return (
     <div
       ref={rootRef}
-      className={`flex flex-col gap-6 md:gap-8 ${draft.serviceIds.length > 0 ? "pb-48 sm:pb-36" : ""}`}
+      className={`flex flex-col gap-4 sm:gap-6 md:gap-8 ${draft.serviceIds.length > 0 ? "pb-24 sm:pb-36" : ""}`}
     >
       <BigTypeHeader
         level={1}
-        eyebrow="Dịch vụ"
+        eyebrow={
+          catalog.isSuccess ? `Dịch vụ · ${view.total} gói sẵn sàng` : "Dịch vụ"
+        }
         title="Chọn dịch vụ, thợ tới nơi."
-        subtitle="Chọn dịch vụ cần làm, rồi nhấn “Tiếp tục đặt lịch”. Một lịch hẹn cho cùng một xe, địa chỉ và giờ hẹn; không cần tài khoản."
+        subtitle="Giá trọn gói báo trước. Chọn một hoặc nhiều dịch vụ rồi đặt lịch một lần."
       />
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="hidden flex-wrap items-center justify-between gap-2 sm:flex">
         <output
           aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}
           className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
@@ -154,12 +156,6 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           <FiArrowRight aria-hidden="true" className="h-5 w-5" />
         </span>
       </Link>
-      <PromoBannerSection
-        title="Ưu đãi cho khách đặt dịch vụ"
-        subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
-        audience="booking"
-      />
-
       {unknownSlug && (
         <div
           data-reveal
@@ -192,6 +188,11 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         serviceIds={draft.serviceIds}
         onToggle={draft.toggleService}
         reasonFor={reasonFor}
+      />
+      <PromoBannerSection
+        title="Ưu đãi cho khách đặt dịch vụ"
+        subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
+        audience="booking"
       />
 
       <section

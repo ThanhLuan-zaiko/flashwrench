@@ -29,6 +29,8 @@ type AuthBrandPanelProps = {
   title?: string;
   description?: string;
   items?: BrandPanelItem[];
+  // Extra layout classes, e.g. hiding the panel on phones.
+  className?: string;
 };
 
 // Hero panel for auth bento grids. Standard skill surface; emphasis
@@ -38,22 +40,23 @@ export function AuthBrandPanel({
   title = "Sửa xe tận nơi.",
   description = "Đặt thợ lưu động, cứu hộ khẩn cấp và theo dõi tiến độ trong một ứng dụng duy nhất.",
   items = DEFAULT_ITEMS,
+  className = "",
 }: AuthBrandPanelProps) {
   return (
     <div
       data-reveal
-      className="flex flex-col justify-between gap-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+      className={`flex flex-col justify-between gap-6 rounded-2xl bg-[#1E3A5F] p-6 text-white sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 ${className}`}
     >
       <div>
         <p>
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-900 text-sm font-bold text-white dark:bg-white dark:text-zinc-900">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-sm font-bold text-[#1E3A5F]">
             FW
           </span>
         </p>
-        <p className="mt-5 text-4xl font-bold tracking-tight text-balance text-zinc-900 sm:text-5xl dark:text-zinc-50">
+        <p className="mt-5 text-4xl font-extrabold tracking-tight text-balance text-white sm:text-5xl">
           {title}
         </p>
-        <p className="mt-3 max-w-md text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
+        <p className="mt-3 max-w-md text-sm text-zinc-200 sm:text-base">
           {description}
         </p>
       </div>
@@ -63,16 +66,16 @@ export function AuthBrandPanel({
           return (
             <li
               key={item.title}
-              className="flex items-center gap-3 rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900"
+              className="flex items-center gap-3 rounded-xl bg-white/10 p-3"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white">
                 <Icon aria-hidden="true" className="h-5 w-5" />
               </span>
               <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                <span className="block truncate text-sm font-semibold text-white">
                   {item.title}
                 </span>
-                <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="block truncate text-xs text-zinc-300">
                   {item.hint}
                 </span>
               </span>

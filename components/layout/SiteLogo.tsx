@@ -14,11 +14,11 @@ export function SiteLogo({ onNavy = false }: { onNavy?: boolean }) {
         src={logoImage}
         alt=""
         priority
-        className="h-9 w-auto transition-transform duration-300 ease-out motion-safe:group-hover:scale-105"
+        className="hidden h-9 w-auto transition-transform sm:block duration-300 ease-out motion-safe:group-hover:scale-105"
       />
       <span className="flex flex-col leading-none">
         <span
-          className={`text-lg font-bold tracking-tight ${onNavy ? "text-white" : "text-zinc-900 dark:text-white"}`}
+          className={`text-base font-extrabold tracking-tight sm:text-lg sm:font-bold ${onNavy ? "text-white" : "text-zinc-900 dark:text-white"}`}
         >
           {SITE_NAME}
         </span>

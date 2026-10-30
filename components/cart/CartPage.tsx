@@ -156,7 +156,7 @@ export function CartPage() {
                     hasUnavailable ? "pointer-events-none opacity-50" : ""
                   }`}
                 >
-                  Đặt hàng
+                  Đặt hàng · {formatVnd(cartView.subtotal)}
                 </Link>
               </div>
             </section>

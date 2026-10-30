@@ -105,7 +105,7 @@ export function BookingMapSection({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <p className="hidden text-xs font-semibold text-zinc-700 sm:block dark:text-zinc-300">
         {text.title}
       </p>
       <div className="relative">
@@ -180,17 +180,17 @@ export function BookingMapSection({
           type="button"
           onClick={() => locate(false, false)}
           disabled={locating}
-          aria-label="Dùng vị trí hiện tại"
-          className="absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          className="absolute right-3 bottom-7 z-10 flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
         >
           {locating ? (
             <FiLoader
               aria-hidden="true"
-              className="h-4 w-4 motion-safe:animate-spin"
+              className="h-3.5 w-3.5 motion-safe:animate-spin"
             />
           ) : (
-            <FiCrosshair aria-hidden="true" className="h-4 w-4" />
+            <FiCrosshair aria-hidden="true" className="h-3.5 w-3.5" />
           )}
+          Dùng vị trí của tôi
         </button>
       </div>
 
