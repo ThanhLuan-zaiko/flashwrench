@@ -37,7 +37,7 @@ export function StaffPendingPassword({
           type="button"
           onClick={() => void copyPassword()}
           aria-label={copied ? "Đã sao chép mật khẩu" : "Sao chép mật khẩu"}
-          className="flex min-h-[36px] items-center gap-1.5 rounded-lg border border-zinc-300 px-2.5 py-1.5 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+          className="flex min-h-[36px] items-center gap-1.5 rounded-lg border border-zinc-300 px-2.5 py-1.5 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
         >
           {copied ? (
             <FiCheck aria-hidden="true" className="h-3.5 w-3.5" />

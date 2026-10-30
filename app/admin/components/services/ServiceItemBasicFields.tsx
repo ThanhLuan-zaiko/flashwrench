@@ -67,7 +67,7 @@ export function ServiceItemBasicFields({
             if (!editing) onSlug(slugifyName(e.target.value));
           }}
           placeholder="Thay dầu động cơ"
-          className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
         {fieldError(error, "name") && (
           <span className="font-medium text-red-600 dark:text-red-400">
@@ -81,7 +81,7 @@ export function ServiceItemBasicFields({
           value={slug}
           onChange={(e) => onSlug(e.target.value)}
           placeholder="thay-dau-dong-co"
-          className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
         {fieldError(error, "slug") && (
           <span className="font-medium text-red-600 dark:text-red-400">

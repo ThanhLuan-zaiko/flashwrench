@@ -75,7 +75,7 @@ export function MonthlyChart({ monthly }: { monthly: MechanicMonthlyPoint[] }) {
               </span>
               <span
                 aria-hidden="true"
-                className={`w-full rounded-t-lg bg-zinc-900 motion-safe:transition-all motion-safe:duration-200 dark:bg-zinc-100 ${barHeightClass(point.completed, maxCompleted)}`}
+                className={`w-full rounded-t-lg bg-[#1E3A5F] motion-safe:transition-all motion-safe:duration-200 dark:bg-zinc-100 ${barHeightClass(point.completed, maxCompleted)}`}
               />
               <span className="truncate text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
                 {formatMonthLabel(point.month)}

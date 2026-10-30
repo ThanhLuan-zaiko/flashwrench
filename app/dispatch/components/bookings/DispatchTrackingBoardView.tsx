@@ -117,7 +117,7 @@ export function DispatchTrackingBoardView({
               onChange={(event) => onSearch(event.target.value)}
               placeholder="Tìm mã đơn, khách, dịch vụ, thợ, biển số hoặc địa chỉ…"
               aria-label="Tìm trong danh sách đơn điều phối"
-              className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+              className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
             />
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">

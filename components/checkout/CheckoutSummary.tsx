@@ -91,7 +91,7 @@ export function CheckoutSummary({
         <button
           type="submit"
           disabled={submitting}
-          className="flex min-h-12 w-full items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-[15px] font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+          className="inline-flex min-h-12 items-center justify-center self-start gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-[15px] font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
         >
           {submitting && (
             <FiLoader

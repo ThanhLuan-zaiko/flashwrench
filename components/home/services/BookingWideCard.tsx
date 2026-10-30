@@ -38,7 +38,7 @@ export function BookingWideCard() {
         }
         guestAriaLabel="Đặt lịch ngay không cần tài khoản"
         authedAriaLabel="Đặt lịch ngay"
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-semibold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+        className="inline-flex min-h-[44px] items-center gap-1.5 self-start rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-semibold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
       />
     </section>
   );

@@ -31,7 +31,7 @@ export function ZoneListCard() {
         <button
           type="button"
           onClick={() => setDialog({ mode: "create" })}
-          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           <FiPlus aria-hidden="true" className="h-4 w-4" />
           Thêm

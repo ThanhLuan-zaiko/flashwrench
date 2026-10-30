@@ -22,7 +22,7 @@ export function ServiceItemSupportFields({
           type="checkbox"
           checked={isHomeSupported}
           onChange={(e) => onHomeSupported(e.target.checked)}
-          className="h-5 w-5 shrink-0 accent-zinc-900 dark:accent-white"
+          className="h-5 w-5 shrink-0 accent-[#1E3A5F] dark:accent-white"
         />
         <span className="min-w-0">
           <span className="block text-xs font-semibold text-zinc-700 dark:text-zinc-200">
@@ -38,7 +38,7 @@ export function ServiceItemSupportFields({
           type="checkbox"
           checked={isEmergencySupported}
           onChange={(e) => onEmergencySupported(e.target.checked)}
-          className="h-5 w-5 shrink-0 accent-zinc-900 dark:accent-white"
+          className="h-5 w-5 shrink-0 accent-[#1E3A5F] dark:accent-white"
         />
         <span className="min-w-0">
           <span className="block text-xs font-semibold text-zinc-700 dark:text-zinc-200">

@@ -14,9 +14,9 @@ import { normalizeRedeemCode } from "@/lib/vouchers/voucher-validation";
 import { AuthApiError } from "@/services/auth.api";
 
 const INPUT =
-  "min-h-[44px] w-full rounded-xl border border-zinc-200 bg-white px-3 font-mono text-sm uppercase text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50";
+  "min-h-[44px] w-full rounded-xl border border-zinc-200 bg-white px-3 font-mono text-sm uppercase text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50";
 const PRIMARY_BUTTON =
-  "flex min-h-[44px] items-center justify-center rounded-xl bg-zinc-900 px-4 text-sm font-semibold text-white disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900";
+  "flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-4 text-sm font-semibold text-white disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900";
 const GHOST_BUTTON =
   "flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 text-sm font-semibold text-zinc-700 transition-colors duration-150 hover:bg-zinc-100 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
 

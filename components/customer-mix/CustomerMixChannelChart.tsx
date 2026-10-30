@@ -58,7 +58,7 @@ export function CustomerMixChannelChart({
         <span className="flex items-center gap-1.5">
           <span
             aria-hidden="true"
-            className="h-2.5 w-2.5 rounded-sm bg-zinc-900 dark:bg-zinc-50"
+            className="h-2.5 w-2.5 rounded-sm bg-[#1E3A5F] dark:bg-zinc-50"
           />
           {MEMBER_LABEL}: <strong>{member}</strong>
         </span>

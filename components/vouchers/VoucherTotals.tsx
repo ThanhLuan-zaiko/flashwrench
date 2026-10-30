@@ -5,25 +5,16 @@ type VoucherTotalsProps = {
   discount: number;
   travelFee?: number;
   total?: number;
-  // "brand": receipt look for customer screens (dashed rule, big navy
-  // total). "mono": the plain bordered list staff portals keep.
-  tone?: "brand" | "mono";
 };
 
-const TONE = {
-  brand: {
-    box: "rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900",
-    totalRow:
-      "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 text-sm dark:border-zinc-600",
-    total:
-      "text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50",
-  },
-  mono: {
-    box: "rounded-xl border border-zinc-200 p-3 dark:border-zinc-800",
-    totalRow:
-      "flex items-center justify-between gap-3 border-t border-zinc-200 pt-2 text-sm dark:border-zinc-800",
-    total: "font-bold text-zinc-900 dark:text-zinc-50",
-  },
+// Receipt look shared by customer and staff screens: dashed rule above a
+// big navy total.
+const styles = {
+  box: "rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900",
+  totalRow:
+    "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 text-sm dark:border-zinc-600",
+  total:
+    "text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50",
 } as const;
 
 export function VoucherTotals({
@@ -31,9 +22,7 @@ export function VoucherTotals({
   discount,
   travelFee = 0,
   total,
-  tone = "brand",
 }: VoucherTotalsProps) {
-  const styles = TONE[tone];
   return (
     <dl
       aria-label="Tạm tính sau voucher"

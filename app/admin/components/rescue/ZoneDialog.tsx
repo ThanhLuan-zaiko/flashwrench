@@ -15,7 +15,7 @@ export type ZoneDialogState =
   | { mode: "edit"; item: ZoneItem };
 
 const INPUT_CLASSES =
-  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
+  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
 
 // Zone create/edit dialog: name, city, center pin and radius. No delete:
 // retiring uses the active toggle so history references stay valid.
@@ -160,7 +160,7 @@ export function ZoneDialog({
               type="checkbox"
               checked={active}
               onChange={(e) => setActive(e.target.checked)}
-              className="h-5 w-5 rounded accent-zinc-900 dark:accent-white"
+              className="h-5 w-5 rounded accent-[#1E3A5F] dark:accent-white"
             />
             Đang hoạt động
           </label>
@@ -169,7 +169,7 @@ export function ZoneDialog({
           type="button"
           onClick={handleSave}
           disabled={save.isPending || !name.trim()}
-          className="mt-4 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900"
+          className="mt-4 inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900"
         >
           {save.isPending ? (
             <>

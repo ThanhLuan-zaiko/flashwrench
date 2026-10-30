@@ -119,15 +119,12 @@ export function MechanicPresenceCard({
   };
 
   return (
-    <div
-      data-tour="mech-presence"
-      className="mt-4 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800"
-    >
+    <div data-tour="mech-presence">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded-lg"
+        className="flex w-full items-center justify-between gap-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 rounded-lg"
       >
         <span className="min-w-0">
           <span className="flex items-center gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -135,7 +132,7 @@ export function MechanicPresenceCard({
               aria-hidden="true"
               className={`h-1.5 w-1.5 rounded-full ${
                 onlineNow
-                  ? "bg-zinc-900 motion-safe:animate-pulse dark:bg-zinc-100"
+                  ? "bg-[#1E3A5F] motion-safe:animate-pulse dark:bg-zinc-100"
                   : "bg-zinc-400 dark:bg-zinc-600"
               }`}
             />
@@ -166,7 +163,7 @@ export function MechanicPresenceCard({
               type="checkbox"
               checked={online}
               onChange={(event) => setOnline(event.target.checked)}
-              className="h-4 w-4 accent-zinc-900 dark:accent-zinc-100"
+              className="h-4 w-4 accent-[#1E3A5F] dark:accent-zinc-100"
               aria-label="Bật trực tuyến"
             />
           </label>
@@ -184,9 +181,9 @@ export function MechanicPresenceCard({
                     type="button"
                     onClick={() => toggleSkill(skill.id)}
                     aria-pressed={active}
-                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 ${
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-95 ${
                       active
-                        ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                        ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
                         : "border-zinc-300 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900"
                     }`}
                   >
@@ -212,7 +209,7 @@ export function MechanicPresenceCard({
                 onClick={locateBase}
                 disabled={locating}
                 aria-label="Lấy vị trí hiện tại làm điểm xuất phát"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-300 text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 motion-safe:active:scale-95 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-300 text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-50 motion-safe:active:scale-95 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
               >
                 <FiCrosshair
                   aria-hidden="true"
@@ -231,7 +228,7 @@ export function MechanicPresenceCard({
             type="button"
             onClick={save}
             disabled={saver.isPending || needsBase || presence.isLoading}
-            className="flex min-h-[40px] w-full items-center justify-center rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            className="inline-flex min-h-[40px] items-center justify-center self-start rounded-xl bg-[#1E3A5F] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
             {saver.isPending ? "Đang lưu…" : "Lưu trạng thái"}
           </button>

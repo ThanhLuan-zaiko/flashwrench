@@ -107,7 +107,7 @@ export function OrderOpsDialog({
               <span className={orderStatusBadgeClass(order.status)}>
                 {ORDER_STATUS_LABELS[order.status]}
               </span>
-              <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              <span className="text-lg font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                 {formatVnd(order.total)}
               </span>
             </div>

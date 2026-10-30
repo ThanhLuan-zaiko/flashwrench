@@ -31,7 +31,7 @@ export function DispatchBookingCard({
       : "Dịch vụ sửa chữa";
   return (
     <li
-      className={`flex flex-col gap-3 px-3 py-3 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900 ${selected ? "border-l-2 border-zinc-900 bg-zinc-50 dark:border-white dark:bg-zinc-900" : ""}`}
+      className={`flex flex-col gap-3 px-3 py-3 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-50 sm:flex-row sm:items-center dark:hover:bg-zinc-900 ${selected ? "border-l-2 border-[#1E3A5F] bg-zinc-50 dark:border-white dark:bg-zinc-900" : ""}`}
     >
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-1.5">
@@ -76,7 +76,7 @@ export function DispatchBookingCard({
             href={`tel:${booking.customerPhone}`}
             aria-label={`Gọi cho ${booking.customerName}`}
             onClick={(event) => event.stopPropagation()}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             <FiPhone aria-hidden="true" className="h-4 w-4" />
           </a>
@@ -86,7 +86,7 @@ export function DispatchBookingCard({
             type="button"
             onClick={onSelect}
             aria-pressed={selected}
-            className="min-h-[44px] rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200"
+            className="min-h-[44px] rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200"
           >
             Bản đồ
           </button>
@@ -94,7 +94,7 @@ export function DispatchBookingCard({
         <button
           type="button"
           onClick={onOpen}
-          className="flex min-h-[44px] items-center rounded-xl bg-zinc-900 px-4 py-2 text-xs font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] items-center rounded-xl bg-[#1E3A5F] px-4 py-2 text-xs font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           Chi tiết
         </button>

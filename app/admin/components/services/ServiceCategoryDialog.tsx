@@ -159,7 +159,7 @@ export function ServiceCategoryDialog({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Thay dầu, lọc gió, kiểm tra tổng quát…"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
           </label>
           <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
@@ -168,7 +168,7 @@ export function ServiceCategoryDialog({
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
               inputMode="numeric"
-              className="h-11 w-32 rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+              className="h-11 w-32 rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
             {fieldError(error, "sortOrder") && (
               <span className="font-medium text-red-600 dark:text-red-400">

@@ -94,7 +94,7 @@ export function TourCard({
         <button
           type="button"
           onClick={skipTour}
-          className="mt-1 flex min-h-[44px] w-full items-center justify-center rounded-xl px-4 py-2 text-xs font-medium text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:text-zinc-400 dark:hover:bg-zinc-900"
+          className="mt-1 inline-flex min-h-[44px] items-center justify-center self-start rounded-xl px-4 py-2 text-xs font-medium text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:text-zinc-400 dark:hover:bg-zinc-900"
         >
           Bỏ qua hướng dẫn
         </button>

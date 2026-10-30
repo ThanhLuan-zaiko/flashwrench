@@ -71,13 +71,13 @@ function StockRow({
           }}
           inputMode="numeric"
           aria-label={`Tồn kho ${name}`}
-          className="h-11 w-24 rounded-xl border border-zinc-300 bg-white px-3 text-center text-sm font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="h-11 w-24 rounded-xl border border-zinc-300 bg-white px-3 text-center text-sm font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
         <button
           type="button"
           disabled={!dirty || setStock.isPending}
           onClick={save}
-          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#1E3A5F] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           {setStock.isPending && (
             <FiLoader

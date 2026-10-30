@@ -11,7 +11,7 @@ export default function DispatchVouchersPage() {
   return (
     <div className="flex flex-col gap-4">
       <header>
-        <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+        <h1 className="text-xl font-bold tracking-tight text-[#1E3A5F] dark:text-white">
           Phát voucher
         </h1>
         <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">

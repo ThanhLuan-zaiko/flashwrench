@@ -47,11 +47,11 @@ export function OrderInvoiceDialog({
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-start gap-2.5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F] text-white dark:bg-white dark:text-zinc-900">
               <FiFileText aria-hidden="true" className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                 Hóa đơn bán linh kiện
               </h2>
               <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">

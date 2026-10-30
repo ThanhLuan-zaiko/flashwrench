@@ -96,7 +96,7 @@ export function IncomeHistory({
               type="button"
               onClick={() => onOpen(entry)}
               aria-label={`Xem chi tiết đơn ${entry.bookingId.slice(0, 8)}`}
-              className="min-w-0 flex-1 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+              className="min-w-0 flex-1 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400"
             >
               <span className="flex flex-wrap items-center gap-1.5">
                 <span className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -129,7 +129,7 @@ export function IncomeHistory({
                 <button
                   type="button"
                   onClick={() => onCollect(entry)}
-                  className="flex min-h-[44px] items-center rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                  className="flex min-h-[44px] items-center rounded-xl bg-[#1E3A5F] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
                   Thu tiền
                 </button>
@@ -156,7 +156,7 @@ export function IncomeHistory({
                     disabled
                     aria-label={`Trang ${index + 1}`}
                     aria-current="page"
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-900 bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-white dark:bg-white dark:text-zinc-900"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#1E3A5F] bg-[#1E3A5F] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-white dark:bg-white dark:text-zinc-900"
                   >
                     {index + 1}
                   </button>
@@ -167,7 +167,7 @@ export function IncomeHistory({
                     scroll={false}
                     prefetch
                     aria-label={`Trang ${index + 1}`}
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
                     {index + 1}
                   </Link>

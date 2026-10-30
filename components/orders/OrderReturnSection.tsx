@@ -91,7 +91,7 @@ export function OrderReturnSection({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="mt-3 inline-flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             <FiRotateCcw aria-hidden="true" className="h-4 w-4" />
             {rejected

@@ -26,8 +26,6 @@ export function SettingsAdminEntry() {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
-        tone="mono"
-        eyebrow="Cài đặt cửa hàng"
         title="Vận hành theo nhân lực."
         subtitle="Các tham số áp dụng ngay cho đơn mới — đơn đã đặt giữ nguyên trạng thái."
       />

@@ -109,7 +109,7 @@ export function CampaignRuleFields({
             type="checkbox"
             checked={form.allowDispatcherGrant}
             onChange={(e) => onSet("allowDispatcherGrant", e.target.checked)}
-            className="h-4 w-4 accent-zinc-900 dark:accent-white"
+            className="h-4 w-4 accent-[#1E3A5F] dark:accent-white"
           />
           Cho điều phối phát voucher của chiến dịch này
         </label>

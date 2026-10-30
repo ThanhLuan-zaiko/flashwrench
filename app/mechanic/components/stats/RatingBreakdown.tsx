@@ -58,7 +58,7 @@ export function RatingBreakdown({
               className="h-2.5 flex-1 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-900"
             >
               <span
-                className={`block h-full rounded-full bg-zinc-900 motion-safe:transition-all motion-safe:duration-200 dark:bg-zinc-100 ${barWidthClass(bucket.count, total)}`}
+                className={`block h-full rounded-full bg-[#1E3A5F] motion-safe:transition-all motion-safe:duration-200 dark:bg-zinc-100 ${barWidthClass(bucket.count, total)}`}
               />
             </span>
             <span className="w-8 shrink-0 text-right font-medium text-zinc-500 dark:text-zinc-400">

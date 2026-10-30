@@ -17,11 +17,18 @@ export const REVEAL_TRIGGER_START = "top 85%";
 
 export type RevealContext = {
   revert: () => void;
+  // Jumps every card to its final, fully visible state.
+  finish: () => void;
+};
+
+// The slice of a GSAP tween the reveal needs to fast-forward it.
+export type RevealTween = {
+  progress: (value: number) => unknown;
 };
 
 export type RevealGsap = {
   registerPlugin: (plugin: unknown) => void;
-  context: (fn: () => void, scope: unknown) => RevealContext;
+  context: (fn: () => void, scope: unknown) => { revert: () => void };
   fromTo: (
     targets: string,
     fromVars: { y: number; opacity: number },
@@ -33,7 +40,7 @@ export type RevealGsap = {
       stagger: number;
       scrollTrigger: { trigger: unknown; start: string; once: boolean };
     },
-  ) => unknown;
+  ) => RevealTween | undefined;
 };
 
 // Reduced-motion users get the final state instantly, with no animation
@@ -58,8 +65,9 @@ export function createReveal(
 ): RevealContext | null {
   if (root.querySelectorAll(REVEAL_SELECTOR).length === 0) return null;
   gsap.registerPlugin(scrollTrigger);
-  return gsap.context(() => {
-    gsap.fromTo(
+  let tween: RevealTween | undefined;
+  const ctx = gsap.context(() => {
+    tween = gsap.fromTo(
       REVEAL_SELECTOR,
       { y: REVEAL_FROM_Y, opacity: 0 },
       {
@@ -76,4 +84,39 @@ export function createReveal(
       },
     );
   }, root);
+  return {
+    revert: () => ctx.revert(),
+    finish: () => {
+      tween?.progress(1);
+    },
+  };
+}
+
+// Hidden tabs throttle requestAnimationFrame to about once a second and
+// GSAP lag smoothing then advances only ~33ms per tick, so a 0.6s reveal
+// would crawl for tens of seconds and leave cards half faded. A page that
+// is hidden must skip the reveal (or finish it) instead.
+export function isPageHidden(
+  doc: { visibilityState?: string } | undefined,
+): boolean {
+  return doc?.visibilityState === "hidden";
+}
+
+type VisibilityTarget = {
+  visibilityState?: string;
+  addEventListener: (type: "visibilitychange", listener: () => void) => void;
+  removeEventListener: (type: "visibilitychange", listener: () => void) => void;
+};
+
+// Fast-forwards an in-flight reveal the moment the page gets hidden.
+// Returns the listener cleanup.
+export function finishRevealOnHide(
+  doc: VisibilityTarget,
+  reveal: RevealContext,
+): () => void {
+  const onChange = () => {
+    if (isPageHidden(doc)) reveal.finish();
+  };
+  doc.addEventListener("visibilitychange", onChange);
+  return () => doc.removeEventListener("visibilitychange", onChange);
 }

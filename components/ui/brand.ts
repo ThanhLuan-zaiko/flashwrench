@@ -1,7 +1,8 @@
 // Shared brand utility strings for customer-facing screens (AGENTS.md
 // Section 6): navy #1E3A5F carries headings, selected states and feature
 // surfaces; orange #F97316 is reserved for the ONE primary action per
-// screen, always with #0F1E33 text. Staff portals never import these.
+// screen, always with #0F1E33 text. Staff portals use the navy strings
+// but never the orange primary button.
 // Plain Tailwind class strings so the scanner picks them up from this file.
 
 const FOCUS =

@@ -28,7 +28,7 @@ export function UsersStatCard({
           {stat.label}
         </span>
       </p>
-      <p className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+      <p className="mt-3 text-3xl font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
         {stat.value}
       </p>
       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">

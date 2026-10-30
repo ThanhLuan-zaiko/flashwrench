@@ -65,7 +65,7 @@ export function OrderCollectSection({
           type="button"
           disabled={collectPayment.isPending}
           onClick={collect}
-          className="mt-2 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-900 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-white dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900"
+          className="mt-2 inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl border border-[#1E3A5F] bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-white dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900"
         >
           {collectPayment.isPending && (
             <FiLoader

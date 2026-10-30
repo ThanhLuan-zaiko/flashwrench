@@ -15,7 +15,7 @@ type PartPricingFieldsProps = {
 };
 
 const INPUT_CLASSES =
-  "h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
+  "h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
 
 const LABEL_CLASSES =
   "flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300";
@@ -86,7 +86,7 @@ export function PartPricingFields({
           type="checkbox"
           checked={isActive}
           onChange={(e) => onActive(e.target.checked)}
-          className="h-4 w-4 rounded border-zinc-300 accent-zinc-900 dark:border-zinc-700 dark:accent-zinc-100"
+          className="h-4 w-4 rounded border-zinc-300 accent-[#1E3A5F] dark:border-zinc-700 dark:accent-zinc-100"
         />
         Hiển thị trên cửa hàng ngay khi lưu
       </label>

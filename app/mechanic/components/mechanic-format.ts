@@ -112,7 +112,7 @@ const STATUS_TONE: Record<MechanicBookingStatus, string> = {
   in_progress:
     "border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300",
   completed:
-    "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900",
+    "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-white dark:bg-white dark:text-zinc-900",
   cancelled:
     "border-zinc-300 bg-white text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-500",
   no_show:

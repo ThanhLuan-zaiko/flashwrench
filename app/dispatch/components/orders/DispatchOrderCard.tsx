@@ -22,7 +22,7 @@ export function DispatchOrderCard({ order, onOpen }: DispatchOrderCardProps) {
       <button
         type="button"
         onClick={onOpen}
-        className="flex w-full flex-col gap-1.5 px-4 py-3.5 text-left transition-colors duration-200 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:flex-row sm:items-center sm:justify-between dark:hover:bg-zinc-900"
+        className="flex w-full flex-col gap-1.5 px-4 py-3.5 text-left transition-colors duration-200 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 sm:flex-row sm:items-center sm:justify-between dark:hover:bg-zinc-900"
       >
         <span className="min-w-0">
           <span className="flex flex-wrap items-center gap-2">
@@ -49,7 +49,7 @@ export function DispatchOrderCard({ order, onOpen }: DispatchOrderCardProps) {
           </span>
         </span>
         <span className="flex items-center gap-2">
-          <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <span className="text-sm font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
             {formatVnd(order.total)}
           </span>
           <FiChevronRight

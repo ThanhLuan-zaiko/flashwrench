@@ -16,7 +16,7 @@ export function PaymentCodeCard({ code }: PaymentCodeCardProps) {
         <FiKey aria-hidden="true" className="h-3.5 w-3.5" />
         Mã xác nhận thanh toán
       </p>
-      <p className="mt-2 font-mono text-3xl font-bold tracking-[0.35em] text-zinc-900 dark:text-zinc-50">
+      <p className="mt-2 font-mono text-3xl font-bold tracking-[0.35em] text-[#1E3A5F] dark:text-zinc-50">
         {code}
       </p>
       <p className="mt-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">

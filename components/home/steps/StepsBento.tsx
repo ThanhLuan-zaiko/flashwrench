@@ -97,7 +97,7 @@ export function StepsBento() {
             authedLabel="Đặt lịch ngay"
             guestAriaLabel="Đăng ký ngay"
             authedAriaLabel="Đặt lịch ngay"
-            className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99] md:w-auto"
+            className="inline-flex min-h-[44px] items-center gap-1.5 self-start rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99]"
           />
         </section>
       </div>

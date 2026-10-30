@@ -77,9 +77,9 @@ export function NavigationList({
               type="button"
               onClick={() => onSelect(target.bookingId)}
               aria-current={selected ? "true" : undefined}
-              className={`flex min-h-[44px] w-full flex-col gap-1 rounded-xl border px-3 py-2.5 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
+              className={`flex min-h-[44px] w-full flex-col gap-1 rounded-xl border px-3 py-2.5 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] ${
                 selected
-                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                  ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-white dark:bg-white dark:text-zinc-900"
                   : "border-zinc-200 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900"
               }`}
             >

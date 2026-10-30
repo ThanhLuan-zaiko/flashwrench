@@ -53,7 +53,7 @@ export function SelectDropdown({
   const triggerId = id ?? buttonId;
   const triggerClasses = invalid
     ? "border-red-500 focus-visible:ring-red-500 dark:border-red-400"
-    : "border-zinc-300 focus-visible:ring-zinc-500 dark:border-zinc-700";
+    : "border-zinc-300 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700";
 
   useEffect(() => {
     if (!open) return;
@@ -84,9 +84,9 @@ export function SelectDropdown({
   };
 
   const optionClass = (active: boolean) =>
-    `flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
+    `flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] ${
       active
-        ? "bg-zinc-900 font-semibold text-white dark:bg-white dark:text-zinc-900"
+        ? "bg-[#1E3A5F] font-semibold text-white dark:bg-white dark:text-zinc-900"
         : "font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
     }`;
 

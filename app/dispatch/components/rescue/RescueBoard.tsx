@@ -130,7 +130,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                     type="button"
                     onClick={() => setSelectedId(rescue.requestId)}
                     aria-label={`Xem chi tiết cứu hộ của ${rescue.customerName ?? "khách"}`}
-                    className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] sm:max-w-44 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                    className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] sm:max-w-44 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
                   >
                     <FiEye aria-hidden="true" className="h-4 w-4" />
                     Xem chi tiết
@@ -138,7 +138,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                   <a
                     href={`tel:${(rescue.customerPhone ?? "").replace(/\s/g, "")}`}
                     aria-label={`Gọi ${rescue.customerName ?? "khách"}`}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
                     <FiPhone aria-hidden="true" className="h-4 w-4" />
                   </a>
@@ -166,7 +166,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
               href={hrefFor(page - 1)}
               scroll={false}
               aria-label="Trang trước"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
@@ -190,7 +190,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                 if (nextCursor) recordNext(nextCursor);
               }}
               aria-label="Trang sau"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />

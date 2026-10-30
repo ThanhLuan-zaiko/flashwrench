@@ -70,8 +70,6 @@ export function UsersSection({ tab }: { tab: UserTab }) {
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
-        tone="mono"
-        eyebrow="Quản lý người dùng"
         title="Đúng người, đúng việc."
         subtitle="Duyệt thợ, khóa tài khoản, quản lý nhân viên và xử lý khiếu nại tại một nơi duy nhất."
       />
@@ -106,9 +104,9 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                     role="tab"
                     aria-selected={tab === t.id}
                     aria-current={tab === t.id ? "page" : undefined}
-                    className={`flex min-h-[44px] items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] ${
+                    className={`flex min-h-[44px] items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] ${
                       tab === t.id
-                        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                        ? "bg-[#1E3A5F] text-white dark:bg-white dark:text-zinc-900"
                         : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
                     }`}
                   >

@@ -11,7 +11,7 @@ import {
 } from "./auto-rule-format";
 
 const inputClass =
-  "min-h-[44px] rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white";
+  "min-h-[44px] rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white";
 const labelClass =
   "flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300";
 
@@ -144,7 +144,7 @@ export function AutoRuleForm() {
       <button
         type="submit"
         disabled={create.isPending || !name.trim() || !campaignId}
-        className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl bg-zinc-900 px-4 text-sm font-semibold text-white disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900"
+        className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-4 text-sm font-semibold text-white disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900"
       >
         {create.isPending ? "Đang tạo…" : "Tạo quy tắc"}
       </button>

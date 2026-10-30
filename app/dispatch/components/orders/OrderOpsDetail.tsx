@@ -82,7 +82,7 @@ export function OrderOpsDetail({
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Xem ảnh hiện trạng"
-                    className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded-lg"
+                    className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 rounded-lg"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {/* biome-ignore lint/performance/noImgElement: immutable /api/media evidence photo; optimizer hop adds nothing. */}
@@ -125,7 +125,7 @@ export function OrderOpsDetail({
         <button
           type="button"
           onClick={onViewInvoice}
-          className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
         >
           <FiFileText aria-hidden="true" className="h-4 w-4" />
           Xem hóa đơn chi tiết

@@ -140,9 +140,9 @@ export function StaffAvatarField({
             const files = Array.from(event.dataTransfer.files ?? []);
             if (files.length > 0) void onFiles(files);
           }}
-          className={`flex min-h-[88px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed px-4 py-4 text-center transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] ${
+          className={`flex min-h-[88px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed px-4 py-4 text-center transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] ${
             avatar.dragging
-              ? "border-zinc-900 bg-zinc-100 dark:border-white dark:bg-zinc-900"
+              ? "border-[#1E3A5F] bg-zinc-100 dark:border-white dark:bg-zinc-900"
               : "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-950"
           }`}
         >

@@ -7,7 +7,7 @@ import { useDispatchSla, useSlaMutation } from "@/hooks/admin-rescue";
 import { AdminRescueApiError } from "@/services/admin-rescue.api";
 
 const INPUT_CLASSES =
-  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
+  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
 
 // SLA tuning for rescue auto-dispatch: offer lifetime, re-offer cap and
 // candidate fan-out. Saved values apply to the next dispatch pass.
@@ -111,7 +111,7 @@ export function SlaConfigCard() {
         type="button"
         onClick={handleSave}
         disabled={save.isPending}
-        className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl bg-zinc-900 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#1E3A5F] px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
         <FiSave aria-hidden="true" className="h-4 w-4" />
         {save.isPending ? "Đang lưu…" : "Lưu cấu hình"}

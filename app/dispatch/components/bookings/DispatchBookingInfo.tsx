@@ -117,7 +117,6 @@ export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
           ))}
         </ul>
         <VoucherTotals
-          tone="mono"
           subtotal={booking.subtotal}
           discount={booking.discount}
           travelFee={booking.travelFee}

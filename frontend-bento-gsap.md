@@ -31,7 +31,8 @@ Always respect these from `AGENTS.md`:
 - Neutral palette: white, zinc scale, black + `dark:` variants.
   Customer screens add the brand palette: navy `#1E3A5F` surfaces and
   orange `#F97316` for the one primary action per screen only (see
-  `AGENTS.md` Section 6). Staff portals stay monochrome. No other
+  `AGENTS.md` Section 6). Staff portals use navy (shared frame in
+  `components/staff/`) but never orange. No other
   accent hues except explicitly requested semantic states.
   Approved: validation errors in red (`text-red-600 dark:text-red-400`,
   alert boxes like `components/auth/FormAlert.tsx`); toasts carry a

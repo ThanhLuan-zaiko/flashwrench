@@ -2,7 +2,13 @@
 
 import { useLayoutEffect, useRef } from "react";
 import {
+  watchFrameStarvation,
+  windowFrameClock,
+} from "@/lib/motion/frame-starvation";
+import {
   createReveal,
+  finishRevealOnHide,
+  isPageHidden,
   prefersReducedMotion,
   REVEAL_SELECTOR,
   type RevealGsap,
@@ -23,6 +29,9 @@ export function useBentoReveal<T extends HTMLElement>() {
     if (!root) return;
     if (root.querySelectorAll(REVEAL_SELECTOR).length === 0) return;
     if (prefersReducedMotion()) return;
+    // A page opened in a background tab shows its final state at once:
+    // throttled frames would otherwise stretch the fade for many seconds.
+    if (isPageHidden(document)) return;
 
     let cancelled = false;
     let cleanup: (() => void) | undefined;
@@ -34,7 +43,18 @@ export function useBentoReveal<T extends HTMLElement>() {
           (triggerModule as { ScrollTrigger?: unknown }).ScrollTrigger ??
           (triggerModule as { default?: unknown }).default;
         const ctx = createReveal(root, gsap, scrollTrigger);
-        if (ctx) cleanup = () => ctx.revert();
+        if (!ctx) return;
+        const stopHideWatch = finishRevealOnHide(document, ctx);
+        // Paused frames (occluded pane, background window) would freeze
+        // the cards half faded; finish the reveal instead.
+        const stopFrameWatch = watchFrameStarvation(windowFrameClock(), () =>
+          ctx.finish(),
+        );
+        cleanup = () => {
+          stopHideWatch();
+          stopFrameWatch();
+          ctx.revert();
+        };
       })
       .catch(() => undefined);
     return () => {

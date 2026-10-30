@@ -35,7 +35,7 @@ export function DashboardStatCard({
       </p>
       <p
         aria-busy={isPending ?? false}
-        className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
+        className="mt-3 text-3xl font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50"
       >
         {isPending ? (
           <span className="motion-safe:animate-pulse">…</span>

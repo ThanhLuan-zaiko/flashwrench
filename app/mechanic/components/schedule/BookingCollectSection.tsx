@@ -141,9 +141,9 @@ export function BookingCollectSection({
             aria-pressed={method === option}
             disabled={collect.isPending}
             onClick={() => setMethod(option)}
-            className={`flex min-h-[44px] items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
+            className={`flex min-h-[44px] items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
               method === option
-                ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-white dark:bg-white dark:text-zinc-900"
                 : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             }`}
           >
@@ -184,7 +184,7 @@ export function BookingCollectSection({
         type="button"
         disabled={collect.isPending || invalidAmount || codeMissing}
         onClick={submit}
-        className="mt-2 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-900 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-white dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900"
+        className="mt-2 inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl border border-[#1E3A5F] bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-white dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900"
       >
         {collect.isPending && (
           <FiLoader

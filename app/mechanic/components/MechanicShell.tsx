@@ -2,19 +2,21 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { FiMenu } from "react-icons/fi";
+import { StaffShell } from "@/components/staff/StaffShell";
+import { StaffStatusPill } from "@/components/staff/StaffStatus";
 import { useToast } from "@/components/toast/useToast";
-import { TourButton } from "@/components/tour/TourButton";
 import { useLogout, useMe } from "@/hooks/auth";
 import { useMechanicBookings, useMechanicInbox } from "@/hooks/mechanic";
 import { useRescueInbox } from "@/hooks/rescue-inbox";
-import { MechanicSidebar } from "./MechanicSidebar";
+import { MechanicPresenceCard } from "./MechanicPresenceCard";
 import {
   getMechanicSection,
+  MECHANIC_SECTIONS,
   type MechanicSectionId,
 } from "./mechanic-sections";
 import { MECHANIC_TOUR_NAMES } from "./tour/mechanic-tour.steps";
+
+const COPY = { areaName: "Khu vực thợ xe", scope: "thợ xe" };
 
 function sectionIdForPath(pathname: string): MechanicSectionId {
   if (pathname.startsWith("/mechanic/schedule")) return "schedule";
@@ -23,29 +25,17 @@ function sectionIdForPath(pathname: string): MechanicSectionId {
   return "stats";
 }
 
-function getInitials(fullName: string): string {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) return (parts[0]?.[0] ?? "?").toUpperCase();
-  const first = parts[0]?.[0] ?? "";
-  const last = parts[parts.length - 1]?.[0] ?? "";
-  return `${first}${last}`.toUpperCase();
-}
-
-// Shell owns layout only: sidebar plus sticky section header plus centered
-// bento content column. No business logic here.
+// Portal wiring only: the shared staff frame plus the personal inbox
+// subscriptions that toast new jobs and drive the queue badge.
 export function MechanicShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   const sectionId = sectionIdForPath(pathname);
   const section = getMechanicSection(sectionId);
-  const SectionIcon = section.icon;
   const me = useMe();
   const logout = useLogout();
   const toast = useToast();
   const queue = useMechanicBookings();
+  const displayName = me.data?.fullName ?? null;
   // New customer bookings arrive on the personal inbox the instant POST
   // /api/bookings succeeds: the queue query above invalidates through the
   // shared socket, so the badge and every list refresh with no reload.
@@ -69,63 +59,22 @@ export function MechanicShell({ children }: { children: ReactNode }) {
       .length ?? 0;
 
   return (
-    <div className="flex w-full flex-1 items-stretch bg-zinc-50 dark:bg-zinc-950">
-      <MechanicSidebar
-        active={section.id}
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        pendingCount={pendingCount}
-        displayName={me.data?.fullName ?? null}
-        onLogout={() => logout.mutate()}
-        onToggleCollapse={() => setCollapsed((value) => !value)}
-        onCloseMobile={() => setMobileOpen(false)}
-      />
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <div className="sticky top-16 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95">
-          <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              aria-label="Mở menu thợ xe"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 md:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
-            >
-              <FiMenu aria-hidden="true" className="h-5 w-5" />
-            </button>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
-              <SectionIcon aria-hidden="true" className="h-5 w-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <h1 className="truncate text-base font-bold tracking-tight text-zinc-900 sm:text-lg dark:text-zinc-50">
-                {section.label}
-              </h1>
-              <p className="hidden truncate text-xs text-zinc-500 sm:block dark:text-zinc-400">
-                {section.description}
-              </p>
-            </div>
-            {pendingCount > 0 && (
-              <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 sm:flex dark:border-zinc-800 dark:text-zinc-300">
-                <span
-                  aria-hidden="true"
-                  className="h-1.5 w-1.5 rounded-full bg-zinc-900 motion-safe:animate-pulse dark:bg-zinc-100"
-                />
-                {pendingCount} đơn chờ nhận
-              </span>
-            )}
-            <TourButton
-              tour={MECHANIC_TOUR_NAMES[sectionId]}
-              ariaLabel={`Hướng dẫn ${section.label}`}
-            />
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-              {getInitials(me.data?.fullName ?? "")}
-            </span>
-          </div>
-        </div>
-
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-4 sm:px-6 md:py-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <StaffShell
+      copy={COPY}
+      sections={MECHANIC_SECTIONS}
+      section={section}
+      tour={MECHANIC_TOUR_NAMES[sectionId]}
+      displayName={displayName}
+      onLogout={() => logout.mutate()}
+      badges={{ schedule: pendingCount }}
+      status={
+        pendingCount > 0 ? (
+          <StaffStatusPill live label={`${pendingCount} đơn chờ nhận`} />
+        ) : undefined
+      }
+      panel={<MechanicPresenceCard displayName={displayName} />}
+    >
+      {children}
+    </StaffShell>
   );
 }
