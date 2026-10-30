@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 
@@ -7,6 +8,7 @@ type Stop = {
   numeral: string;
   title: string;
   hint: string;
+  illustration: string;
 };
 
 const STOPS: Stop[] = [
@@ -14,27 +16,33 @@ const STOPS: Stop[] = [
     numeral: "1",
     title: "Mô tả sự cố",
     hint: "Chọn dịch vụ, nhập vị trí và ảnh xe nếu có.",
+    illustration: "/images/isometric/wrench.svg",
   },
   {
     numeral: "2",
     title: "Nhận giá cố định",
     hint: "Báo giá rõ ràng trước khi xác nhận.",
+    illustration: "/images/isometric/toolbox.svg",
   },
   {
     numeral: "3",
     title: "Theo dõi thợ",
     hint: "Xem thợ đang đến trên bản đồ theo thời gian thực.",
+    illustration: "/images/isometric/tyre.svg",
   },
   {
     numeral: "4",
     title: "Xong việc, thanh toán",
     hint: "Thanh toán sau khi bạn hài lòng.",
+    illustration: "/images/isometric/gear.svg",
   },
 ];
 
-// Route-style process: four numbered stops. Phones get a 2x2 grid so each
-// hint keeps a readable line length; from `sm` up the stops sit on one
-// horizontal route line. The closing navy card carries the sign-up action.
+// Route-style process: four numbered stops, each topped with a flat isometric
+// illustration. Phones get a 2x2 grid so each hint keeps a readable line
+// length; from `sm` up the stops sit on one horizontal route line that runs
+// through the numerals (illustration 96px + 16px gap + half of the 36px badge).
+// The closing navy card carries the sign-up action.
 export function StepsBento() {
   const rootRef = useBentoReveal<HTMLElement>();
 
@@ -55,13 +63,20 @@ export function StepsBento() {
         >
           <span
             aria-hidden="true"
-            className="absolute top-[17px] left-4 hidden h-0.5 w-[calc(100%-2rem)] bg-[#1E3A5F] sm:block"
+            className="absolute top-[129px] left-4 hidden h-0.5 w-[calc(100%-2rem)] bg-[#1E3A5F] sm:block"
           />
           {STOPS.map((stop) => (
             <li key={stop.numeral} data-reveal className="relative min-w-0">
+              <Image
+                src={stop.illustration}
+                alt=""
+                width={96}
+                height={96}
+                className="h-16 w-16 sm:h-24 sm:w-24"
+              />
               <span
                 aria-hidden="true"
-                className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#1E3A5F] text-sm font-bold text-white sm:h-9 sm:w-9"
+                className="relative mt-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#1E3A5F] text-sm font-bold text-white sm:mt-4 sm:h-9 sm:w-9"
               >
                 {stop.numeral}
               </span>

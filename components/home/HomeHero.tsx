@@ -4,6 +4,7 @@ import { FiCheck } from "react-icons/fi";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { HomeHeroTicket } from "./HomeHeroTicket";
+import { RepairScene } from "./hero/RepairScene";
 
 const TRUST_POINTS = ["Thợ đã xác thực", "Giá minh bạch", "Bảo hành 30 ngày"];
 
@@ -77,7 +78,10 @@ export function HomeHero() {
             ))}
           </ul>
         </div>
-        <HomeHeroTicket />
+        <div className="flex flex-col gap-6">
+          <RepairScene />
+          <HomeHeroTicket />
+        </div>
       </div>
     </section>
   );
