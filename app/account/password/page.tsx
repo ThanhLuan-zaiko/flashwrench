@@ -28,7 +28,7 @@ const TIPS = [
 // Static render on purpose (metadata page), same visual language.
 export default function ChangePasswordPage() {
   return (
-    <main className="flex flex-1 bg-zinc-50 dark:bg-black">
+    <main className="flex flex-1 bg-white dark:bg-zinc-950">
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-3 px-4 py-6 sm:px-6 md:gap-4 md:py-10">
         <Link
           href="/account"

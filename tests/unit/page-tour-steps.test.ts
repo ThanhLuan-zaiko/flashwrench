@@ -118,8 +118,9 @@ const WORKSPACE_SELECTORS: Record<string, string[]> = {
   [ADMIN_TOUR_NAMES.dashboard]: [
     "admin-dash-hero",
     "admin-dash-stats",
+    "admin-dash-trend",
+    "admin-dash-top",
     "admin-dash-activity",
-    "admin-dash-alerts",
   ],
   [ADMIN_TOUR_NAMES.users]: [
     "admin-users-stats",

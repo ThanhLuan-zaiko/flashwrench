@@ -14,6 +14,7 @@ import { NavigationHeader } from "./NavigationHeader";
 import { NavigationList } from "./NavigationList";
 import { googleDirectionsUrl } from "./navigation-directions";
 import { OrderCollectPanel } from "./OrderCollectPanel";
+import { RouteDistanceChart } from "./RouteDistanceChart";
 import { useTravelRouteSharing } from "./useTravelRouteSharing";
 
 // Bento root for navigation: an embedded live map of the current job,
@@ -103,6 +104,7 @@ export function NavigationSection() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
+      <RouteDistanceChart />
       <div className="grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-4">
         <BentoCard
           label="Bản đồ điểm sửa"

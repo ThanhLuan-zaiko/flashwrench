@@ -125,15 +125,15 @@ export const MECHANIC_TOUR_STEPS: Tour[] = [
         selector: '[data-tour="mech-stats-counters"]',
         title: "Bốn chỉ số chính",
         content:
-          "Đơn hoàn thành, tỷ lệ hoàn thành, đánh giá trung bình và doanh thu tích lũy của bạn.",
+          "Thu nhập và số đơn hoàn thành tuần này so với tuần trước, đánh giá trung bình và tỉ lệ hoàn thành.",
         side: "bottom",
         ...TOUR_STEP_OPTIONS,
       },
       {
         selector: '[data-tour="mech-stats-chart"]',
-        title: "Hiệu suất 6 tháng",
+        title: "Thu nhập 7 ngày",
         content:
-          "Cột đơn hoàn thành từng tháng kèm tổng doanh thu của các đơn đã xong.",
+          "Doanh thu từng ngày, cột hôm nay tự cao lên khi bạn thu tiền; nét đứt là trung bình mỗi ngày của tuần trước.",
         side: "top",
         ...TOUR_STEP_OPTIONS,
       },

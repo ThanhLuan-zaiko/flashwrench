@@ -152,6 +152,7 @@ export type AdminDashboard = {
     method: string | null;
     detail: string | null;
   }>;
+  mechanics: Record<string, { name: string; rating: number | null }>;
 };
 
 export function fetchAdminDashboard(): Promise<AdminDashboard> {

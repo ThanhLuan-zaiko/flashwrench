@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FiLoader, FiLogIn, FiLogOut, FiUser } from "react-icons/fi";
-import { useToast } from "@/components/toast/useToast";
-import { useLogout, useMe } from "@/hooks/auth";
+import { useMe } from "@/hooks/auth";
+import { useSignOut } from "@/hooks/useSignOut";
 import {
   getRoleInternalLink,
   LOGIN_HREF,
@@ -22,10 +21,8 @@ function getInitials(fullName: string): string {
 }
 
 export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
-  const router = useRouter();
-  const toast = useToast();
   const me = useMe();
-  const logout = useLogout();
+  const logout = useSignOut(() => setOpen(false));
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -95,18 +92,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
   const roleLink = getRoleInternalLink(user.role);
   const RoleIcon = roleLink?.icon;
 
-  function handleLogout() {
-    logout.mutate(undefined, {
-      onSuccess: () => {
-        setOpen(false);
-        toast.success("Đã đăng xuất", "Hẹn gặp lại bạn.");
-        router.refresh();
-      },
-      onError: () => {
-        toast.error("Đăng xuất thất bại", "Vui lòng thử lại sau.");
-      },
-    });
-  }
+  const handleLogout = logout.signOut;
 
   return (
     <div ref={containerRef} className="relative">

@@ -1,5 +1,6 @@
 import type { DispatchConfig } from "@/lib/rescue/rescue-config.service";
 import type { ZoneItem } from "@/lib/zones/zone.service";
+import type { ZoneLoadItem } from "@/lib/zones/zone-load.service";
 import { AuthApiError, apiRequest } from "./auth.api";
 
 export type { DispatchConfig, ZoneItem };
@@ -90,4 +91,8 @@ export function updateDispatchConfig(
       body: JSON.stringify(payload),
     },
   );
+}
+
+export function fetchZoneLoad(): Promise<{ items: ZoneLoadItem[] }> {
+  return adminRescueRequest<{ items: ZoneLoadItem[] }>("/api/admin/zones/load");
 }

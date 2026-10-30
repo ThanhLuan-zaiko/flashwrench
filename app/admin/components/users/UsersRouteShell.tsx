@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { UsersSection } from "../UsersSection";
+import { UsersRoleChart } from "./UsersRoleChart";
 import { isUserTab, USER_TABS } from "./user-tabs";
 
 // Mounted once by the /admin/users layout, so it survives tab switches
@@ -46,5 +47,10 @@ export function UsersRouteShell() {
     );
   }
 
-  return <UsersSection tab={tab} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <UsersRoleChart />
+      <UsersSection tab={tab} />
+    </div>
+  );
 }

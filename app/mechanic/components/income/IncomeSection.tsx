@@ -25,6 +25,7 @@ import {
 import { BookingDetailDialog } from "../schedule/BookingDetailDialog";
 import { CollectPaymentDialog } from "./CollectPaymentDialog";
 import { IncomeHistory } from "./IncomeHistory";
+import { IncomeTrendChart } from "./IncomeTrendChart";
 import { INCOME_TABS, type IncomeTab } from "./income-tabs";
 
 // Bento root for income: revenue counters by day/week/month plus the
@@ -122,6 +123,7 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
+      <IncomeTrendChart />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         {counters.map((stat) => {
           const Icon = stat.icon;

@@ -37,7 +37,7 @@ export function HomeHeroTicket() {
     <section
       data-reveal
       aria-label="Ví dụ theo dõi tiến độ"
-      className="rounded-3xl border border-zinc-200 bg-zinc-50 p-6 text-zinc-900 sm:p-7 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+      className="rounded-3xl border border-zinc-200 bg-white p-6 text-zinc-900 sm:p-7 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
     >
       <div className="flex items-center justify-between gap-3 border-b border-dashed border-zinc-400 pb-4">
         <div className="flex min-w-0 items-center gap-2">

@@ -136,4 +136,40 @@ describe("getMechanicStats", () => {
     expect(result.data.monthly).toHaveLength(6);
     expect(result.data.reviews).toEqual([]);
   });
+
+  test("adds the 7-day income and heatmap from completed jobs only", async () => {
+    mechanicStubs.workloadRows = [
+      makeWorkloadRow({
+        booking_id: "today",
+        status: "completed",
+        total: 300_000,
+        scheduled_at: new Date("2026-09-16T03:00:00.000Z"),
+      }),
+      makeWorkloadRow({
+        booking_id: "last-week",
+        status: "completed",
+        total: 120_000,
+        scheduled_at: new Date("2026-09-08T03:00:00.000Z"),
+      }),
+      makeWorkloadRow({
+        booking_id: "open",
+        status: "confirmed",
+        total: 999_000,
+        scheduled_at: new Date("2026-09-16T05:00:00.000Z"),
+      }),
+    ];
+    const result = await getMechanicStats(MECHANIC_ID, { now: REFERENCE });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const { daily } = result.data;
+    expect(daily.week.at(-1)).toEqual({
+      day: "2026-09-16",
+      completed: 1,
+      revenue: 300_000,
+    });
+    expect(daily.weekRevenue).toBe(300_000);
+    expect(daily.previousWeekRevenue).toBe(120_000);
+    expect(daily.heatmap).toHaveLength(84);
+    expect(daily.streak).toBe(1);
+  });
 });

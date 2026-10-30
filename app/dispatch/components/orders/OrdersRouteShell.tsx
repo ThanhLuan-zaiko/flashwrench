@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { OrderTrendChart } from "@/components/charts/OrderTrendChart";
 import { DispatchOrdersBoard } from "./OrdersBoard";
 import {
   DEFAULT_ORDER_TAB,
@@ -59,5 +60,10 @@ export function OrdersRouteShell() {
     );
   }
 
-  return <DispatchOrdersBoard status={status} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <OrderTrendChart metric="count" />
+      <DispatchOrdersBoard status={status} />
+    </div>
+  );
 }

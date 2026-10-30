@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ServicesSection } from "../ServicesSection";
 import { CATALOG_TABS, isCatalogTab } from "./catalog-tabs";
+import { ServicesByCategoryChart } from "./ServicesByCategoryChart";
 
 // Mounted once by the /admin/services layout, so it survives tab switches
 // between categories, prices and trash. The tab comes from the URL on every
@@ -46,5 +47,10 @@ export function CatalogRouteShell() {
     );
   }
 
-  return <ServicesSection tab={tab} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <ServicesByCategoryChart />
+      <ServicesSection tab={tab} />
+    </div>
+  );
 }

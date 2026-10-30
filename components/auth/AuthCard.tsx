@@ -36,7 +36,7 @@ export function AuthCard({
   const rootRef = useBentoReveal<HTMLDivElement>();
 
   return (
-    <main className="flex flex-1 bg-[#1E3A5F] sm:bg-zinc-50 dark:sm:bg-black">
+    <main className="flex flex-1 bg-[#1E3A5F] sm:bg-white dark:sm:bg-zinc-950">
       <div
         ref={rootRef}
         className="mx-auto flex w-full max-w-6xl flex-1 flex-col sm:gap-3 sm:px-6 sm:py-6 md:gap-4 md:py-10"

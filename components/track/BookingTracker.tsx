@@ -130,7 +130,7 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
         )}
         <TrackProgressCard stage={stage} details={details} />
         {tracking.paymentConfirmCode && (
-          <div className="rounded-2xl border border-zinc-300 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="rounded-2xl border border-zinc-300 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-950">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
               Mã xác nhận thanh toán tiền mặt
             </p>

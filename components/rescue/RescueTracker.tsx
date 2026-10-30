@@ -54,7 +54,7 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
 
   if (step === "cancelled") {
     return (
-      <div className="flex items-start gap-2 rounded-xl border border-zinc-300 bg-zinc-50 p-3 text-sm dark:border-zinc-700 dark:bg-zinc-900">
+      <div className="flex items-start gap-2 rounded-xl border border-zinc-300 bg-white p-3 text-sm dark:border-zinc-700 dark:bg-zinc-950">
         <FiXCircle
           aria-hidden="true"
           className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"

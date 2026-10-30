@@ -13,6 +13,7 @@ import type {
   MechanicStats,
 } from "@/lib/mechanic/mechanic.types";
 import type { MechanicPresence } from "@/lib/mechanic/mechanic-profile.service";
+import type { MechanicStatsPayload } from "@/lib/mechanic/mechanic-stats.service";
 import type { MechanicBookingAction } from "@/lib/mechanic/mechanic-status";
 import type {
   BookingPayment,
@@ -164,18 +165,8 @@ export function deliverOrderRequest(
   );
 }
 
-export function fetchMechanicStats(): Promise<{
-  stats: MechanicStats;
-  monthly: MechanicMonthlyPoint[];
-  ratings: MechanicRatingBucket[];
-  reviews: MechanicReviewItem[];
-}> {
-  return apiRequest<{
-    stats: MechanicStats;
-    monthly: MechanicMonthlyPoint[];
-    ratings: MechanicRatingBucket[];
-    reviews: MechanicReviewItem[];
-  }>("/api/mechanic/stats");
+export function fetchMechanicStats(): Promise<MechanicStatsPayload> {
+  return apiRequest<MechanicStatsPayload>("/api/mechanic/stats");
 }
 
 export function fetchNavigationBoard(): Promise<{

@@ -104,7 +104,7 @@ export function OrderTracker({ orderId }: { orderId: string }) {
       />
 
       {tracking.status === "return_requested" && (
-        <p className="rounded-xl border border-zinc-300 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+        <p className="rounded-xl border border-zinc-300 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
           Yêu cầu trả hàng của bạn đang được xử lý — shop sẽ liên hệ theo thông
           tin bạn đã để lại.
         </p>
@@ -118,7 +118,7 @@ export function OrderTracker({ orderId }: { orderId: string }) {
       )}
 
       {tracking.paymentConfirmCode && (
-        <div className="rounded-xl border border-zinc-300 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="rounded-xl border border-zinc-300 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-950">
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Mã xác nhận thanh toán tiền mặt
           </p>

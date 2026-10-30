@@ -5,12 +5,13 @@ import type { ReactNode } from "react";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { StaffStatusPill } from "@/components/staff/StaffStatus";
 import { useToast } from "@/components/toast/useToast";
-import { useLogout, useMe } from "@/hooks/auth";
+import { useMe } from "@/hooks/auth";
 import { useMechanicBookings, useMechanicInbox } from "@/hooks/mechanic";
 import { useRescueInbox } from "@/hooks/rescue-inbox";
 import { MechanicPresenceCard } from "./MechanicPresenceCard";
 import {
   getMechanicSection,
+  MECHANIC_NAV_GROUPS,
   MECHANIC_SECTIONS,
   type MechanicSectionId,
 } from "./mechanic-sections";
@@ -32,7 +33,6 @@ export function MechanicShell({ children }: { children: ReactNode }) {
   const sectionId = sectionIdForPath(pathname);
   const section = getMechanicSection(sectionId);
   const me = useMe();
-  const logout = useLogout();
   const toast = useToast();
   const queue = useMechanicBookings();
   const displayName = me.data?.fullName ?? null;
@@ -61,11 +61,11 @@ export function MechanicShell({ children }: { children: ReactNode }) {
   return (
     <StaffShell
       copy={COPY}
+      groups={MECHANIC_NAV_GROUPS}
       sections={MECHANIC_SECTIONS}
       section={section}
       tour={MECHANIC_TOUR_NAMES[sectionId]}
       displayName={displayName}
-      onLogout={() => logout.mutate()}
       badges={{ schedule: pendingCount }}
       status={
         pendingCount > 0 ? (

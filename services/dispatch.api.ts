@@ -4,9 +4,10 @@ import type {
   BookingTravelPoint,
 } from "@/lib/booking/workspace.types";
 import type { DispatchAction } from "@/lib/dispatch/dispatch.types";
+import type { DispatchPulse } from "@/lib/dispatch/dispatch-pulse.types";
 import { AuthApiError, apiRequest } from "./auth.api";
 
-export type { BookingDetail, BookingSummary, DispatchAction };
+export type { BookingDetail, BookingSummary, DispatchAction, DispatchPulse };
 export { AuthApiError };
 
 export type DispatchListQuery = {
@@ -72,4 +73,8 @@ export function dispatchBookingAction(
     `/api/dispatch/bookings/${encodeURIComponent(bookingId)}`,
     { method: "PATCH", body: JSON.stringify(payload) },
   );
+}
+
+export function fetchDispatchPulse(): Promise<DispatchPulse> {
+  return apiRequest<DispatchPulse>("/api/dispatch/pulse");
 }

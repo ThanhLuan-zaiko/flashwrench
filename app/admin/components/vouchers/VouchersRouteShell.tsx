@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { AdminCampaignUsage } from "./AdminCampaignUsage";
 import { AdminVoucherBoard } from "./AdminVoucherBoard";
 import { isVoucherTab, VOUCHER_TABS } from "./voucher-tabs";
 
@@ -46,5 +47,10 @@ export function VouchersRouteShell() {
     );
   }
 
-  return <AdminVoucherBoard tab={tab} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <AdminCampaignUsage />
+      <AdminVoucherBoard tab={tab} />
+    </div>
+  );
 }

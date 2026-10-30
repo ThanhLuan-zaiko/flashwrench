@@ -10,9 +10,9 @@ export const ADMIN_CATALOG_TOURS: Tour[] = [
     steps: [
       {
         selector: '[data-tour="admin-dash-hero"]',
-        title: "Vận hành hôm nay",
+        title: "Chọn kỳ báo cáo",
         content:
-          "Lịch hôm nay, cứu hộ đang mở, thợ trực tuyến — kèm lối tắt duyệt thợ và cấu hình dịch vụ.",
+          "Đổi Ngày / Tuần / Tháng để doanh thu, giao dịch, cơ cấu và top thợ cùng chuyển sang kỳ đó.",
         side: "bottom",
         ...TOUR_STEP_OPTIONS,
       },
@@ -20,8 +20,24 @@ export const ADMIN_CATALOG_TOURS: Tour[] = [
         selector: '[data-tour="admin-dash-stats"]',
         title: "Số liệu trực tiếp",
         content:
-          "Các ô đếm tự làm mới theo thời gian thực: đơn, cứu hộ, thợ trực tuyến và doanh thu tháng.",
+          "Doanh thu và giao dịch theo kỳ kèm đường xu hướng, cùng đơn hẹn hôm nay và thợ trực tuyến — tự làm mới theo thời gian thực.",
         side: "bottom",
+        ...TOUR_STEP_OPTIONS,
+      },
+      {
+        selector: '[data-tour="admin-dash-trend"]',
+        title: "Xu hướng doanh thu",
+        content:
+          "Biểu đồ doanh thu của kỳ đang chọn, đường tự vẽ tiếp khi có phiếu thu mới.",
+        side: "top",
+        ...TOUR_STEP_OPTIONS,
+      },
+      {
+        selector: '[data-tour="admin-dash-top"]',
+        title: "Top thợ",
+        content:
+          "Năm thợ thu được nhiều doanh thu nhất trong kỳ, kèm số phiếu và điểm đánh giá.",
+        side: "top",
         ...TOUR_STEP_OPTIONS,
       },
       {
@@ -29,14 +45,6 @@ export const ADMIN_CATALOG_TOURS: Tour[] = [
         title: "Hoạt động thu tiền",
         content:
           "Nhật ký mới nhất: phiếu thu đã ghi, mã xác nhận đã cấp và các lần nhập sai.",
-        side: "top",
-        ...TOUR_STEP_OPTIONS,
-      },
-      {
-        selector: '[data-tour="admin-dash-alerts"]',
-        title: "Cảnh báo vận hành",
-        content:
-          "Nhập sai mã xác nhận, cứu hộ chờ điều phối, phiếu thu hôm nay — đổi “Cần chú ý” khi có bất thường.",
         side: "left",
         ...TOUR_STEP_OPTIONS,
       },

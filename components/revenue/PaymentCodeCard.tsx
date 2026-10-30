@@ -10,7 +10,7 @@ export function PaymentCodeCard({ code }: PaymentCodeCardProps) {
   return (
     <section
       aria-label="Mã xác nhận thanh toán"
-      className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center dark:border-zinc-800 dark:bg-zinc-900"
+      className="rounded-xl border border-zinc-200 bg-white p-4 text-center dark:border-zinc-800 dark:bg-zinc-950"
     >
       <p className="flex items-center justify-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
         <FiKey aria-hidden="true" className="h-3.5 w-3.5" />

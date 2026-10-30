@@ -104,7 +104,7 @@ export function BookingReviewForm({
   return (
     <form
       aria-label="Đánh giá dịch vụ và thợ sửa xe"
-      className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 dark:border-zinc-800 dark:bg-zinc-900"
+      className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-950"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit({

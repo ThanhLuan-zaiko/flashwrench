@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ProductsSection } from "./ProductsSection";
 import { isProductTab, PRODUCT_TABS } from "./product-tabs";
+import { StockByCategoryChart } from "./StockByCategoryChart";
 
 // Mounted once by the /admin/products layout, so it survives tab switches
 // between categories, parts and trash. The tab comes from the URL on
@@ -46,5 +47,10 @@ export function ProductsRouteShell() {
     );
   }
 
-  return <ProductsSection tab={tab} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <StockByCategoryChart />
+      <ProductsSection tab={tab} />
+    </div>
+  );
 }

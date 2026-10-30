@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FiLoader, FiLogIn, FiLogOut, FiUser } from "react-icons/fi";
-import { useToast } from "@/components/toast/useToast";
-import { useLogout, useMe } from "@/hooks/auth";
+import { useMe } from "@/hooks/auth";
+import { useSignOut } from "@/hooks/useSignOut";
 import {
   getRoleInternalLink,
   LOGIN_HREF,
@@ -16,10 +15,8 @@ type MobileMenuAuthProps = {
 };
 
 export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
-  const router = useRouter();
-  const toast = useToast();
   const me = useMe();
-  const logout = useLogout();
+  const logout = useSignOut(onNavigate);
 
   if (me.isPending) {
     return (
@@ -51,18 +48,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
   const roleLink = getRoleInternalLink(user.role);
   const RoleIcon = roleLink?.icon;
 
-  function handleLogout() {
-    logout.mutate(undefined, {
-      onSuccess: () => {
-        onNavigate?.();
-        toast.success("Đã đăng xuất", "Hẹn gặp lại bạn.");
-        router.refresh();
-      },
-      onError: () => {
-        toast.error("Đăng xuất thất bại", "Vui lòng thử lại sau.");
-      },
-    });
-  }
+  const handleLogout = logout.signOut;
 
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">

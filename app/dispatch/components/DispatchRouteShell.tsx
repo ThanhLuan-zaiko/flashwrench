@@ -9,6 +9,7 @@ import {
   dispatchTabHref,
   isDispatchTab,
 } from "./bookings/dispatch-tabs";
+import { DispatchPulse } from "./pulse/DispatchPulse";
 
 // Mounted once by the /dispatch/bookings layout, so it survives status-tab
 // switches without remounting or replaying the enter animation. The tab
@@ -61,5 +62,10 @@ export function DispatchRouteShell() {
     );
   }
 
-  return <DispatchBoard status={status} />;
+  return (
+    <div className="flex flex-col gap-6 md:gap-8">
+      <DispatchPulse />
+      <DispatchBoard status={status} />
+    </div>
+  );
 }

@@ -10,7 +10,7 @@ type VoucherTotalsProps = {
 // Receipt look shared by customer and staff screens: dashed rule above a
 // big navy total.
 const styles = {
-  box: "rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900",
+  box: "rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950",
   totalRow:
     "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 text-sm dark:border-zinc-600",
   total:

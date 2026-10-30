@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { RescueBoard } from "./RescueBoard";
+import { RescueLoadChart } from "./RescueLoadChart";
 import {
   DEFAULT_RESCUE_TAB,
   isRescueBoardTab,
@@ -57,5 +58,10 @@ export function RescueRouteShell() {
     );
   }
 
-  return <RescueBoard status={status} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <RescueLoadChart />
+      <RescueBoard status={status} />
+    </div>
+  );
 }

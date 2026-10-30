@@ -63,7 +63,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
       </h2>
 
       {orderReview ? (
-        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           <FiStar aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           Đánh giá đơn hàng: {orderReview.rating}/5
           {orderReview.body ? ` — ${orderReview.body}` : ""}

@@ -110,3 +110,23 @@ export function buildBookingHref(
   }
   return `/booking?serviceId=${encodeURIComponent(id)}`;
 }
+
+// Route trees whose server layout redirects guests to /login. After a
+// logout from inside one of them the client must leave the tree itself:
+// a soft refresh keeps the mounted shell on screen.
+const LOGIN_REQUIRED_PREFIXES = ["/admin", "/dispatch", "/mechanic"] as const;
+
+export function requiresLogin(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return LOGIN_REQUIRED_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+// Where to land after a successful logout: the login page when the
+// current route needs an account, otherwise stay put (null).
+export function postLogoutHref(
+  pathname: string | null | undefined,
+): string | null {
+  return requiresLogin(pathname) ? "/login" : null;
+}

@@ -191,7 +191,7 @@ export function OrderInvoiceDialog({
 
             <section
               aria-label="Thanh toán"
-              className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs dark:border-zinc-800 dark:bg-zinc-900"
+              className="rounded-xl border border-zinc-200 bg-white p-3 text-xs dark:border-zinc-800 dark:bg-zinc-950"
             >
               <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">
                 Thanh toán

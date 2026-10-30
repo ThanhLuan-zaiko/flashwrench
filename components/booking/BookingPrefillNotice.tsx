@@ -8,7 +8,7 @@ type BookingPrefillNoticeProps = {
 // any field in place, or wipe the saved snapshot and type fresh.
 export function BookingPrefillNotice({ onReset }: BookingPrefillNoticeProps) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950">
       <p className="text-xs text-zinc-600 dark:text-zinc-300">
         Đã điền sẵn thông tin từ lần đặt trước — sửa lại nếu có thay đổi.
       </p>

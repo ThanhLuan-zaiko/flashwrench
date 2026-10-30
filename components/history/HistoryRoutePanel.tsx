@@ -59,7 +59,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
       </div>
 
       {!booking && (
-        <div className="flex min-h-72 flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex min-h-72 flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white p-5 text-center dark:border-zinc-800 dark:bg-zinc-950">
           <FiMapPin aria-hidden="true" className="h-5 w-5 text-zinc-500" />
           <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Chọn một đơn để xem lộ trình
@@ -148,7 +148,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           )}
 
           {query.isSuccess && !map.hasMap && (
-            <p className="flex min-h-72 items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 p-5 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+            <p className="flex min-h-72 items-center justify-center rounded-2xl border border-zinc-200 bg-white p-5 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
               Đơn này chưa có tọa độ để hiển thị trên bản đồ.
             </p>
           )}

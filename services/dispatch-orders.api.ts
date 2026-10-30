@@ -3,6 +3,7 @@ import type {
   OrderDetail,
   OrderSummary,
 } from "@/lib/orders/orders.types";
+import type { OrderTrend } from "@/lib/orders/orders-trend.service";
 import type { PartItem } from "@/lib/parts/parts.types";
 import type { OrderInvoice } from "@/lib/payments/order-payment.types";
 import { apiRequest } from "./auth.api";
@@ -114,4 +115,8 @@ export function setPartStockRequest(
       body: JSON.stringify({ action: "set-stock", stockQty }),
     },
   );
+}
+
+export function fetchOrderTrend(): Promise<OrderTrend> {
+  return apiRequest<OrderTrend>("/api/dispatch/orders/trend");
 }

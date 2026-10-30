@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { OrderTrendChart } from "@/components/charts/OrderTrendChart";
 import { AdminOrdersBoard } from "./AdminOrdersBoard";
 import { ADMIN_ORDER_TABS, isAdminOrderTab } from "./admin-order-tabs";
 
@@ -42,5 +43,10 @@ export function AdminOrdersShell() {
     );
   }
 
-  return <AdminOrdersBoard status={status} />;
+  return (
+    <div className="flex flex-col gap-4 md:gap-6">
+      <OrderTrendChart metric="value" />
+      <AdminOrdersBoard status={status} />
+    </div>
+  );
 }

@@ -1,65 +1,64 @@
 "use client";
 
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
-import { formatVnd } from "@/components/revenue/revenue-format";
+import { useState } from "react";
 import {
   useAdminDashboard,
   useAdminDashboardRealtime,
 } from "@/hooks/admin-dashboard";
+import { useAdminRevenue, useRevenueRealtime } from "@/hooks/revenue";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import type { RevenueRange } from "@/lib/revenue/revenue-period";
 import { DashboardActivityCard } from "./bento/DashboardActivityCard";
-import { DashboardAlertCard } from "./bento/DashboardAlertCard";
-import { DashboardHeroCard } from "./bento/DashboardHeroCard";
-import { DashboardStatCard } from "./bento/DashboardStatCard";
-import { DASHBOARD_STATS } from "./bento/dashboard-stats";
+import { DashboardCharts } from "./bento/DashboardCharts";
+import { DashboardKpiRow } from "./bento/DashboardKpiRow";
+import { DashboardRangeTabs } from "./bento/DashboardRangeTabs";
+import { DashboardTopMechanics } from "./bento/DashboardTopMechanics";
 
-// Grid root: big type statement plus layout and reveal scope. Stats come
-// from the dashboard endpoint; each stat id maps to one counter.
+// Admin landing laid out like the approved design: header with the range
+// switch, KPI row, revenue trend + mix, top mechanics + live activity.
+// Both queries refresh from the operations feed, so every canvas morphs
+// in place when a collection or booking change lands.
 export function DashboardSection() {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  const [range, setRange] = useState<RevenueRange>("month");
   const dashboard = useAdminDashboard();
+  const revenue = useAdminRevenue({ range });
   useAdminDashboardRealtime();
-  const data = dashboard.data;
-
-  const statValues: Record<string, string> = data
-    ? {
-        "bookings-today": String(data.todayBookings),
-        "rescue-open": String(data.openRescues),
-        "mechanics-online": String(data.onlineMechanics),
-        "revenue-month": formatVnd(data.monthRevenue),
-      }
-    : {};
+  useRevenueRealtime();
+  const report = revenue.data;
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        title="Vận hành trong tầm mắt."
-        subtitle="Mọi lịch đặt, cứu hộ và thợ xe gói gọn trong một dashboard duy nhất."
+    <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
+      <div
+        data-tour="admin-dash-hero"
+        className="flex flex-wrap items-end justify-between gap-3"
+      >
+        <div>
+          <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
+            Quản trị · Toàn hệ thống
+          </p>
+          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-[28px] dark:text-zinc-50">
+            Dashboard tổng quan
+          </h2>
+        </div>
+        <DashboardRangeTabs value={range} onChange={setRange} />
+      </div>
+      <DashboardKpiRow report={report} dashboard={dashboard.data} />
+      <DashboardCharts
+        report={report}
+        isPending={revenue.isPending}
+        isError={revenue.isError}
       />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        <DashboardHeroCard
-          todayBookings={data?.todayBookings}
-          openRescues={data?.openRescues}
-          onlineMechanics={data?.onlineMechanics}
+      <div className="grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-2">
+        <DashboardTopMechanics
+          slices={report?.byMechanic}
+          mechanics={dashboard.data?.mechanics}
+          rangeLabel={report?.label ?? "kỳ đang chọn"}
         />
-        {DASHBOARD_STATS.map((stat, index) => (
-          <DashboardStatCard
-            key={stat.id}
-            stat={stat}
-            value={statValues[stat.id]}
-            isPending={dashboard.isPending}
-            tour={index === 0 ? "admin-dash-stats" : undefined}
-          />
-        ))}
         <DashboardActivityCard
-          events={data?.events}
+          events={dashboard.data?.events}
           isPending={dashboard.isPending}
           isError={dashboard.isError}
-        />
-        <DashboardAlertCard
-          failedConfirmations={data?.failedConfirmations}
-          pendingRescues={data?.pendingRescues}
-          todayReceipts={data?.todayReceipts}
         />
       </div>
       {dashboard.isError && (

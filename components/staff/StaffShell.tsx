@@ -1,12 +1,18 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
+import { useSignOut } from "@/hooks/useSignOut";
 import { StaffSidebar } from "./StaffSidebar";
 import { StaffTopBar } from "./StaffTopBar";
-import type { StaffNavSection, StaffShellCopy } from "./staff-shell.types";
+import type {
+  StaffNavGroup,
+  StaffNavSection,
+  StaffShellCopy,
+} from "./staff-shell.types";
 
 type StaffShellProps = {
   copy: StaffShellCopy;
+  groups: StaffNavGroup[];
   sections: StaffNavSection[];
   section: StaffNavSection;
   tour: string;
@@ -15,7 +21,6 @@ type StaffShellProps = {
   status?: ReactNode;
   displayName?: string | null;
   maxWidthClass?: string;
-  onLogout?: () => void;
   children: ReactNode;
 };
 
@@ -24,6 +29,7 @@ type StaffShellProps = {
 // portal shell keeps its own realtime hooks and passes copy plus slots.
 export function StaffShell({
   copy,
+  groups,
   sections,
   section,
   tour,
@@ -32,23 +38,25 @@ export function StaffShell({
   status,
   displayName,
   maxWidthClass = "max-w-7xl",
-  onLogout,
   children,
 }: StaffShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Every portal signs out the same way: leave the staff tree for /login.
+  const { signOut } = useSignOut(() => setMobileOpen(false));
 
   return (
-    <div className="flex w-full flex-1 items-stretch bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex w-full flex-1 items-stretch bg-white dark:bg-zinc-950">
       <StaffSidebar
         copy={copy}
+        groups={groups}
         sections={sections}
         active={section.id}
         badges={badges}
         panel={panel}
         collapsed={collapsed}
         mobileOpen={mobileOpen}
-        onLogout={onLogout}
+        onLogout={signOut}
         onToggleCollapse={() => setCollapsed((value) => !value)}
         onCloseMobile={() => setMobileOpen(false)}
       />

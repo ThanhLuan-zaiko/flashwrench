@@ -211,7 +211,7 @@ export function BookingDetailDialog({
               )}
 
               {booking.cancelReason && (
-                <p className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+                <p className="rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
                   Lý do hủy: {booking.cancelReason}
                 </p>
               )}

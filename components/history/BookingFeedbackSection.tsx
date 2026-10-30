@@ -26,7 +26,7 @@ function SubmittedRating({
   body: string;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+    <div className="flex flex-col gap-1 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
       <p className="flex flex-wrap items-center gap-2">
         <span className="font-semibold text-zinc-900 dark:text-zinc-50">
           {label}

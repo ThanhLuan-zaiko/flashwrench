@@ -15,6 +15,7 @@ import {
 import { listWorkloadRows } from "./mechanic-bookings.repository";
 import { toBookingStatus } from "./mechanic-mapper";
 import { isSameMonth, monthKey, recentMonthKeys } from "./mechanic-period";
+import { buildMechanicDaily, type MechanicDaily } from "./mechanic-stats-daily";
 import { isOpenBookingStatus } from "./mechanic-status";
 import {
   findMechanicProfileRow,
@@ -33,6 +34,7 @@ export type MechanicStatsPayload = {
   monthly: MechanicMonthlyPoint[];
   ratings: MechanicRatingBucket[];
   reviews: MechanicReviewItem[];
+  daily: MechanicDaily;
 };
 
 export type MechanicStatsParams = {
@@ -162,7 +164,16 @@ export async function getMechanicStats(
   stats.completionRate =
     settled > 0 ? Math.round((stats.completedJobs / settled) * 100) : 0;
 
-  return { ok: true, data: { stats, monthly, ratings, reviews } };
+  const daily = buildMechanicDaily(
+    rows.map((row) => ({
+      scheduledAt: completionStamp(row.scheduled_at),
+      completed: toBookingStatus(row.status) === "completed",
+      total: toNumberOr(row.total),
+    })),
+    reference,
+  );
+
+  return { ok: true, data: { stats, monthly, ratings, reviews, daily } };
 }
 
 export type { MechanicBookingStatus };

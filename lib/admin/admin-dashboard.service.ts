@@ -43,6 +43,13 @@ export type AdminDashboard = {
   todayReceipts: number;
   failedConfirmations: number;
   events: PaymentAuditEvent[];
+  /** Directory names keyed by mechanic id, for the top-mechanics list. */
+  mechanics: Record<string, AdminDashboardMechanic>;
+};
+
+export type AdminDashboardMechanic = {
+  name: string;
+  rating: number | null;
 };
 
 export async function getAdminDashboard(
@@ -91,6 +98,13 @@ export async function getAdminDashboard(
   const onlineMechanics = mechanicRows.filter(
     (row) => row.is_online === true,
   ).length;
+  const mechanics: Record<string, AdminDashboardMechanic> = {};
+  for (const row of mechanicRows) {
+    mechanics[row.mechanic_id] = {
+      name: row.display_name?.trim() || "Thợ chưa đặt tên",
+      rating: row.rating_avg,
+    };
+  }
 
   const revenue = await getAdminRevenue(actor, { range: "month" });
   const audit = await getPaymentAudit(actor, { range: "day" });
@@ -127,6 +141,7 @@ export async function getAdminDashboard(
       todayReceipts,
       failedConfirmations,
       events: events.slice(0, TODAY_EVENTS_SHOWN),
+      mechanics,
     },
   };
 }

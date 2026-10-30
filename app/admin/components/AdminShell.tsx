@@ -9,6 +9,7 @@ import {
 } from "@/components/staff/StaffStatus";
 import { useMe } from "@/hooks/auth";
 import {
+  ADMIN_NAV_GROUPS,
   ADMIN_SECTIONS,
   getAdminSection,
   sectionIdForPath,
@@ -27,6 +28,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <StaffShell
       copy={COPY}
+      groups={ADMIN_NAV_GROUPS}
       sections={ADMIN_SECTIONS}
       section={getAdminSection(sectionId)}
       tour={ADMIN_TOUR_NAMES[sectionId]}

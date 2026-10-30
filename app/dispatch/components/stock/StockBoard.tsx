@@ -7,6 +7,7 @@ import { useDispatchParts } from "@/hooks/dispatch-orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
+import { LowStockChart } from "./LowStockChart";
 import { StockPager } from "./StockPager";
 import { StockPanel } from "./StockPanel";
 import { StockToolbar } from "./StockToolbar";
@@ -46,6 +47,7 @@ export function StockBoard() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
+      <LowStockChart />
       <div className="grid grid-cols-1 gap-3 md:gap-4">
         <BentoCard label="Tồn kho linh kiện" tour="disp-stock-intro">
           <div className="flex flex-wrap items-end justify-between gap-3">

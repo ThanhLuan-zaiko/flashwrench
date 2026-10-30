@@ -24,7 +24,7 @@ export function StaffPendingPassword({
   };
 
   return (
-    <span className="mt-2 block rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900">
+    <span className="mt-2 block rounded-xl border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-zinc-950">
       <span className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600 dark:text-zinc-300">
         <FiKey aria-hidden="true" className="h-3.5 w-3.5" />
         Mật khẩu tạm — chưa đổi

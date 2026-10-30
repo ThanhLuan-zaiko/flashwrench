@@ -105,7 +105,7 @@ export function MockPaymentDialog({
         </div>
 
         <div className="mt-4 flex justify-center">
-          <div className="flex h-36 w-36 items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="flex h-36 w-36 items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-950">
             <FaQrcode
               aria-hidden="true"
               className="h-20 w-20 text-zinc-400 dark:text-zinc-600"
@@ -113,7 +113,7 @@ export function MockPaymentDialog({
           </div>
         </div>
 
-        <dl className="mt-4 space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <dl className="mt-4 space-y-2 rounded-xl border border-zinc-200 bg-white p-3.5 text-xs dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex justify-between gap-3">
             <dt className="text-zinc-500 dark:text-zinc-400">Đơn hàng</dt>
             <dd className="font-semibold text-zinc-800 dark:text-zinc-200">

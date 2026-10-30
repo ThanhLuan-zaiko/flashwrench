@@ -1,5 +1,6 @@
 import type { IconType } from "react-icons";
 import {
+  FiActivity,
   FiBarChart2,
   FiFileText,
   FiGift,
@@ -10,6 +11,7 @@ import {
   FiSliders,
   FiUsers,
 } from "react-icons/fi";
+import type { StaffNavGroup } from "@/components/staff/staff-shell.types";
 
 export type AdminSectionId =
   | "dashboard"
@@ -27,6 +29,7 @@ export type AdminSection = {
   id: AdminSectionId;
   label: string;
   description: string;
+  group: string;
   href: string;
   icon: IconType;
 };
@@ -34,6 +37,7 @@ export type AdminSection = {
 export const ADMIN_SECTIONS: AdminSection[] = [
   {
     id: "dashboard",
+    group: "overview",
     label: "Dashboard tổng quan",
     description: "Số liệu vận hành hệ thống theo thời gian thực.",
     href: "/admin",
@@ -41,6 +45,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "users",
+    group: "ops",
     label: "Quản lý người dùng",
     description: "Duyệt thợ, khóa tài khoản, xử lý khiếu nại.",
     href: "/admin/users",
@@ -48,6 +53,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "services",
+    group: "catalog",
     label: "Cấu hình dịch vụ",
     description: "Quản lý bảng giá và loại hình sửa chữa.",
     href: "/admin/services/categories",
@@ -55,6 +61,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "products",
+    group: "catalog",
     label: "Quản lý sản phẩm",
     description: "Quản lý danh mục và linh kiện đang bán.",
     href: "/admin/products/categories",
@@ -62,6 +69,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "vouchers",
+    group: "catalog",
     label: "Ưu đãi voucher",
     description: "Chiến dịch ví voucher gắn tài khoản.",
     href: "/admin/vouchers",
@@ -69,6 +77,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "rescue",
+    group: "ops",
     label: "Cứu hộ khẩn cấp",
     description: "Vùng phục vụ và cấu hình tự điều phối.",
     href: "/admin/rescue",
@@ -76,6 +85,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "orders",
+    group: "ops",
     label: "Đơn hàng & hóa đơn",
     description: "Theo dõi đơn linh kiện và xem hóa đơn thu tiền.",
     href: "/admin/orders/pending",
@@ -83,6 +93,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "revenue",
+    group: "overview",
     label: "Doanh thu",
     description: "Báo cáo toàn hệ thống, theo thợ và giám sát gian lận.",
     href: "/admin/revenue/day",
@@ -90,6 +101,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "customer-mix",
+    group: "overview",
     label: "Nguồn khách hàng",
     description: "Tỷ trọng khách thành viên và vãng lai theo đơn và đăng nhập.",
     href: "/admin/customer-mix/day",
@@ -97,6 +109,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "settings",
+    group: "system",
     label: "Cài đặt cửa hàng",
     description: "Chính sách đặt lịch và tham số vận hành chung.",
     href: "/admin/settings",
@@ -122,3 +135,15 @@ export function sectionIdForPath(pathname: string): AdminSectionId {
   if (pathname.startsWith("/admin/settings")) return "settings";
   return "dashboard";
 }
+
+export const ADMIN_NAV_GROUPS: StaffNavGroup[] = [
+  {
+    id: "overview",
+    label: "Tổng quan",
+    shortLabel: "Tổng quan",
+    icon: FiActivity,
+  },
+  { id: "ops", label: "Vận hành", shortLabel: "Vận hành", icon: FiUsers },
+  { id: "catalog", label: "Danh mục", shortLabel: "Danh mục", icon: FiPackage },
+  { id: "system", label: "Hệ thống", shortLabel: "Hệ thống", icon: FiSettings },
+];

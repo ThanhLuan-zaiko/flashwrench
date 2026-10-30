@@ -32,7 +32,7 @@ export function StaffAvatarField({
       <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
         Ảnh thợ (tùy chọn, ảnh vuông hiển thị đẹp nhất)
       </span>
-      <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
+      <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950">
         {avatar.existing && (
           <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
             {/* biome-ignore lint/performance/noImgElement: admin preview of stored media asset; optimizer adds no value here. */}

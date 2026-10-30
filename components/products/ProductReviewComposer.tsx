@@ -111,7 +111,7 @@ export function ProductReviewComposer({
       )}
 
       {state?.status === "reviewed" && (
-        <p className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+        <p className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           <Stars rating={state.review.rating} size="h-3.5 w-3.5" />
           Cảm ơn bạn đã đánh giá sản phẩm này
           {state.review.body ? ` — ${state.review.body}` : "."}

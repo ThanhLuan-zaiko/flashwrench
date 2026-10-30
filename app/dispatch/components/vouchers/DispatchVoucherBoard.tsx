@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CampaignUsageChart } from "@/components/charts/CampaignUsageChart";
 import { PromoCarousel } from "@/components/promotions/PromoCarousel";
 import { DropdownSelect } from "@/components/ui/DropdownSelect";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
@@ -38,6 +39,12 @@ export function DispatchVoucherBoard() {
   const visible = publicCampaigns.data ?? [];
   return (
     <div className="flex flex-col gap-4">
+      <CampaignUsageChart
+        campaigns={campaigns.data}
+        isPending={campaigns.isPending}
+        isError={campaigns.isError}
+        dispatcherOnly
+      />
       <form
         onSubmit={handleGrant}
         data-tour="disp-vouchers-grant"

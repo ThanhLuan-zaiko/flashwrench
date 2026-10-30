@@ -11,7 +11,12 @@ const stubs = {
     rows: [] as Array<{ booking_id: string; scheduled_at: Date | null }>,
     pageState: null as string | null,
   },
-  mechanicRows: [] as Array<{ is_online: boolean | null }>,
+  mechanicRows: [] as Array<{
+    mechanic_id?: string;
+    display_name?: string | null;
+    rating_avg?: number | null;
+    is_online: boolean | null;
+  }>,
   rescueCounts: new Map<string, number>(),
   revenueResult: {
     ok: true,
@@ -143,6 +148,31 @@ describe("getAdminDashboard aggregation", () => {
     ];
     const result = await getAdminDashboard(admin, NOW);
     if (result.ok) expect(result.data.onlineMechanics).toBe(2);
+  });
+
+  test("maps mechanic names for the top-mechanics list", async () => {
+    stubs.mechanicRows = [
+      {
+        mechanic_id: "m-1",
+        display_name: " Quốc Huy ",
+        rating_avg: 4.9,
+        is_online: true,
+      },
+      {
+        mechanic_id: "m-2",
+        display_name: null,
+        rating_avg: null,
+        is_online: false,
+      },
+    ];
+    const result = await getAdminDashboard(admin, NOW);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.mechanics).toEqual({
+        "m-1": { name: "Quốc Huy", rating: 4.9 },
+        "m-2": { name: "Thợ chưa đặt tên", rating: null },
+      });
+    }
   });
 
   test("passes through month revenue and counts audit actions", async () => {

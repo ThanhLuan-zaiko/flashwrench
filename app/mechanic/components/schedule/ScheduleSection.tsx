@@ -19,6 +19,7 @@ import { BookingDetailDialog } from "./BookingDetailDialog";
 import { ScheduleBody } from "./ScheduleBody";
 import { SchedulePager } from "./SchedulePager";
 import { ScheduleStatCards } from "./ScheduleStatCards";
+import { ScheduleWeekChart } from "./ScheduleWeekChart";
 import { SCHEDULE_TABS, type ScheduleTab } from "./schedule-tabs";
 
 // Bento root for the schedule: live counts, a filterable work queue with
@@ -66,6 +67,7 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
+      <ScheduleWeekChart />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         <ScheduleStatCards bookings={bookings} loading={query.isPending} />
         <BentoCard

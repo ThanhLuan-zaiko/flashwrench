@@ -38,9 +38,9 @@ export const BRAND_SECTION_TITLE =
 export const BRAND_PRICE =
   "font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50";
 
-// Receipt-style summary box: muted surface, dashed rule above the total.
+// Receipt-style summary box: page surface with a border, dashed rule above the total.
 export const BRAND_RECEIPT =
-  "rounded-2xl border border-zinc-200 bg-zinc-50 p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-900";
+  "rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-950";
 export const BRAND_RECEIPT_TOTAL =
   "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 dark:border-zinc-600";
 

@@ -250,13 +250,17 @@ Rules:
 - Animate by tweening a progress object (`0 -> 1`) and
   re-drawing the canvas on each `onUpdate` tick, inside the
   same `gsap.context` + `ctx.revert()` pattern from 4.2.
+- Live charts use `hooks/useTweenedCanvas.ts`: the first paint
+  reveals `0 -> 1`, later data changes tween the drawn values from
+  the previous numbers to the new ones (never replay from zero).
 - Respect reduced motion: when `prefers-reduced-motion` matches,
   draw the final frame instantly with no tween.
 - Scale the canvas for `devicePixelRatio`, and re-draw on
   resize (`ResizeObserver`) and on `dark` class changes so the
   chart stays crisp and readable in both themes.
 - Colors come from the zinc scale plus the brand palette in
-  `AGENTS.md` Section 6 (navy and orange).
+  `AGENTS.md` Section 6; staff dashboards add the approved chart
+  palette (navy, sky, teal, amber) via `components/charts/chart-palette.ts`.
   Resolve theme-aware colors at draw time; never hardcode
   accent hues.
 - The allowed-motion limits in 4.3 still apply: max 0.6s,

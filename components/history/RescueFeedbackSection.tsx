@@ -37,7 +37,7 @@ export function RescueFeedbackSection({ rescue }: { rescue: RescueDetail }) {
   return (
     <section aria-label="Đánh giá và phản hồi" className="flex flex-col gap-3">
       {existing ? (
-        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           <FiStar aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           Bạn đã đánh giá {existing.rating}/5
           {existing.body ? ` — ${existing.body}` : ""}

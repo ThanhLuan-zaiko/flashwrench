@@ -43,7 +43,7 @@ export function CatalogCoverField({
         {label ??
           `Ảnh bìa (tối đa ${covers.max}${covers.max > 1 ? ", ảnh đầu là bìa chính" : ""})`}
       </span>
-      <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
+      <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950">
         <CatalogCoverThumbs
           existing={covers.existing}
           staged={covers.staged}

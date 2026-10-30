@@ -70,7 +70,7 @@ export function BookingRunningTotal({
   return (
     <section
       aria-label="Tạm tính"
-      className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900"
+      className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
     >
       {services.map((service) => (
         <p

@@ -112,7 +112,7 @@ export function BookingCancelSection({
   return (
     <section
       aria-label="Hủy lịch hẹn"
-      className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 dark:border-zinc-800 dark:bg-zinc-900"
+      className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Hủy lịch hẹn này?

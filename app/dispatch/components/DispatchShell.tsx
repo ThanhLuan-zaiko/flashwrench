@@ -8,10 +8,11 @@ import {
   StaffStatusPill,
 } from "@/components/staff/StaffStatus";
 import { useToast } from "@/components/toast/useToast";
-import { useLogout, useMe } from "@/hooks/auth";
+import { useMe } from "@/hooks/auth";
 import { useDispatchOperations } from "@/hooks/dispatch";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import {
+  DISPATCH_NAV_GROUPS,
   DISPATCH_SECTIONS,
   type DispatchSectionId,
   getDispatchSection,
@@ -38,7 +39,6 @@ export function DispatchShell({ children }: { children: ReactNode }) {
   const sectionId = sectionIdForPath(pathname);
   const section = getDispatchSection(sectionId);
   const me = useMe();
-  const logout = useLogout();
   const toast = useToast();
   const realtime = useRealtimeStatus();
   const displayName = me.data?.fullName ?? null;
@@ -63,11 +63,11 @@ export function DispatchShell({ children }: { children: ReactNode }) {
   return (
     <StaffShell
       copy={COPY}
+      groups={DISPATCH_NAV_GROUPS}
       sections={DISPATCH_SECTIONS}
       section={section}
       tour={DISPATCH_TOUR_NAMES[sectionId]}
       displayName={displayName}
-      onLogout={() => logout.mutate()}
       status={
         <StaffStatusPill
           live={realtime === "live"}

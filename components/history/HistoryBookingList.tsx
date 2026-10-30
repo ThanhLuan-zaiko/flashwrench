@@ -126,7 +126,7 @@ export function HistoryBookingList({
       )}
 
       {!loading && !error && bookings.length === 0 && (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           <p>
             {search
               ? "Không tìm thấy đơn phù hợp. Hãy thử mã đơn, dịch vụ, thợ hoặc biển số khác."

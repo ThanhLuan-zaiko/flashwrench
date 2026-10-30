@@ -42,7 +42,7 @@ export function ApplicableVoucherBadge({
       <Link
         href="/login"
         aria-label="Đăng nhập để xem ưu đãi áp được cho món này"
-        className="flex min-h-[44px] items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className="flex min-h-[44px] items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-white px-3 py-2 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800"
       >
         <FiGift aria-hidden="true" className="h-4 w-4 shrink-0" />
         <span>
@@ -66,7 +66,7 @@ export function ApplicableVoucherBadge({
       scroll={false}
       prefetch
       aria-label={`${pick.wallet.campaignName}: ${ticketDiscountText(pick.wallet, pick.discount)} cho món này`}
-      className="flex min-h-[44px] items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+      className="flex min-h-[44px] items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-white px-3 py-2 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-800"
     >
       <FiTag
         aria-hidden="true"

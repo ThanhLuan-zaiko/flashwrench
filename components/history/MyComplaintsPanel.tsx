@@ -114,7 +114,7 @@ export function MyComplaintsPanel() {
                 {item.body}
               </p>
               {item.resolutionNote && (
-                <p className="mt-2 rounded-xl border border-zinc-200 bg-zinc-50 p-2.5 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+                <p className="mt-2 rounded-xl border border-zinc-200 bg-white p-2.5 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
                   Kết quả: {item.resolutionNote}
                 </p>
               )}
