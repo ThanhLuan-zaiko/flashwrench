@@ -7,15 +7,18 @@ import { VouchersRouteShell } from "@/components/vouchers/VouchersRouteShell";
 // and /vouchers/c/[slug]. Next.js keeps the layout mounted while only
 // the segment changes, so pager links reuse the wallet query cache and
 // list/detail switches never replay the enter animation. Pages stay
-// metadata-only.
+// metadata-only. The page is full width so a campaign band can run edge to
+// edge; overflow is clipped at the viewport, not at the content column.
 export default function VouchersLayout({ children }: { children: ReactNode }) {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6">
-      <Suspense fallback={null}>
-        <VouchersRouteShell />
-      </Suspense>
-      {children}
-      <SpeculationRules scope="vouchers" />
+    <main className="flex flex-1 flex-col overflow-x-clip">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6">
+        <Suspense fallback={null}>
+          <VouchersRouteShell />
+        </Suspense>
+        {children}
+        <SpeculationRules scope="vouchers" />
+      </div>
     </main>
   );
 }

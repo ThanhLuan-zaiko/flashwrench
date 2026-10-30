@@ -103,7 +103,7 @@ export function BookingForm({
         onSubmit={handleSubmit}
         noValidate
         aria-label="Đặt lịch sửa xe"
-        className="grid scroll-mt-20 grid-cols-1 gap-4 max-lg:pb-24 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-6"
+        className="grid scroll-mt-20 grid-cols-1 gap-4 max-lg:pb-24 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-6"
       >
         <div className="flex min-w-0 flex-col gap-4">
           <BookingWizardProgress step={wizard.step} labels={stepLabels} />

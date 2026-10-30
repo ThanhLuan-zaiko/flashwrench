@@ -11,7 +11,7 @@ import { TourProvider } from "@/components/tour/TourProvider";
 // replaying the GSAP enter animation. Pages stay metadata-only.
 export default function ProductsLayout({ children }: { children: ReactNode }) {
   return (
-    <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
+    <main className="flex flex-1 flex-col overflow-x-clip bg-white dark:bg-zinc-950">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14">
         <TourProvider steps={PRODUCTS_TOUR_STEPS}>
           <Suspense fallback={null}>
