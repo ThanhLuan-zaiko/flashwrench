@@ -9,6 +9,7 @@ import {
   getSafeNextPath,
 } from "@/lib/auth/auth-redirect";
 import { getServerAccountSession } from "@/lib/auth/server-session";
+import { listAuthServices } from "@/lib/home/home-catalog.service";
 
 export const metadata: Metadata = {
   title: "Đăng ký | FlashWrench",
@@ -33,8 +34,11 @@ export default async function RegisterPage({
     redirect(safeNext ?? defaultPostAuthHref(session.user.role));
   }
 
+  const services = await listAuthServices();
+
   return (
     <AuthCard
+      services={services}
       title="Tạo tài khoản mới"
       subtitle="Đăng ký miễn phí để đặt thợ lưu động, cứu hộ tận nơi và mua phụ tùng."
       footerText="Đã có tài khoản?"

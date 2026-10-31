@@ -14,6 +14,7 @@ import {
   getSafeNextPath,
 } from "@/lib/auth/auth-redirect";
 import { getServerAccountSession } from "@/lib/auth/server-session";
+import { listAuthServices } from "@/lib/home/home-catalog.service";
 
 export const metadata: Metadata = {
   title: "Đăng nhập | FlashWrench",
@@ -43,8 +44,11 @@ export default async function LoginPage({
     }
   }
 
+  const services = await listAuthServices();
+
   return (
     <AuthCard
+      services={services}
       eyebrow="Đăng nhập"
       title="Chào mừng bạn quay lại."
       subtitle="Theo dõi lịch sửa, đơn hàng và voucher trong một tài khoản."

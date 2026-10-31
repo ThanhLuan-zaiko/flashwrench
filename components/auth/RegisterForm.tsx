@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 import { FiLoader, FiUserPlus } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
+import { BRAND_PRIMARY_BUTTON } from "@/components/ui/brand";
 import { useMe, useRegister } from "@/hooks/auth";
 import { resolvePostAuthHref } from "@/lib/auth/auth-redirect";
 import type { FieldErrors } from "@/lib/auth/user.types";
@@ -204,7 +205,7 @@ export function RegisterForm({ next }: RegisterFormProps) {
       <button
         type="submit"
         disabled={pending}
-        className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+        className={`mt-1 w-full ${BRAND_PRIMARY_BUTTON}`}
       >
         {pending ? (
           <FiLoader

@@ -12,6 +12,7 @@ import { SHOWCASE_BUDGET_MS } from "./mechanic-showcase.service";
 
 export const HOME_SERVICE_LIMIT = 4;
 export const HOME_PRODUCT_LIMIT = 8;
+export const AUTH_SERVICE_LIMIT = 5;
 
 // Services with a photo lead the rail, then alphabetical by name, matching
 // the ordering the public catalog already uses.
@@ -27,6 +28,21 @@ export function pickHomeServices(
       if (imageA !== imageB) return imageB - imageA;
       return a.name.localeCompare(b.name, "vi");
     })
+    .slice(0, Math.max(0, limit));
+}
+
+// Photographed services for the login/register showcase: the newest few, so
+// the slideshow stays short however large the catalog grows. A missing
+// createdAt sorts last.
+export function pickAuthServices(
+  services: ServiceItem[],
+  limit = AUTH_SERVICE_LIMIT,
+): ServiceItem[] {
+  return services
+    .filter(
+      (service) => service.isActive && !service.isDeleted && service.imageUrl,
+    )
+    .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))
     .slice(0, Math.max(0, limit));
 }
 
@@ -65,6 +81,20 @@ export async function listHomeServices(
       loadHomeServices(limit),
       deadlineAfter(SHOWCASE_BUDGET_MS, "Home services"),
     ]);
+  } catch {
+    return [];
+  }
+}
+
+export async function listAuthServices(
+  limit = AUTH_SERVICE_LIMIT,
+): Promise<ServiceItem[]> {
+  try {
+    const result = await Promise.race([
+      listPublicCatalog(),
+      deadlineAfter(SHOWCASE_BUDGET_MS, "Auth services"),
+    ]);
+    return result.ok ? pickAuthServices(result.data.services, limit) : [];
   } catch {
     return [];
   }

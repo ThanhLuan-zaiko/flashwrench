@@ -5,8 +5,10 @@ import type { ReactNode } from "react";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import { BRAND_OUTLINE_BUTTON } from "@/components/ui/brand";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { AuthBrandPanel } from "./AuthBrandPanel";
 import { AuthHighlights } from "./AuthHighlights";
+import { AuthSplitCard } from "./AuthSplitCard";
 
 type AuthCardProps = {
   title: string;
@@ -18,11 +20,14 @@ type AuthCardProps = {
   eyebrow?: string;
   // Short trust lines under the form, e.g. what an account unlocks.
   perks?: string[];
+  // Catalog services; those with a photo switch to the split photo layout.
+  services?: ServiceItem[];
 };
 
-// Auth shell. Phones: a navy band with the heading that continues the
-// header, then a white rounded sheet holding the form. From sm up: the
-// bento grid with brand panel, form card and trust minis.
+// Auth shell. With service photos it renders AuthSplitCard. Without them:
+// phones get a navy band with the heading that continues the header, then
+// a white rounded sheet holding the form; from sm up, the bento grid with
+// brand panel, form card and trust minis.
 export function AuthCard({
   title,
   subtitle,
@@ -32,8 +37,27 @@ export function AuthCard({
   footerLinkLabel,
   eyebrow,
   perks,
+  services,
 }: AuthCardProps) {
+  const slides = (services ?? []).filter((service) => service.imageUrl);
   const rootRef = useBentoReveal<HTMLDivElement>();
+
+  if (slides.length > 0) {
+    return (
+      <AuthSplitCard
+        title={title}
+        subtitle={subtitle}
+        footerText={footerText}
+        footerLinkHref={footerLinkHref}
+        footerLinkLabel={footerLinkLabel}
+        eyebrow={eyebrow}
+        perks={perks}
+        services={slides}
+      >
+        {children}
+      </AuthSplitCard>
+    );
+  }
 
   return (
     <main className="flex flex-1 bg-[#1E3A5F] sm:bg-white dark:sm:bg-zinc-950">

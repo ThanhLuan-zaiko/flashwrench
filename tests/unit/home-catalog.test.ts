@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
+  AUTH_SERVICE_LIMIT,
+  pickAuthServices,
   pickHomeProducts,
   pickHomeServices,
 } from "@/lib/home/home-catalog.service";
@@ -30,6 +32,44 @@ describe("pickHomeServices", () => {
     );
     expect(pickHomeServices(services, 2)).toHaveLength(2);
     expect(pickHomeServices(services, 0)).toHaveLength(0);
+  });
+});
+
+describe("pickAuthServices", () => {
+  const dated = (id: string, createdAt: string | null, extra = {}) =>
+    makeServiceItem({ id, createdAt, imageUrl: "/x.jpg", ...extra });
+
+  test("keeps only the five newest photographed services", () => {
+    const services = Array.from({ length: 8 }, (_, i) =>
+      dated(`s${i}`, `2026-0${i + 1}-01T00:00:00Z`),
+    );
+    const picked = pickAuthServices(services);
+    expect(AUTH_SERVICE_LIMIT).toBe(5);
+    expect(picked.map((service) => service.id)).toEqual([
+      "s7",
+      "s6",
+      "s5",
+      "s4",
+      "s3",
+    ]);
+  });
+
+  test("skips photo-less, inactive and deleted services before capping", () => {
+    const picked = pickAuthServices([
+      dated("newest-no-photo", "2026-09-01T00:00:00Z", { imageUrl: "" }),
+      dated("off", "2026-08-01T00:00:00Z", { isActive: false }),
+      dated("gone", "2026-07-01T00:00:00Z", { isDeleted: true }),
+      dated("ok", "2026-01-01T00:00:00Z"),
+    ]);
+    expect(picked.map((service) => service.id)).toEqual(["ok"]);
+  });
+
+  test("sorts a missing createdAt last", () => {
+    const picked = pickAuthServices([
+      dated("unknown", null),
+      dated("known", "2026-01-01T00:00:00Z"),
+    ]);
+    expect(picked.map((service) => service.id)).toEqual(["known", "unknown"]);
   });
 });
 
