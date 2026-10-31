@@ -84,7 +84,7 @@ export function PosSaleLines({
       )}
 
       {lines.length > 0 && (
-        <ul className="divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+        <ul className="divide-y divide-zinc-100 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
           {lines.map((line) => {
             const part = partById.get(line.partId);
             return (

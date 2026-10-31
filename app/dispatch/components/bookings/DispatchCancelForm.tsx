@@ -28,7 +28,7 @@ export function DispatchCancelForm({
         event.preventDefault();
         if (!running && trimmed.length > 0) onSubmit(trimmed);
       }}
-      className="rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800"
+      className="flex flex-col"
     >
       <label
         htmlFor={`dispatch-cancel-${bookingId}`}

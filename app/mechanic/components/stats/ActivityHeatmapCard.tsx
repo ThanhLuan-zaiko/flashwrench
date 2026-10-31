@@ -65,12 +65,9 @@ export function ActivityHeatmapCard({
             Nhiều
           </div>
         </div>
-        <div className="grid flex-1 grid-cols-2 content-center gap-3">
+        <div className="grid flex-1 grid-cols-2 content-center gap-x-6 gap-y-4">
           {facts.map((fact) => (
-            <div
-              key={fact.label}
-              className="rounded-xl border border-zinc-200 px-4 py-3 dark:border-zinc-800"
-            >
+            <div key={fact.label}>
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {fact.label}
               </p>

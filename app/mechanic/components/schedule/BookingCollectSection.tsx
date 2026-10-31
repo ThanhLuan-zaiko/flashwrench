@@ -101,7 +101,7 @@ export function BookingCollectSection({
   return (
     <section
       aria-label="Thu tiền"
-      className="rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800"
+      className="border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">

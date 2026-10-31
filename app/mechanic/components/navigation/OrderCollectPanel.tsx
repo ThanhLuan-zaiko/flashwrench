@@ -61,7 +61,7 @@ export function OrderCollectPanel({ target }: OrderCollectPanelProps) {
   };
 
   return (
-    <div className="mt-3 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
+    <div className="mt-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
       <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
         Thu tiền khi giao · {formatVnd(target.codAmount ?? 0)}
       </p>

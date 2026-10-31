@@ -90,19 +90,19 @@ export function StepsBento() {
           ))}
         </ol>
         <section
-          aria-label="Bắt đầu miễn phí"
+          aria-label="Tạo tài khoản"
           data-reveal
           className="mt-12 flex flex-col gap-5 rounded-2xl bg-[#1E3A5F] p-5 text-white md:flex-row md:items-center md:justify-between md:p-7"
         >
           <div>
             <p className="text-sm font-semibold tracking-wide text-zinc-200 uppercase">
-              Miễn phí đăng ký
+              Đăng ký tài khoản
             </p>
             <h3 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl">
-              Sẵn sàng lăn bánh?
+              Đặt lịch sửa xe
             </h3>
             <p className="mt-1 text-sm text-zinc-200">
-              Tham gia miễn phí, đặt lịch khi cần.
+              Tạo tài khoản để đặt lịch khi cần.
             </p>
           </div>
           <SmartCtaLink

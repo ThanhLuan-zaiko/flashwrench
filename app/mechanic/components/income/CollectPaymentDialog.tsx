@@ -111,7 +111,7 @@ export function CollectPaymentDialog({
           </button>
         </div>
 
-        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 rounded-xl bg-zinc-100 px-3 py-2.5 text-xs dark:bg-zinc-900">
+        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 border-y border-zinc-200 py-2.5 text-xs dark:border-zinc-800">
           <dt className="text-zinc-500 dark:text-zinc-400">Tổng đơn</dt>
           <dd className="text-right font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">
             {formatVnd(entry.total)}

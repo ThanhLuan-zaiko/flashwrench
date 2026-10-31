@@ -84,7 +84,7 @@ export function ChangePasswordForm() {
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       {errors.form && <FormAlert message={errors.form} />}
       {done && (
-        <output className="flex items-start gap-2.5 rounded-lg border border-zinc-300 bg-zinc-100 px-3.5 py-3 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+        <output className="flex items-start gap-2.5 rounded-lg border border-zinc-300 px-3.5 py-3 text-sm text-zinc-800 dark:border-zinc-700 dark:text-zinc-200">
           <FiCheckCircle
             aria-hidden="true"
             className="mt-0.5 h-4 w-4 shrink-0"

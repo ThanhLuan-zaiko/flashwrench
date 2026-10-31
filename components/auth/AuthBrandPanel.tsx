@@ -37,8 +37,8 @@ type AuthBrandPanelProps = {
 // comes from giant type size, not inverted color. Checklist
 // collapses on mobile to keep the form one scroll away.
 export function AuthBrandPanel({
-  title = "Sửa xe tận nơi.",
-  description = "Đặt thợ lưu động, cứu hộ khẩn cấp và theo dõi tiến độ trong một ứng dụng duy nhất.",
+  title = "Sửa xe tận nơi",
+  description = "Đặt thợ lưu động, cứu hộ và theo dõi tiến độ sửa xe trong cùng một tài khoản.",
   items = DEFAULT_ITEMS,
   className = "",
 }: AuthBrandPanelProps) {
@@ -68,9 +68,10 @@ export function AuthBrandPanel({
               key={item.title}
               className="flex items-center gap-3 rounded-xl bg-white/10 p-3"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white">
-                <Icon aria-hidden="true" className="h-5 w-5" />
-              </span>
+              <Icon
+                aria-hidden="true"
+                className="h-5 w-5 shrink-0 text-white"
+              />
               <span className="min-w-0">
                 <span className="block truncate text-sm font-semibold text-white">
                   {item.title}

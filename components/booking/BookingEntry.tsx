@@ -118,9 +118,10 @@ export function BookingEntry({
         className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 max-sm:hidden sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
       >
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-            <FiUser aria-hidden="true" className="h-5 w-5" />
-          </span>
+          <FiUser
+            aria-hidden="true"
+            className="h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200"
+          />
           <div>
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               {guest ? "Đặt lịch với tư cách khách" : userName}

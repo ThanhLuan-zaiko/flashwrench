@@ -68,8 +68,9 @@ Rules:
    on `lg:`, first in DOM on mobile.
 6. Uniform gaps: `gap-3 md:gap-4`. Uniform radius: `rounded-2xl`.
    Uniform border: `border border-zinc-200 dark:border-zinc-800`.
-7. Card surface: `bg-white dark:bg-zinc-950`. Muted inner blocks:
-   `bg-zinc-100 dark:bg-zinc-900`. Text: `text-zinc-900 dark:text-zinc-100`,
+7. Card surface: `bg-white dark:bg-zinc-950`. Inner content is never
+   a tinted or bordered box (see 3.1 rule 3); separate it with
+   `divide-*` or spacing. Text: `text-zinc-900 dark:text-zinc-100`,
    secondary: `text-zinc-500 dark:text-zinc-400`.
 8. Minimum touch target 44px for all interactive cards and buttons.
 9. No horizontal overflow on 360px wide viewport. Test this.
@@ -131,6 +132,39 @@ Preferred Tailwind skeleton (compose, do not copy blindly):
 
 Each `*Card` lives in its own file under the same folder,
 for example `components/bento/HeroCard.tsx`.
+
+## 3.1 Visual Style Rules (Mandatory)
+
+These rules apply to every customer, staff and marketing surface.
+They override generic dashboard or landing-page defaults.
+
+1. **Typeface.** Use the app font loaded in `app/layout.tsx`
+   (Be Vietnam Pro). Inter is forbidden. Do not add a second
+   font family.
+2. **Icons.** Forbidden: an icon inside a rounded container
+   (`rounded-full`, `rounded-xl`, `rounded-2xl` wrapping an icon).
+   Limit: at most one bare icon per card, and only when it carries
+   meaning (status, direction, action). Icon-per-card grids used as
+   decoration are forbidden. Icons stay in `react-icons`.
+3. **No nested cards.** A card never contains another bordered box,
+   tile or panel. Split content inside one card with `divide-y`,
+   `divide-x`, or spacing. Inner blocks are never cards.
+4. **Gradients need a stated purpose.** Forbidden: decorative
+   gradient backgrounds, gradient text, gradient buttons, gradient
+   borders, blurred blobs and background patterns. A gradient is
+   allowed only when the spec names its job (for example a
+   legibility scrim over a photo).
+5. **No dead space.** Fill the grid. A short card next to a tall one
+   must be balanced by span or real content (data, status, action),
+   not left blank and not padded with filler text or decoration.
+   Section rhythm sets the vertical gap; leftover area is a bug.
+   Check the 360px mobile layout as well as desktop.
+6. **Plain copy, no sales tone.** Forbidden: slogans, superlatives,
+   exclamation marks and ad-style phrasing (for example
+   "Trải nghiệm đỉnh cao!", "Nâng tầm mọi chuyến đi"). Say what the
+   thing is and what the user does next.
+   Bad: "Đặt lịch sửa xe nhanh chóng, chuyên nghiệp, tiết kiệm tối đa!"
+   Good: "Chọn dịch vụ, giờ hẹn và địa chỉ. Thợ đến tận nơi."
 
 ## 4. GSAP Rules
 
@@ -321,9 +355,18 @@ Before finishing, verify:
 7. User-facing copy is guidance-oriented with no technical jargon
    (no CRUD, slug, API, or debug wording in instructions).
 8. Growing lists paginate with reset-on-filter and clamped pages.
+9. Visual style (3.1) checked: Be Vietnam Pro only, no rounded icon
+   containers, no nested cards, no unexplained gradients, no empty
+   gaps left in grids, no sales-tone copy.
 
 ## 8. Anti-Patterns (Forbidden)
 
+- Inter or any second font family (see 3.1 rule 1).
+- Icons inside rounded containers, or decorative icon-per-card grids.
+- Nested cards, or tinted/bordered boxes inside a card.
+- Decorative gradients, gradient text, blobs or background patterns.
+- Half-empty grid cells or sections padded with filler.
+- Slogans, superlatives and ad-style copy in user-facing text.
 - Full-page GSAP timelines spanning unrelated sections.
 - Per-card `useEffect` creating separate ScrollTriggers.
 - Missing `ctx.revert()` cleanup.

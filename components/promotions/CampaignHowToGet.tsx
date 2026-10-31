@@ -11,7 +11,7 @@ const STEPS: Step[] = [
   {
     numeral: "1",
     title: "Tạo tài khoản",
-    hint: "Đăng ký tài khoản khách hàng miễn phí.",
+    hint: "Đăng ký tài khoản khách hàng.",
     illustration: "/images/isometric/id-card.svg",
   },
   {
@@ -39,7 +39,7 @@ export function CampaignHowToGet() {
     >
       <div>
         <p className="text-xs font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
-          Hành trình nhận ưu đãi
+          Nhận ưu đãi
         </p>
         <h2 className="mt-1 text-xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-2xl dark:text-zinc-50">
           Cách nhận voucher

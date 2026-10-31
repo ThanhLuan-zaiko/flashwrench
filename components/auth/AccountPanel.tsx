@@ -129,26 +129,26 @@ export function AccountPanel() {
             Đổi mật khẩu
           </Link>
         </div>{" "}
-        <dl className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
+        <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
+          <div>
             <dt className="text-zinc-500 dark:text-zinc-400">Họ và tên</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.fullName}
             </dd>
           </div>
-          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
+          <div>
             <dt className="text-zinc-500 dark:text-zinc-400">Số điện thoại</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.phone}
             </dd>
           </div>
-          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
+          <div>
             <dt className="text-zinc-500 dark:text-zinc-400">Email</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.email}
             </dd>
           </div>
-          <div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-900">
+          <div>
             <dt className="text-zinc-500 dark:text-zinc-400">Vai trò</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.role}

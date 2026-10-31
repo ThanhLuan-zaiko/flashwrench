@@ -29,7 +29,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
             : order.address?.fullText || "—"}
         </p>
         {order.courierName && (
-          <p className="mt-2 rounded-lg bg-zinc-50 px-3 py-2 text-[11px] text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+          <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-[11px] text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
             {order.courierType === "mechanic"
               ? `Thợ giao hàng: ${order.courierName}`
               : `Đơn vị vận chuyển: ${order.courierName}`}
@@ -37,7 +37,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
           </p>
         )}
         {order.note && (
-          <p className="mt-2 rounded-lg bg-zinc-50 px-3 py-2 text-[11px] text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+          <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-[11px] text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
             Ghi chú: {order.note}
           </p>
         )}

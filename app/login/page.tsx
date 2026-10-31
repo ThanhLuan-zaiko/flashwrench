@@ -54,7 +54,7 @@ export default async function LoginPage({
       subtitle="Theo dõi lịch sửa, đơn hàng và voucher trong một tài khoản."
       footerText="Chưa có tài khoản?"
       footerLinkHref={buildRegisterHref(safeNext)}
-      footerLinkLabel="Tạo tài khoản miễn phí"
+      footerLinkLabel="Tạo tài khoản"
       perks={["Voucher tự phát khi đủ điều kiện", "Lưu lịch sử sửa xe"]}
     >
       <div className="flex flex-col gap-4">

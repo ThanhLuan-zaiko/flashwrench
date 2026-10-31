@@ -125,10 +125,7 @@ export function PolicySnapshotCard() {
       </div>
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="flex items-center gap-3 rounded-xl border border-zinc-200 px-3 py-2.5 dark:border-zinc-800"
-          >
+          <div key={stat.label} className="flex items-center gap-3 py-2">
             <stat.icon
               aria-hidden="true"
               className="h-5 w-5 shrink-0 text-zinc-500 dark:text-zinc-400"

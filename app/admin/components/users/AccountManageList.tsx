@@ -99,12 +99,12 @@ export function AccountManageList({
       </div>
 
       {isPending ? (
-        <ul className="flex flex-col gap-2" aria-label="Đang tải tài khoản">
+        <ul
+          className="divide-y divide-zinc-200 dark:divide-zinc-800"
+          aria-label="Đang tải tài khoản"
+        >
           {[0, 1, 2].map((i) => (
-            <li
-              key={i}
-              className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-3 dark:bg-zinc-900"
-            >
+            <li key={i} className="flex items-center gap-3 py-3">
               <FiLoader
                 aria-hidden="true"
                 className="h-4 w-4 motion-safe:animate-spin"
@@ -116,7 +116,7 @@ export function AccountManageList({
           ))}
         </ul>
       ) : isError ? (
-        <div className="rounded-xl bg-zinc-100 px-4 py-10 text-center dark:bg-zinc-900">
+        <div className="py-10 text-center">
           <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
             Không tải được danh sách. Vui lòng thử lại.
           </p>
@@ -136,7 +136,7 @@ export function AccountManageList({
         />
       ) : (
         <div className="flex flex-col gap-2">
-          <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+          <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {pager.slice(visible).map((item) => (
               <AdminUserCard
                 key={item.id}

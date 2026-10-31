@@ -32,9 +32,9 @@ export function StaffAvatarField({
       <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
         Ảnh thợ (tùy chọn, ảnh vuông hiển thị đẹp nhất)
       </span>
-      <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="flex flex-col gap-3">
         {avatar.existing && (
-          <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="flex items-center gap-3">
             {/* biome-ignore lint/performance/noImgElement: admin preview of stored media asset; optimizer adds no value here. */}
             <img
               src={avatar.existing}
@@ -64,7 +64,7 @@ export function StaffAvatarField({
           </div>
         )}
         {avatar.staged && (
-          <div className="flex items-center gap-3 rounded-xl border border-dashed border-zinc-300 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-950">
+          <div className="flex items-center gap-3">
             {/* biome-ignore lint/performance/noImgElement: local object-URL preview before upload; next/image cannot handle blob URLs. */}
             <img
               src={avatar.staged.previewUrl}
@@ -104,7 +104,7 @@ export function StaffAvatarField({
           </div>
         )}
         {!avatar.existing && !avatar.staged && (
-          <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="flex items-center gap-3">
             <span
               aria-hidden="true"
               className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 sm:h-20 sm:w-20 dark:bg-zinc-900 dark:text-zinc-400"

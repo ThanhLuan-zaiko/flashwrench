@@ -35,12 +35,10 @@ export function VoucherOfferTicket({
       className={`rounded-xl border p-3 ${border} ${muted ? "opacity-70" : ""}`}
     >
       <div className="flex items-start gap-2.5">
-        <span
+        <FiTag
           aria-hidden="true"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
-        >
-          <FiTag className="h-4 w-4" />
-        </span>
+          className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700 dark:text-zinc-200"
+        />
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {title}

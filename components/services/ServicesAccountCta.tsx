@@ -34,10 +34,10 @@ export function ServicesAccountCta() {
     return (
       <Link
         href={buildRegisterHref("/services")}
-        aria-label="Tạo tài khoản miễn phí để đặt lịch"
+        aria-label="Tạo tài khoản để đặt lịch"
         className={CTA_CLASSES}
       >
-        Tạo tài khoản miễn phí
+        Tạo tài khoản
         <FiArrowRight aria-hidden="true" className="h-4 w-4" />
       </Link>
     );

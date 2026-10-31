@@ -170,7 +170,7 @@ export function PartDialog({ dialog, categories, onClose }: PartDialogProps) {
       <DialogPanel wide>
         <DialogHeader
           title={editing ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-          hint="Giá tính bằng VND, slug dùng để xác nhận khi xóa vĩnh viễn."
+          hint="Giá tính bằng VND, mã định danh dùng để xác nhận khi xóa vĩnh viễn."
           onClose={guard.requestClose}
         />
 

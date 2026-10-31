@@ -97,7 +97,7 @@ function NoteForm({
         event.preventDefault();
         if (!running) onSubmit();
       }}
-      className="rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800"
+      className="border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
       <label
         htmlFor={`booking-note-${bookingId}`}

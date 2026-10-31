@@ -19,14 +19,20 @@ export function AutoRuleList({ rules }: { rules: VoucherAutoRule[] }) {
 
   return (
     <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      {rules.map((rule) => (
+      {rules.map((rule, index) => (
         <li
           key={rule.id}
-          className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+          className={`flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950 ${
+            index === rules.length - 1 && rules.length % 2 === 1
+              ? "md:col-span-2"
+              : ""
+          }`}
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-300">
-            <FiZap aria-hidden size={18} />
-          </span>
+          <FiZap
+            aria-hidden
+            size={18}
+            className="shrink-0 text-zinc-500 dark:text-zinc-300"
+          />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
               {rule.name}

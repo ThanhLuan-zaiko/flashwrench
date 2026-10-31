@@ -13,8 +13,7 @@ import { listAuthServices } from "@/lib/home/home-catalog.service";
 
 export const metadata: Metadata = {
   title: "Đăng ký | FlashWrench",
-  description:
-    "Tạo tài khoản FlashWrench để đặt lịch sửa xe lưu động nhanh chóng.",
+  description: "Tạo tài khoản FlashWrench để đặt lịch sửa xe lưu động.",
 };
 
 // `?next=` preserves a booking intent from /services: after a successful
@@ -40,7 +39,7 @@ export default async function RegisterPage({
     <AuthCard
       services={services}
       title="Tạo tài khoản mới"
-      subtitle="Đăng ký miễn phí để đặt thợ lưu động, cứu hộ tận nơi và mua phụ tùng."
+      subtitle="Tạo tài khoản để đặt thợ lưu động, cứu hộ tận nơi và mua phụ tùng."
       footerText="Đã có tài khoản?"
       footerLinkHref={buildLoginHref(safeNext)}
       footerLinkLabel="Đăng nhập"

@@ -64,12 +64,12 @@ export function CampaignList({
   const pager = usePagination(items.length);
   if (isPending) {
     return (
-      <ul className="flex flex-col gap-2" aria-label="Đang tải chiến dịch">
+      <ul
+        className="divide-y divide-zinc-200 dark:divide-zinc-800"
+        aria-label="Đang tải chiến dịch"
+      >
         {[0, 1, 2].map((i) => (
-          <li
-            key={i}
-            className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-3 dark:bg-zinc-900"
-          >
+          <li key={i} className="flex items-center gap-3 py-3">
             <FiLoader
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
@@ -84,7 +84,7 @@ export function CampaignList({
   }
   if (isError) {
     return (
-      <div className="rounded-xl bg-zinc-100 px-4 py-10 text-center dark:bg-zinc-900">
+      <div className="py-10 text-center">
         <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
           Không tải được chiến dịch.
         </p>
@@ -100,17 +100,18 @@ export function CampaignList({
   }
   if (items.length === 0) {
     return (
-      <div className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-6 dark:bg-zinc-900">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
-          <FiInbox aria-hidden="true" className="h-5 w-5" />
-        </span>
+      <div className="flex items-center gap-3 py-6">
+        <FiInbox
+          aria-hidden="true"
+          className="h-5 w-5 shrink-0 text-zinc-500 dark:text-zinc-400"
+        />
         <span>
           <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
             {trashMode ? "Thùng rác trống" : "Chưa có chiến dịch nào"}
           </span>
           <span className="block text-xs text-zinc-500 dark:text-zinc-400">
             {trashMode
-              ? "Các chiến dịch xóa mềm sẽ hiện tại đây"
+              ? "Các chiến dịch đã xóa sẽ hiện ở đây"
               : "Nhấn Thêm chiến dịch để tạo mới"}
           </span>
         </span>
@@ -119,7 +120,7 @@ export function CampaignList({
   }
   return (
     <div className="flex flex-col gap-2">
-      <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+      <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
         {pager.slice(items).map((item) => {
           const busy = pendingId === item.id;
           return (

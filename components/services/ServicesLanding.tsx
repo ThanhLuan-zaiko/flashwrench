@@ -162,7 +162,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
             Gọi cứu hộ 24/7
           </span>
         </span>
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#1E3A5F]">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center">
           <FiArrowRight aria-hidden="true" className="h-5 w-5" />
         </span>
       </Link>

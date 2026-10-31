@@ -110,7 +110,7 @@ export function DispatchActions({
 
   if (mode === "assign") {
     return (
-      <div className="rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
+      <div>
         <AssignMechanicPicker
           lat={booking.addressLat}
           lng={booking.addressLng}

@@ -35,9 +35,10 @@ export function WalletHeroTicket({ wallet }: { wallet: VoucherWallet }) {
     >
       <div className="flex min-w-0 flex-1 flex-col p-4 md:p-5">
         <p className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
-            <FiGift aria-hidden="true" className="h-5 w-5" />
-          </span>
+          <FiGift
+            aria-hidden="true"
+            className="h-5 w-5 text-zinc-700 dark:text-zinc-300"
+          />
           <span className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             Voucher của bạn
           </span>
@@ -65,7 +66,7 @@ export function WalletHeroTicket({ wallet }: { wallet: VoucherWallet }) {
           </Link>
         </div>
       </div>
-      <div className="flex w-20 shrink-0 flex-col items-center justify-center gap-2 border-l-2 border-dashed border-zinc-300 bg-zinc-100 px-2 py-4 text-center sm:w-24 dark:border-zinc-700 dark:bg-zinc-900">
+      <div className="flex w-20 shrink-0 flex-col items-center justify-center gap-2 border-l-2 border-dashed border-zinc-300 px-2 py-4 text-center sm:w-24 dark:border-zinc-700 dark:bg-zinc-900">
         <FiCheckCircle
           aria-hidden="true"
           className="h-6 w-6 text-zinc-500 dark:text-zinc-400"

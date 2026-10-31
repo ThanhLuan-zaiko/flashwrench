@@ -89,7 +89,7 @@ export function PartBasicFields({
       </label>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className={LABEL_CLASSES}>
-          Mã định danh (slug)
+          Mã định danh
           <input
             value={slug}
             onChange={(e) => onSlug(e.target.value)}

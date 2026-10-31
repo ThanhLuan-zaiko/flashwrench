@@ -47,9 +47,10 @@ export function OrderInvoiceDialog({
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-start gap-2.5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F] text-white dark:bg-white dark:text-zinc-900">
-              <FiFileText aria-hidden="true" className="h-5 w-5" />
-            </span>
+            <FiFileText
+              aria-hidden="true"
+              className="mt-0.5 h-5 w-5 shrink-0 text-[#1E3A5F] dark:text-zinc-50"
+            />
             <div>
               <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                 Hóa đơn bán linh kiện
@@ -101,7 +102,7 @@ export function OrderInvoiceDialog({
           <div className="mt-4 flex flex-col gap-4">
             <section
               aria-label="Thông tin hóa đơn"
-              className="rounded-xl border border-dashed border-zinc-300 p-3 text-xs dark:border-zinc-700"
+              className="border-y border-dashed border-zinc-300 py-3 text-xs dark:border-zinc-700"
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="font-semibold text-zinc-800 dark:text-zinc-200">
@@ -191,7 +192,7 @@ export function OrderInvoiceDialog({
 
             <section
               aria-label="Thanh toán"
-              className="rounded-xl border border-zinc-200 bg-white p-3 text-xs dark:border-zinc-800 dark:bg-zinc-950"
+              className="border-t border-zinc-200 pt-3 text-xs dark:border-zinc-800"
             >
               <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">
                 Thanh toán

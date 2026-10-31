@@ -51,7 +51,7 @@ export function UsersRoleChart() {
         {roles.map((role, index) => (
           <li
             key={role.key}
-            className="flex items-center gap-2 rounded-xl border border-zinc-200 px-3 py-2 text-xs text-zinc-700 dark:border-zinc-800 dark:text-zinc-300"
+            className="flex items-center gap-2 py-1 text-xs text-zinc-700 dark:text-zinc-300"
           >
             <span
               aria-hidden="true"

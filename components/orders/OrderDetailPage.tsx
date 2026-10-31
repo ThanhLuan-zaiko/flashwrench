@@ -51,7 +51,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
           className="flex items-center gap-2 rounded-2xl border border-zinc-900 bg-zinc-900 px-4 py-3 text-sm font-semibold text-white dark:border-white dark:bg-white dark:text-zinc-900"
         >
           <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
-          Đặt hàng thành công! Cửa hàng sẽ xác nhận đơn trong ít phút.
+          Đặt hàng thành công. Cửa hàng sẽ xác nhận đơn trong ít phút.
         </p>
       )}
 

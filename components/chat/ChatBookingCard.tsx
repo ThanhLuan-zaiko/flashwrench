@@ -67,7 +67,7 @@ export function ChatBookingCard({ threadId }: { threadId: string }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="shrink-0 border-b border-zinc-200 bg-zinc-50/60 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="shrink-0 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800">
       <p className="px-1 pb-1.5 text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         Đơn liên quan ({items.length})
       </p>
@@ -77,9 +77,10 @@ export function ChatBookingCard({ threadId }: { threadId: string }) {
             key={booking.id}
             className="flex items-center gap-2.5 rounded-xl border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950"
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-              <FiClipboard className="h-4 w-4" aria-hidden />
-            </span>
+            <FiClipboard
+              className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+              aria-hidden
+            />
             <span className="min-w-0 flex-1">
               <span className="flex items-baseline justify-between gap-2">
                 <span className="truncate text-xs font-semibold text-zinc-900 dark:text-zinc-100">

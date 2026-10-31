@@ -21,7 +21,7 @@ export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
   const mapUrl = mapViewUrl(booking.addressLat, booking.addressLng);
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
+      <div>
         <p className="flex flex-wrap items-center gap-1.5">
           <span
             className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${statusTone(booking.status)}`}
@@ -58,12 +58,12 @@ export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
             Thợ phụ trách: {mechanicLabel(booking.mechanicName)}
           </span>
           {booking.notes && (
-            <span className="rounded-xl bg-zinc-100 px-2.5 py-2 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+            <span className="text-zinc-700 dark:text-zinc-300">
               Ghi chú: {booking.notes}
             </span>
           )}
           {booking.cancelReason && (
-            <span className="rounded-xl bg-zinc-100 px-2.5 py-2 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+            <span className="text-zinc-700 dark:text-zinc-300">
               Lý do hủy: {booking.cancelReason}
             </span>
           )}
@@ -96,7 +96,7 @@ export function DispatchBookingInfo({ booking }: { booking: BookingDetail }) {
         <h3 className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
           Dịch vụ ({booking.items.length})
         </h3>
-        <ul className="mt-2 divide-y divide-zinc-200 rounded-2xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+        <ul className="mt-2 divide-y divide-zinc-200 border-t border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
           {booking.items.map((item) => (
             <li
               key={item.serviceId}

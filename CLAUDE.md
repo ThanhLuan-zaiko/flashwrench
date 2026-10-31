@@ -1,5 +1,16 @@
 @AGENTS.md
 
+## Visual style (mandatory for every UI change)
+
+The full rules are in `frontend-bento-gsap.md` Section 3.1, and `AGENTS.md` Section 6 repeats the summary. Before building or reviewing a screen, check it against these bans:
+
+- Font: Be Vietnam Pro only. Inter is forbidden.
+- Icons: never inside rounded containers. Limit to one bare icon per card, and only when it adds meaning.
+- Cards: no nested cards and no bordered or tinted boxes inside a card.
+- Gradients: forbidden unless the spec names a functional purpose.
+- Space: no dead space in grids or sections. Fill it with content or span, never filler.
+- Copy: plain and factual. No slogans, superlatives or ad-style wording.
+
 ## Skill: flat isometric illustrations
 
 Use this skill when a page needs decorative 3D-style illustrations (flat isometric, no gradients or photos). It produces static SVG files; it is not for UI icons, which must still come from `react-icons` (see `AGENTS.md` section 2).

@@ -203,7 +203,7 @@ export function SelectDropdown({
               );
             })}
             {filtered.length === 0 && (
-              <div className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-4 dark:bg-zinc-900">
+              <div className="flex items-center gap-3 px-3 py-4">
                 <FiInbox
                   aria-hidden="true"
                   className="h-5 w-5 shrink-0 text-zinc-500 dark:text-zinc-400"

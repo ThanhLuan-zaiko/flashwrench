@@ -37,7 +37,7 @@ type MapPanelProps = {
 export function MapPanel({ origin, target }: MapPanelProps) {
   if (!target) {
     return (
-      <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+      <div className="mt-3">
         <StaffEmptyState
           art={STAFF_ART.van}
           title="Chưa chọn điểm đến"

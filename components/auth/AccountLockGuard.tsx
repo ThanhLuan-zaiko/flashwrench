@@ -118,9 +118,10 @@ export function AccountLockGuard() {
     >
       <div aria-hidden="true" className="fixed inset-0 bg-zinc-950/50" />
       <div className="relative w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 text-center shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
-          <FiLock aria-hidden="true" className="h-6 w-6" />
-        </span>
+        <FiLock
+          aria-hidden="true"
+          className="mx-auto h-6 w-6 text-zinc-700 dark:text-zinc-200"
+        />
         <p className="mt-4 text-base font-bold text-zinc-900 dark:text-zinc-50">
           {notice.title}
         </p>

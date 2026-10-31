@@ -112,9 +112,6 @@ export function AuthServiceSlideshow({
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 hidden bg-[radial-gradient(rgba(255,255,255,0.14)_1.5px,transparent_1.5px)] [background-size:28px_28px] lg:block" />
-      <div className="pointer-events-none absolute inset-0 hidden bg-[radial-gradient(ellipse_at_50%_30%,rgba(47,99,163,0.55),rgba(30,58,95,0)_70%)] lg:block" />
-
       {/* Content hugs the top and sticks while a long form scrolls, so the headline never ends up below the fold. */}
       <div className="relative hidden flex-col pt-8 lg:sticky lg:top-0 lg:flex">
         <div className="relative h-[54svh] min-h-[340px]">

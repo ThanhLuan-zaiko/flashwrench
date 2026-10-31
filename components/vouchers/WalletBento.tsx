@@ -61,7 +61,7 @@ export function WalletBento({
           icon={FiPercent}
           value={savings}
           format={formatPromoVnd}
-          label="tiết kiệm tối đa"
+          label="đã tiết kiệm"
         />
       ) : null}
       {remainingOffers > 0 ? (
@@ -71,9 +71,10 @@ export function WalletBento({
           aria-label={`Xem ${remainingOffers} ưu đãi bạn chưa có`}
           className="flex min-h-[44px] flex-col justify-between gap-3 rounded-2xl border border-zinc-200 bg-zinc-100 p-4 transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
         >
-          <p className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
-            <FiArrowDown aria-hidden="true" className="h-5 w-5" />
-          </p>
+          <FiArrowDown
+            aria-hidden="true"
+            className="h-5 w-5 text-zinc-700 dark:text-zinc-300"
+          />
           <div>
             <p className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               {remainingOffers}

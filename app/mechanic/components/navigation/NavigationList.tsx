@@ -64,7 +64,7 @@ export function NavigationList({
   }
   if (targets.length === 0) {
     return (
-      <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+      <div className="mt-3">
         <StaffEmptyState
           art={STAFF_ART.van}
           title="Không có đơn nào cần di chuyển"

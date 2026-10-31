@@ -133,13 +133,12 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
               label={stat.label}
               tour={stat.id === "today" ? "mech-income-summary" : undefined}
             >
-              <p className="flex items-center gap-2.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
-                  <Icon aria-hidden="true" className="h-5 w-5" />
-                </span>
-                <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  {stat.label}
-                </span>
+              <p className="flex items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                <Icon
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
+                />
+                {stat.label}
               </p>
               <p className="mt-3 text-3xl font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                 {stat.value}

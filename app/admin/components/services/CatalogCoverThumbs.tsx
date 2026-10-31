@@ -84,14 +84,14 @@ export function CatalogCoverThumbs({
       : existing.length === 0 && index === 0;
 
   return (
-    <ul aria-label="Ảnh bìa đã chọn" className="flex flex-col gap-2">
+    <ul
+      aria-label="Ảnh bìa đã chọn"
+      className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800"
+    >
       {existing.map((url, index) => {
         const isCover = isExistingCover(url, index);
         return (
-          <li
-            key={`saved-${url}`}
-            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950"
-          >
+          <li key={`saved-${url}`} className="flex items-center gap-3 py-2">
             {/* biome-ignore lint/performance/noImgElement: admin preview of stored media asset; optimizer adds no value here. */}
             <img
               src={url}
@@ -130,10 +130,7 @@ export function CatalogCoverThumbs({
       {staged.map((item, index) => {
         const isCover = isStagedCover(item.id, index);
         return (
-          <li
-            key={item.id}
-            className="flex items-center gap-3 rounded-xl border border-dashed border-zinc-300 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-950"
-          >
+          <li key={item.id} className="flex items-center gap-3 py-2">
             {/* biome-ignore lint/performance/noImgElement: local object-URL preview before upload; next/image cannot handle blob URLs. */}
             <img
               src={item.previewUrl}

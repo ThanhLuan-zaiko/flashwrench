@@ -122,7 +122,7 @@ export function NavigationSection() {
           />
           <MapPanel origin={origin} target={selected ?? null} />
           {selected && (
-            <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-zinc-200 p-3 sm:flex-row sm:items-center dark:border-zinc-800">
+            <div className="mt-3 flex flex-col gap-2 border-t border-zinc-200 pt-3 sm:flex-row sm:items-center dark:border-zinc-800">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                   {selected.customerName || "Khách hàng"}

@@ -19,7 +19,7 @@ export function PaymentPromptBanner() {
   usePaymentPromptsRealtime(isCustomer ? prompts : undefined);
   if (!isCustomer || !prompts || prompts.length === 0) return null;
   return (
-    <div className="sticky top-16 z-40 border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="sticky top-16 z-40 border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
       <ul className="mx-auto max-w-7xl divide-y divide-zinc-200 px-4 sm:px-6 lg:px-8 dark:divide-zinc-800">
         {prompts.map((prompt) => (
           <li key={`${prompt.kind}:${prompt.refId}`}>

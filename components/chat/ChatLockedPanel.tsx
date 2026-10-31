@@ -9,12 +9,10 @@ import { FiLock } from "react-icons/fi";
 export function ChatLockedPanel() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 px-6 py-8 text-center">
-      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
-        <FiLock
-          className="h-5 w-5 text-zinc-500 dark:text-zinc-400"
-          aria-hidden
-        />
-      </span>
+      <FiLock
+        className="h-6 w-6 text-zinc-500 dark:text-zinc-400"
+        aria-hidden
+      />
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         Đăng nhập để nhắn tin
       </p>

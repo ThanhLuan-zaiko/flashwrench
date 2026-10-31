@@ -13,11 +13,12 @@ function TopMechanicRow({ item }: { item: MechanicDirectoryItem }) {
   const rated = item.ratingCount > 0;
 
   return (
-    <li className="flex flex-col gap-2 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+    <li className="flex flex-col gap-2 py-3">
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-          <FiUser aria-hidden="true" className="h-4 w-4" />
-        </span>
+        <FiUser
+          aria-hidden="true"
+          className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+        />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {item.displayName}
@@ -128,7 +129,7 @@ export function TopMechanicsCard({
       )}
 
       {mechanics.isSuccess && top.length > 0 && (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {top.map((item) => (
             <TopMechanicRow key={item.id} item={item} />
           ))}
@@ -136,7 +137,7 @@ export function TopMechanicsCard({
       )}
 
       {mechanics.isSuccess && top.length === 0 && (
-        <p className="rounded-xl border border-zinc-200 p-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
           Hiện chưa có thợ trực tuyến. Đơn của bạn sẽ được điều phối ngay khi có
           thợ rảnh.
         </p>

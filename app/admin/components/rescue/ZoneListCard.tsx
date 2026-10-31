@@ -50,14 +50,14 @@ export function ZoneListCard() {
         <StaffEmptyState
           art={STAFF_ART.towTruck}
           title="Chưa có vùng nào"
-          hint="Mọi ca đang broadcast toàn hệ thống."
+          hint="Mọi ca đang được gửi tới toàn hệ thống."
         />
       ) : (
-        <ul className="mt-3 flex flex-col gap-2">
+        <ul className="mt-3 divide-y divide-zinc-200 dark:divide-zinc-800">
           {items.map((zone) => (
             <li
               key={zone.zoneId}
-              className="flex items-center justify-between gap-2 rounded-xl border border-zinc-200 px-3 py-2.5 dark:border-zinc-800"
+              className="flex items-center justify-between gap-2 py-2.5"
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">

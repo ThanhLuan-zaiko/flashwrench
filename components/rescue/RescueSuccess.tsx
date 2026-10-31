@@ -44,10 +44,8 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
         />
       </div>
 
-      <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
-        <RescueTracker requestId={created.requestId} />
-      </div>
-      <dl className="grid grid-cols-1 gap-2 rounded-xl bg-zinc-100 p-3 text-sm sm:grid-cols-2 dark:bg-zinc-900">
+      <RescueTracker requestId={created.requestId} />
+      <dl className="grid grid-cols-1 gap-x-4 gap-y-2 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
         <div>
           <dt className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
             Sự cố

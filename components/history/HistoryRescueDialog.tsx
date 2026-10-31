@@ -88,7 +88,7 @@ export function HistoryRescueDialog({
           </p>
         ) : (
           <div className="mt-4 flex flex-col gap-4">
-            <dl className="grid grid-cols-1 gap-2 rounded-xl bg-zinc-100 p-3 text-sm sm:grid-cols-2 dark:bg-zinc-900">
+            <dl className="grid grid-cols-1 gap-x-4 gap-y-2 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
               <div>
                 <dt className="text-[11px] text-zinc-500">Biển số</dt>
                 <dd className="font-semibold text-zinc-900 dark:text-zinc-50">

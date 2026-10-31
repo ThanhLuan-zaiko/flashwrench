@@ -98,7 +98,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
 
         {handling ? (
           <div className="mt-4 flex flex-col gap-3">
-            <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
+            <div>
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {handling.subject}
               </p>

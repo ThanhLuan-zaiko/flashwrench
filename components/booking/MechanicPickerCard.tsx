@@ -50,9 +50,10 @@ export function MechanicPickerCard({
           aria-label={`Chọn thợ ${item.displayName}`}
           className="h-4 w-4 shrink-0 accent-zinc-900 dark:accent-white"
         />
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-          <FiUser aria-hidden="true" className="h-4 w-4" />
-        </span>
+        <FiUser
+          aria-hidden="true"
+          className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+        />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {item.displayName}

@@ -23,9 +23,10 @@ export function WalletStatTile({
       data-reveal
       className="flex flex-col justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
     >
-      <p className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
-        <Icon aria-hidden="true" className="h-5 w-5" />
-      </p>
+      <Icon
+        aria-hidden="true"
+        className="h-5 w-5 text-zinc-700 dark:text-zinc-300"
+      />
       <div>
         <p className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           <span ref={countRef}>{format(value)}</span>

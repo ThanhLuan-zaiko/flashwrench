@@ -29,7 +29,7 @@ export function StaffCreatedPanel({
 
   return (
     <div>
-      <p className="mt-3 rounded-xl bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+      <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-300">
         Đã tạo tài khoản cho {fullName}. Mật khẩu tạm vẫn hiển thị trong danh
         sách cho đến khi nhân viên đổi mật khẩu — hãy gửi cho nhân viên ngay.
       </p>

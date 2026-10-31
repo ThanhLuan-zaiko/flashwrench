@@ -42,9 +42,10 @@ export function PromoTeaser({ audience }: PromoTeaserProps) {
       className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-          <FiGift aria-hidden="true" className="h-5 w-5" />
-        </span>
+        <FiGift
+          aria-hidden="true"
+          className="h-5 w-5 shrink-0 text-zinc-600 dark:text-zinc-300"
+        />
         <div>
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             <Link

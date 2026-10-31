@@ -87,13 +87,11 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
             </button>
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-            <StaffEmptyState
-              art={STAFF_ART.towTruck}
-              title="Không có cứu hộ chờ"
-              hint="Yêu cầu mới do hệ thống tự giao thợ sẽ hiện ở đây ngay lập tức."
-            />
-          </div>
+          <StaffEmptyState
+            art={STAFF_ART.towTruck}
+            title="Không có cứu hộ chờ"
+            hint="Yêu cầu mới do hệ thống tự giao thợ sẽ hiện ở đây ngay lập tức."
+          />
         ) : (
           <ul className="flex flex-col gap-3">
             {items.map((rescue) => (

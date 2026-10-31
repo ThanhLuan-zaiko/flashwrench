@@ -29,10 +29,8 @@ export function BookingSuccess({
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1.5">
           <h1 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-white dark:bg-zinc-100 dark:text-zinc-900">
-              <FiCheck aria-hidden="true" className="h-4 w-4" />
-            </span>
-            Đặt lịch thành công!
+            <FiCheck aria-hidden="true" className="h-5 w-5 shrink-0" />
+            Đặt lịch thành công
           </h1>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Lịch hẹn đã được ghi nhận. Dưới đây là thông tin bạn vừa đặt.
@@ -46,8 +44,8 @@ export function BookingSuccess({
           className="h-20 w-auto shrink-0 sm:h-28"
         />
       </div>
-      <dl className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
-        <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
+      <dl className="grid grid-cols-1 gap-x-4 gap-y-3 border-y border-zinc-200 py-3 text-xs sm:grid-cols-2 dark:border-zinc-800">
+        <div>
           <dt className="font-medium text-zinc-500 dark:text-zinc-400">
             Dịch vụ
           </dt>
@@ -73,7 +71,7 @@ export function BookingSuccess({
             )}
           </dd>
         </div>
-        <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
+        <div>
           <dt className="font-medium text-zinc-500 dark:text-zinc-400">
             Khung giờ
           </dt>
@@ -83,7 +81,7 @@ export function BookingSuccess({
             })}
           </dd>
         </div>
-        <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
+        <div>
           <dt className="font-medium text-zinc-500 dark:text-zinc-400">
             Biển số xe
           </dt>
@@ -92,7 +90,7 @@ export function BookingSuccess({
           </dd>
         </div>
         {booking.mechanicName && (
-          <div className="rounded-xl bg-zinc-100 px-3 py-2.5 sm:col-span-2 dark:bg-zinc-900">
+          <div className="sm:col-span-2">
             <dt className="font-medium text-zinc-500 dark:text-zinc-400">
               Thợ phụ trách
             </dt>

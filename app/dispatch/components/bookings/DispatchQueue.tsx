@@ -71,7 +71,7 @@ export function DispatchQueue({
     );
   }
   return (
-    <ul className="mt-4 divide-y divide-zinc-200 rounded-2xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+    <ul className="mt-4 divide-y divide-zinc-200 border-t border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
       {items.map((booking) => (
         <DispatchBookingCard
           key={booking.id}

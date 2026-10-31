@@ -52,13 +52,11 @@ export function CampaignDeleteDialog({
       <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3">
           <p className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-zinc-50">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-900">
-              {isHard ? (
-                <FiTrash2 aria-hidden="true" className="h-4 w-4" />
-              ) : (
-                <FiAlertTriangle aria-hidden="true" className="h-4 w-4" />
-              )}
-            </span>
+            {isHard ? (
+              <FiTrash2 aria-hidden="true" className="h-4 w-4" />
+            ) : (
+              <FiAlertTriangle aria-hidden="true" className="h-4 w-4" />
+            )}
             {isHard ? "Xóa vĩnh viễn chiến dịch" : "Xóa mềm chiến dịch"}
           </p>
           <button
@@ -76,13 +74,13 @@ export function CampaignDeleteDialog({
         </p>
 
         {isHard ? (
-          <div className="mt-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+          <div className="mt-3">
             <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
               Hành động không thể hoàn tác. Toàn bộ dữ liệu chiến dịch — kể cả
-              mã voucher và slug — sẽ mất vĩnh viễn.
+              mã voucher và mã định danh — sẽ mất vĩnh viễn.
             </p>
             <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-              Nhập đúng slug{" "}
+              Nhập đúng mã định danh{" "}
               <span className="font-mono font-semibold">{target.slug}</span> để
               xác nhận.
             </p>
@@ -90,12 +88,12 @@ export function CampaignDeleteDialog({
               value={confirmText}
               onChange={(e) => onConfirmText(e.target.value)}
               placeholder={target.slug}
-              aria-label="Nhập slug để xác nhận xóa vĩnh viễn"
+              aria-label="Nhập mã định danh để xác nhận xóa vĩnh viễn"
               className="mt-2 h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 font-mono text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
           </div>
         ) : (
-          <p className="mt-3 rounded-xl bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+          <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-300">
             Chiến dịch sẽ chuyển vào Thùng rác, ngừng phát voucher mới và ẩn
             khỏi điều phối. Voucher đã vào ví khách vẫn dùng được. Bạn có thể
             khôi phục bất cứ lúc nào.

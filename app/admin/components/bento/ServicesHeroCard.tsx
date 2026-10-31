@@ -11,15 +11,16 @@ export function ServicesHeroCard() {
     >
       <div>
         <p className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1E3A5F] text-white dark:bg-white dark:text-zinc-900">
-            <FiSettings aria-hidden="true" className="h-5 w-5" />
-          </span>
+          <FiSettings
+            aria-hidden="true"
+            className="h-5 w-5 text-[#1E3A5F] dark:text-zinc-100"
+          />
           <span className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             Cấu hình dịch vụ
           </span>
         </p>
         <h2 className="mt-3 text-2xl font-bold tracking-tight text-balance text-[#1E3A5F] md:text-3xl dark:text-zinc-50">
-          Bảng giá rõ ràng, bật tắt linh hoạt
+          Loại hình và bảng giá dịch vụ
         </h2>
         <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
           Quản lý loại hình sửa chữa và bảng giá áp dụng cho khách hàng trên
@@ -28,7 +29,7 @@ export function ServicesHeroCard() {
       </div>
 
       <div>
-        <dl className="mt-4 grid grid-cols-3 divide-x divide-zinc-200 rounded-xl bg-zinc-100 py-3 dark:divide-zinc-800 dark:bg-zinc-900">
+        <dl className="mt-4 grid grid-cols-3 divide-x divide-zinc-200 border-y border-zinc-200 py-3 dark:divide-zinc-800 dark:border-zinc-800">
           {[
             { value: "3", label: "Loại hình" },
             { value: "3/3", label: "Đang áp dụng" },

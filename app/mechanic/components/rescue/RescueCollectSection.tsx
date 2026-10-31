@@ -66,7 +66,7 @@ export function RescueCollectSection({ rescue }: { rescue: RescueDetail }) {
   };
 
   return (
-    <div className="mt-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+    <div className="mt-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
           Thu tiền cứu hộ
