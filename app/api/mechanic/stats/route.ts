@@ -19,6 +19,7 @@ export async function GET() {
       monthly: result.data.monthly,
       ratings: result.data.ratings,
       reviews: result.data.reviews,
+      daily: result.data.daily,
     });
   } catch {
     return NextResponse.json(
