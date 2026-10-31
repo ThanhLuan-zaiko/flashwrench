@@ -213,6 +213,27 @@ describe("collectOrderDelivery", () => {
     expect(orderWriteRepoMocks.updateOrderStatusRows).not.toHaveBeenCalled();
   });
 
+  test("a lost status claim keeps the code and records no cash", async () => {
+    orderStubs.orderById = {
+      ...codShippingOrder(),
+      payment_confirm_code: "123456",
+    };
+    orderWriteRepoMocks.updateOrderStatusRows.mockImplementationOnce(
+      async () => false,
+    );
+    const result = await collectOrderDelivery(COURIER, ORDER_ID, {
+      confirmCode: "123456",
+    });
+    expect(result).toMatchObject({ ok: false, status: 409 });
+    expect(orderDeliveryRepoMocks.setOrderPaymentCode).not.toHaveBeenCalled();
+    expect(
+      workspaceStubs.auditEvents.some(
+        (event) => event.action === "recorded" && event.refId === ORDER_ID,
+      ),
+    ).toBe(false);
+    expect(serviceStubs.orderReceiptProjections).toEqual([]);
+  });
+
   test("settles delivered+paid on a matching code and clears the prompt", async () => {
     orderStubs.orderById = {
       ...codShippingOrder(),

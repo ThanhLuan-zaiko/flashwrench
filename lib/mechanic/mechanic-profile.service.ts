@@ -6,6 +6,7 @@ import {
   userTopic,
 } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
+import { redispatchOpenRescues } from "@/lib/rescue/rescue-sweep.service";
 import { isRecord, numericInput } from "@/lib/validation";
 import type { MechanicProfileRow, MechanicResult } from "./mechanic.types";
 import { syncMechanicDirectory } from "./mechanic-directory.service";
@@ -188,6 +189,7 @@ export async function updateMechanicProfilePresence(
     // available: sweep the pending queue once per offline→online flip,
     // not on every presence write.
     void redispatchUnassignedBookings().catch(() => undefined);
+    void redispatchOpenRescues().catch(() => undefined);
   }
   void Promise.all([
     publishRealtimeEvent(MECHANIC_DIRECTORY_TOPIC, {

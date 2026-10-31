@@ -32,6 +32,7 @@ import {
   sendTo,
   type TopicRegistry,
 } from "./registry";
+import { startRescueOfferSweepLoop } from "./rescue-sweep-loop";
 import { isAllowedRealtimeOrigin } from "./security";
 import { startVoucherWinBackLoop } from "./winback-loop";
 
@@ -331,4 +332,5 @@ if (import.meta.main) {
   console.log(`[realtime] listening on :${server.port}`);
   startVoucherWinBackLoop();
   startMaintenanceReminderLoop();
+  startRescueOfferSweepLoop();
 }

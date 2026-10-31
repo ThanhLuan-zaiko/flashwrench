@@ -48,6 +48,7 @@ export function OrderOpsTransitions({
   const [note, setNote] = useState("");
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors>({});
   const [courier, setCourier] = useState<CourierDraft>(EMPTY_COURIER_DRAFT);
+  const [restockReturned, setRestockReturned] = useState(false);
 
   const transitions = (
     orderTransitions(order.fulfillmentType)[order.status] ?? []
@@ -84,10 +85,12 @@ export function OrderOpsTransitions({
                 trackingCode: courier.trackingCode || undefined,
               }
             : undefined,
+        restockReturned: status === "refunded" ? restockReturned : undefined,
       },
       {
         onSuccess: () => {
           setNote("");
+          setRestockReturned(false);
           onToast(
             "success",
             "Đã cập nhật đơn",
@@ -151,6 +154,18 @@ export function OrderOpsTransitions({
             }
           />
         </div>
+      )}
+      {transitions.includes("refunded") && (
+        <label className="mt-3 flex min-h-[44px] items-center gap-2.5 text-sm text-zinc-700 dark:text-zinc-300">
+          <input
+            type="checkbox"
+            checked={restockReturned}
+            disabled={updateStatus.isPending}
+            onChange={(e) => setRestockReturned(e.target.checked)}
+            className="h-4 w-4 accent-[#1E3A5F] dark:accent-zinc-100"
+          />
+          Hàng trả về còn nguyên, nhập lại kho
+        </label>
       )}
       <div className="mt-2 flex flex-wrap gap-1.5">
         {transitions.map((next) => (

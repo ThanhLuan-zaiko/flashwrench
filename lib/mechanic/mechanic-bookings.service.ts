@@ -57,6 +57,9 @@ import {
 export const MECHANIC_BOOKING_LIMIT = 25;
 export const MECHANIC_BOOKING_MAX_LIMIT = 60;
 const MAX_NOTE_LENGTH = 300;
+// A customer counts as a no-show only after the slot has passed by this grace
+// window; marking earlier would void a visit that is still on the way.
+const NO_SHOW_GRACE_MS = 15 * 60 * 1000;
 
 export type MechanicBookingListParams = {
   status?: MechanicBookingStatus | "all";
@@ -187,6 +190,15 @@ export async function applyMechanicBookingAction(
   }
   if (!canApplyAction(action, current)) {
     return fieldError(400, { action: transitionError(action, current) });
+  }
+  if (
+    action === "mark-no-show" &&
+    (!detail.scheduled_at ||
+      Date.now() < detail.scheduled_at.getTime() + NO_SHOW_GRACE_MS)
+  ) {
+    return fieldError(400, {
+      action: "Chỉ đánh dấu khách vắng mặt sau giờ hẹn 15 phút.",
+    });
   }
 
   if (action === "accept") {

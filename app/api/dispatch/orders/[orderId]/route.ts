@@ -99,6 +99,7 @@ export async function PATCH(
       body.status,
       body.note === undefined ? undefined : String(body.note),
       toCourierInput(body),
+      { restockReturned: body.restockReturned === true },
     );
     if (!result.ok)
       return NextResponse.json(

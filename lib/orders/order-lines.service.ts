@@ -66,7 +66,12 @@ export async function reserveOrderLines(
     if (outcome !== "ok") {
       // Roll back earlier decrements before reporting the failure.
       for (const done of decremented) {
-        await restockForOrder(done.partId, done.qty).catch(() => undefined);
+        await restockForOrder(done.partId, done.qty).catch((error) =>
+          console.error(
+            `[orders] rollback restock failed for part ${done.partId}`,
+            error,
+          ),
+        );
       }
       return fail(
         409,

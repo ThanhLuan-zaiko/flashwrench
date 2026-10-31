@@ -85,7 +85,7 @@ describe("cancelMyOrder", () => {
     if (result.ok) return;
     expect(result.status).toBe(400);
     expect(orderWriteRepoMocks.updateOrderStatusRows).not.toHaveBeenCalled();
-    expect(partInventoryRepoMocks.setPartStock).not.toHaveBeenCalled();
+    expect(partInventoryRepoMocks.restockPartStockCas).not.toHaveBeenCalled();
   });
 
   test("cancels a pending order and restocks its items", async () => {
@@ -102,14 +102,16 @@ describe("cancelMyOrder", () => {
     } | null;
     expect(statusCall?.newStatus).toBe("cancelled");
     expect(orderWriteRepoMocks.insertOrderHistory).toHaveBeenCalled();
-    // Restock: 8 + 2 = 10, sold_count floored at 0 → 5 - 2 = 3.
-    const restockCall = partInventoryRepoMocks.setPartStock.mock.calls[0];
-    expect(restockCall?.slice(0, 4)).toEqual([
-      makePartItemRowId(),
-      makePartRow().category_id,
-      makePartRow().created_at,
-      10,
-    ]);
+    // Restock: CAS from the value read (8) to 8 + 2 = 10, sold_count floored
+    // at 0 → 5 - 2 = 3.
+    const restockCall = partInventoryRepoMocks.restockPartStockCas.mock
+      .calls[0]?.[0] as Record<string, unknown> | undefined;
+    expect(restockCall).toMatchObject({
+      partId: makePartItemRowId(),
+      categoryId: makePartRow().category_id,
+      expectedQty: 8,
+      newQty: 10,
+    });
     expect(partInventoryRepoMocks.setPartSoldCount.mock.calls[0]).toEqual([
       makePartItemRowId(),
       3,
@@ -133,7 +135,7 @@ describe("cancelMyOrder", () => {
     expect(paymentCall?.paymentStatus).toBe("refunded");
     expect(paymentCall?.paidAt).toBeNull();
     // Stock still comes back — refunding does not skip the restock.
-    expect(partInventoryRepoMocks.setPartStock).toHaveBeenCalled();
+    expect(partInventoryRepoMocks.restockPartStockCas).toHaveBeenCalled();
   });
 
   test("cancelling an unpaid order leaves payments untouched", async () => {
@@ -202,7 +204,7 @@ describe("updateOrderStatus", () => {
     } | null;
     expect(statusCall?.newStatus).toBe("refunded");
     // Refund is not a restock transition.
-    expect(partInventoryRepoMocks.setPartStock).not.toHaveBeenCalled();
+    expect(partInventoryRepoMocks.restockPartStockCas).not.toHaveBeenCalled();
     // The refund hook unwinds the customer's loyalty rollup.
     const refundCalls =
       autoGrantServiceMocks.handleVoucherOrderTransition.mock.calls;
@@ -273,7 +275,7 @@ describe("updateOrderStatus", () => {
     expect(result.status).toBe(400);
     expect(result.errors.note).toBeTruthy();
     expect(orderWriteRepoMocks.updateOrderStatusRows).not.toHaveBeenCalled();
-    expect(partInventoryRepoMocks.setPartStock).not.toHaveBeenCalled();
+    expect(partInventoryRepoMocks.restockPartStockCas).not.toHaveBeenCalled();
   });
 
   test("staff cancel restocks items and echoes the reason to history", async () => {
@@ -291,12 +293,12 @@ describe("updateOrderStatus", () => {
     const historyCall = orderWriteRepoMocks.insertOrderHistory.mock
       .calls[0]?.[0] as { note: string } | null;
     expect(historyCall?.note).toBe("Khach bao doi y, khong mua nua");
-    const restockCall = partInventoryRepoMocks.setPartStock.mock.calls[0];
-    expect(restockCall?.slice(0, 4)).toEqual([
-      makePartItemRowId(),
-      makePartRow().category_id,
-      makePartRow().created_at,
-      5,
-    ]);
+    const restockCall = partInventoryRepoMocks.restockPartStockCas.mock
+      .calls[0]?.[0] as Record<string, unknown> | undefined;
+    expect(restockCall).toMatchObject({
+      partId: makePartItemRowId(),
+      expectedQty: 4,
+      newQty: 5,
+    });
   });
 });

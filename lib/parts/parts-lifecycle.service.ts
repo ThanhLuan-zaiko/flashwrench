@@ -13,11 +13,14 @@ import {
 import {
   decrementPartStockCas,
   hardDeletePart,
+  restockPartStockCas,
   setPartActive,
   setPartDeleted,
   setPartSoldCount,
   setPartStock,
 } from "./parts-inventory.repository";
+
+const RESTOCK_ATTEMPTS = 3;
 
 // Status, trash and stock flows for parts. Split from parts.service.ts
 // (create/update) so both files stay under the line limit.
@@ -157,23 +160,34 @@ export async function decrementStockForOrder(
   return "insufficient";
 }
 
-// Restore stock after a cancelled order (plain write: the cancel path has
-// no contention worth a CAS loop). sold_count never drops below zero.
+// Restore stock after a cancelled order. Compare-and-set on the value just
+// read, like the checkout decrement, so a concurrent sale's decrement is
+// never overwritten by a blind write. Re-reads and retries on conflict; if
+// every attempt loses, the restock is reported as a failure, not dropped.
+// sold_count never drops below zero and stays a best-effort stat.
 export async function restockForOrder(
   partId: string,
   qty: number,
 ): Promise<void> {
-  const row = await findPartRowById(partId);
-  if (!row) return;
-  await setPartStock(
-    partId,
-    row.category_id ?? "",
-    row.created_at,
-    (row.stock_qty ?? 0) + qty,
-    new Date(),
-  );
-  const sold = Math.max(0, (row.sold_count ?? 0) - qty);
-  await setPartSoldCount(partId, sold).catch(() => undefined);
+  for (let attempt = 0; attempt < RESTOCK_ATTEMPTS; attempt += 1) {
+    const row = await findPartRowById(partId);
+    if (!row) return;
+    const current = row.stock_qty ?? 0;
+    const restocked = await restockPartStockCas({
+      partId,
+      categoryId: row.category_id ?? "",
+      createdAt: row.created_at,
+      expectedQty: current,
+      newQty: current + qty,
+      updatedAt: new Date(),
+    });
+    if (restocked) {
+      const sold = Math.max(0, (row.sold_count ?? 0) - qty);
+      await setPartSoldCount(partId, sold).catch(() => undefined);
+      return;
+    }
+  }
+  throw new Error(`Restock lost the stock claim for part ${partId}`);
 }
 
 // Hard delete is permanent: main row, read models and both unique

@@ -1,21 +1,18 @@
 import type { UserRole } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
-import { restockForOrder } from "@/lib/parts/parts-lifecycle.service";
 import { clearPaymentPrompt } from "@/lib/payments/payment-prompt.service";
 import { handleVoucherOrderTransition } from "@/lib/vouchers/auto-grant.service";
 import {
   type ResolvedCourier,
   resolveCourierConfig,
 } from "./order-courier.service";
+import { restockOrderItems } from "./order-restock";
 import { projectOrderReceipts, refundOrderReceipts } from "./order-revenue";
 import { refundOrderWallet } from "./order-wallet-restore";
+import { ORDER_CONFLICT_MESSAGE } from "./orders.constants";
 import { toOrderSummary } from "./orders.mapper";
-import {
-  findOrderRowById,
-  listOrderItemRows,
-  listOrderRowsByStatus,
-} from "./orders.repository";
+import { findOrderRowById, listOrderRowsByStatus } from "./orders.repository";
 import {
   type CourierConfigInput,
   canTransitionForOrder,
@@ -63,7 +60,14 @@ export async function cancelMyOrder(
       "Đơn hàng đã được xử lý, không thể hủy. Vui lòng liên hệ cửa hàng.",
     );
   }
-  await applyStatusChange(row, "cancelled", customerId, "Khách hàng hủy", null);
+  const cancelled = await applyStatusChange(
+    row,
+    "cancelled",
+    customerId,
+    "Khách hàng hủy",
+    null,
+  );
+  if (!cancelled) return fail(409, ORDER_CONFLICT_MESSAGE);
   // Simulated money is refunded by the status move above; the spent
   // wallet comes back to the owner so a cancel never eats the voucher.
   await refundOrderWallet({
@@ -134,6 +138,7 @@ export async function updateOrderStatus(
   nextStatus: unknown,
   note?: string,
   courier?: CourierConfigInput,
+  options?: { restockReturned?: boolean },
 ): Promise<OrdersResult<OrderDetail>> {
   if (!isOrderStatus(nextStatus)) {
     return failFields(400, { status: "Trạng thái đơn hàng không hợp lệ." });
@@ -192,13 +197,15 @@ export async function updateOrderStatus(
     if (!resolved.ok) return resolved;
     resolvedCourier = resolved.data;
   }
-  await applyStatusChange(
+  const applied = await applyStatusChange(
     row,
     nextStatus,
     actor.id,
     note ?? "",
     resolvedCourier,
+    options?.restockReturned === true,
   );
+  if (!applied) return fail(409, ORDER_CONFLICT_MESSAGE);
   // Staff cancels and refunds return the spent wallet the same way the
   // customer cancel above does; other moves leave the wallet consumed.
   if (nextStatus === "cancelled" || nextStatus === "refunded") {
@@ -223,12 +230,13 @@ export async function applyStatusChange(
   changedBy: string,
   note: string,
   courier: ResolvedCourier | null,
-): Promise<void> {
+  restockReturned = false,
+): Promise<boolean> {
   const now = new Date();
   const createdAt = row.created_at ?? now;
   const monthBucket =
     row.month_bucket ?? monthKey(createdAt, MECHANIC_TIME_ZONE);
-  await updateOrderStatusRows({
+  const claimed = await updateOrderStatusRows({
     orderId: row.order_id,
     customerId: row.customer_id,
     oldStatus: row.status ?? "pending",
@@ -238,6 +246,9 @@ export async function applyStatusChange(
     total: row.total ?? 0,
     now,
   });
+  // Lost the claim: another move already changed the order. Nothing after
+  // this point (payments, stock, wallet, history) may run for this call.
+  if (!claimed) return false;
   if (nextStatus === "shipping" && courier) {
     await assignOrderCourier({
       orderId: row.order_id,
@@ -314,12 +325,11 @@ export async function applyStatusChange(
     note,
     now,
   });
-  if (RESTOCK_TRANSITIONS.includes(nextStatus)) {
-    const items = await listOrderItemRows(row.order_id);
-    for (const item of items) {
-      await restockForOrder(item.part_id, item.quantity ?? 0).catch(
-        () => undefined,
-      );
-    }
+  if (
+    RESTOCK_TRANSITIONS.includes(nextStatus) ||
+    (nextStatus === "refunded" && restockReturned)
+  ) {
+    await restockOrderItems(row.order_id);
   }
+  return true;
 }

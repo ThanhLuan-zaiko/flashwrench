@@ -1,18 +1,52 @@
-// Writes the maintenance cadence per service from scripts/maintenance-intervals.json.
-// The file holds PROPOSED values until the shop owner confirms them; slugs
-// that do not exist in services_by_slug are reported, not created.
-// Idempotent: re-running overwrites the same rows with the same values.
-// Usage: bun run scripts/set-maintenance-intervals.ts
+// Writes the maintenance cadence per service from a JSON file of entries
+// shaped like { slug, months, km }. The values are PROPOSED until the shop
+// owner confirms them; slugs that do not exist in services_by_slug are
+// reported, not created. Idempotent: re-running overwrites the same rows
+// with the same values.
+// Usage: bun run scripts/set-maintenance-intervals.ts <path-to-intervals.json>
+import { readFile } from "node:fs/promises";
 import { scylla } from "../lib/db/client";
-import intervals from "./maintenance-intervals.json";
 
 type IntervalEntry = { slug: string; months: number | null; km: number | null };
 
+function isIntervalEntry(value: unknown): value is IntervalEntry {
+  if (typeof value !== "object" || value === null) return false;
+  const entry = value as Record<string, unknown>;
+  return (
+    typeof entry.slug === "string" &&
+    (entry.months === null || Number.isInteger(entry.months)) &&
+    (entry.km === null || Number.isInteger(entry.km))
+  );
+}
+
+async function loadIntervals(path: string): Promise<IntervalEntry[]> {
+  const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
+  if (!Array.isArray(parsed) || !parsed.every(isIntervalEntry)) {
+    throw new Error(`${path} must be an array of { slug, months, km } entries`);
+  }
+  return parsed;
+}
+
 async function main(): Promise<number> {
+  const path = process.argv[2];
+  if (!path) {
+    console.error(
+      "Usage: bun run scripts/set-maintenance-intervals.ts <path-to-intervals.json>",
+    );
+    return 1;
+  }
+  let intervals: IntervalEntry[];
+  try {
+    intervals = await loadIntervals(path);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    return 1;
+  }
+
   let written = 0;
   const missing: string[] = [];
   try {
-    for (const entry of intervals as IntervalEntry[]) {
+    for (const entry of intervals) {
       const lookup = await scylla.execute(
         "SELECT service_id FROM services_by_slug WHERE slug = ?",
         [entry.slug],

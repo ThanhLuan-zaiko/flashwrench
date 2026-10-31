@@ -9,6 +9,7 @@ import { verifyCashConfirmCode } from "@/lib/payments/payment-code.service";
 import { publishOrderChange } from "@/lib/realtime/domain-publish";
 import { recordAuditEvent } from "@/lib/revenue/revenue.service";
 import { isRecord, isUuid } from "@/lib/validation";
+import { ORDER_CONFLICT_MESSAGE } from "./orders.constants";
 import { findOrderRowById } from "./orders.repository";
 import { applyStatusChange } from "./orders.service";
 import type { OrderDetail, OrdersResult } from "./orders.types";
@@ -61,14 +62,17 @@ export async function collectOrderDelivery(
     return fail(400, "Mã xác nhận không đúng. Kiểm tra lại với khách hàng.");
   }
   const now = new Date();
-  await setOrderPaymentCode(orderId, null, now);
-  await applyStatusChange(
+  // The status claim goes first: a lost race must not burn the confirm code
+  // or record a cash receipt for an order that already moved on.
+  const delivered = await applyStatusChange(
     row,
     "delivered",
     actor.id,
     note || "Giao hàng tận nơi — đã thu tiền COD",
     null,
   );
+  if (!delivered) return fail(409, ORDER_CONFLICT_MESSAGE);
+  await setOrderPaymentCode(orderId, null, now);
   await recordAuditEvent({
     eventId: randomUUID(),
     actorId: actor.id,

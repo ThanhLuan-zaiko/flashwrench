@@ -73,10 +73,14 @@ export function updateDispatchOrderStatus(
   status: string,
   note?: string,
   courier?: CourierConfigInput,
+  restockReturned?: boolean,
 ): Promise<{ order: OrderDetail }> {
   return apiRequest<{ order: OrderDetail }>(
     `/api/dispatch/orders/${encodeURIComponent(orderId)}`,
-    { method: "PATCH", body: JSON.stringify({ status, note, courier }) },
+    {
+      method: "PATCH",
+      body: JSON.stringify({ status, note, courier, restockReturned }),
+    },
   );
 }
 

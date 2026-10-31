@@ -175,6 +175,17 @@ describe("return request decisions", () => {
     orderStubs.historyRows = [makeOrderHistoryRow()];
   }
 
+  test("409 and no evidence saved when the delivered claim was lost", async () => {
+    deliveredInsideWindow();
+    orderWriteRepoMocks.updateOrderStatusRows.mockImplementationOnce(
+      async () => false,
+    );
+    const result = await requestOrderReturn(CUSTOMER, ORDER_ID, VALID_INPUT);
+    expect(result).toMatchObject({ ok: false, status: 409 });
+    expect(orderWriteRepoMocks.saveOrderReturnRequest).not.toHaveBeenCalled();
+    expect(orderWriteRepoMocks.insertOrderHistory).not.toHaveBeenCalled();
+  });
+
   test("rejecting needs a note and writes no rows", async () => {
     queuedRequest();
     const result = await updateOrderStatus(DISPATCHER, ORDER_ID, "delivered");
@@ -223,7 +234,7 @@ describe("return request decisions", () => {
       .calls[0]?.[0] as { paymentStatus: string } | null;
     expect(paymentCall?.paymentStatus).toBe("refunded");
     // Refunding never restocks automatically.
-    expect(partInventoryRepoMocks.setPartStock).not.toHaveBeenCalled();
+    expect(partInventoryRepoMocks.restockPartStockCas).not.toHaveBeenCalled();
   });
 
   test("only admins refund a delivered order without a request", async () => {

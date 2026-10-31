@@ -68,7 +68,7 @@ export const PICKUP_ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   packing: ["delivered", "cancelled"],
 };
 
-// Transitions that put purchased items back into stock.
+// Always restock; a refund restocks only when staff confirm (applyStatusChange).
 export const RESTOCK_TRANSITIONS: OrderStatus[] = ["cancelled"];
 
 // Refunding straight from delivered skips the review queue, so it stays

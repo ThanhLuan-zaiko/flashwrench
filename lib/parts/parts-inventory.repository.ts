@@ -103,6 +103,33 @@ export async function decrementPartStockCas(
   return result.wasApplied();
 }
 
+// Compare-and-set restock for cancelled orders: the same guard as checkout,
+// so a sale that decremented the row after our read is never overwritten.
+// The category read model follows only once the claim applied.
+export async function restockPartStockCas(params: {
+  partId: string;
+  categoryId: string;
+  createdAt: Date | null;
+  expectedQty: number;
+  newQty: number;
+  updatedAt: Date;
+}): Promise<boolean> {
+  const result = await scylla.execute(
+    "UPDATE parts_by_id SET stock_qty = ?, updated_at = ? WHERE part_id = ? IF stock_qty = ?",
+    [params.newQty, params.updatedAt, params.partId, params.expectedQty],
+    { prepare: true },
+  );
+  if (!result.wasApplied()) return false;
+  if (params.categoryId && params.createdAt) {
+    await scylla.execute(
+      "UPDATE parts_by_category SET stock_qty = ? WHERE category_id = ? AND created_at = ? AND part_id = ?",
+      [params.newQty, params.categoryId, params.createdAt, params.partId],
+      { prepare: true },
+    );
+  }
+  return true;
+}
+
 export async function setPartSoldCount(
   partId: string,
   soldCount: number,

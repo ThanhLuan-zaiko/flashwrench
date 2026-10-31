@@ -190,8 +190,14 @@ export async function insertOrder(params: InsertOrderParams): Promise<void> {
   await scylla.batch(statements, { prepare: true });
 }
 
-// Status moves across partitions: delete the old (status, month) row and
-// insert the new one; the by-id and by-customer copies update in place.
+// Status move. The by-id row is the claim: it flips only while it still holds
+// oldStatus (IF status = ?), so a staff move and a customer cancel that read
+// the same order cannot both apply. Only the winner moves the buckets.
+// Returns false when the claim was lost; nothing else is written then.
+//
+// The by-status bucket moves across partitions, so it cannot share the
+// conditional write: delete the old (status, month) row and insert the new
+// one in a batch after the claim. The by-customer copy updates in place.
 // Walk-in sales have no customer account, so their by-customer row is
 // absent and the update is skipped.
 export async function updateOrderStatusRows(params: {
@@ -203,13 +209,15 @@ export async function updateOrderStatusRows(params: {
   createdAt: Date;
   total: number;
   now: Date;
-}): Promise<void> {
+}): Promise<boolean> {
+  const claim = await scylla.execute(
+    "UPDATE orders_by_id SET status = ?, updated_at = ? WHERE order_id = ? IF status = ?",
+    [params.newStatus, params.now, params.orderId, params.oldStatus],
+    { prepare: true },
+  );
+  if (!claim.wasApplied()) return false;
+
   const statements: { query: string; params: unknown[] }[] = [
-    {
-      query:
-        "UPDATE orders_by_id SET status = ?, updated_at = ? WHERE order_id = ?",
-      params: [params.newStatus, params.now, params.orderId],
-    },
     {
       query:
         "DELETE FROM orders_by_status WHERE status = ? AND month_bucket = ? AND created_at = ? AND order_id = ?",
@@ -246,6 +254,7 @@ export async function updateOrderStatusRows(params: {
     });
   }
   await scylla.batch(statements, { prepare: true });
+  return true;
 }
 
 // Customer return request: payload lands on the order row while the

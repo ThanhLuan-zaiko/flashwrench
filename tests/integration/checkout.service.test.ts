@@ -104,13 +104,13 @@ describe("checkoutCart", () => {
       10,
       8,
     ]);
-    const restockCall = partInventoryRepoMocks.setPartStock.mock.calls[0];
-    expect(restockCall?.slice(0, 4)).toEqual([
-      partA,
-      makePartRow().category_id,
-      makePartRow().created_at,
-      12,
-    ]);
+    const restockCall = partInventoryRepoMocks.restockPartStockCas.mock
+      .calls[0]?.[0] as Record<string, unknown> | undefined;
+    expect(restockCall).toMatchObject({
+      partId: partA,
+      expectedQty: 10,
+      newQty: 12,
+    });
     expect(orderWriteRepoMocks.insertOrder).not.toHaveBeenCalled();
     expect(cartRepoMocks.clearCartRows).not.toHaveBeenCalled();
   });

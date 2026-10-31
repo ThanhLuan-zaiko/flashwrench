@@ -28,6 +28,7 @@ export const partStubs = {
   partSkuOwner: null as string | null,
   partSkuClaimed: true,
   decrementApplied: true,
+  restockApplied: true,
   categoryRows: [] as PartCategoryRow[],
   categoryById: null as PartCategoryRow | null,
   categorySlugOwner: null as string | null,
@@ -114,6 +115,9 @@ export const partInventoryRepoMocks = {
       _expectedQty: number,
       _newQty: number,
     ): Promise<boolean> => partStubs.decrementApplied,
+  ),
+  restockPartStockCas: mock(
+    async (_params: unknown): Promise<boolean> => partStubs.restockApplied,
   ),
   setPartSoldCount: mock(
     async (_partId: string, _soldCount: number): Promise<void> => undefined,
@@ -211,7 +215,7 @@ export const orderRepoMocks = {
 export const orderWriteRepoMocks = {
   insertOrder: mock(async (_params: unknown): Promise<void> => undefined),
   updateOrderStatusRows: mock(
-    async (_params: unknown): Promise<void> => undefined,
+    async (_params: unknown): Promise<boolean> => true,
   ),
   insertOrderHistory: mock(
     async (_params: unknown): Promise<void> => undefined,
@@ -255,6 +259,7 @@ export function resetPartsMocks(): void {
   partStubs.partSkuOwner = null;
   partStubs.partSkuClaimed = true;
   partStubs.decrementApplied = true;
+  partStubs.restockApplied = true;
   partStubs.categoryRows = [];
   partStubs.categoryById = null;
   partStubs.categorySlugOwner = null;

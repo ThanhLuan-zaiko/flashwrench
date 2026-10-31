@@ -129,12 +129,21 @@ export function useUpdateDispatchOrderStatus() {
       status,
       note,
       courier,
+      restockReturned,
     }: {
       orderId: string;
       status: string;
       note?: string;
       courier?: CourierConfigInput;
-    }) => updateDispatchOrderStatus(orderId, status, note, courier),
+      restockReturned?: boolean;
+    }) =>
+      updateDispatchOrderStatus(
+        orderId,
+        status,
+        note,
+        courier,
+        restockReturned,
+      ),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: dispatchOrderKeys.all });
     },

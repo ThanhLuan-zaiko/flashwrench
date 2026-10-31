@@ -18,6 +18,10 @@ const STEP_LABELS: Record<RescueProgressStep, string> = {
   completed: "Hoàn tất",
 };
 
+// "accepted" folds into the finding step, but a mechanic already took the
+// offer, so the customer should not read it as still searching.
+const ACCEPTED_LABEL = "Thợ đã nhận yêu cầu";
+
 type RescueTrackerProps = {
   requestId: string;
 };
@@ -100,7 +104,9 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
                       : "text-zinc-400 dark:text-zinc-600"
                 }`}
               >
-                {STEP_LABELS[id]}
+                {id === "finding" && tracking.status === "accepted"
+                  ? ACCEPTED_LABEL
+                  : STEP_LABELS[id]}
                 {id === "finding" && tracking.mechanicName
                   ? ` · ${tracking.mechanicName}`
                   : ""}

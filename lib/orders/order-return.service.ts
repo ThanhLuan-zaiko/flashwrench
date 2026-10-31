@@ -5,6 +5,7 @@ import {
   returnWindowOpen,
   validateReturnInput,
 } from "./order-return";
+import { ORDER_CONFLICT_MESSAGE } from "./orders.constants";
 import { findOrderRowById, listOrderHistoryRows } from "./orders.repository";
 import type {
   OrderDetail,
@@ -60,7 +61,7 @@ export async function requestOrderReturn(
   const createdAt = row.created_at ?? now;
   const monthBucket =
     row.month_bucket ?? monthKey(createdAt, MECHANIC_TIME_ZONE);
-  await updateOrderStatusRows({
+  const claimed = await updateOrderStatusRows({
     orderId: row.order_id,
     customerId: row.customer_id,
     oldStatus: "delivered",
@@ -70,6 +71,7 @@ export async function requestOrderReturn(
     total: row.total ?? 0,
     now,
   });
+  if (!claimed) return fail(409, ORDER_CONFLICT_MESSAGE);
   await saveOrderReturnRequest({
     orderId: row.order_id,
     reason,
