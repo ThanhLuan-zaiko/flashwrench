@@ -308,6 +308,7 @@ export async function applyDispatchAction(
       walletId: row.coupon_code,
       userId: row.customer_id,
       bookingId,
+      amount: row.discount ?? 0,
     });
     void publishWalletChange({
       kind: "voucher-granted",

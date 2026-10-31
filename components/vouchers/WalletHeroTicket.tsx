@@ -11,7 +11,7 @@ import { walletDetailHref } from "./voucher-detail-href";
 function heroDiscountLabel(wallet: VoucherWallet): string {
   if (wallet.discountType === "percent") return `-${wallet.discountValue}%`;
   if (wallet.discountType === "free_service") return "Miễn phí công";
-  return `-${formatPromoVnd(wallet.discountValue)}`;
+  return `-${formatPromoVnd(wallet.remainingValue)}`;
 }
 
 function grantedDayLabel(wallet: VoucherWallet): string | null {

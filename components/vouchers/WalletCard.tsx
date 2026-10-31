@@ -3,22 +3,16 @@ import Link from "next/link";
 import { FiArrowRight, FiGift } from "react-icons/fi";
 import type { VoucherWallet } from "@/lib/vouchers/voucher.types";
 import { walletDetailHref } from "./voucher-detail-href";
-
-function statusLabel(status: VoucherWallet["status"]): string {
-  if (status === "used") return "Đã dùng";
-  if (status === "expired") return "Hết hạn";
-  if (status === "revoked") return "Đã thu hồi";
-  return "Còn hiệu lực";
-}
+import { walletStatusLabel } from "./wallet-status-label";
 
 function discountLabel(wallet: VoucherWallet): string {
   if (wallet.discountType === "percent") return `Giảm ${wallet.discountValue}%`;
   if (wallet.discountType === "free_service") return "Miễn phí công";
-  return `Giảm ${wallet.discountValue.toLocaleString("vi-VN")}đ`;
+  return `Giảm ${wallet.remainingValue.toLocaleString("vi-VN")}đ`;
 }
 
 export function WalletCard({ wallet }: { wallet: VoucherWallet }) {
-  const usable = wallet.status === "active";
+  const usable = wallet.spendable;
   return (
     <article
       data-reveal
@@ -53,7 +47,7 @@ export function WalletCard({ wallet }: { wallet: VoucherWallet }) {
           aria-live="polite"
           className="mt-1 inline-flex w-fit rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300"
         >
-          {statusLabel(wallet.status)}
+          {walletStatusLabel(wallet)}
         </p>
         <Link
           href={walletDetailHref(wallet.id)}

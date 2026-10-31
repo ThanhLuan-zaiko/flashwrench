@@ -1,7 +1,10 @@
 "use client";
 
 import type { CardComponentProps } from "nextstepjs";
+import { useEffect, useRef } from "react";
 import { FiArrowLeft, FiArrowRight, FiX } from "react-icons/fi";
+import { BOOKING_WIZARD_GOTO_EVENT } from "@/components/booking/booking-wizard.events";
+import { useTourFocus } from "./useTourFocus";
 
 // Monochrome tour card shared by every page guide. Floating overlay so a
 // subtle shadow is allowed; everything else is border and type hierarchy.
@@ -16,9 +19,26 @@ export function TourCard({
 }: CardComponentProps) {
   const isFirst = currentStep === 0;
   const isLast = currentStep === totalSteps - 1;
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // On phones the booking form shows one wizard step at a time. Ask the
+  // wizard for this step before the spotlight is measured for it.
+  const wizardStep = (step as { wizardStep?: number }).wizardStep;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-run for each step; the body reads only the wizard step
+  useEffect(() => {
+    if (wizardStep === undefined) return;
+    window.dispatchEvent(
+      new CustomEvent(BOOKING_WIZARD_GOTO_EVENT, { detail: wizardStep }),
+    );
+  }, [step.title]);
+
+  // A step whose target is not drawn is skipped instead of leaving the
+  // spotlight pinned to 0,0.
+  useTourFocus(cardRef, step.selector, step.title, nextStep);
 
   return (
     <div
+      ref={cardRef}
       role="dialog"
       aria-modal="true"
       aria-label={step.title}

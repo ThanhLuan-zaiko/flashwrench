@@ -9,6 +9,8 @@ import { LazyCrossTabSync } from "@/components/providers/LazyCrossTabSync";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeInitScript } from "@/components/theme/ThemeInitScript";
 import { ToastProvider } from "@/components/toast/ToastProvider";
+import { CUSTOMER_GUIDE_STEPS } from "@/components/tour/customer-guide.steps";
+import { TourProvider } from "@/components/tour/TourProvider";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 import { baseMetadata } from "@/lib/seo/site";
@@ -56,7 +58,9 @@ export default async function RootLayout({
             <LazyChatFab />
             <SiteHeader />
             <LazyPaymentPromptBanner />
-            <div className="flex flex-1 flex-col">{children}</div>
+            <TourProvider steps={CUSTOMER_GUIDE_STEPS}>
+              <div className="flex flex-1 flex-col">{children}</div>
+            </TourProvider>
           </ToastProvider>
         </QueryProvider>
       </body>

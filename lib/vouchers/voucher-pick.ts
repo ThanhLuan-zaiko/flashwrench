@@ -14,7 +14,7 @@ export type BestWalletPick = {
 function discountFor(wallet: VoucherWallet, subtotal: number): number {
   return clampVoucherDiscount({
     discountType: wallet.discountType,
-    discountValue: wallet.discountValue,
+    discountValue: wallet.remainingValue,
     maxDiscount: wallet.maxDiscount,
     subtotal,
   });

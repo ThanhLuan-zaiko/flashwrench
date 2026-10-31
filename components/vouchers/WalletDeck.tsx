@@ -10,7 +10,7 @@ import { walletDetailHref } from "./voucher-detail-href";
 function deckDiscountLabel(wallet: VoucherWallet): string {
   if (wallet.discountType === "percent") return `-${wallet.discountValue}%`;
   if (wallet.discountType === "free_service") return "Miễn phí công";
-  return `-${formatPromoVnd(wallet.discountValue)}`;
+  return `-${formatPromoVnd(wallet.remainingValue)}`;
 }
 
 // Stacked offsets per visible-card count. Rest: each card peeks 28px

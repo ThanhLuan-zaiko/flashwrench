@@ -70,6 +70,7 @@ export async function cancelMyOrder(
     couponCode: row.coupon_code,
     customerId: row.customer_id,
     orderId,
+    amount: row.discount ?? 0,
   });
   const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
@@ -205,6 +206,7 @@ export async function updateOrderStatus(
       couponCode: row.coupon_code,
       customerId: row.customer_id,
       orderId,
+      amount: row.discount ?? 0,
     });
   }
   const detail = await loadOrderDetail(orderId);

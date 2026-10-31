@@ -230,7 +230,8 @@ async function runCheckout(
   } catch (error) {
     // The simulated totals below stay untouched: the wallet reservation
     // is released so the customer keeps the voucher.
-    if (walletId) await releaseWalletReservation(walletId, { orderId });
+    if (walletId)
+      await releaseWalletReservation(walletId, { orderId }, discount);
     throw error;
   }
   if (walletId && actor.customerId) {

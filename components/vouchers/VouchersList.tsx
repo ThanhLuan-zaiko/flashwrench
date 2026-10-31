@@ -2,6 +2,7 @@
 
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { PromoCampaignGrid } from "@/components/promotions/PromoCampaignGrid";
+import { TourButton } from "@/components/tour/TourButton";
 import { useMe } from "@/hooks/auth";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useVoucherGrantToast } from "@/hooks/useVoucherGrantToast";
@@ -11,6 +12,7 @@ import {
   useMyWallets,
   usePublicCampaigns,
 } from "@/hooks/useVouchers";
+import { VouchersFaq } from "./VouchersFaq";
 import { WalletBento } from "./WalletBento";
 import { WalletBoard } from "./WalletBoard";
 
@@ -45,7 +47,7 @@ export function VouchersList() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6">
-      <header>
+      <header data-tour="vouchers-header">
         <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
           Ví voucher của tôi
         </h1>
@@ -53,6 +55,13 @@ export function VouchersList() {
           Mỗi voucher chỉ dùng được trên tài khoản này, tự cập nhật khi có
           voucher mới.
         </p>
+        <div className="mt-3">
+          <TourButton
+            tour="vouchers-guide"
+            ariaLabel="Mở sổ tay hướng dẫn ví voucher"
+            label="Sổ tay hướng dẫn"
+          />
+        </div>
       </header>
       {hasWallets ? (
         <WalletBento wallets={items} remainingOffers={remainingOffers} />
@@ -77,14 +86,17 @@ export function VouchersList() {
         excludeIds={ownedIds}
         showAllLink={false}
       />
-      <PromoCampaignGrid
-        title={hasWallets ? "Cách nhận ưu đãi" : "Tất cả ưu đãi đang chạy"}
-        anchorId="vouchers-con-lai"
-        excludeIds={ownedIds}
-        ghost
-        stats={stats.data ?? null}
-        showCodes
-      />
+      <div data-tour="vouchers-campaigns">
+        <PromoCampaignGrid
+          title={hasWallets ? "Cách nhận ưu đãi" : "Tất cả ưu đãi đang chạy"}
+          anchorId="vouchers-con-lai"
+          excludeIds={ownedIds}
+          ghost
+          stats={stats.data ?? null}
+          showCodes
+        />
+      </div>
+      <VouchersFaq />
       <WalletBoard />
     </div>
   );

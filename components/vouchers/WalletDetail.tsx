@@ -11,15 +11,8 @@ import { useMe } from "@/hooks/auth";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { useMyWalletDetail } from "@/hooks/useVouchers";
-import type { VoucherWallet } from "@/lib/vouchers/voucher.types";
 import { ProductGallery } from "../products/ProductGallery";
-
-function statusLabel(status: VoucherWallet["status"]): string {
-  if (status === "used") return "Đã dùng";
-  if (status === "expired") return "Hết hạn";
-  if (status === "revoked") return "Đã thu hồi";
-  return "Còn hiệu lực";
-}
+import { walletStatusLabel } from "./wallet-status-label";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "Không giới hạn";
@@ -42,7 +35,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
   const item = detail.data ?? null;
   const wallet = item?.wallet ?? null;
   const campaign = item?.campaign ?? null;
-  const usable = wallet?.status === "active";
+  const usable = wallet?.spendable === true;
   const gallery = campaign?.images.length
     ? campaign.images
     : wallet?.imageUrl
@@ -129,7 +122,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   aria-live="polite"
                   className="mt-2 inline-flex rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300"
                 >
-                  {statusLabel(wallet.status)}
+                  {walletStatusLabel(wallet)}
                 </p>
               </div>
               <p className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">

@@ -26,16 +26,15 @@ import {
 } from "./voucher-campaign.repository";
 import { notifyVoucherGranted } from "./voucher-notify.service";
 import { publishWalletChange } from "./voucher-realtime";
-import {
-  countUserWalletsForCampaign,
-  insertWallet,
-} from "./voucher-wallet.repository";
+import { insertWallet } from "./voucher-wallet.repository";
 
 // One auto-grant: claim the milestone in the ledger first (LWT dedupe),
-// then reuse the campaign caps — per_user_limit and the total_limit CAS
-// slot — before writing the wallet. Any failure releases the claims so a
-// retry can still pay the milestone out. Exported for the win-back sweep
-// module, same domain.
+// then reuse the campaign's total_limit CAS slot before writing the
+// wallet. per_user_limit does not apply here: a repeating rule (every N
+// bookings, monthly win-back) would otherwise pay out once and then
+// silently stop, and the ledger already pays each milestone at most once.
+// Any failure releases the claims so a retry can still pay the milestone
+// out. Exported for the win-back sweep module, same domain.
 export async function grantFromRule(
   rule: AutoRuleRow,
   campaign: CampaignRow,
@@ -53,14 +52,6 @@ export async function grantFromRule(
   );
   if (!claimed) return false;
   try {
-    const owned = await countUserWalletsForCampaign(
-      userId,
-      campaign.campaign_id,
-    );
-    if (owned >= (campaign.per_user_limit ?? 1)) {
-      await releaseAutoGrantDedupe(rule.rule_id, userId, dedupeKey);
-      return false;
-    }
     const slot = await claimGrantSlot(
       campaign.campaign_id,
       campaign.total_limit ?? 0,
@@ -307,11 +298,22 @@ export async function handleVoucherReviewCreated(
 // line (delivered ticks the rollup, refunded unwinds it); the customer_id
 // null-check lives here so guest orders skip quietly. Best-effort.
 export async function handleVoucherOrderTransition(
-  row: { customer_id: string | null; order_id: string; total: number | null },
+  row: {
+    customer_id: string | null;
+    order_id: string;
+    total: number | null;
+    status?: string | null;
+  },
   nextStatus: string,
 ): Promise<void> {
   try {
     if (!row.customer_id) return;
+    // Rejecting a return request moves the order back to delivered, but it
+    // was already counted when it was first delivered. Counting it again
+    // would inflate the rollup and could pay milestones early.
+    if (row.status === "return_requested" && nextStatus === "delivered") {
+      return;
+    }
     if (nextStatus === "delivered") {
       await handleVoucherOrderDelivered(
         row.customer_id,

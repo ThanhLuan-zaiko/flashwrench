@@ -24,6 +24,7 @@ function makeWallet(
     imageUrl: "",
     discountType: "fixed",
     discountValue: 50000,
+    remainingValue: 50000,
     maxDiscount: 0,
     scope: "all",
     minOrder: 0,
@@ -84,11 +85,13 @@ describe("rankUsableWallets", () => {
         makeWallet({
           id: "b-late",
           discountValue: 50000,
+          remainingValue: 50000,
           expiresAt: "2026-12-01T00:00:00.000Z",
         }),
         makeWallet({
           id: "c-soon",
           discountValue: 50000,
+          remainingValue: 50000,
           expiresAt: "2026-10-10T00:00:00.000Z",
         }),
         makeWallet({ id: "d-none", discountValue: 50000 }),

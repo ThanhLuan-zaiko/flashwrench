@@ -6,6 +6,7 @@ import { useId, useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
+import { TourButton } from "@/components/tour/TourButton";
 import {
   BRAND_NAVY_SURFACE,
   BRAND_PRIMARY_BUTTON,
@@ -131,13 +132,22 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         </p>
       </div>
 
-      <PublicCatalogFilter
-        categories={categories}
-        activeSlug={unknownSlug ? null : activeSlug}
-        query={query}
-        searchId={searchId}
-        onQuery={typeQuery}
-      />
+      <div className="flex justify-end">
+        <TourButton
+          tour="customer-guide"
+          ariaLabel="Mở sổ tay hướng dẫn đặt lịch"
+          label="Sổ tay hướng dẫn"
+        />
+      </div>
+      <div data-tour="guide-services">
+        <PublicCatalogFilter
+          categories={categories}
+          activeSlug={unknownSlug ? null : activeSlug}
+          query={query}
+          searchId={searchId}
+          onQuery={typeQuery}
+        />
+      </div>
       <Link
         href="/rescue"
         prefetch

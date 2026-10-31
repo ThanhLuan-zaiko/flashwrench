@@ -123,10 +123,13 @@ thiểu, kèm xem trước số tiền giảm và tổng phải trả.
 ## Phase 3 — phát tự động theo quy tắc
 
 Thay vì nhân viên phát tay, hệ thống tự cấp voucher vào ví khi khách
-chạm điều kiện. Quy tắc trỏ vào một chiến dịch sẵn có nên mọi giới hạn
-của chiến dịch (active, khung giờ, `total_limit` qua CAS slot,
-`per_user_limit`) vẫn được tôn trọng y như phát tay; voucher tự động
-ghi `granted_by = NULL` (hệ thống) và note `Tự động: <tên quy tắc>`.
+chạm điều kiện. Quy tắc trỏ vào một chiến dịch sẵn có nên chiến dịch
+phải đang bật, trong khung giờ, và còn `total_limit` (CAS slot) như khi
+phát tay. `per_user_limit` **không** áp cho voucher tự động: quy tắc
+lặp (mỗi N lần, win-back hàng tháng) sẽ dừng sau lần đầu nếu bị giới
+hạn này chặn. Mỗi mốc đã được trả đúng một lần nhờ sổ cái dedupe.
+Voucher tự động ghi `granted_by = NULL` (hệ thống) và note
+`Tự động: <tên quy tắc>`.
 
 ### Bảng ScyllaDB mới
 
@@ -209,3 +212,23 @@ tháng nên chạy lại trong tháng không phát trùng.
   (tạo/bật-tắt quy tắc, đếm lượt đã phát) và "Khách sắp đạt mốc"
   (khách còn 1 bước, hoặc trong 20% mốc chi tiêu) với nút copy ID để
   phát tay nếu muốn thưởng sớm.
+
+## Dùng dần voucher giảm cố định
+
+Voucher giảm cố định không mất phần dư. Ví lưu `remaining_value`:
+
+- Đơn 700.000đ dùng voucher 1.000.000đ: giảm 700.000đ, ví còn `active`
+  với 300.000đ. Đơn sau dùng tiếp phần còn lại.
+- Mỗi lần dùng là CAS trên `remaining_value` (`IF remaining_value = ?`),
+  nên hai checkout đồng thời không thể cùng tiêu một phần.
+- Hủy hoặc hoàn đơn trả lại đúng số tiền đã trừ (`order.discount`), tối
+  đa bằng mệnh giá. Gọi lặp lại không tạo thêm tiền.
+- Voucher phần trăm và miễn phí công vẫn dùng một lần.
+- `min_order` của chiến dịch vẫn áp cho mỗi lần dùng. Chiến dịch có
+  đơn tối thiểu lớn có thể khiến phần dư không dùng được.
+
+Migration (an toàn chạy lại, điền `remaining_value` = mệnh giá cho ví cũ):
+
+```bash
+bun run scripts/migrate-voucher-remaining.ts
+```

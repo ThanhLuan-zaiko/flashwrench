@@ -10,7 +10,7 @@ const countFormat = (value: number): string =>
   new Intl.NumberFormat("vi-VN").format(value);
 
 function voucherFaceValue(wallet: VoucherWallet): number {
-  if (wallet.discountType === "fixed") return wallet.discountValue;
+  if (wallet.discountType === "fixed") return wallet.remainingValue;
   if (wallet.discountType === "percent") return wallet.maxDiscount;
   return 0;
 }
@@ -26,7 +26,7 @@ export function WalletBento({
   wallets: VoucherWallet[];
   remainingOffers: number;
 }) {
-  const active = wallets.filter((wallet) => wallet.status === "active");
+  const active = wallets.filter((wallet) => wallet.spendable);
   const hero = active[0] ?? wallets[0];
   const savings = active.reduce(
     (total, wallet) => total + voucherFaceValue(wallet),

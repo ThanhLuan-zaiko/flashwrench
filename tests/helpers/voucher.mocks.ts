@@ -3,6 +3,11 @@
 // database. Extend these handles instead of inventing file-local mocks
 // for the same modules.
 import { mock } from "bun:test";
+
+import { voucherRealtimeMocks } from "./voucher-realtime.mocks";
+
+export { voucherRealtimeMocks };
+
 import type { CampaignRow, WalletRow } from "@/lib/vouchers/voucher.types";
 import type {
   GrantSlotOutcome,
@@ -281,6 +286,13 @@ export const voucherWalletRepoMocks = {
       ) {
         return false;
       }
+      if (
+        params.expectRemainingValue !== undefined &&
+        (row?.remaining_value ?? row?.discount_value) !==
+          params.expectRemainingValue
+      ) {
+        return false;
+      }
       voucherStubs.statusMarks.push({
         walletId: params.walletId,
         status: params.status,
@@ -294,23 +306,12 @@ export const voucherWalletRepoMocks = {
           used_at: params.usedAt,
           used_order_id: params.usedOrderId,
           used_booking_id: params.usedBookingId,
+          remaining_value:
+            params.remainingValue ?? row?.remaining_value ?? null,
         };
       }
       return true;
     },
-  ),
-};
-
-export const voucherRealtimeMocks = {
-  publishCampaignChange: mock(
-    async (_campaignId: string): Promise<void> => undefined,
-  ),
-  publishWalletChange: mock(
-    async (_params: {
-      kind: string;
-      walletId: string;
-      userId: string;
-    }): Promise<void> => undefined,
   ),
 };
 

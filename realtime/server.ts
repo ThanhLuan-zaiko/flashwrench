@@ -19,6 +19,7 @@ import {
   type RealtimeUser,
   resolvePublishSecret,
 } from "@/lib/realtime/protocol";
+import { startMaintenanceReminderLoop } from "./maintenance-reminder-loop";
 import {
   addSubscription,
   createRegistry,
@@ -329,4 +330,5 @@ if (import.meta.main) {
   const server = startRealtimeServer();
   console.log(`[realtime] listening on :${server.port}`);
   startVoucherWinBackLoop();
+  startMaintenanceReminderLoop();
 }

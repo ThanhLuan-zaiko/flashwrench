@@ -23,7 +23,7 @@ import type {
   ClaimVoucherCodeResult,
   RedeemCodeVisibility,
 } from "./voucher-code.types";
-import { clampVoucherDiscount } from "./voucher-discount";
+import { clampVoucherDiscount, walletRemainingValue } from "./voucher-discount";
 import type { VoucherKind } from "./voucher-pick";
 import { publishWalletChange } from "./voucher-realtime";
 import {
@@ -68,7 +68,7 @@ function normalizeDiscountType(value: string | null): VoucherDiscountType {
 function walletDiscount(row: WalletRow, subtotal: number): number {
   return clampVoucherDiscount({
     discountType: normalizeDiscountType(row.discount_type),
-    discountValue: row.discount_value ?? 0,
+    discountValue: walletRemainingValue(row),
     maxDiscount: row.max_discount ?? 0,
     subtotal,
   });

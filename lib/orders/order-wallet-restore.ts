@@ -7,12 +7,14 @@ export async function refundOrderWallet(params: {
   couponCode: string | null;
   customerId: string | null;
   orderId: string;
+  amount: number;
 }): Promise<void> {
   if (!params.couponCode || !params.customerId) return;
   await restoreWalletForRef({
     walletId: params.couponCode,
     userId: params.customerId,
     orderId: params.orderId,
+    amount: params.amount,
   });
   void publishWalletChange({
     kind: "voucher-granted",

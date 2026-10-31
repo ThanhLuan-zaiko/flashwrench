@@ -1,5 +1,5 @@
 // Pure discount math for account-bound wallets. Tested without a DB.
-import type { VoucherDiscountType } from "./voucher.types";
+import type { VoucherDiscountType, WalletRow } from "./voucher.types";
 
 export function clampVoucherDiscount(params: {
   discountType: VoucherDiscountType;
@@ -47,4 +47,20 @@ export function isWalletUsable(params: {
     return { ok: false, reason: "min_order" };
   }
   return { ok: true };
+}
+
+// What a wallet can still give. Fixed wallets track the leftover after
+// partial spends; a row from before the column existed falls back to its
+// face value. Percent and free-service wallets are all-or-nothing.
+export function walletRemainingValue(row: WalletRow): number {
+  if (row.discount_type === "percent" || row.discount_type === "free_service") {
+    return row.discount_value ?? 0;
+  }
+  return row.remaining_value ?? row.discount_value ?? 0;
+}
+
+export function isFixedWallet(row: WalletRow): boolean {
+  return (
+    row.discount_type !== "percent" && row.discount_type !== "free_service"
+  );
 }

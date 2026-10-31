@@ -77,6 +77,9 @@ export type VoucherWallet = {
   imageUrl: string;
   discountType: VoucherDiscountType;
   discountValue: number;
+  // What is still spendable: the face value for a fresh fixed wallet, the
+  // leftover after partial spends. Equals discountValue for other types.
+  remainingValue: number;
   maxDiscount: number;
   // Eligibility snapshot for pickers: the wallet row itself carries the
   // money fields, the campaign contributes scope + minimum order.
@@ -131,6 +134,7 @@ export type WalletRow = {
   image_url: string | null;
   discount_type: string | null;
   discount_value: number | null;
+  remaining_value: number | null;
   max_discount: number | null;
   status: string | null;
   granted_by: string | null;

@@ -62,6 +62,7 @@ export function BookingWizardBar({
   return (
     <div
       data-dock-bar="phone"
+      data-tour="booking-wizard"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div className="mx-auto flex max-w-3xl gap-2.5">

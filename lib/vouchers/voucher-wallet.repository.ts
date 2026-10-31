@@ -12,6 +12,7 @@ function toRow(raw: Record<string, unknown>): WalletRow {
     image_url: (raw.image_url as string | null) ?? null,
     discount_type: (raw.discount_type as string | null) ?? null,
     discount_value: (raw.discount_value as number | null) ?? null,
+    remaining_value: (raw.remaining_value as number | null) ?? null,
     max_discount: (raw.max_discount as number | null) ?? null,
     status: (raw.status as string | null) ?? null,
     granted_by: raw.granted_by ? String(raw.granted_by) : null,
@@ -25,7 +26,7 @@ function toRow(raw: Record<string, unknown>): WalletRow {
 }
 
 const COLUMNS =
-  "wallet_id, user_id, campaign_id, campaign_code, campaign_name, image_url, discount_type, discount_value, max_discount, status, granted_by, grant_note, granted_at, expires_at, used_at, used_order_id, used_booking_id";
+  "wallet_id, user_id, campaign_id, campaign_code, campaign_name, image_url, discount_type, discount_value, remaining_value, max_discount, status, granted_by, grant_note, granted_at, expires_at, used_at, used_order_id, used_booking_id";
 
 export async function findWalletRowById(
   walletId: string,
@@ -198,7 +199,7 @@ export async function insertWallet(params: InsertWalletParams): Promise<void> {
     [
       {
         query:
-          "INSERT INTO voucher_wallets_by_id (wallet_id, user_id, campaign_id, campaign_code, campaign_name, image_url, discount_type, discount_value, max_discount, status, granted_by, grant_note, granted_at, expires_at, used_at, used_order_id, used_booking_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, null, null, null)",
+          "INSERT INTO voucher_wallets_by_id (wallet_id, user_id, campaign_id, campaign_code, campaign_name, image_url, discount_type, discount_value, remaining_value, max_discount, status, granted_by, grant_note, granted_at, expires_at, used_at, used_order_id, used_booking_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, null, null, null)",
         params: [
           params.walletId,
           params.userId,
@@ -207,6 +208,7 @@ export async function insertWallet(params: InsertWalletParams): Promise<void> {
           params.campaignName,
           params.imageUrl,
           params.discountType,
+          params.discountValue,
           params.discountValue,
           params.maxDiscount,
           params.grantedBy,
@@ -256,6 +258,10 @@ export type WalletTransitionParams = {
   expectStatus?: string;
   expectUsedOrderId?: string | null;
   expectUsedBookingId?: string | null;
+  // Fixed-value wallets: the remaining value is written only when the stored
+  // value still equals expectRemainingValue (partial spends stay CAS-safe).
+  remainingValue?: number;
+  expectRemainingValue?: number;
 };
 
 // Mirror one status into an index table. Index rows are audit mirrors of
@@ -295,15 +301,21 @@ export async function commitWalletTransition(
     conditions.push("used_booking_id = ?");
     conditionParams.push(params.expectUsedBookingId);
   }
+  if (params.expectRemainingValue !== undefined) {
+    conditions.push("remaining_value = ?");
+    conditionParams.push(params.expectRemainingValue);
+  }
+  const setRemaining = params.remainingValue !== undefined;
   const conditional =
     conditions.length > 0 ? ` IF ${conditions.join(" AND ")}` : "";
   const result = await scylla.execute(
-    `UPDATE voucher_wallets_by_id SET status = ?, used_at = ?, used_order_id = ?, used_booking_id = ? WHERE wallet_id = ?${conditional}`,
+    `UPDATE voucher_wallets_by_id SET status = ?, used_at = ?, used_order_id = ?, used_booking_id = ?${setRemaining ? ", remaining_value = ?" : ""} WHERE wallet_id = ?${conditional}`,
     [
       params.status,
       params.usedAt,
       params.usedOrderId,
       params.usedBookingId,
+      ...(setRemaining ? [params.remainingValue] : []),
       params.walletId,
       ...conditionParams,
     ],

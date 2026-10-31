@@ -7,6 +7,7 @@ import type {
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { toIso, toNumberOr } from "@/lib/mechanic/mechanic.types";
 import { isUuid } from "@/lib/validation";
+import { remindOnOdometer } from "./maintenance-odometer.service";
 import {
   claimVehiclePlate,
   findVehicleRowById,
@@ -214,6 +215,10 @@ export async function updateVehicleDetails(
     archived: row.is_archived === true,
     updatedAt: now,
   });
+  // Best-effort: a km reminder must never fail the odometer save.
+  void remindOnOdometer(vehicleId, checked.value.odometerKm).catch(
+    () => undefined,
+  );
   const refreshed = await findVehicleRowById(vehicleId);
   return { ok: true, data: toVehicleItem(refreshed ?? row) };
 }

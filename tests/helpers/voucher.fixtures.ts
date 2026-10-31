@@ -48,6 +48,7 @@ export function makeWalletRow(overrides?: Partial<WalletRow>): WalletRow {
     image_url: "",
     discount_type: "fixed",
     discount_value: 50000,
+    remaining_value: 50000,
     max_discount: 0,
     status: "active",
     granted_by: "admin-1",

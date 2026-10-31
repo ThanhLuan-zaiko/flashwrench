@@ -293,6 +293,7 @@ export async function applyMechanicBookingAction(
       walletId: detail.coupon_code,
       userId: detail.customer_id,
       bookingId,
+      amount: detail.discount ?? 0,
     });
     void publishWalletChange({
       kind: "voucher-granted",

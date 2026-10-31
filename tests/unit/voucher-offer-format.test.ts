@@ -19,6 +19,7 @@ function makeWallet(overrides: Partial<VoucherWallet> = {}): VoucherWallet {
     imageUrl: "",
     discountType: "fixed",
     discountValue: 50000,
+    remainingValue: 50000,
     maxDiscount: 0,
     scope: "all",
     minOrder: 0,

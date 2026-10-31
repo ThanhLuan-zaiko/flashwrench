@@ -1,6 +1,7 @@
 "use client";
 
 import { type RefObject, useEffect, useState } from "react";
+import { BOOKING_WIZARD_GOTO_EVENT } from "./booking-wizard.events";
 import { focusFirstInvalid } from "./focus-first-invalid";
 
 const INVALID_SELECTOR = '[aria-invalid="true"], [role="alert"]';
@@ -55,6 +56,19 @@ export function useBookingWizard(
     setStep(owner);
     setFocusRequest((value) => value + 1);
   }, [invalidAttempt, count, formRef]);
+
+  // The guided tour asks for a step by event. The layout is measured again
+  // afterwards, so the spotlight follows the section that just appeared.
+  useEffect(() => {
+    const onGoto = (event: Event) => {
+      const requested = (event as CustomEvent<unknown>).detail;
+      if (typeof requested !== "number") return;
+      setStep(clampStep(requested, count));
+      window.setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+    };
+    window.addEventListener(BOOKING_WIZARD_GOTO_EVENT, onGoto);
+    return () => window.removeEventListener(BOOKING_WIZARD_GOTO_EVENT, onGoto);
+  }, [count]);
 
   // Runs after the owning step is visible again, so focus can land.
   useEffect(() => {

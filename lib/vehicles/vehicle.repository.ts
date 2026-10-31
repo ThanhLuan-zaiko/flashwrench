@@ -62,6 +62,8 @@ export type MaintenanceInsertParams = {
   summary: string;
   cost: number;
   odometerKm: number | null;
+  nextDueAt?: Date | null;
+  nextDueKm?: number | null;
 };
 
 type RawRow = Record<string, unknown>;
@@ -289,7 +291,7 @@ export async function insertMaintenanceRecord(
   params: MaintenanceInsertParams,
 ): Promise<void> {
   await scylla.execute(
-    "INSERT INTO maintenance_history_by_vehicle (vehicle_id, serviced_at, record_id, source_type, source_id, mechanic_name, summary, cost, odometer_km) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO maintenance_history_by_vehicle (vehicle_id, serviced_at, record_id, source_type, source_id, mechanic_name, summary, cost, odometer_km, next_due_at, next_due_km) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       params.vehicleId,
       params.servicedAt,
@@ -300,6 +302,8 @@ export async function insertMaintenanceRecord(
       params.summary,
       params.cost,
       params.odometerKm,
+      params.nextDueAt ?? null,
+      params.nextDueKm ?? null,
     ],
     { prepare: true },
   );

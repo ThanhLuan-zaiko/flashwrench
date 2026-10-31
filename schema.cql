@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS media_assets_by_owner (
 -- Query: get user by id (profile, auth session)
 CREATE TABLE IF NOT EXISTS users_by_id (
   user_id       UUID PRIMARY KEY,
+  maintenance_opt_out BOOLEAN, -- customer turned off maintenance reminder emails
   phone         TEXT,
   email         TEXT,
   password_hash TEXT,
@@ -1356,6 +1357,7 @@ CREATE TABLE IF NOT EXISTS voucher_wallets_by_id (
   image_url      TEXT,
   discount_type  TEXT,
   discount_value BIGINT,
+  remaining_value BIGINT, -- fixed wallets: value still spendable after partial spends
   max_discount   BIGINT,
   status         TEXT,
   granted_by     UUID,
@@ -1508,3 +1510,37 @@ CREATE TABLE IF NOT EXISTS chat_messages_by_thread (
   body       TEXT,
   PRIMARY KEY ((thread_id), created_at, message_id)
 ) WITH CLUSTERING ORDER BY (created_at DESC, message_id ASC);
+
+-- ============================================================================
+-- 22. MAINTENANCE REMINDERS (cadence, next-due index, reminder ledger)
+-- ============================================================================
+
+-- Service cadence. Null months/km = the service never triggers a reminder.
+CREATE TABLE IF NOT EXISTS maintenance_intervals_by_service (
+  service_id      UUID PRIMARY KEY,
+  interval_months INT,
+  interval_km     INT,
+  updated_at      TIMESTAMP
+);
+
+-- Query: vehicles falling due in one shop-local month, ordered by due time.
+-- Rows are replaced when a newer visit moves the due date.
+CREATE TABLE IF NOT EXISTS maintenance_due_by_month (
+  due_month      TEXT,
+  due_at         TIMESTAMP,
+  vehicle_id     UUID,
+  owner_id       UUID,
+  next_due_km    INT,
+  reminder_group TEXT, -- treatment | holdout
+  PRIMARY KEY ((due_month), due_at, vehicle_id)
+) WITH CLUSTERING ORDER BY (due_at ASC, vehicle_id ASC);
+
+-- Reminder ledger: IF NOT EXISTS claim per (vehicle, due date) so a daily
+-- rerun never sends twice. Holdout vehicles are claimed too, without mail.
+CREATE TABLE IF NOT EXISTS maintenance_reminders_by_vehicle (
+  vehicle_id     UUID,
+  due_at         TIMESTAMP,
+  reminder_group TEXT,
+  claimed_at     TIMESTAMP,
+  PRIMARY KEY ((vehicle_id), due_at)
+) WITH CLUSTERING ORDER BY (due_at DESC);

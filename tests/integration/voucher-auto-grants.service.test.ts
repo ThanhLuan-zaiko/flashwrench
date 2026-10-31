@@ -41,7 +41,6 @@ mock.module(
 import {
   handleVoucherBookingCompleted,
   handleVoucherOrderDelivered,
-  handleVoucherOrderRefunded,
   handleVoucherReviewCreated,
   handleVoucherSignup,
 } from "@/lib/vouchers/auto-grant.service";
@@ -187,18 +186,34 @@ describe("order triggers", () => {
     );
   });
 
-  test("per-user campaign limit releases the milestone claim", async () => {
-    voucherStubs.userCampaignCount = 10;
+  test("per_user_limit does not block a repeating rule's later milestones", async () => {
+    // The customer already holds one voucher from this campaign (per_user 1).
+    voucherStubs.userCampaignCount = 1;
     voucherStubs.campaignById = makeCampaignRow({
       scope: "all",
       min_order: 0,
-      per_user_limit: 10,
+      per_user_limit: 1,
     });
+    autoRuleStubs.ruleRows = [
+      makeAutoRuleRow({ trigger_type: "booking_count", threshold: 5 }),
+    ];
+    autoRuleStubs.statsByCustomer.set(
+      VOUCHER_CUSTOMER_ID,
+      makeCustomerStatsRow({ completed_bookings: 4 }),
+    );
+    await handleVoucherBookingCompleted(VOUCHER_CUSTOMER_ID, 200000);
+    expect(voucherStubs.insertedWallets).toHaveLength(1);
+    expect(autoRuleStubs.dedupeLedger.has(dedupeKey(AUTO_RULE_ID, "b1"))).toBe(
+      true,
+    );
+  });
+
+  test("total_limit still caps rule grants and releases the milestone", async () => {
+    voucherStubs.grantSlotOutcome = "limit";
     autoRuleStubs.ruleRows = [makeAutoRuleRow({ trigger_type: "signup" })];
     await handleVoucherSignup(VOUCHER_CUSTOMER_ID);
     expect(voucherStubs.insertedWallets).toHaveLength(0);
-    // Claim released: a later retry (e.g. after admin lifts the limit)
-    // can still pay the milestone out.
+    // Claim released: a later retry can still pay the milestone out.
     expect(autoRuleStubs.releasedDedupe).toContain(
       dedupeKey(AUTO_RULE_ID, "signup"),
     );
@@ -223,31 +238,6 @@ describe("review_created trigger", () => {
     await handleVoucherReviewCreated(VOUCHER_CUSTOMER_ID, "booking-1");
     await handleVoucherReviewCreated(VOUCHER_CUSTOMER_ID, "order:o1");
     expect(voucherStubs.insertedWallets).toHaveLength(2);
-  });
-});
-
-describe("refund unwind", () => {
-  test("drops the delivered count and spend without touching wallets", async () => {
-    autoRuleStubs.statsByCustomer.set(
-      VOUCHER_CUSTOMER_ID,
-      makeCustomerStatsRow({ completed_orders: 3, total_spent: 900000 }),
-    );
-    await handleVoucherOrderRefunded(VOUCHER_CUSTOMER_ID, 300000);
-    const row = autoRuleStubs.statsByCustomer.get(VOUCHER_CUSTOMER_ID);
-    expect(row?.completed_orders).toBe(2);
-    expect(row?.total_spent).toBe(600000);
-    expect(voucherStubs.insertedWallets).toHaveLength(0);
-  });
-
-  test("clamps at zero instead of going negative", async () => {
-    autoRuleStubs.statsByCustomer.set(
-      VOUCHER_CUSTOMER_ID,
-      makeCustomerStatsRow({ completed_orders: 0, total_spent: 100000 }),
-    );
-    await handleVoucherOrderRefunded(VOUCHER_CUSTOMER_ID, 300000);
-    const row = autoRuleStubs.statsByCustomer.get(VOUCHER_CUSTOMER_ID);
-    expect(row?.completed_orders).toBe(0);
-    expect(row?.total_spent).toBe(0);
   });
 });
 

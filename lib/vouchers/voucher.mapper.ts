@@ -9,6 +9,7 @@ import type {
   WalletRow,
   WalletStatus,
 } from "./voucher.types";
+import { walletRemainingValue } from "./voucher-discount";
 
 function toIso(value: Date | null): string | null {
   return value ? new Date(value).toISOString() : null;
@@ -31,6 +32,16 @@ function toStatus(value: string | null): WalletStatus {
     return value;
   }
   return "active";
+}
+
+// The stored status only flips to expired when someone tries to spend the
+// wallet, so an active wallet past its expiry is reported as expired here.
+function walletStatus(row: WalletRow, now: Date): WalletStatus {
+  const status = toStatus(row.status);
+  if (status === "active" && row.expires_at && row.expires_at <= now) {
+    return "expired";
+  }
+  return status;
 }
 
 export function toCampaign(row: CampaignRow): VoucherCampaign {
@@ -123,10 +134,11 @@ export function toWallet(
     imageUrl: row.image_url ?? "",
     discountType: toDiscountType(row.discount_type),
     discountValue: row.discount_value ?? 0,
+    remainingValue: walletRemainingValue(row),
     maxDiscount: row.max_discount ?? 0,
     scope: toScope(campaign?.scope ?? null),
     minOrder: campaign?.min_order ?? 0,
-    status: toStatus(row.status),
+    status: walletStatus(row, now),
     spendable: walletLive && campaignLive,
     grantedAt: toIso(row.granted_at),
     expiresAt: toIso(row.expires_at),

@@ -62,7 +62,7 @@ export function useCheckoutForm() {
   const walletDiscount = selectedWallet
     ? clampVoucherDiscount({
         discountType: selectedWallet.discountType,
-        discountValue: selectedWallet.discountValue,
+        discountValue: selectedWallet.remainingValue,
         maxDiscount: selectedWallet.maxDiscount,
         subtotal: cartView?.subtotal ?? 0,
       })

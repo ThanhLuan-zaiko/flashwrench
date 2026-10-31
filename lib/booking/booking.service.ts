@@ -201,7 +201,8 @@ export async function createCustomerBooking(
       mechanicName,
     });
   } catch (error) {
-    if (walletId) await releaseWalletReservation(walletId, { bookingId });
+    if (walletId)
+      await releaseWalletReservation(walletId, { bookingId }, discount);
     throw error;
   }
   if (walletId && customer) {

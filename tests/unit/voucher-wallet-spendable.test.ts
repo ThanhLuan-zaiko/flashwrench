@@ -59,3 +59,27 @@ describe("toWallet spendable", () => {
     ).toBe(false);
   });
 });
+
+describe("toWallet status", () => {
+  test("an active wallet past its expiry reads as expired", () => {
+    const wallet = mapWallet({
+      expires_at: new Date("2026-09-01T00:00:00.000Z"),
+    });
+    expect(wallet.status).toBe("expired");
+    expect(wallet.spendable).toBe(false);
+  });
+
+  test("an active wallet whose campaign is off keeps its active status", () => {
+    const wallet = mapWallet({}, makeCampaignRow({ is_active: false }));
+    expect(wallet.status).toBe("active");
+    expect(wallet.spendable).toBe(false);
+  });
+
+  test("a used wallet keeps its used status even past expiry", () => {
+    const wallet = mapWallet({
+      status: "used",
+      expires_at: new Date("2026-09-01T00:00:00.000Z"),
+    });
+    expect(wallet.status).toBe("used");
+  });
+});

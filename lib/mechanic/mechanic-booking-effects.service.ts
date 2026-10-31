@@ -1,4 +1,8 @@
 import {
+  planVisitDue,
+  syncDueIndex,
+} from "@/lib/vehicles/maintenance-due.service";
+import {
   findVehicleRowById,
   insertMaintenanceRecord,
 } from "@/lib/vehicles/vehicle.repository";
@@ -18,7 +22,15 @@ export async function writeBookingCompletionEffects(
 ): Promise<void> {
   if (detail.vehicle_id) {
     const vehicle = await findVehicleRowById(detail.vehicle_id);
+    const plan = await planVisitDue({
+      vehicleId: detail.vehicle_id,
+      servedAt: servicedAt,
+      odometerKm: vehicle?.odometer_km ?? null,
+      serviceIds: items.map((item) => item.serviceId),
+    });
     await insertMaintenanceRecord({
+      nextDueAt: plan.next.dueAt,
+      nextDueKm: plan.next.dueKm,
       vehicleId: detail.vehicle_id,
       servicedAt,
       recordId: detail.booking_id,
@@ -32,6 +44,11 @@ export async function writeBookingCompletionEffects(
       cost: detail.total ?? 0,
       odometerKm: vehicle?.odometer_km ?? null,
     });
+    await syncDueIndex({
+      vehicleId: detail.vehicle_id,
+      ownerId: detail.customer_id,
+      plan,
+    }).catch(() => undefined);
   }
   const profile = await findMechanicProfileRow(mechanicId);
   await setMechanicCompletedJobs(
