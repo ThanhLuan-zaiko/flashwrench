@@ -212,6 +212,40 @@ decorative block or a stretched image. Pick the method that matches the cause:
    with `getBoundingClientRect()` in the browser; a screenshot alone can miss
    a clipped line.
 
+## 3.3 Chapter Layout (home and marketing pages)
+
+Home page sections are "chapters", not bento grids. Use this layout for
+landing sections that list services, parts, vouchers, steps, prices,
+mechanics or reviews.
+
+1. **Ruled list on the page surface.** A chapter is a header (eyebrow,
+   large masked headline, optional link) followed by rows separated by
+   hairline rules (`h-px bg-zinc-200 dark:bg-zinc-800`, `data-rule`). No
+   card borders, no tinted boxes, no bento spans.
+2. **Show the image whenever the data has one.** Services use `imageUrl`,
+   parts `imageUrl`, vouchers `imageUrl`, mechanics `avatarUrl`. A row or
+   tile that has an API image must render it; text-only rows are only for
+   data with no image field (reviews, price promises). Wrap each photo in a
+   fixed-size clipped frame (`overflow-hidden rounded-lg bg-zinc-100
+   dark:bg-zinc-900`), mark the `<img>` `data-chapter-photo`, use
+   `object-cover` and `loading="lazy"`. When the image is missing, keep the
+   frame: a bare `react-icons` glyph for catalog items, initials for people.
+3. **Row anatomy (desktop).** Photo, large figure or name, supporting text,
+   then the value or terms, in fixed grid columns (for example
+   `md:grid-cols-[11rem_12rem_minmax(0,1fr)_16rem]`). On phones the photo
+   stays on the left at about 6.5rem wide and the text stacks beside it.
+   Four or fewer rows must fit about one 1440x900 viewport.
+4. **Scale.** Headline `text-3xl md:text-5xl font-bold`; list-row title
+   `text-lg md:text-3xl`; section width `w-full px-4 sm:px-6 lg:px-10`.
+5. **Actions.** Secondary actions are bold text links with an arrow. The
+   single orange button of the page is the closing call to action.
+6. **Hide when empty.** Data-driven chapters return `null` when there is
+   nothing to show.
+
+Reference: `components/home/services/`,
+`components/home/promotions/HomePromoList.tsx`, `components/home/products/`,
+`components/home/mechanics/`, `components/home/testimonials/`.
+
 ## 4. GSAP Rules
 
 ### 4.1 Setup
@@ -220,7 +254,8 @@ decorative block or a stretched image. Pick the method that matches the cause:
   `gsap/ScrollTrigger` only. Do not add other motion libraries.
 - All GSAP code runs in Client Components (`"use client"` only).
   Never animate in Server Components.
-- Encapsulate motion in `hooks/useBentoReveal.ts` or
+- Encapsulate motion in `hooks/useBentoReveal.ts` (bento cards),
+  `hooks/useChapterMotion.ts` (home chapter sections, see 4.7) or
   `hooks/useGsapStagger.ts` so `.tsx` files stay small.
 
 ### 4.2 Mandatory Pattern
@@ -265,7 +300,8 @@ Cards mark themselves with `data-reveal`, no per-card JS.
 
 ### 4.3 Allowed Motion Only
 
-- Animate only `y`, `x`, `scale`, `opacity`. Max duration 0.6s,
+- Animate only `y`, `x`, `scale`, `opacity` (chapter sections also use
+  `yPercent`, `scaleX` and `clipPath`, see 4.7). Max duration 0.6s,
   max stagger 0.1s, `ease: "power2.out"` default.
 - Enter effects: fade-up `y: 24 -> 0`. Hover: `scale: 1.02`
   via Tailwind `motion-safe:transition-transform motion-safe:duration-200`,
@@ -349,6 +385,56 @@ Rules:
   values as accessible text (`aria-label` plus visually rendered
   numbers in the card).
 
+### 4.7 Chapter Motion (home chapter sections)
+
+Home chapter sections (promotions, services, parts, steps, price,
+mechanics, reviews and the closing call to action) share one GSAP hook,
+`hooks/useChapterMotion.ts`, driven by the values in
+`lib/motion/chapter-motion.ts`. Layout rules are in Section 3.3. A section
+opts in with data attributes and calls the hook once on its root ref; no
+section creates its own timelines.
+
+| Attribute | Element | Motion |
+| --- | --- | --- |
+| `data-lines` + `data-line` | headline (`components/home/MaskLines.tsx`) | each line rises out of an `overflow-hidden` mask (`yPercent 110 -> 0`, stagger 0.08) |
+| `data-rule` | hairline `h-px origin-left` | draws from the left (`scaleX 0 -> 1`) |
+| `data-chapter-row` | row, tile or paragraph | fades up (`y 16 -> 0`, `opacity 0 -> 1`) |
+| `data-chapter-photo` | the `<img>` inside a clipped frame | opens top to bottom (`clipPath inset()`), scrubbed with scroll, `ease: "none"` |
+
+Optional extras, opted into per element and driven by
+`hooks/useChapterExtras.ts` and `hooks/useCursorPreview.ts`:
+
+| Attribute | Element | Motion |
+| --- | --- | --- |
+| `data-parallax` | the same `<img>` (scaled 1.2 in its clipped frame) | drifts `yPercent -8 -> 8` while its frame crosses the viewport, scrubbed. Do not put a Tailwind `scale-*` or hover scale on this element: GSAP owns its transform |
+| `data-focus` | a large title (md and up only) | opacity `0.55 -> 1 -> 0.55` across the viewport, scrubbed; never dim body-size text |
+| `data-count-to={number}` | a span holding the formatted price | counts 0 to the value once (0.6s), then shows the static text again on cleanup |
+| `data-preview-src={url}` on a row + one `data-preview` overlay | row and a fixed 320x200 photo | the overlay follows the mouse with `gsap.quickTo` on `x`/`y` and fades in and out (0.3s); mouse pointers at 1024px and up only, hidden after 24px of scrolling |
+
+The overlay is decorative (`aria-hidden`), uses no shadow and no inline
+style, and the row link keeps the accessible name. Pure helpers
+(`previewPosition`, `formatCountValue`) live in `lib/motion/chapter-motion.ts`.
+
+Rules:
+
+- Line, rule and row tweens run once (`once: true`, start `top 88%`,
+  duration at most 0.6s, `power2.out`). Only photo tweens scrub, so the
+  0.6s cap does not apply to them.
+- Allowed properties for chapters: `yPercent`, `y`, `scaleX`, `opacity`
+  and `clipPath`. Never animate layout properties.
+- Sections that render after async data (for example promotions) pass
+  `ready` as the second argument so the hook waits for the root to exist.
+- The hook skips GSAP entirely for reduced motion and hidden pages, imports
+  GSAP lazily, jumps one-shot tweens to their final state when frames
+  starve, and reverts everything through `ctx.revert()`.
+- Budget: one once-trigger per headline, rule and row, at most ~25 per
+  section, and at most ~8 scrubbed photos per section.
+- Do not use ScrollTrigger `pin`, sticky columns, snapping or forced
+  scroll positions. No infinite loops, tickers or scroll-jacking.
+- Pure values live in `lib/motion/chapter-motion.ts` and are covered by
+  `tests/unit/chapter-motion.test.ts`; change a value there, not in a
+  component.
+
 ## 5. File Organization
 
 Keep files small and single-purpose:
@@ -361,6 +447,7 @@ components/bento/
   ActionCard.tsx
 hooks/
   useBentoReveal.ts     # GSAP reveal hook, < 350 lines
+  useChapterMotion.ts   # home chapter motion (lines, rules, rows, photos)
   useCountUp.ts         # optional numeric tween, isolated
   useGsapChart.ts       # canvas chart draw + GSAP tween, isolated
 ```
@@ -420,6 +507,8 @@ Before finishing, verify:
 - Hiding an offer's details behind taps or sliders to save room
   (see 3.2 rule 7).
 - Slogans, superlatives and ad-style copy in user-facing text.
+- Rows or tiles that drop an image the API provides (see 3.3 rule 2).
+- Bordered card grids for home chapter sections (see 3.3).
 - Full-page GSAP timelines spanning unrelated sections.
 - Per-card `useEffect` creating separate ScrollTriggers.
 - Missing `ctx.revert()` cleanup.

@@ -4,10 +4,10 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { MechanicsBento } from "@/components/home/mechanics/MechanicsBento";
 import { HomePriceSection } from "@/components/home/pricing/HomePriceSection";
 import { HomeProductsBento } from "@/components/home/products/HomeProductsBento";
+import { HomePromoList } from "@/components/home/promotions/HomePromoList";
 import { ServicesBento } from "@/components/home/services/ServicesBento";
 import { StepsBento } from "@/components/home/steps/StepsBento";
 import { TestimonialsBento } from "@/components/home/testimonials/TestimonialsBento";
-import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import {
   listHeroServices,
@@ -37,9 +37,7 @@ export default async function HomePage() {
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <HomeHero heroServices={heroServices} />
-      <div className="w-full px-4 pt-10 sm:px-6 md:pt-14 lg:px-10">
-        <PromoBannerSection />
-      </div>
+      <HomePromoList />
       <ServicesBento services={services} />
       <HomeProductsBento items={products} />
       <StepsBento />

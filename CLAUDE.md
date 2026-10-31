@@ -10,6 +10,13 @@ The full rules are in `frontend-bento-gsap.md` Section 3.1, and `AGENTS.md` Sect
 - Gradients: forbidden unless the spec names a functional purpose.
 - Space: no dead space in grids or sections. Fill it with content or span, never filler. Apply the layout fixes in `frontend-bento-gsap.md` Section 3.2, and check cell fit and clipped text at 375, 1024 and 1440px.
 - Copy: plain and factual. No slogans, superlatives or ad-style wording.
+- Images: every service, part, voucher and mechanic row or tile shows the image its API provides (`imageUrl`, `avatarUrl`) in a fixed clipped frame, with a bare icon or initials as fallback. Never ship a text-only row when an image exists.
+
+## Home chapter layout and motion
+
+Home sections (promotions, services, parts, steps, price, mechanics, reviews, closing call to action) are ruled-row chapters, not card grids or banners: masked headline, hairline rules, rows on the page surface. Layout rules are in `frontend-bento-gsap.md` Section 3.3.
+
+Motion comes from one hook, `hooks/useChapterMotion.ts`, using the attributes `data-lines`/`data-line` (via `components/home/MaskLines.tsx`), `data-rule`, `data-chapter-row` and `data-chapter-photo`. Optional extras (`hooks/useChapterExtras.ts`, `hooks/useCursorPreview.ts`): `data-parallax`, `data-focus`, `data-count-to` and `data-preview-src`. Values live in `lib/motion/chapter-motion.ts`; limits are in Section 4.7. Do not write a new timeline per section, and do not pin or use sticky columns.
 
 ## Skill: flat isometric illustrations
 
@@ -28,6 +35,6 @@ Use this skill when a page needs decorative 3D-style illustrations (flat isometr
 - The root `<svg>` carries `aria-hidden="true"` (Biome `noSvgWithoutTitle` requires it for decorative SVGs).
 - Render with `next/image` and `alt=""`, passing `width`/`height` and sizing with Tailwind classes.
 
-**Placement:** keep the illustration and its text in the same column. The route line in `components/home/steps/StepsBento.tsx` is positioned in px (`top-[129px]`) to pass through the numerals below a 96px illustration; if you change the illustration size or the gap above the numeral, update that offset.
+**Placement:** keep the illustration and its text in the same column. In `components/home/steps/StepsBento.tsx` each step draws its own hairline rule above the numeral, so no pixel offsets depend on the illustration size.
 
 **Checks:** run `bun run check:all` after changes. Do not delete `.next/dev` unless a stale generated type error appears; it is a regenerated dev cache.
