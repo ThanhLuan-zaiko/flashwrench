@@ -8,7 +8,7 @@ The full rules are in `frontend-bento-gsap.md` Section 3.1, and `AGENTS.md` Sect
 - Icons: never inside rounded containers. Limit to one bare icon per card, and only when it adds meaning.
 - Cards: no nested cards and no bordered or tinted boxes inside a card.
 - Gradients: forbidden unless the spec names a functional purpose.
-- Space: no dead space in grids or sections. Fill it with content or span, never filler.
+- Space: no dead space in grids or sections. Fill it with content or span, never filler. Apply the layout fixes in `frontend-bento-gsap.md` Section 3.2, and check cell fit and clipped text at 375, 1024 and 1440px.
 - Copy: plain and factual. No slogans, superlatives or ad-style wording.
 
 ## Skill: flat isometric illustrations

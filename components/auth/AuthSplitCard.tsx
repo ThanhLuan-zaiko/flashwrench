@@ -34,7 +34,7 @@ export function AuthSplitCard({
   services,
 }: AuthSplitCardProps) {
   return (
-    <main className="flex flex-1 flex-col bg-[#1E3A5F] sm:bg-white lg:grid lg:grid-cols-2 dark:sm:bg-zinc-950">
+        <main className="flex flex-1 flex-col bg-[#1E3A5F] sm:bg-white lg:grid lg:min-h-[calc(100svh-65px)] lg:grid-cols-2 dark:sm:bg-zinc-950">
       <AuthServiceSlideshow
         services={services}
         className="h-64 shrink-0 sm:h-60 lg:h-auto"

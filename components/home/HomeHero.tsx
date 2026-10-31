@@ -1,26 +1,36 @@
 "use client";
 
-import Image from "next/image";
-import { FiCheck } from "react-icons/fi";
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import { HeroServiceFan } from "./HeroServiceFan";
 
-const TRUST_POINTS = ["Thợ đã xác thực", "Giá minh bạch", "Bảo hành 30 ngày"];
+// Headline facts shown under the actions. Each one repeats a promise already
+// made on the booking and rescue pages.
+const FACTS = [
+  { value: "30 phút", label: "Có mặt sau khi đặt" },
+  { value: "24/7", label: "Cứu hộ khẩn cấp" },
+  { value: "30 ngày", label: "Bảo hành công việc" },
+];
 
-// Full-width navy band for the home hero, in the same style as the product and
-// campaign bands: headline, booking actions and trust points on the left, the
-// service illustration on the right.
+// Full-width navy band for the home hero, in the same layered style as the
+// auth showcase: headline, actions and facts on the left, fanned service cards
+// on the right. Without photographed services the band drops the right column
+// instead of leaving an empty box.
 // It sits directly under the sticky site header and rounds its bottom corners.
-export function HomeHero() {
+export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
   const rootRef = useBentoReveal<HTMLElement>();
+  const hasTiles = heroServices.length > 0;
 
   return (
     <section
       ref={rootRef}
       aria-label="Giới thiệu FlashWrench"
-      className="rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-10 pb-12 text-white sm:px-6 md:pt-14 md:pb-16"
+      className="rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-8 pb-10 text-white sm:px-6 md:pt-10 md:pb-12"
     >
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+      <div
+        className={`mx-auto grid w-full max-w-6xl items-center gap-10 lg:gap-14 ${hasTiles ? "lg:grid-cols-2" : ""}`}
+      >
         <div className="flex flex-col items-start text-left">
           <p
             data-reveal
@@ -30,7 +40,7 @@ export function HomeHero() {
           </p>
           <h1
             data-reveal
-            className="mt-5 text-5xl leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl"
+            className="mt-5 text-5xl leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl"
           >
             Xe hỏng ở đâu, thợ đến đó.
           </h1>
@@ -62,27 +72,21 @@ export function HomeHero() {
           </div>
           <ul
             data-reveal
-            className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2"
+            className="mt-10 grid w-full max-w-md grid-cols-3 gap-4 border-t border-white/20 pt-6"
           >
-            {TRUST_POINTS.map((point) => (
-              <li
-                key={point}
-                className="flex items-center gap-1.5 text-sm font-medium text-zinc-100"
-              >
-                <FiCheck aria-hidden="true" className="h-4 w-4 shrink-0" />
-                {point}
+            {FACTS.map((fact) => (
+              <li key={fact.value}>
+                <p className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                  {fact.value}
+                </p>
+                <p className="mt-1 text-xs text-zinc-200 sm:text-sm">
+                  {fact.label}
+                </p>
               </li>
             ))}
           </ul>
         </div>
-        <Image
-          data-reveal
-          src="/images/home/hero-auto-service.png"
-          alt="Thợ sửa xe đang làm việc cùng chiếc xe màu cam"
-          width={776}
-          height={688}
-          className="mx-auto h-80 w-auto sm:h-96"
-        />
+        {hasTiles ? <HeroServiceFan services={heroServices} /> : null}
       </div>
     </section>
   );

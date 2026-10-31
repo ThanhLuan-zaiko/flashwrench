@@ -105,7 +105,7 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
   - **Icons:** FORBIDDEN inside rounded containers (`rounded-full`, `rounded-xl`, `rounded-2xl` around an icon). LIMIT to at most one bare icon per card, and only when it carries meaning.
   - **Nested cards:** FORBIDDEN. A card never holds another bordered box, tile or panel; separate content with `divide-*` or spacing.
   - **Gradients:** FORBIDDEN unless the spec names a functional purpose (for example a legibility scrim). No gradient text, buttons, borders, blobs or background patterns.
-  - **No dead space:** fill grid cells and sections with real content or span. Never leave blank areas or pad them with filler text or decoration.
+  - **No dead space:** fill grid cells and sections with real content or span. Never leave blank areas or pad them with filler text or decoration. The layout fixes (span tables for a fixed item count, last-item spans, stretch and wrap growth, content-sized rows, full-width media grids) are in `frontend-bento-gsap.md` Section 3.2.
   - **Plain copy:** no slogans, superlatives, exclamation marks or ad-style wording in user-facing text. Say what the thing is and what the user does next.
 - **Naming & Language:** Vietnamese WITH full diacritics (tiếng Việt có dấu, e.g., "Đặt lịch sửa xe", NOT "Dat lich sua xe") is allowed ONLY in two places: user-facing web UI strings (labels, placeholders, aria-labels, metadata, user-facing validation/error messages) and files under `docs/`. Everything else MUST be in English: all code identifiers (variables, functions, types, components, hooks), URL paths (`/dang-nhap` is FORBIDDEN — use `/login`), and ALL comments (TypeScript, JSX, CQL, shell).
 

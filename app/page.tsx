@@ -10,6 +10,7 @@ import { TestimonialsBento } from "@/components/home/testimonials/TestimonialsBe
 import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import {
+  listHeroServices,
   listHomeProducts,
   listHomeServices,
 } from "@/lib/home/home-catalog.service";
@@ -25,16 +26,18 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   // Server-side reads run in parallel; each service degrades to [] on any
   // outage and the matching section then removes itself.
-  const [services, products, mechanics, realReviews] = await Promise.all([
-    listHomeServices(),
-    listHomeProducts(),
-    listShowcaseMechanics(),
-    listLandingReviews(),
-  ]);
+  const [services, heroServices, products, mechanics, realReviews] =
+    await Promise.all([
+      listHomeServices(),
+      listHeroServices(),
+      listHomeProducts(),
+      listShowcaseMechanics(),
+      listLandingReviews(),
+    ]);
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
-      <HomeHero />
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+      <HomeHero heroServices={heroServices} />
+      <div className="w-full px-4 pt-10 sm:px-6 md:pt-14 lg:px-10">
         <PromoBannerSection />
       </div>
       <ServicesBento services={services} />

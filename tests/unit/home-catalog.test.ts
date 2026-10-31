@@ -1,12 +1,50 @@
 import { describe, expect, test } from "bun:test";
 import {
   AUTH_SERVICE_LIMIT,
+  HERO_SERVICE_LIMIT,
   pickAuthServices,
+  pickHeroServices,
   pickHomeProducts,
   pickHomeServices,
 } from "@/lib/home/home-catalog.service";
 import { makeServiceItem } from "../helpers/catalog.fixtures";
 import { makePartItem } from "../helpers/home-catalog.fixtures";
+
+describe("pickHeroServices", () => {
+  test("keeps only active, non-deleted services that have a photo", () => {
+    const picked = pickHeroServices([
+      makeServiceItem({ id: "plain", imageUrl: "" }),
+      makeServiceItem({ id: "gone", imageUrl: "/a.jpg", isDeleted: true }),
+      makeServiceItem({ id: "off", imageUrl: "/b.jpg", isActive: false }),
+      makeServiceItem({ id: "photo", imageUrl: "/c.jpg" }),
+    ]);
+    expect(picked.map((service) => service.id)).toEqual(["photo"]);
+  });
+
+  test("caps the grid at the hero limit", () => {
+    const services = ["a", "b", "c", "d", "e"].map((id) =>
+      makeServiceItem({ id, imageUrl: "/x.jpg" }),
+    );
+    expect(pickHeroServices(services)).toHaveLength(5);
+    expect(pickHeroServices(services, 2)).toHaveLength(2);
+    expect(HERO_SERVICE_LIMIT).toBe(8);
+    expect(pickHeroServices(services, 0)).toHaveLength(0);
+  });
+
+  test("orders the carousel alphabetically so the rotation is stable", () => {
+    const picked = pickHeroServices([
+      makeServiceItem({ id: "c", name: "Thay lốp", imageUrl: "/c.jpg" }),
+      makeServiceItem({ id: "a", name: "Bảo dưỡng", imageUrl: "/a.jpg" }),
+      makeServiceItem({ id: "b", name: "Sửa động cơ", imageUrl: "/b.jpg" }),
+    ]);
+    expect(picked.map((service) => service.id)).toEqual(["a", "b", "c"]);
+  });
+
+  test("returns an empty list when no service has a photo", () => {
+    expect(pickHeroServices([makeServiceItem({ imageUrl: "" })])).toEqual([]);
+    expect(pickHeroServices([])).toEqual([]);
+  });
+});
 
 describe("pickHomeServices", () => {
   test("drops inactive and deleted services", () => {

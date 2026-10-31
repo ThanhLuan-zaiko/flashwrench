@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { usePublicCampaigns } from "@/hooks/useVouchers";
-import { PromoCarousel } from "./PromoCarousel";
+import { PromoGrid } from "./PromoGrid";
 import { type PromoAudience, promoAppliesTo } from "./promo-format";
 
 type PromoBannerSectionProps = {
@@ -18,11 +18,11 @@ type PromoBannerSectionProps = {
   showAllLink?: boolean;
 };
 
-// Public promotion banner: a large auto-rotating carousel guests see to
-// create an account, customers see to know which campaign to ask staff
-// about. Every live campaign renders — optionally narrowed to the page's
-// audience (booking on /services, order on /products). Renders nothing
-// when nothing matches so landing layouts keep their rhythm.
+// Public promotion section: a grid of the live campaigns, each card showing
+// its full offer, so guests and customers read every voucher without opening
+// it. Optionally narrowed to the page's audience (booking on /services, order
+// on /products). Renders nothing when nothing matches so landing layouts keep
+// their rhythm.
 export function PromoBannerSection({
   title = "Ưu đãi đang chạy",
   subtitle = "Voucher gắn thẳng vào tài khoản, tạo tài khoản để được phát tự động khi đủ điều kiện.",
@@ -75,7 +75,7 @@ export function PromoBannerSection({
         )}
       </header>
       <div data-reveal>
-        <PromoCarousel campaigns={items} />
+        <PromoGrid campaigns={items} />
       </div>
     </section>
   );

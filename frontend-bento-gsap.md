@@ -158,13 +158,59 @@ They override generic dashboard or landing-page defaults.
    must be balanced by span or real content (data, status, action),
    not left blank and not padded with filler text or decoration.
    Section rhythm sets the vertical gap; leftover area is a bug.
-   Check the 360px mobile layout as well as desktop.
+   Check the 360px mobile layout as well as desktop. Fix gaps in the
+   layout itself; the methods are in Section 3.2.
 6. **Plain copy, no sales tone.** Forbidden: slogans, superlatives,
    exclamation marks and ad-style phrasing (for example
    "Trải nghiệm đỉnh cao!", "Nâng tầm mọi chuyến đi"). Say what the
    thing is and what the user does next.
    Bad: "Đặt lịch sửa xe nhanh chóng, chuyên nghiệp, tiết kiệm tối đa!"
    Good: "Chọn dịch vụ, giờ hẹn và địa chỉ. Thợ đến tận nơi."
+
+## 3.2 Filling Empty Space
+
+An empty area means a row or grid whose items do not add up to the space
+they sit in. Fix it in the layout. Never fill it with filler text, a
+decorative block or a stretched image. Pick the method that matches the cause:
+
+1. **Fixed item count: pre-compute the spans.** When a grid has a known
+   item limit (for example at most six cards in three columns), keep a
+   table from item count to spans, and write each entry so its spans fill
+   the grid exactly. Six cards in three columns: one featured card at
+   `lg:col-span-2 lg:row-span-2` (four cells) plus five single cells fills
+   the 3×3 grid with no hole. Use literal class strings such as
+   `lg:col-span-2`; a class built from a variable is missed by the Tailwind
+   scanner. Source: `components/promotions/promo-grid-layout.ts`.
+2. **Unknown item count: span the last item.** When a row may end early,
+   give the last item the remaining columns: `span = columns - remainder + 1`.
+   For chip rows, use `flex-wrap` with `md:flex-1 md:basis-44` so the last
+   row grows to the full width instead of leaving a gap. On phones keep the
+   horizontal scroll.
+3. **Verify the layout with a placement test.** Simulate the browser's
+   auto-placement (`grid-auto-flow: row`: the cursor only moves forward) and
+   assert that every cell up to the last used row is occupied. See
+   `tests/unit/promo-grid-layout.test.ts`.
+4. **Equal-height cards: stretch, do not pin.** Cards in one row share the
+   row height through `h-full` on the grid item and `flex-1` on the content.
+   Do not give each card its own fixed height; long text is then clipped.
+5. **Let rows size to their content.** Use the default `auto` rows when the
+   text must show in full. A fixed row height such as `auto-rows-[13.5rem]`
+   clips copy in narrow columns. After changing row sizes, measure each card's
+   copy in the browser: no text may end below the bottom edge of its card.
+6. **Media grids use the full width.** A section whose content is a grid of
+   photos or cards may span the viewport with horizontal padding
+   (`w-full px-4 sm:px-6 lg:px-10`). A `max-w-6xl` wrapper leaves side voids
+   on wide screens. Keep the max width for text-only sections.
+7. **Do not hide content to save room.** Do not move an offer's details behind
+   taps, accordions or sliders to fit more items. Show the full content in
+   every visible card. When items outnumber the slots, cap the visible count
+   at the layout limit, rotate only the featured slot on a timer (pausing on
+   hover and focus), and link to the full list. Never shrink cards into slivers.
+8. **Check every breakpoint.** At 375px, 1024px and 1440px confirm: no
+   horizontal scroll, cell rectangles touch their neighbours with only the
+   grid gap between them, and no text extends past its card. Measure these
+   with `getBoundingClientRect()` in the browser; a screenshot alone can miss
+   a clipped line.
 
 ## 4. GSAP Rules
 
@@ -358,6 +404,8 @@ Before finishing, verify:
 9. Visual style (3.1) checked: Be Vietnam Pro only, no rounded icon
    containers, no nested cards, no unexplained gradients, no empty
    gaps left in grids, no sales-tone copy.
+10. Empty space (3.2) checked at 375, 1024 and 1440px: every cell filled,
+    no text clipped by its card, media grids use the full width.
 
 ## 8. Anti-Patterns (Forbidden)
 
@@ -366,6 +414,11 @@ Before finishing, verify:
 - Nested cards, or tinted/bordered boxes inside a card.
 - Decorative gradients, gradient text, blobs or background patterns.
 - Half-empty grid cells or sections padded with filler.
+- Fixed row heights that clip card copy (see 3.2 rule 5).
+- Shrinking cards to slivers as the item count grows; cap the visible
+  count instead (see 3.2 rule 7).
+- Hiding an offer's details behind taps or sliders to save room
+  (see 3.2 rule 7).
 - Slogans, superlatives and ad-style copy in user-facing text.
 - Full-page GSAP timelines spanning unrelated sections.
 - Per-card `useEffect` creating separate ScrollTriggers.
