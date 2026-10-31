@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { TaskBar } from "@/components/layout/TaskBar";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { OrderTracker } from "@/components/track/OrderTracker";
+import { TrackPlacedBanner } from "@/components/track/TrackPlacedBanner";
 
 export const metadata: Metadata = {
   title: "Theo dõi đơn hàng | FlashWrench",
@@ -20,7 +21,10 @@ export default async function TrackOrderPage({
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <TaskBar title="Theo dõi đơn hàng" backHref="/" />
-      <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6 md:py-14">
+      <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6 md:py-14 lg:max-w-4xl">
+        <div className="mb-4 empty:hidden">
+          <TrackPlacedBanner kind="order" />
+        </div>
         <div className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800 sm:p-6">
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
             Theo dõi đơn hàng

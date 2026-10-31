@@ -80,7 +80,10 @@ export function BookingWizardBar({
             className={`${BRAND_PRIMARY_BUTTON} min-w-0 flex-1`}
           >
             <span className="truncate">
-              Tiếp tục: {labels[step + 1].toLocaleLowerCase("vi")}
+              Tiếp tục
+              <span className="hidden sm:inline">
+                : {labels[step + 1].toLocaleLowerCase("vi")}
+              </span>
             </span>
             <FiArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
           </button>

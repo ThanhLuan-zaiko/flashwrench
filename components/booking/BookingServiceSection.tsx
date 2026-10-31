@@ -9,6 +9,7 @@ import {
 import { BOOKING_MAX_SERVICES } from "@/lib/booking/booking-services.constants";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { BookingServiceMedia } from "./BookingServiceMedia";
+import { BookingServiceQuickPick } from "./BookingServiceQuickPick";
 import { BookingStep } from "./BookingStep";
 import { SelectedServiceLines } from "./SelectedServiceLines";
 import { toServiceSelectOptions } from "./service-select-options";
@@ -96,6 +97,13 @@ export function BookingServiceSection({
             disabled={disabled || serviceIds.length >= BOOKING_MAX_SERVICES}
           />
           {message && <FormAlert message={message} />}
+          {serviceIds.length === 0 && (
+            <BookingServiceQuickPick
+              services={remaining}
+              disabled={disabled}
+              onPick={(id) => onServiceIds([...serviceIds, id])}
+            />
+          )}
           <Link
             href="/services"
             scroll={false}

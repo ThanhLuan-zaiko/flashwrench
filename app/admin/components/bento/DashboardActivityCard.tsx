@@ -1,4 +1,6 @@
 import { FiLoader } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { formatDateTime } from "@/lib/datetime/format";
 import type { PaymentAuditEvent } from "@/lib/revenue/revenue.types";
 import { BentoCard } from "./BentoCard";
@@ -71,9 +73,10 @@ export function DashboardActivityCard({
         </p>
       )}
       {events && events.length === 0 && (
-        <p className="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          Chưa có hoạt động thu tiền nào hôm nay.
-        </p>
+        <StaffEmptyState
+          art={STAFF_ART.coins}
+          title="Chưa có hoạt động thu tiền nào hôm nay"
+        />
       )}
       {events && events.length > 0 && (
         <ul aria-live="polite" className="mt-2">

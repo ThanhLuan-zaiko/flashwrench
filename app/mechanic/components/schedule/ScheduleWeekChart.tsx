@@ -5,6 +5,8 @@ import {
   ChartHeadline,
   StaffChartCard,
 } from "@/components/charts/StaffChartCard";
+import { StaffAsideArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useMechanicBookings } from "@/hooks/mechanic";
 import { upcomingLoad } from "@/lib/staff-charts/page-series";
 import { weekLabels } from "../stats/stats-format";
@@ -25,7 +27,11 @@ export function ScheduleWeekChart() {
       subtitle="Số đơn hẹn mỗi ngày, tính cả hôm nay"
       isPending={query.isPending}
       empty={query.isError ? "Không tải được lịch làm việc." : null}
-      aside={<ChartHeadline value={String(total)} caption="đơn sắp tới" />}
+      aside={
+        <StaffAsideArt art={STAFF_ART.calendar}>
+          <ChartHeadline value={String(total)} caption="đơn sắp tới" />
+        </StaffAsideArt>
+      }
     >
       <ColumnChart
         values={load.map((point) => point.value)}

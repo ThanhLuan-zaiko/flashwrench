@@ -17,7 +17,9 @@ export function BookingServiceMedia({
   multiple,
 }: BookingServiceMediaProps) {
   return (
-    <div className="flex min-w-0 flex-col gap-3">
+    <div
+      className={`min-w-0 flex-col gap-3 ${service ? "flex" : "hidden md:flex"}`}
+    >
       <BookingServiceGallery key={service?.id ?? "none"} service={service} />
       {service && <BookingServiceSummary service={service} />}
       {multiple && (

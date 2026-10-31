@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useMe } from "@/hooks/auth";
 import { useTransitionComplaint } from "@/hooks/complaints";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
@@ -71,6 +72,7 @@ export function UsersSection({ tab }: { tab: UserTab }) {
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
         title="Đúng người, đúng việc."
+        art={STAFF_ART.idCard}
         subtitle="Duyệt thợ, khóa tài khoản, quản lý nhân viên và xử lý khiếu nại tại một nơi duy nhất."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">

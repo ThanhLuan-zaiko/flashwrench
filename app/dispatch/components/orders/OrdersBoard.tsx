@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiRefreshCw, FiShoppingBag } from "react-icons/fi";
 import { PageBounce } from "@/components/pagination/PageBounce";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useToast } from "@/components/toast/useToast";
 import {
   useDispatchOrders,
@@ -75,13 +77,18 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
           tour="disp-orders-intro"
           className="sm:col-span-2 lg:col-span-2"
         >
-          <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
-            Vận hành đơn linh kiện
-          </h2>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Xác nhận, đóng gói và giao đơn linh kiện. Hủy đơn sẽ hoàn số lượng
-            về kho.
-          </p>
+          <div className="flex items-center gap-4">
+            <StaffHeroArt art={STAFF_ART.package} />
+            <div className="min-w-0">
+              <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
+                Vận hành đơn linh kiện
+              </h2>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                Xác nhận, đóng gói và giao đơn linh kiện. Hủy đơn sẽ hoàn số
+                lượng về kho.
+              </p>
+            </div>
+          </div>
           <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
             <span
               aria-hidden="true"

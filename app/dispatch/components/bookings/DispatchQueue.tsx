@@ -1,4 +1,6 @@
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type { BookingSummary } from "@/services/dispatch.api";
 import { DispatchBookingCard } from "./DispatchBookingCard";
 
@@ -61,15 +63,11 @@ export function DispatchQueue({
   }
   if (items.length === 0) {
     return (
-      <div className="mt-4 flex flex-col items-center py-8 text-center">
-        <FiAlertCircle aria-hidden="true" className="h-10 w-10 text-zinc-400" />
-        <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-          Chưa có đơn nào
-        </p>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-          Không có đơn ở trạng thái “{filterLabel}” trong tháng này.
-        </p>
-      </div>
+      <StaffEmptyState
+        art={STAFF_ART.calendar}
+        title="Chưa có đơn nào"
+        hint={`Không có đơn ở trạng thái “${filterLabel}” trong tháng này.`}
+      />
     );
   }
   return (

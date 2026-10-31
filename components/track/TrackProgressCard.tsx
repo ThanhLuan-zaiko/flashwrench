@@ -22,19 +22,30 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
           {stage + 1}/{BOOKING_TRACK_STAGES.length} bước
         </p>
       </div>
-      <ol className="mt-3 flex flex-col gap-3">
+      <ol className="mt-4 flex flex-col gap-4">
         {BOOKING_TRACK_STAGES.map((label, index) => {
           const done = index < stage;
           const active = index === stage;
+          const last = index === BOOKING_TRACK_STAGES.length - 1;
           return (
             <li
               key={label}
               aria-current={active ? "step" : undefined}
-              className="flex gap-2.5"
+              className="relative flex gap-3"
             >
+              {!last && (
+                <span
+                  aria-hidden="true"
+                  className={`absolute top-5 -bottom-4 left-[7px] w-0.5 ${
+                    done
+                      ? "bg-[#1E3A5F] dark:bg-zinc-100"
+                      : "bg-zinc-200 dark:bg-zinc-800"
+                  }`}
+                />
+              )}
               <span
                 aria-hidden="true"
-                className={`mt-1 flex h-3 w-3 shrink-0 items-center justify-center rounded-full border-2 ${
+                className={`relative mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
                   done
                     ? "border-[#1E3A5F] bg-[#1E3A5F] dark:border-zinc-100 dark:bg-zinc-100"
                     : active
@@ -44,18 +55,18 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
               />
               <span className="flex min-w-0 flex-col">
                 <span
-                  className={`text-[13px] ${
+                  className={`text-sm ${
                     active
                       ? "font-bold text-[#1E3A5F] dark:text-zinc-50"
                       : done
                         ? "font-semibold text-zinc-900 dark:text-zinc-100"
-                        : "font-semibold text-zinc-400 dark:text-zinc-600"
+                        : "font-semibold text-zinc-500 dark:text-zinc-500"
                   }`}
                 >
                   {label}
                 </span>
                 {details[index] && (
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
                     {details[index]}
                   </span>
                 )}

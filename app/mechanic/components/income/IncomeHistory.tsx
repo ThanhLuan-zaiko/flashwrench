@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type { MechanicIncomeEntry } from "@/services/mechanic.api";
 import { isCollectableIncomeEntry } from "../collect-payment";
 import {
@@ -73,15 +75,11 @@ export function IncomeHistory({
   }
   if (visible.length === 0) {
     return (
-      <div className="mt-4 flex flex-col items-center py-8 text-center">
-        <FiAlertCircle aria-hidden="true" className="h-10 w-10 text-zinc-400" />
-        <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-          Chưa có giao dịch nào
-        </p>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-          Giao dịch xuất hiện khi đơn hoàn thành và được thanh toán.
-        </p>
-      </div>
+      <StaffEmptyState
+        art={STAFF_ART.coins}
+        title="Chưa có giao dịch nào"
+        hint="Giao dịch xuất hiện khi đơn hoàn thành và được thanh toán."
+      />
     );
   }
   return (

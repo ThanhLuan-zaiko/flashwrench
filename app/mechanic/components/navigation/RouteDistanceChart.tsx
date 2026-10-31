@@ -5,6 +5,8 @@ import {
   ChartHeadline,
   StaffChartCard,
 } from "@/components/charts/StaffChartCard";
+import { StaffAsideArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useNavigationBoard } from "@/hooks/mechanic";
 import { formatDistanceKm, formatEtaMin } from "../mechanic-format";
 
@@ -32,10 +34,12 @@ export function RouteDistanceChart() {
             : null
       }
       aside={
-        <ChartHeadline
-          value={formatDistanceKm(totalKm)}
-          caption={`${targets.length} điểm`}
-        />
+        <StaffAsideArt art={STAFF_ART.van}>
+          <ChartHeadline
+            value={formatDistanceKm(totalKm)}
+            caption={`${targets.length} điểm`}
+          />
+        </StaffAsideArt>
       }
     >
       <LabeledBarRows

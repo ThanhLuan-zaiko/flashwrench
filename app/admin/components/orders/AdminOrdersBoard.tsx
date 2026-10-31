@@ -14,6 +14,8 @@ import { OrdersQueueCard } from "@/app/dispatch/components/orders/OrdersQueueCar
 import type { DispatchOrderTab } from "@/app/dispatch/components/orders/order-tabs";
 import { ORDER_TAB_LABELS } from "@/app/dispatch/components/orders/order-tabs";
 import { PageBounce } from "@/components/pagination/PageBounce";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import {
   useDispatchOrders,
   useDispatchOrdersRealtime,
@@ -70,13 +72,18 @@ export function AdminOrdersBoard({ status }: { status: DispatchOrderTab }) {
           tour="admin-orders-intro"
           className="sm:col-span-2 lg:col-span-2"
         >
-          <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
-            Giám sát đơn linh kiện
-          </h2>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Theo dõi toàn bộ đơn và mở hóa đơn thu tiền. Thao tác vận hành do
-            nhân viên điều phối thực hiện.
-          </p>
+          <div className="flex items-center gap-4">
+            <StaffHeroArt art={STAFF_ART.package} />
+            <div className="min-w-0">
+              <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
+                Giám sát đơn linh kiện
+              </h2>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                Theo dõi toàn bộ đơn và mở hóa đơn thu tiền. Thao tác vận hành
+                do nhân viên điều phối thực hiện.
+              </p>
+            </div>
+          </div>
           <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
             <span
               aria-hidden="true"

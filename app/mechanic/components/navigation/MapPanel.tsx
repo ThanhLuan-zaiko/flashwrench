@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { FiMapPin } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type {
   MechanicNavigationBoard,
   MechanicNavigationTarget,
@@ -36,17 +37,12 @@ type MapPanelProps = {
 export function MapPanel({ origin, target }: MapPanelProps) {
   if (!target) {
     return (
-      <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-zinc-200 px-4 py-8 text-center dark:border-zinc-800">
-        <p className="max-w-xs text-xs text-zinc-500 dark:text-zinc-400">
-          <FiMapPin
-            aria-hidden="true"
-            className="mx-auto h-8 w-8 text-zinc-400"
-          />
-          <span className="mt-2 block font-semibold text-zinc-700 dark:text-zinc-300">
-            Chưa chọn điểm đến
-          </span>
-          Bản đồ sẽ hiện khi bạn có đơn đang mở.
-        </p>
+      <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+        <StaffEmptyState
+          art={STAFF_ART.van}
+          title="Chưa chọn điểm đến"
+          hint="Bản đồ sẽ hiện khi bạn có đơn đang mở."
+        />
       </div>
     );
   }

@@ -27,6 +27,12 @@ const TrackingMap = dynamic(
   { ssr: false },
 );
 
+const ABORTED_ART = {
+  src: "/images/isometric/calendar.svg",
+  width: 60,
+  height: 42,
+};
+
 function Padded({ children }: { children: ReactNode }) {
   return <div className="px-4 sm:px-0">{children}</div>;
 }
@@ -62,11 +68,15 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
                 ? `Lý do: ${tracking.cancelReason}`
                 : "Nếu bạn vẫn cần sửa xe, hãy đặt lịch mới hoặc gọi hotline."
             }
+            illustration={ABORTED_ART}
+            action={{ href: "/booking", label: "Đặt lịch mới" }}
           />
         ) : (
           <TrackAborted
             title="Thợ đã đến nhưng không gặp được bạn."
             body="Đơn đã đóng. Nếu bạn vẫn cần sửa xe, hãy đặt lịch mới hoặc gọi hotline."
+            illustration={ABORTED_ART}
+            action={{ href: "/booking", label: "Đặt lịch mới" }}
           />
         )}
       </Padded>
@@ -106,25 +116,31 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
   ];
 
   return (
-    <div className="flex flex-col gap-3">
-      <TrackHero stage={stage} etaMin={etaMin} detail={detail || null} />
-      <div className="-mt-12 flex flex-col gap-3 px-4 sm:px-3">
+    <div className="flex flex-col gap-3 lg:grid lg:grid-cols-5 lg:items-start lg:gap-6">
+      <div className="flex flex-col gap-3 lg:col-span-3">
+        <TrackHero stage={stage} etaMin={etaMin} detail={detail || null} />
         {(mechanic || destination) && (
-          <div className="relative">
+          <div className="relative -mt-12 px-4 sm:px-3 lg:mt-0 lg:px-0">
             <TrackingMap
               customer={destination}
               mechanic={
                 mechanic ? { lat: mechanic.lat, lng: mechanic.lng } : null
               }
-              mapClassName="h-44 w-full sm:h-56"
+              mapClassName="h-44 w-full sm:h-56 lg:h-[28rem]"
             />
             {km !== null && (
-              <span className="absolute bottom-2 left-2 z-10 rounded-lg bg-white px-2 py-1 text-[11px] font-semibold text-zinc-800 dark:bg-zinc-950 dark:text-zinc-100">
+              <span className="absolute bottom-2 left-6 z-10 lg:left-2 rounded-lg bg-white px-2 py-1 text-[11px] font-semibold text-zinc-800 sm:left-5 dark:bg-zinc-950 dark:text-zinc-100">
                 Cách bạn {formatKm(km)}
               </span>
             )}
           </div>
         )}
+      </div>
+      <div
+        className={`flex flex-col gap-3 px-4 sm:px-3 lg:sticky lg:top-24 lg:col-span-2 lg:px-0 ${
+          mechanic || destination ? "" : "-mt-12 lg:mt-0"
+        }`}
+      >
         {tracking.mechanicName && (
           <TrackMechanicCard name={tracking.mechanicName} />
         )}
@@ -146,14 +162,14 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
         {tracking.updatedAt && (
           <p
             aria-live="polite"
-            className="text-[11px] text-zinc-400 dark:text-zinc-500"
+            className="text-xs text-zinc-500 dark:text-zinc-400"
           >
             Cập nhật {formatDateTime(tracking.updatedAt)} · tự làm mới mỗi 15
             giây
           </p>
         )}
+        <TrackActionBar />
       </div>
-      <TrackActionBar />
     </div>
   );
 }

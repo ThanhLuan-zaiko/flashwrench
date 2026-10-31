@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { CampaignUsageChart } from "@/components/charts/CampaignUsageChart";
 import { PromoCarousel } from "@/components/promotions/PromoCarousel";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { DropdownSelect } from "@/components/ui/DropdownSelect";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import {
@@ -50,12 +52,17 @@ export function DispatchVoucherBoard() {
         data-tour="disp-vouchers-grant"
         className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
       >
-        <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
-          Phát voucher đền bù / chào mừng
-        </h2>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-          Chỉ phát chiến dịch admin cho phép, vượt hạn mức sẽ bị chặn.
-        </p>
+        <div className="flex items-center gap-4">
+          <StaffHeroArt art={STAFF_ART.gift} />
+          <div>
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
+              Phát voucher đền bù / chào mừng
+            </h2>
+            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+              Chỉ phát chiến dịch admin cho phép, vượt hạn mức sẽ bị chặn.
+            </p>
+          </div>
+        </div>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
             <span id="grant-campaign-label">Chiến dịch</span>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FiClock, FiPhone, FiShield } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { TourButton } from "@/components/tour/TourButton";
@@ -38,16 +39,27 @@ export function RescueEntry() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
-        eyebrow="Cứu hộ khẩn cấp"
-        title="Xe dừng giữa đường? Thợ tới ngay."
-        subtitle={
-          form.loggedIn
-            ? "Đã đăng nhập — chỉ cần chọn sự cố và vị trí xe, thợ trực gọi lại trong vài phút."
-            : "Không cần đăng nhập. Điền tên, số điện thoại, vị trí xe và sự cố — thợ trực gọi lại trong vài phút."
-        }
-      />
+      <div className="flex items-center justify-between gap-8">
+        <div className="min-w-0 flex-1">
+          <BigTypeHeader
+            level={1}
+            eyebrow="Cứu hộ khẩn cấp"
+            title="Xe dừng giữa đường? Thợ tới ngay."
+            subtitle={
+              form.loggedIn
+                ? "Đã đăng nhập — chỉ cần chọn sự cố và vị trí xe, thợ trực gọi lại trong vài phút."
+                : "Không cần đăng nhập. Điền tên, số điện thoại, vị trí xe và sự cố — thợ trực gọi lại trong vài phút."
+            }
+          />
+        </div>
+        <Image
+          src="/images/isometric/tow-truck.svg"
+          alt=""
+          width={68}
+          height={53}
+          className="hidden h-36 w-auto shrink-0 lg:block"
+        />
+      </div>
 
       <div data-reveal className="flex">
         <TourButton

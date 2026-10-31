@@ -5,6 +5,8 @@ import {
   ChartHeadline,
   StaffChartCard,
 } from "@/components/charts/StaffChartCard";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useDispatchPulse } from "@/hooks/dispatch-pulse";
 import { useNow } from "@/hooks/useNow";
 import { formatWait, RESCUE_LABELS } from "../pulse/pulse-format";
@@ -29,14 +31,17 @@ export function RescueLoadChart() {
       isPending={pulse.isPending}
       empty={pulse.isError ? "Không tải được số liệu cứu hộ." : null}
       aside={
-        <ChartHeadline
-          value={String(total)}
-          caption={
-            meanWait === null
-              ? "ca đang mở"
-              : `ca đang mở · chờ TB ${formatWait(meanWait)}`
-          }
-        />
+        <div className="flex items-center gap-4">
+          <StaffHeroArt art={STAFF_ART.towTruck} />
+          <ChartHeadline
+            value={String(total)}
+            caption={
+              meanWait === null
+                ? "ca đang mở"
+                : `ca đang mở · chờ TB ${formatWait(meanWait)}`
+            }
+          />
+        </div>
       }
     >
       {data && (

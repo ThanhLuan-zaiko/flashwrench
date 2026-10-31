@@ -6,13 +6,14 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiEye,
-  FiInbox,
   FiLifeBuoy,
   FiPhone,
   FiRefreshCw,
 } from "react-icons/fi";
 import { PageBounce } from "@/components/pagination/PageBounce";
 import { RESCUE_ISSUE_OPTIONS } from "@/components/rescue/rescue-constants";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useDispatchRescues, useRescueOperations } from "@/hooks/rescue-inbox";
 import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
@@ -86,17 +87,12 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
             </button>
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950">
-            <FiInbox
-              aria-hidden="true"
-              className="mx-auto h-8 w-8 text-zinc-300 dark:text-zinc-700"
+          <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+            <StaffEmptyState
+              art={STAFF_ART.towTruck}
+              title="Không có cứu hộ chờ"
+              hint="Yêu cầu mới do hệ thống tự giao thợ sẽ hiện ở đây ngay lập tức."
             />
-            <p className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              Không có cứu hộ chờ
-            </p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-              Yêu cầu mới do hệ thống tự giao thợ sẽ hiện ở đây ngay lập tức.
-            </p>
           </div>
         ) : (
           <ul className="flex flex-col gap-3">

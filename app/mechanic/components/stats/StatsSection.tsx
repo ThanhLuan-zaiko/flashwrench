@@ -1,6 +1,8 @@
 "use client";
 
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useMechanicStats } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useIncreaseToast } from "@/hooks/useIncreaseToast";
@@ -25,13 +27,16 @@ export function StatsSection() {
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
-            Thợ · Tuần này
-          </p>
-          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-[28px] dark:text-zinc-50">
-            Hiệu suất của bạn
-          </h2>
+        <div className="flex items-center gap-4">
+          <StaffHeroArt art={STAFF_ART.toolbox} />
+          <div>
+            <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
+              Thợ · Tuần này
+            </p>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-[28px] dark:text-zinc-50">
+              Hiệu suất của bạn
+            </h2>
+          </div>
         </div>
         <p role="status" className="min-h-10">
           {collected !== null && (

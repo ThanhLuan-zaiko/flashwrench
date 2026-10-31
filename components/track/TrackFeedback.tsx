@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { FiLoader, FiXCircle } from "react-icons/fi";
 
 // Small shared states for the public tracking screens.
@@ -24,25 +26,48 @@ export function TrackError() {
   );
 }
 
+type TrackAbortedProps = {
+  title: string;
+  body?: string;
+  // Optional isometric drawing and the one follow-up action on the card.
+  illustration?: { src: string; width: number; height: number };
+  action?: { href: string; label: string };
+};
+
 export function TrackAborted({
   title,
   body,
-}: {
-  title: string;
-  body?: string;
-}) {
+  illustration,
+  action,
+}: TrackAbortedProps) {
   return (
-    <div className="flex items-start gap-2 rounded-xl border border-zinc-300 bg-white p-3 text-sm dark:border-zinc-700 dark:bg-zinc-950">
-      <FiXCircle
-        aria-hidden="true"
-        className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"
-      />
-      <div className="flex flex-col gap-0.5">
-        <p className="font-medium text-zinc-700 dark:text-zinc-300">{title}</p>
-        {body ? (
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">{body}</p>
-        ) : null}
-      </div>
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-6 text-center sm:p-10 dark:border-zinc-800 dark:bg-zinc-950">
+      {illustration && (
+        <Image
+          src={illustration.src}
+          alt=""
+          width={illustration.width}
+          height={illustration.height}
+          className="mb-1 h-24 w-auto sm:h-28"
+        />
+      )}
+      <p className="flex items-center gap-2 text-base font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+        <FiXCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
+        {title}
+      </p>
+      {body ? (
+        <p className="max-w-sm text-sm text-zinc-600 dark:text-zinc-400">
+          {body}
+        </p>
+      ) : null}
+      {action && (
+        <Link
+          href={action.href}
+          className="mt-2 flex min-h-[44px] items-center justify-center rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+        >
+          {action.label}
+        </Link>
+      )}
     </div>
   );
 }

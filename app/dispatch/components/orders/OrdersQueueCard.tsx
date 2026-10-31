@@ -2,6 +2,8 @@
 
 import { type UseQueryResult, useQueryClient } from "@tanstack/react-query";
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { dispatchOrderKeys } from "@/hooks/dispatch-orders";
 import type { OrderSummary } from "@/lib/orders/orders.types";
 import { fetchDispatchOrders } from "@/services/dispatch-orders.api";
@@ -132,19 +134,11 @@ export function OrdersQueueCard({
         </div>
       )}
       {query.isSuccess && items.length === 0 && (
-        <div className="mt-4 flex flex-col items-center py-8 text-center">
-          <FiAlertCircle
-            aria-hidden="true"
-            className="h-10 w-10 text-zinc-400"
-          />
-          <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-            Chưa có đơn nào
-          </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Không có đơn ở trạng thái “{ORDER_TAB_LABELS[status]}” trong tháng
-            này.
-          </p>
-        </div>
+        <StaffEmptyState
+          art={STAFF_ART.package}
+          title="Chưa có đơn nào"
+          hint={`Không có đơn ở trạng thái “${ORDER_TAB_LABELS[status]}” trong tháng này.`}
+        />
       )}
       {items.length > 0 && (
         <ul className="mt-4 divide-y divide-zinc-200 rounded-2xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">

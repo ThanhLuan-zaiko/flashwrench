@@ -1,6 +1,7 @@
 "use client";
 
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useBookingConfigRealtime } from "@/hooks/booking-config";
 import {
   useBusinessHoursRealtime,
@@ -27,6 +28,7 @@ export function SettingsAdminEntry() {
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
         title="Vận hành theo nhân lực."
+        art={STAFF_ART.gear}
         subtitle="Các tham số áp dụng ngay cho đơn mới — đơn đã đặt giữ nguyên trạng thái."
       />
       <SettingsNav />

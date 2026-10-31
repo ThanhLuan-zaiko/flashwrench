@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { FiEdit2, FiPlus } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useAdminZones } from "@/hooks/admin-rescue";
 import { ZoneDialog, type ZoneDialogState } from "./ZoneDialog";
 
@@ -40,12 +42,16 @@ export function ZoneListCard() {
 
       {zones.isPending ? (
         <p className="py-6 text-center text-sm text-zinc-500">Đang tải…</p>
-      ) : zones.isError || items.length === 0 ? (
+      ) : zones.isError ? (
         <p className="py-6 text-center text-sm text-zinc-500">
-          {zones.isError
-            ? "Không tải được. Vui lòng thử lại."
-            : "Chưa có vùng nào — mọi ca đang broadcast toàn hệ thống."}
+          Không tải được. Vui lòng thử lại.
         </p>
+      ) : items.length === 0 ? (
+        <StaffEmptyState
+          art={STAFF_ART.towTruck}
+          title="Chưa có vùng nào"
+          hint="Mọi ca đang broadcast toàn hệ thống."
+        />
       ) : (
         <ul className="mt-3 flex flex-col gap-2">
           {items.map((zone) => (

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import {
   useAdminDashboard,
   useAdminDashboardRealtime,
@@ -33,13 +35,16 @@ export function DashboardSection() {
         data-tour="admin-dash-hero"
         className="flex flex-wrap items-end justify-between gap-3"
       >
-        <div>
-          <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
-            Quản trị · Toàn hệ thống
-          </p>
-          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-[28px] dark:text-zinc-50">
-            Dashboard tổng quan
-          </h2>
+        <div className="flex items-center gap-4">
+          <StaffHeroArt art={STAFF_ART.gear} />
+          <div>
+            <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
+              Quản trị · Toàn hệ thống
+            </p>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-[28px] dark:text-zinc-50">
+              Dashboard tổng quan
+            </h2>
+          </div>
         </div>
         <DashboardRangeTabs value={range} onChange={setRange} />
       </div>

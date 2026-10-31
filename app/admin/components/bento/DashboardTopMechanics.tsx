@@ -1,5 +1,7 @@
 import { BarRowsChart } from "@/components/charts/BarRowsChart";
 import { formatVnd } from "@/components/revenue/revenue-format";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type { RevenueSlice } from "@/lib/revenue/revenue.types";
 import type { AdminDashboard } from "@/services/admin.api";
 import { BentoCard } from "./BentoCard";
@@ -43,9 +45,10 @@ export function DashboardTopMechanics({
         Theo doanh thu thu được · {rangeLabel}
       </p>
       {rows.length === 0 ? (
-        <p className="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          Chưa có thợ nào ghi nhận thu tiền trong kỳ.
-        </p>
+        <StaffEmptyState
+          art={STAFF_ART.toolbox}
+          title="Chưa có thợ nào ghi nhận thu tiền trong kỳ"
+        />
       ) : (
         <div className="mt-3 flex gap-3">
           <ol className="flex w-36 shrink-0 flex-col">

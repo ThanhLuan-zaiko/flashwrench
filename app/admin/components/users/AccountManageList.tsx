@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FiInbox, FiLoader, FiUsers } from "react-icons/fi";
+import { FiLoader, FiUsers } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import { CatalogPager } from "../services/CatalogPager";
 import { SelectDropdown } from "../services/SelectDropdown";
@@ -127,19 +129,11 @@ export function AccountManageList({
           </button>
         </div>
       ) : visible.length === 0 ? (
-        <div className="flex items-center gap-3 rounded-xl bg-zinc-100 px-3 py-6 dark:bg-zinc-900">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
-            <FiInbox aria-hidden="true" className="h-5 w-5" />
-          </span>
-          <span>
-            <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-              Không tìm thấy tài khoản phù hợp
-            </span>
-            <span className="block text-xs text-zinc-500 dark:text-zinc-400">
-              Thử từ khóa hoặc vai trò khác
-            </span>
-          </span>
-        </div>
+        <StaffEmptyState
+          art={STAFF_ART.idCard}
+          title="Không tìm thấy tài khoản phù hợp"
+          hint="Thử từ khóa hoặc vai trò khác"
+        />
       ) : (
         <div className="flex flex-col gap-2">
           <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">

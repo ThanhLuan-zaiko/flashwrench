@@ -1,3 +1,5 @@
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { formatDateTime } from "@/lib/datetime/format";
 import type { RevenueTransaction } from "@/lib/revenue/revenue.types";
 import { formatVnd, sliceLabel } from "./revenue-format";
@@ -22,9 +24,11 @@ export function RevenueTransactionsTable({
 }: RevenueTransactionsTableProps) {
   if (items.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-        Chưa có giao dịch trong kỳ này.
-      </p>
+      <StaffEmptyState
+        art={STAFF_ART.coins}
+        title="Chưa có giao dịch trong kỳ này"
+        hint="Doanh thu xuất hiện khi có phiếu thu được ghi nhận."
+      />
     );
   }
   return (

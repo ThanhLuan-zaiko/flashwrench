@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FiCheckCircle, FiPhone, FiRefreshCw } from "react-icons/fi";
 import type { CreatedRescue } from "@/services/rescue.api";
 import { RescueTracker } from "./RescueTracker";
@@ -23,14 +24,25 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
       data-reveal
       className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
-      <p className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
-        Đã gửi yêu cầu cứu hộ
-      </p>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Giữ trang này mở để theo dõi thợ tới nơi. Thợ trực cũng sẽ gọi lại số{" "}
-        {created.customerPhone} để xác nhận vị trí và báo giá.
-      </p>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <p className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+            <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
+            Đã gửi yêu cầu cứu hộ
+          </p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Giữ trang này mở để theo dõi thợ tới nơi. Thợ trực cũng sẽ gọi lại
+            số {created.customerPhone} để xác nhận vị trí và báo giá.
+          </p>
+        </div>
+        <Image
+          src="/images/isometric/tow-truck.svg"
+          alt=""
+          width={68}
+          height={53}
+          className="hidden h-24 w-auto shrink-0 sm:block md:h-28"
+        />
+      </div>
 
       <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
         <RescueTracker requestId={created.requestId} />

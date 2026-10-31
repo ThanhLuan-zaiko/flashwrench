@@ -59,13 +59,13 @@ export function DashboardKpiRow({ report, dashboard }: DashboardKpiRowProps) {
       {tiles.map((tile, index) => (
         <div
           key={tile.label}
-          className="flex items-end justify-between gap-2 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
+          className="flex flex-col justify-between gap-2 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
         >
           <div className="min-w-0">
             <p className="text-[13px] font-semibold text-zinc-600 dark:text-zinc-400">
               {tile.label}
             </p>
-            <p className="mt-1.5 truncate text-2xl font-extrabold text-[#1E3A5F] tabular-nums sm:text-[28px] dark:text-zinc-50">
+            <p className="mt-1.5 truncate text-xl font-extrabold text-[#1E3A5F] tabular-nums sm:text-[28px] dark:text-zinc-50">
               {tile.value}
             </p>
             {tile.delta && (
@@ -84,7 +84,7 @@ export function DashboardKpiRow({ report, dashboard }: DashboardKpiRowProps) {
             <Sparkline
               values={tile.spark}
               seriesIndex={index}
-              className="h-14 w-24 shrink-0 max-sm:hidden"
+              className="h-9 w-full shrink-0 max-sm:hidden"
             />
           )}
         </div>

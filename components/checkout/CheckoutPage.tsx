@@ -12,6 +12,7 @@ import { CheckoutExtras } from "./CheckoutExtras";
 import { CheckoutFulfillmentFields } from "./CheckoutFulfillmentFields";
 import { CheckoutNotices } from "./CheckoutNotices";
 import { CheckoutPaymentFields } from "./CheckoutPaymentFields";
+import { CheckoutProgress } from "./CheckoutProgress";
 import { CheckoutSummary } from "./CheckoutSummary";
 import { CHECKOUT_SECTION_TITLE } from "./checkout-ui";
 import { useCheckoutForm } from "./useCheckoutForm";
@@ -42,6 +43,8 @@ export function CheckoutPage() {
         title="Kiểm tra trước khi đặt."
       />
 
+      {canOrder && <CheckoutProgress />}
+
       {me.isSuccess && (
         <CheckoutNotices
           isStaff={Boolean(me.data && me.data.role !== "customer")}
@@ -56,7 +59,7 @@ export function CheckoutPage() {
       {canOrder && cartView && (
         <form
           onSubmit={form.submit}
-          className="grid grid-cols-1 gap-6 max-md:pb-24 md:grid-cols-5"
+          className="grid grid-cols-1 gap-6 max-md:pb-28 md:grid-cols-5"
         >
           <div className="flex flex-col gap-6 md:col-span-3">
             <ul

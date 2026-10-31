@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FiCreditCard, FiDollarSign, FiHome } from "react-icons/fi";
 import type {
   FulfillmentType,
@@ -90,6 +91,15 @@ export function CheckoutPaymentFields({
                   {hint}
                 </span>
               </span>
+              {method === "bank_transfer" && (
+                <Image
+                  src="/images/isometric/payment-card.svg"
+                  alt=""
+                  width={67}
+                  height={43}
+                  className="ml-auto hidden h-9 w-auto sm:block"
+                />
+              )}
             </button>
           );
         })}

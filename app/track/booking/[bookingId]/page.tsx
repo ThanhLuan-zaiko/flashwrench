@@ -3,6 +3,7 @@ import Link from "next/link";
 import { TaskBar } from "@/components/layout/TaskBar";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 import { BookingTracker } from "@/components/track/BookingTracker";
+import { TrackPlacedBanner } from "@/components/track/TrackPlacedBanner";
 import { bookingTicketCode } from "@/lib/track/booking-track-view";
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default async function TrackBookingPage({
         title="FlashWrench"
         trailing={`Phiếu #${bookingTicketCode(bookingId)}`}
       />
-      <div className="mx-auto w-full max-w-xl sm:px-6 sm:py-10 md:py-14">
+      <div className="mx-auto w-full max-w-xl sm:px-6 sm:py-10 md:py-14 lg:max-w-6xl lg:px-8">
         <div className="mb-4 hidden sm:block">
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
             Theo dõi đặt lịch
@@ -34,10 +35,13 @@ export default async function TrackBookingPage({
             Phiếu #{bookingTicketCode(bookingId)}
           </p>
         </div>
+        <div className="mx-4 mt-4 mb-4 empty:hidden sm:mx-0 sm:mt-0">
+          <TrackPlacedBanner kind="booking" />
+        </div>
         <BookingTracker bookingId={bookingId} />
         {/* This link is the whole capability model, so the one moment a
             guest realises they lost it belongs right here. */}
-        <p className="mx-4 mt-4 mb-28 border-t sm:mx-0 sm:mb-0 border-zinc-200 pt-3 text-xs text-zinc-500 sm:mx-0 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="mx-4 mt-4 mb-28 border-t border-zinc-200 pt-3 text-xs text-zinc-500 sm:mx-0 sm:mb-0 lg:mt-8 dark:border-zinc-800 dark:text-zinc-400">
           Mất đường dẫn này?{" "}
           <Link
             href="/lookup"

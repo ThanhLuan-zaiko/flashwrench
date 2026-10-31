@@ -11,6 +11,7 @@ import {
   FiZap,
 } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { useAdminCampaigns } from "@/hooks/useVouchers";
@@ -84,6 +85,7 @@ export function AdminVoucherBoard({ tab }: { tab: VoucherTab }) {
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
         title="Voucher đúng người, đúng lúc."
+        art={STAFF_ART.gift}
         subtitle="Admin tạo và giám sát chiến dịch; điều phối phát trong hạn mức, mọi thay đổi tự cập nhật qua websocket."
         level={1}
       />

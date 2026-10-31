@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { BentoCard } from "./bento/BentoCard";
 import { ServicesStatCard } from "./bento/ServicesStatCard";
@@ -49,6 +50,7 @@ export function ServicesSection({ tab }: { tab: CatalogTab }) {
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
         title="Giá rõ, bật tắt gọn."
+        art={STAFF_ART.toolbox}
         subtitle="Quản lý loại hình sửa chữa và bảng giá áp dụng cho khách hàng trên toàn hệ thống."
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">

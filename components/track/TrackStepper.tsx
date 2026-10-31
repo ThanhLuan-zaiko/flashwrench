@@ -25,12 +25,23 @@ export function TrackStepper({
 }: TrackStepperProps) {
   return (
     <div className="flex flex-col gap-2.5">
-      <ol aria-label={ariaLabel} className="flex flex-col gap-2">
+      <ol aria-label={ariaLabel} className="flex flex-col gap-4">
         {steps.map((step, index) => {
           const done = index < activeIndex;
           const active = index === activeIndex;
+          const last = index === steps.length - 1;
           return (
-            <li key={step.id} className="flex items-center gap-2.5">
+            <li key={step.id} className="relative flex items-center gap-2.5">
+              {!last && (
+                <span
+                  aria-hidden="true"
+                  className={`absolute top-5 -bottom-4 left-[9px] w-0.5 ${
+                    done
+                      ? "bg-zinc-900 dark:bg-white"
+                      : "bg-zinc-200 dark:bg-zinc-800"
+                  }`}
+                />
+              )}
               <span
                 aria-hidden="true"
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
@@ -53,7 +64,7 @@ export function TrackStepper({
                     ? "font-semibold text-zinc-900 dark:text-zinc-50"
                     : done
                       ? "text-zinc-700 dark:text-zinc-300"
-                      : "text-zinc-400 dark:text-zinc-600"
+                      : "text-zinc-500 dark:text-zinc-500"
                 }`}
               >
                 {step.label}
@@ -68,7 +79,7 @@ export function TrackStepper({
       {updatedAt && (
         <p
           aria-live="polite"
-          className="text-[11px] text-zinc-400 dark:text-zinc-500"
+          className="text-xs text-zinc-500 dark:text-zinc-400"
         >
           Cập nhật {formatDateTime(updatedAt)} · tự làm mới mỗi 15 giây
         </p>

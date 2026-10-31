@@ -1,6 +1,7 @@
 "use client";
 
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { SlaConfigCard } from "./SlaConfigCard";
 import { ZoneListCard } from "./ZoneListCard";
@@ -16,6 +17,7 @@ export function RescueAdminEntry() {
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
       <BigTypeHeader
         title="Vùng chuẩn, giao nhanh."
+        art={STAFF_ART.towTruck}
         subtitle="Vùng phục vụ quyết định ca thuộc về đâu, cấu hình quyết định hệ thống giao thợ ra sao."
       />
       <ZoneLoadChart />

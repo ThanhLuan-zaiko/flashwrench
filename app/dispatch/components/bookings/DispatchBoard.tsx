@@ -10,6 +10,7 @@ import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
+import { DispatchBoardIntro } from "./DispatchBoardIntro";
 import { DispatchDetailDialog } from "./DispatchDetailDialog";
 import { DispatchPager } from "./DispatchPager";
 import { DispatchQueue } from "./DispatchQueue";
@@ -131,27 +132,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
   return (
     <div ref={rootRef} className="flex flex-col gap-3 md:gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-        <BentoCard
-          label="Bàn điều phối đơn hàng"
-          tour="disp-board-intro"
-          className="sm:col-span-2 lg:col-span-2"
-        >
-          <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
-            Bàn điều phối đơn hàng
-          </h2>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Xem đơn theo trạng thái, xác nhận lịch hẹn, phân công thợ trực tuyến
-            và hủy đơn khi khách yêu cầu.
-          </p>
-          <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
-            <span
-              aria-hidden="true"
-              className="h-1.5 w-1.5 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse dark:bg-zinc-100"
-            />
-            Đang xem: {DISPATCH_STATUS_LABELS[status]} ·{" "}
-            {formatMonthKey(appliedMonth)}
-          </p>
-        </BentoCard>
+        <DispatchBoardIntro status={status} month={appliedMonth} />
 
         <BentoCard
           label="Bộ lọc tháng"

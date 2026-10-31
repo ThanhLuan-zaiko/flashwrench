@@ -1,6 +1,8 @@
 "use client";
 
 import { FiAlertCircle, FiLoader } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type { MechanicNavigationTarget } from "@/services/mechanic.api";
 import {
   formatDistanceKm,
@@ -62,9 +64,13 @@ export function NavigationList({
   }
   if (targets.length === 0) {
     return (
-      <p className="mt-3 rounded-2xl border border-zinc-200 px-3 py-6 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-        Không có đơn nào cần di chuyển. Đơn mới có địa chỉ sẽ hiện ở đây.
-      </p>
+      <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+        <StaffEmptyState
+          art={STAFF_ART.van}
+          title="Không có đơn nào cần di chuyển"
+          hint="Đơn mới có địa chỉ sẽ hiện ở đây."
+        />
+      </div>
     );
   }
   return (

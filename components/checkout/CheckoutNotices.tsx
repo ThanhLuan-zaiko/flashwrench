@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type CheckoutNoticesProps = {
@@ -30,10 +31,20 @@ export function CheckoutNotices({ isStaff, cartEmpty }: CheckoutNoticesProps) {
   return (
     <div
       data-reveal
-      className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
+      className="rounded-2xl border border-zinc-200 bg-white p-6 text-center sm:p-10 dark:border-zinc-800 dark:bg-zinc-950"
     >
+      <Image
+        src="/images/isometric/basket.svg"
+        alt=""
+        width={60}
+        height={56}
+        className="mx-auto mb-4 h-28 w-auto sm:h-32"
+      />
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Giỏ hàng đang trống
+      </p>
+      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        Thêm ắc quy, dầu nhớt hay bóng đèn vào giỏ để đặt hàng.
       </p>
       <Link
         href="/products"

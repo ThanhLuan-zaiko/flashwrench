@@ -7,6 +7,8 @@ import {
   ChartHeadline,
   StaffChartCard,
 } from "@/components/charts/StaffChartCard";
+import { StaffAsideArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useMechanicIncome } from "@/hooks/mechanic";
 import {
   groupTotals,
@@ -45,7 +47,11 @@ export function IncomeTrendChart() {
       }
       isPending={query.isPending}
       empty={query.isError ? "Không tải được thu nhập." : null}
-      aside={<ChartHeadline value={formatVnd(total)} caption="trong 30 ngày" />}
+      aside={
+        <StaffAsideArt art={STAFF_ART.coins}>
+          <ChartHeadline value={formatVnd(total)} caption="trong 30 ngày" />
+        </StaffAsideArt>
+      }
     >
       <AreaChart
         values={days.map((point) => point.value)}

@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiAlertCircle, FiLoader, FiRefreshCw } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useDispatchParts } from "@/hooks/dispatch-orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
@@ -51,14 +54,17 @@ export function StockBoard() {
       <div className="grid grid-cols-1 gap-3 md:gap-4">
         <BentoCard label="Tồn kho linh kiện" tour="disp-stock-intro">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
-                Kiểm kê và điều chỉnh tồn kho
-              </h2>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Đặt số lượng tuyệt đối cho từng linh kiện sau kiểm kê hoặc nhập
-                hàng. Sửa giá/danh mục nằm ở trang quản trị.
-              </p>
+            <div className="flex min-w-0 items-center gap-4">
+              <StaffHeroArt art={STAFF_ART.crates} />
+              <div className="min-w-0">
+                <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
+                  Kiểm kê và điều chỉnh tồn kho
+                </h2>
+                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  Đặt số lượng tuyệt đối cho từng linh kiện sau kiểm kê hoặc
+                  nhập hàng. Sửa giá/danh mục nằm ở trang quản trị.
+                </p>
+              </div>
             </div>
             <button
               type="button"
@@ -116,15 +122,17 @@ export function StockBoard() {
             />
           )}
           {query.isSuccess && items.length === 0 && (
-            <p className="py-8 text-center text-xs text-zinc-500 dark:text-zinc-400">
-              Chưa có sản phẩm nào trong kho.
-            </p>
+            <StaffEmptyState
+              art={STAFF_ART.crates}
+              title="Chưa có sản phẩm nào trong kho"
+            />
           )}
           {query.isSuccess && items.length > 0 && filtered.length === 0 && (
-            <p className="py-8 text-center text-xs text-zinc-500 dark:text-zinc-400">
-              Không có linh kiện nào khớp bộ lọc — thử từ khóa khác hoặc xóa
-              lọc.
-            </p>
+            <StaffEmptyState
+              art={STAFF_ART.crates}
+              title="Không có linh kiện nào khớp bộ lọc"
+              hint="Thử từ khóa khác hoặc xóa bộ lọc."
+            />
           )}
           {filtered.length > 0 && <StockPanel items={slice.items} />}
           <StockPager

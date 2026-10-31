@@ -7,183 +7,18 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-type Vec3 = [number, number, number];
-type Point = { x: number; y: number };
-
-const NAVY_DEEP = "#0F1E33";
-const NAVY = "#1E3A5F";
-const SKY = "#8FB3D9";
-const ORANGE = "#F97316";
-const ORANGE_LIGHT = "#FDBA74";
-const KRAFT = "#E2C9A0";
-const PAPER = "#F4F4F5";
-const ZINC = "#D4D4D8";
-const GRAPHITE = "#3F3F46";
-const WHITE = "#FFFFFF";
-
-const COS30 = Math.cos(Math.PI / 6);
-const RING_SEGMENTS = 40;
-const MARGIN = 4;
-const SHADOW_OPACITY = 0.16;
-
-// World x runs toward the lower right, world y toward the lower left, z is up.
-function project([x, y, z]: Vec3): Point {
-  return { x: (x - y) * COS30, y: (x + y) * 0.5 - z };
-}
-
-function parseHex(hex: string): number[] {
-  const value = Number.parseInt(hex.slice(1), 16);
-  return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
-}
-
-function mix(hex: string, target: string, amount: number): string {
-  const from = parseHex(hex);
-  const to = parseHex(target);
-  const channels = from.map((c, i) => Math.round(c + (to[i] - c) * amount));
-  return `#${channels.map((c) => c.toString(16).padStart(2, "0")).join("")}`;
-}
-
-// Left faces (+y) take a light shade, right faces (+x) the darkest, top keeps base.
-function shades(base: string) {
-  return {
-    top: base,
-    left: mix(base, NAVY_DEEP, 0.14),
-    right: mix(base, NAVY_DEEP, 0.3),
-  };
-}
-
-function ringPoints(cx: number, cy: number, z: number, radius: number): Vec3[] {
-  return Array.from({ length: RING_SEGMENTS }, (_, i): Vec3 => {
-    const angle = (i / RING_SEGMENTS) * Math.PI * 2;
-    return [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle), z];
-  });
-}
-
-const fmt = (n: number): string => Number(n.toFixed(2)).toString();
-
-class Scene {
-  private readonly parts: string[] = [];
-  private readonly bounds = {
-    minX: Number.POSITIVE_INFINITY,
-    minY: Number.POSITIVE_INFINITY,
-    maxX: Number.NEGATIVE_INFINITY,
-    maxY: Number.NEGATIVE_INFINITY,
-  };
-
-  private polygon(points: Vec3[], fill: string, opacity?: number): void {
-    const screen = points.map(project);
-    for (const p of screen) {
-      this.bounds.minX = Math.min(this.bounds.minX, p.x);
-      this.bounds.minY = Math.min(this.bounds.minY, p.y);
-      this.bounds.maxX = Math.max(this.bounds.maxX, p.x);
-      this.bounds.maxY = Math.max(this.bounds.maxY, p.y);
-    }
-    // Same-colour stroke hides anti-aliasing seams between adjacent faces.
-    const paint =
-      opacity === undefined
-        ? `fill="${fill}" stroke="${fill}" stroke-width="0.3" stroke-linejoin="round"`
-        : `fill="${fill}" fill-opacity="${opacity}"`;
-    const path = screen.map((p) => `${fmt(p.x)},${fmt(p.y)}`).join(" ");
-    this.parts.push(`  <polygon points="${path}" ${paint}/>`);
-  }
-
-  // Flat footprint on the ground plane, used under objects.
-  shadowBox([x, y, z]: Vec3, [w, d]: [number, number]): void {
-    this.polygon(
-      [
-        [x, y, z],
-        [x + w, y, z],
-        [x + w, y + d, z],
-        [x, y + d, z],
-      ],
-      NAVY_DEEP,
-      SHADOW_OPACITY,
-    );
-  }
-
-  shadowDisc(center: Vec3, radius: number): void {
-    const [cx, cy, z] = center;
-    this.polygon(ringPoints(cx, cy, z, radius), NAVY_DEEP, SHADOW_OPACITY);
-  }
-
-  box(at: Vec3, size: Vec3, base: string): void {
-    const [x, y, z] = at;
-    const [w, d, h] = size;
-    const c = shades(base);
-    const x1 = x + w;
-    const y1 = y + d;
-    const z1 = z + h;
-    this.polygon(
-      [
-        [x, y1, z],
-        [x1, y1, z],
-        [x1, y1, z1],
-        [x, y1, z1],
-      ],
-      c.left,
-    );
-    this.polygon(
-      [
-        [x1, y, z],
-        [x1, y1, z],
-        [x1, y1, z1],
-        [x1, y, z1],
-      ],
-      c.right,
-    );
-    this.polygon(
-      [
-        [x, y, z1],
-        [x1, y, z1],
-        [x1, y1, z1],
-        [x, y1, z1],
-      ],
-      c.top,
-    );
-  }
-
-  // Flat disc lying on a horizontal plane, drawn as its top face only.
-  disc(center: Vec3, radius: number, base: string): void {
-    const [cx, cy, z] = center;
-    this.polygon(ringPoints(cx, cy, z, radius), base);
-  }
-
-  // Vertical cylinder. Only sides facing the viewer are drawn.
-  cylinder(at: Vec3, radius: number, height: number, base: string): void {
-    const [cx, cy, z] = at;
-    const c = shades(base);
-    const bottom = ringPoints(cx, cy, z, radius);
-    const top = ringPoints(cx, cy, z + height, radius);
-    for (let i = 0; i < RING_SEGMENTS; i++) {
-      const next = (i + 1) % RING_SEGMENTS;
-      const mid = ((i + 0.5) / RING_SEGMENTS) * Math.PI * 2;
-      const nx = Math.cos(mid);
-      const ny = Math.sin(mid);
-      if (nx + ny <= 0) continue;
-      const t = Math.min(1, Math.max(0, nx / (nx + ny)));
-      this.polygon(
-        [bottom[i], bottom[next], top[next], top[i]],
-        mix(c.left, c.right, t),
-      );
-    }
-    this.polygon(top, c.top);
-  }
-
-  toSvg(): string {
-    const { minX, minY, maxX, maxY } = this.bounds;
-    const x = minX - MARGIN;
-    const y = minY - MARGIN;
-    const w = maxX - minX + MARGIN * 2;
-    const h = maxY - minY + MARGIN * 2;
-    const view = `${fmt(x)} ${fmt(y)} ${fmt(w)} ${fmt(h)}`;
-    return [
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${fmt(w)}" height="${fmt(h)}" viewBox="${view}" fill="none" aria-hidden="true">`,
-      ...this.parts,
-      "</svg>",
-      "",
-    ].join("\n");
-  }
-}
+import {
+  GRAPHITE,
+  KRAFT,
+  NAVY,
+  ORANGE,
+  ORANGE_LIGHT,
+  PAPER,
+  Scene,
+  SKY,
+  WHITE,
+  ZINC,
+} from "./isometric/scene";
 
 // Campaign hero: a gift box with a ticket lying in front.
 function gift(s: Scene): void {
@@ -261,7 +96,96 @@ function van(s: Scene): void {
   s.cylinder([30, 17, 0], 4.5, 4, GRAPHITE);
 }
 
+// Checkout empty cart: a basket holding a battery and an oil bottle.
+function basket(s: Scene): void {
+  s.shadowBox([-1, -1, 0], [34, 26]);
+  s.box([0, 0, 0], [32, 24, 8], NAVY);
+  s.box([0, 24, 3], [32, 0.5, 2], ORANGE);
+  s.box([-1, -1, 8], [34, 26, 1.2], SKY);
+  s.box([3, 3, 9.2], [14, 11, 13], GRAPHITE);
+  s.box([5, 5, 22.2], [3, 3, 2], ORANGE);
+  s.box([12, 5, 22.2], [3, 3, 2], SKY);
+  s.cylinder([24, 17, 9.2], 4.5, 15, ORANGE);
+  s.cylinder([24, 17, 24.2], 2, 4, NAVY);
+}
+
+// Checkout payment: a bank card with a stack of coins beside it.
+function paymentCard(s: Scene): void {
+  s.shadowBox([1, 1, 0], [36, 22]);
+  s.shadowDisc([46, 10, 0], 7);
+  s.box([0, 0, 0], [36, 22, 2], NAVY);
+  s.box([0, 4, 2], [36, 4, 0.6], GRAPHITE);
+  s.box([4, 12, 2], [8, 6, 0.8], ORANGE_LIGHT);
+  s.box([16, 14, 2], [16, 2, 0.8], SKY);
+  s.box([16, 18, 2], [10, 2, 0.8], SKY);
+  s.cylinder([46, 10, 0], 6, 2, ORANGE_LIGHT);
+  s.cylinder([46, 10, 2], 6, 2, ORANGE);
+  s.cylinder([46, 10, 4], 6, 2, ORANGE_LIGHT);
+}
+
+// Booking confirmation: a clipboard with a ticked checklist.
+function clipboard(s: Scene): void {
+  s.shadowBox([-1, 3, 0], [24, 7]);
+  s.box([0, 4, 0], [22, 3, 30], NAVY);
+  s.box([2, 7, 2.5], [18, 0.4, 25], PAPER);
+  s.box([5, 7.4, 20], [4, 0.4, 3], ORANGE);
+  s.box([11, 7.4, 20.5], [7, 0.4, 2], ZINC);
+  s.box([5, 7.4, 13], [4, 0.4, 3], ORANGE);
+  s.box([11, 7.4, 13.5], [7, 0.4, 2], ZINC);
+  s.box([5, 7.4, 6], [4, 0.4, 3], ZINC);
+  s.box([11, 7.4, 6.5], [5, 0.4, 2], ZINC);
+  s.box([7, 7, 28], [8, 1, 4], GRAPHITE);
+}
+
+// Rescue: a flatbed tow truck carrying a stranded car.
+function towTruck(s: Scene): void {
+  s.shadowBox([-1, -2, 0], [48, 21]);
+  s.cylinder([7, -1, 0], 4.5, 4, GRAPHITE);
+  s.cylinder([34, -1, 0], 4.5, 4, GRAPHITE);
+  s.box([0, 0, 4], [30, 16, 2], NAVY);
+  s.box([30, 0, 4], [12, 16, 12], ORANGE);
+  s.box([42, 3, 9], [0.5, 10, 4], SKY);
+  s.box([34, 5, 16], [4, 6, 1.5], ORANGE_LIGHT);
+  s.box([3, 2, 6], [24, 12, 6], SKY);
+  s.box([8, 3, 12], [13, 10, 5], PAPER);
+  s.box([0, 16, 4.5], [30, 0.5, 1], ORANGE);
+  s.box([34, 16, 9], [6, 0.5, 4], SKY);
+  s.cylinder([7, 17, 0], 4.5, 4, GRAPHITE);
+  s.cylinder([34, 17, 0], 4.5, 4, GRAPHITE);
+}
+
+// Staff income: two stacks of coins.
+function coins(s: Scene): void {
+  s.shadowDisc([1, 1, 0], 8);
+  s.shadowDisc([16, 14, 0], 8);
+  for (let i = 0; i < 4; i++) {
+    s.cylinder([0, 0, i * 2], 7, 2, i % 2 === 0 ? ORANGE_LIGHT : ORANGE);
+  }
+  s.disc([0, 0, 8.05], 3.5, NAVY);
+  for (let i = 0; i < 3; i++) {
+    s.cylinder([15, 13, i * 2], 7, 2, i % 2 === 0 ? ORANGE_LIGHT : ORANGE);
+  }
+  s.disc([15, 13, 6.05], 3.5, NAVY);
+}
+
+// Staff stock: stacked storage crates with labels.
+function crates(s: Scene): void {
+  s.shadowBox([-1, -1, 0], [34, 26]);
+  s.box([0, 0, 0], [16, 24, 10], KRAFT);
+  s.box([16, 0, 0], [16, 24, 10], KRAFT);
+  s.box([2, 24, 3], [12, 0.4, 4], PAPER);
+  s.box([18, 24, 3], [12, 0.4, 4], ORANGE);
+  s.box([6, 3, 10], [20, 18, 9], KRAFT);
+  s.box([9, 21, 13], [14, 0.4, 4], PAPER);
+}
+
 const FILES: Record<string, (scene: Scene) => void> = {
+  "coins.svg": coins,
+  "crates.svg": crates,
+  "clipboard.svg": clipboard,
+  "tow-truck.svg": towTruck,
+  "basket.svg": basket,
+  "payment-card.svg": paymentCard,
   "gift.svg": gift,
   "id-card.svg": idCard,
   "calendar.svg": calendar,

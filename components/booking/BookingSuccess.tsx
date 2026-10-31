@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight, FiCheck } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
@@ -25,12 +26,26 @@ export function BookingSuccess({
       data-reveal
       className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
     >
-      <h1 className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900">
-          <FiCheck aria-hidden="true" className="h-4 w-4" />
-        </span>
-        Đặt lịch thành công!
-      </h1>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <h1 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-white dark:bg-zinc-100 dark:text-zinc-900">
+              <FiCheck aria-hidden="true" className="h-4 w-4" />
+            </span>
+            Đặt lịch thành công!
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Lịch hẹn đã được ghi nhận. Dưới đây là thông tin bạn vừa đặt.
+          </p>
+        </div>
+        <Image
+          src="/images/isometric/clipboard.svg"
+          alt=""
+          width={35}
+          height={53}
+          className="h-20 w-auto shrink-0 sm:h-28"
+        />
+      </div>
       <dl className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
         <div className="rounded-xl bg-zinc-100 px-3 py-2.5 dark:bg-zinc-900">
           <dt className="font-medium text-zinc-500 dark:text-zinc-400">
