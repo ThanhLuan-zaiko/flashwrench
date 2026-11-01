@@ -51,7 +51,7 @@ export function HomePromoRow({ campaign, active }: HomePromoRowProps) {
           )}
         </span>
         <span className="min-w-0">
-          <span className="block text-xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-2xl dark:text-zinc-50">
+          <span className="block text-lg leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-xl dark:text-zinc-50">
             {figure.value}
             <span className="ml-2 text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
               {figure.unit}

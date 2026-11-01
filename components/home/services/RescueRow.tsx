@@ -16,7 +16,7 @@ export function RescueRow() {
         data-chapter-row
         className="grid grid-cols-1 items-center gap-4 py-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-10 md:py-8"
       >
-        <p className="text-4xl leading-none font-bold tracking-tight text-[#1E3A5F] md:text-5xl dark:text-zinc-50">
+        <p className="text-3xl leading-none font-bold tracking-tight text-[#1E3A5F] md:text-4xl dark:text-zinc-50">
           24/7
         </p>
         <div className="min-w-0">

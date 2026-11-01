@@ -33,7 +33,7 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
       </div>
 
       <div>
-        <h1 className="text-3xl leading-[1.1] font-extrabold tracking-tight text-balance lg:text-4xl">
+        <h1 className="text-2xl leading-[1.1] font-extrabold tracking-tight text-balance lg:text-3xl">
           {part.name}
         </h1>
         <p className="mt-2 text-xs font-medium text-zinc-300">SKU {part.sku}</p>

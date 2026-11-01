@@ -28,7 +28,7 @@ export function ServicesCategoryHeader({
         <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
           Loại hình
         </p>
-        <h2 className="mt-1 text-xl font-bold tracking-tight text-zinc-900 md:text-2xl dark:text-zinc-50">
+        <h2 className="mt-1 text-lg font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
           {category.name}
         </h2>
         {category.description ? (

@@ -66,21 +66,21 @@ export function HomePriceSection(props: HomePriceSectionProps) {
       aria-label="Bảng giá"
       className="scroll-mt-20"
     >
-      <div className="w-full px-4 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
         <span
           data-rule
           aria-hidden="true"
           className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
         />
       </div>
-      <div className="grid w-full gap-8 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-10">
+      <div className="mx-auto max-w-7xl grid w-full gap-8 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-8">
         <div>
           <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             Bảng giá
           </p>
           <MaskLines
             lines={["Giá niêm yết.", "Không phí ẩn."]}
-            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
           <p className="mt-4 max-w-md text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
             Giá từng dịch vụ có trong mục Dịch vụ. Các khoản dưới đây áp dụng
@@ -99,7 +99,7 @@ export function HomePriceSection(props: HomePriceSectionProps) {
                 data-chapter-row
                 className="grid gap-1 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 md:py-5"
               >
-                <dt className="text-base font-bold text-zinc-900 md:text-lg dark:text-zinc-50">
+                <dt className="text-base font-bold text-zinc-900 dark:text-zinc-50">
                   {item.term}
                 </dt>
                 <dd className="text-sm text-zinc-600 md:text-base dark:text-zinc-400">

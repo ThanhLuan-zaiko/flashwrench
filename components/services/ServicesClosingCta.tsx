@@ -16,7 +16,7 @@ export function ServicesClosingCta() {
     <section
       ref={rootRef}
       aria-label="Tạo tài khoản để lưu lịch hẹn"
-      className="w-full px-4 pt-6 pb-16 sm:px-6 md:pt-10 md:pb-16 lg:px-10"
+      className="mx-auto max-w-7xl w-full px-4 pt-6 pb-16 sm:px-6 md:pt-10 md:pb-16 lg:px-8"
     >
       <span
         data-rule
@@ -27,9 +27,9 @@ export function ServicesClosingCta() {
         <div data-chapter-row>
           <MaskLines
             lines={["Đã chọn được dịch vụ ưng ý?"]}
-            className="text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+            className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
-          <p className="mt-4 max-w-xl text-base text-zinc-600 md:text-lg dark:text-zinc-400">
+          <p className="mt-4 max-w-xl text-base text-zinc-600 dark:text-zinc-400">
             Đặt nhanh một dịch vụ hoặc thêm nhiều dịch vụ vào cùng lịch hẹn. Tạo
             tài khoản nếu bạn muốn lưu lịch sử và dùng voucher.
           </p>

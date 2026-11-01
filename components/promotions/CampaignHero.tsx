@@ -31,7 +31,7 @@ export function CampaignHero({
           <p className="text-xs font-semibold tracking-[0.14em] text-zinc-200 uppercase">
             Khuyến mãi · Voucher gắn tài khoản
           </p>
-          <h1 className="text-3xl font-extrabold tracking-tight text-balance lg:text-4xl">
+          <h1 className="text-2xl font-extrabold tracking-tight text-balance lg:text-3xl">
             {name}
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-zinc-200">

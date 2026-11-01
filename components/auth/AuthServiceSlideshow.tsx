@@ -143,7 +143,7 @@ export function AuthServiceSlideshow({
                   </span>
                   <span className="shrink-0 text-right text-xs text-zinc-600">
                     từ
-                    <span className="block text-lg font-extrabold text-[#0F1E33] xl:text-xl">
+                    <span className="block text-base font-extrabold text-[#0F1E33] xl:text-lg">
                       {formatVnd(service.basePrice)}
                     </span>
                   </span>

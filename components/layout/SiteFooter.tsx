@@ -34,14 +34,14 @@ export function SiteFooter() {
           items={FOOTER_PHRASES}
           label="Cam kết của FlashWrench"
           renderItem={(phrase) => (
-            <li className="shrink-0 pr-12 text-lg font-bold tracking-tight text-white md:text-2xl">
+            <li className="shrink-0 pr-12 text-lg font-bold tracking-tight text-white md:text-xl">
               {phrase.text}
             </li>
           )}
         />
       </div>
 
-      <div className="px-4 pt-12 sm:px-6 md:pt-16 lg:px-10">
+      <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 md:pt-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-12 md:gap-x-10">
           <div className="flex flex-col justify-between gap-10 md:col-span-5">
             <p className="max-w-sm text-base text-zinc-300">
@@ -112,7 +112,7 @@ export function SiteFooter() {
         />
       </div>
 
-      <div className="mt-8 flex flex-col gap-3 border-t border-white/15 px-4 py-6 text-sm text-zinc-300 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-10">
+      <div className="mx-auto max-w-7xl mt-8 flex flex-col gap-3 border-t border-white/15 px-4 py-6 text-sm text-zinc-300 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
         <p>
           © {new Date().getFullYear()} {SITE_NAME}. Bảo lưu mọi quyền.
         </p>

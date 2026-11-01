@@ -57,7 +57,7 @@ export function StockBoard() {
             <div className="flex min-w-0 items-center gap-4">
               <StaffHeroArt art={STAFF_ART.crates} />
               <div className="min-w-0">
-                <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
+                <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                   Kiểm kê và điều chỉnh tồn kho
                 </h2>
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">

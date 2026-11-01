@@ -50,7 +50,7 @@ export function ProductsShelf({
     <section
       ref={rootRef}
       aria-label="Danh sách sản phẩm"
-      className="w-full px-4 pt-10 sm:px-6 md:pt-10 lg:px-10"
+      className="mx-auto max-w-7xl w-full px-4 pt-10 sm:px-6 md:pt-10 lg:px-8"
     >
       <ProductFilter
         categories={categories}

@@ -40,13 +40,13 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
           </p>
           <h1
             data-reveal
-            className="mt-5 text-3xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-4xl lg:text-5xl"
+            className="mt-5 text-2xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-3xl lg:text-4xl"
           >
             Xe hỏng ở đâu, thợ đến đó.
           </h1>
           <p
             data-reveal
-            className="mt-6 max-w-xl text-base leading-relaxed text-pretty text-zinc-200 sm:text-lg"
+            className="mt-6 max-w-xl text-base leading-relaxed text-pretty text-zinc-200"
           >
             Đặt thợ sửa xe tận nơi hoặc cứu hộ khẩn cấp 24/7. Giá báo trước,
             không phát sinh. Theo dõi thợ đang đến trên bản đồ.

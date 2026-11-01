@@ -21,7 +21,7 @@ export function ProductsIntro({ live, countText }: ProductsIntroProps) {
     <section
       ref={rootRef}
       aria-label="Cửa hàng linh kiện"
-      className="w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-10"
+      className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-8"
     >
       <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
         Sản phẩm
@@ -29,7 +29,7 @@ export function ProductsIntro({ live, countText }: ProductsIntroProps) {
       <MaskLines
         as="h1"
         lines={["Linh kiện chính hãng,", "giao tận nơi."]}
-        className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+        className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
       />
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <p
