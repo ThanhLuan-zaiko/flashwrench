@@ -26,10 +26,10 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
     <section
       ref={rootRef}
       aria-label="Giới thiệu FlashWrench"
-      className="rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-8 pb-10 text-white sm:px-6 md:pt-10 md:pb-12"
+      className="rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-8 pb-10 text-white sm:px-6 md:pt-10 md:pb-12 lg:px-0"
     >
       <div
-        className={`mx-auto grid w-full max-w-6xl items-center gap-10 lg:gap-14 ${hasTiles ? "lg:grid-cols-2" : ""}`}
+        className={`mx-auto grid w-full max-w-7xl items-center gap-10 lg:gap-14 lg:px-8 ${hasTiles ? "lg:grid-cols-2" : ""}`}
       >
         <div className="flex flex-col items-start text-left">
           <p

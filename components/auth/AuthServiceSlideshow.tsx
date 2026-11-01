@@ -96,7 +96,7 @@ export function AuthServiceSlideshow({
               <p className="text-[11px] font-bold tracking-[0.14em] text-zinc-200 uppercase">
                 {service.categoryName}
               </p>
-              <p className="mt-1 text-2xl leading-tight font-extrabold tracking-tight text-balance sm:text-[26px]">
+              <p className="mt-1 text-2xl leading-tight font-extrabold tracking-tight text-balance">
                 {service.name}
               </p>
               <p className="mt-1.5 text-sm text-zinc-100">

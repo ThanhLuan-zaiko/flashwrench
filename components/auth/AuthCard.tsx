@@ -87,7 +87,7 @@ export function AuthCard({
                   {eyebrow}
                 </p>
               )}
-              <h1 className="text-[30px] leading-[1.1] font-extrabold tracking-tight sm:text-2xl sm:font-bold">
+              <h1 className="text-2xl leading-[1.1] font-extrabold tracking-tight sm:font-bold">
                 {title}
               </h1>
               <p className="mt-2 text-sm text-zinc-200 sm:text-zinc-600 dark:sm:text-zinc-400">

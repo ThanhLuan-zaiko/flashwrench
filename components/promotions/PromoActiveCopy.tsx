@@ -44,12 +44,12 @@ export function PromoActiveCopy({
         </p>
         <h3
           data-promo-anim
-          className="text-xl font-extrabold tracking-tight lg:text-[1.75rem]"
+          className="text-xl font-extrabold tracking-tight lg:text-2xl"
         >
           {campaign.name}
         </h3>
         <p data-promo-anim className="flex flex-wrap items-baseline gap-x-3">
-          <span className="text-[3.25rem] leading-none font-extrabold tracking-[-0.03em] lg:text-[4rem]">
+          <span className="text-[2.75rem] leading-none font-extrabold tracking-[-0.03em] lg:text-[3.25rem]">
             {figure.value}
           </span>
           <span className="text-xs font-bold tracking-[0.08em] text-zinc-300 uppercase">

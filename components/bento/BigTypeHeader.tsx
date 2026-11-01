@@ -32,7 +32,7 @@ export function BigTypeHeader({
             {eyebrow}
           </p>
         )}
-        <TitleTag className="text-2xl leading-[1.1] font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:text-3xl lg:text-3xl dark:text-zinc-50">
+        <TitleTag className="text-2xl leading-[1.1] font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:text-3xl dark:text-zinc-50">
           {title}
         </TitleTag>
         {subtitle && (

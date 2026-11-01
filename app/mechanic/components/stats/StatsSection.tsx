@@ -33,7 +33,7 @@ export function StatsSection() {
             <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
               Thợ · Tuần này
             </p>
-            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-[28px] dark:text-zinc-50">
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
               Hiệu suất của bạn
             </h2>
           </div>
