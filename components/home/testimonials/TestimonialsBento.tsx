@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { LandingReview } from "@/lib/home/landing-reviews.service";
+import { MarqueeTrack } from "../MarqueeTrack";
 import { MaskLines } from "../MaskLines";
 import { RealReviewCard } from "./RealReviewCard";
 
@@ -32,18 +33,30 @@ export function TestimonialsBento({
           Đánh giá từ người dùng dịch vụ sửa xe lưu động, cứu hộ và mua phụ tùng
           trên FlashWrench.
         </p>
-        <ul className="mt-8 md:mt-10">
-          {realItems.map((review) => (
-            <RealReviewCard key={review.id} review={review} />
-          ))}
-          <li>
-            <span
-              data-rule
-              aria-hidden="true"
-              className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
-            />
-          </li>
-        </ul>
+        <span
+          data-rule
+          aria-hidden="true"
+          className="mt-8 block h-px origin-left bg-zinc-200 md:mt-10 dark:bg-zinc-800"
+        />
+        <div className="flex flex-col gap-8 py-6 md:py-8">
+          <MarqueeTrack
+            items={realItems}
+            label="Đánh giá từ khách hàng"
+            renderItem={(review) => <RealReviewCard review={review} />}
+          />
+          <MarqueeTrack
+            items={[...realItems].reverse()}
+            label="Đánh giá từ khách hàng, cuộn ngược"
+            direction="right"
+            decorative
+            renderItem={(review) => <RealReviewCard review={review} />}
+          />
+        </div>
+        <span
+          data-rule
+          aria-hidden="true"
+          className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
+        />
       </div>
     </section>
   );

@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro } from "next/font/google";
 import type { ReactNode } from "react";
 import { LazyAccountLockGuard } from "@/components/auth/LazyAccountLockGuard";
 import { LazyChatFab } from "@/components/chat/LazyChatFab";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LazyPaymentPromptBanner } from "@/components/payments/LazyPaymentPromptBanner";
 import { LazyCrossTabSync } from "@/components/providers/LazyCrossTabSync";
@@ -61,6 +62,7 @@ export default async function RootLayout({
             <TourProvider steps={CUSTOMER_GUIDE_STEPS}>
               <div className="flex flex-1 flex-col">{children}</div>
             </TourProvider>
+            <SiteFooter />
           </ToastProvider>
         </QueryProvider>
       </body>

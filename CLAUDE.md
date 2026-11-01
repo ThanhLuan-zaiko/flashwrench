@@ -16,7 +16,7 @@ The full rules are in `frontend-bento-gsap.md` Section 3.1, and `AGENTS.md` Sect
 
 Home sections (promotions, services, parts, steps, price, mechanics, reviews, closing call to action) are ruled-row chapters, not card grids or banners: masked headline, hairline rules, rows on the page surface. Layout rules are in `frontend-bento-gsap.md` Section 3.3.
 
-Motion comes from one hook, `hooks/useChapterMotion.ts`, using the attributes `data-lines`/`data-line` (via `components/home/MaskLines.tsx`), `data-rule`, `data-chapter-row` and `data-chapter-photo`. Optional extras (`hooks/useChapterExtras.ts`, `hooks/useCursorPreview.ts`): `data-parallax`, `data-focus`, `data-count-to` and `data-preview-src`. Values live in `lib/motion/chapter-motion.ts`; limits are in Section 4.7. Do not write a new timeline per section, and do not pin or use sticky columns.
+Motion comes from one hook, `hooks/useChapterMotion.ts`, using the attributes `data-lines`/`data-line` (via `components/home/MaskLines.tsx`), `data-rule`, `data-chapter-row` and `data-chapter-photo`. Optional extras (`hooks/useChapterExtras.ts`): `data-parallax` and `data-count-to`. Values live in `lib/motion/chapter-motion.ts`; limits are in Section 4.7. Do not write a new timeline per section, and do not pin or use sticky columns.
 
 ## Skill: flat isometric illustrations
 

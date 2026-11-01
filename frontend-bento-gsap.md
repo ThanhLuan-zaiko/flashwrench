@@ -241,6 +241,23 @@ mechanics or reviews.
    single orange button of the page is the closing call to action.
 6. **Hide when empty.** Data-driven chapters return `null` when there is
    nothing to show.
+7. **Image pattern per chapter.** Promotions show the live campaigns as a
+   wide lead carousel (GSAP crossfade via `hooks/useCarousel.ts`, the same
+   timing as services, bars below) beside ruled rows that list every shown
+   campaign; the row for the campaign on show carries a navy rule and
+   `aria-current`. Services are
+   an accordion: a closed row keeps a small photo, and the open row reveals a
+   wide photo carousel and the description (one row open at a time, the first
+   open by default). The carousel is a GSAP crossfade driven by
+   `hooks/useCarousel.ts`: it advances every 5 s while its row is open, and
+   bars below the photo jump to one directly. Reduced motion turns off the
+   timer and the fade. Products are tall tiles with the photo contained on white
+   (`object-contain`), price above the name.
+8. **Site footer.** `components/layout/SiteFooter.tsx` is the one navy band
+   below the page (`#1E3A5F`, white text): a marquee strip of promises, the
+   hotline and ruled link columns, then an oversized wordmark that rises in
+   with `useChapterMotion`. It is hidden on staff portals and flow screens
+   (`components/layout/site-footer.routes.ts`).
 
 Reference: `components/home/services/`,
 `components/home/promotions/HomePromoList.tsx`, `components/home/products/`,
@@ -399,36 +416,44 @@ section creates its own timelines.
 | `data-lines` + `data-line` | headline (`components/home/MaskLines.tsx`) | each line rises out of an `overflow-hidden` mask (`yPercent 110 -> 0`, stagger 0.08) |
 | `data-rule` | hairline `h-px origin-left` | draws from the left (`scaleX 0 -> 1`) |
 | `data-chapter-row` | row, tile or paragraph | fades up (`y 16 -> 0`, `opacity 0 -> 1`) |
-| `data-chapter-photo` | the `<img>` inside a clipped frame | opens top to bottom (`clipPath inset()`), scrubbed with scroll, `ease: "none"` |
+| `data-chapter-photo` | the `<img>` inside a clipped frame | opens top to bottom (`clipPath inset()`) once, like rows (`power2.out`, 0.6s). Never scrubbed: a scrubbed reveal stuck half-open on screen |
 
 Optional extras, opted into per element and driven by
-`hooks/useChapterExtras.ts` and `hooks/useCursorPreview.ts`:
+`hooks/useChapterExtras.ts`:
 
 | Attribute | Element | Motion |
 | --- | --- | --- |
 | `data-parallax` | the same `<img>` (scaled 1.2 in its clipped frame) | drifts `yPercent -8 -> 8` while its frame crosses the viewport, scrubbed. Do not put a Tailwind `scale-*` or hover scale on this element: GSAP owns its transform |
-| `data-focus` | a large title (md and up only) | opacity `0.55 -> 1 -> 0.55` across the viewport, scrubbed; never dim body-size text |
 | `data-count-to={number}` | a span holding the formatted price | counts 0 to the value once (0.6s), then shows the static text again on cleanup |
-| `data-preview-src={url}` on a row + one `data-preview` overlay | row and a fixed 320x200 photo | the overlay follows the mouse with `gsap.quickTo` on `x`/`y` and fades in and out (0.3s); mouse pointers at 1024px and up only, hidden after 24px of scrolling |
+| `data-ribbon-item` | not rendered on the home page since the promotions lead layout; kept for a future flat ribbon row (`[perspective:1200px]` on the row, `components/home/promotions/PromoDepthRibbon.tsx`) | winds into depth while the row scrolls through the viewport (scrubbed): `y` up to 24px, `z` up to 120px, `rotateY` up to 28deg, from the flat rest pose. Pose values come from `ribbonPose` in `lib/motion/chapter-motion.ts`. Do not add a Tailwind `scale-*` or hover transform to this element |
 
-The overlay is decorative (`aria-hidden`), uses no shadow and no inline
-style, and the row link keeps the accessible name. Pure helpers
-(`previewPosition`, `formatCountValue`) live in `lib/motion/chapter-motion.ts`.
+Pure helpers (`formatCountValue`, `marqueeDuration`) live in
+`lib/motion/chapter-motion.ts`.
+
+Marquee rows (mechanics, reviews) come in pairs: a left-moving row, then a
+decorative right-moving row below it with the items reversed (`direction="right"`,
+`decorative`, which hides the row from assistive tech). They are not chapter tweens: `MarqueeTrack`
+(`components/home/MarqueeTrack.tsx`) renders the items twice, the second copy
+`inert`, and `hooks/useMarquee.ts` slides the track one copy to the left at
+`CHAPTER_MARQUEE.pxPerSecond`, endlessly, right to left. Hovering pauses it.
+Reduced motion leaves a sideways-scrollable row. The row items carry no
+chapter attributes, so the once-tweens do not fight the moving track.
 
 Rules:
 
-- Line, rule and row tweens run once (`once: true`, start `top 88%`,
-  duration at most 0.6s, `power2.out`). Only photo tweens scrub, so the
-  0.6s cap does not apply to them.
+- Line, rule, row and photo-reveal tweens run once (`once: true`, start
+  `top 88%`, duration at most 0.6s, `power2.out`). Only the parallax and
+  counter extras scrub.
 - Allowed properties for chapters: `yPercent`, `y`, `scaleX`, `opacity`
-  and `clipPath`. Never animate layout properties.
+  and `clipPath`, plus `z` and `rotateY` for the depth ribbon (transforms
+  only). Never animate layout properties.
 - Sections that render after async data (for example promotions) pass
   `ready` as the second argument so the hook waits for the root to exist.
 - The hook skips GSAP entirely for reduced motion and hidden pages, imports
   GSAP lazily, jumps one-shot tweens to their final state when frames
   starve, and reverts everything through `ctx.revert()`.
-- Budget: one once-trigger per headline, rule and row, at most ~25 per
-  section, and at most ~8 scrubbed photos per section.
+- Budget: one once-trigger per headline, rule, row and photo, at most ~25
+  per section.
 - Do not use ScrollTrigger `pin`, sticky columns, snapping or forced
   scroll positions. No infinite loops, tickers or scroll-jacking.
 - Pure values live in `lib/motion/chapter-motion.ts` and are covered by

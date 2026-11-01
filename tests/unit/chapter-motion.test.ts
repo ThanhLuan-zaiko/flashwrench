@@ -1,14 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import {
-  CHAPTER_FOCUS_MIN_OPACITY,
   CHAPTER_LINES,
   CHAPTER_PARALLAX,
   CHAPTER_PHOTO_CLIP,
-  CHAPTER_PREVIEW,
   CHAPTER_ROW,
   CHAPTER_RULE,
   formatCountValue,
-  previewPosition,
+  marqueeDuration,
+  marqueeOffsets,
+  nextSlideIndex,
 } from "@/lib/motion/chapter-motion";
 
 describe("chapter motion values", () => {
@@ -18,7 +18,12 @@ describe("chapter motion values", () => {
   });
 
   test("one-shot tweens respect the 0.6s cap and power2.out ease", () => {
-    for (const { to } of [CHAPTER_LINES, CHAPTER_RULE, CHAPTER_ROW]) {
+    for (const { to } of [
+      CHAPTER_LINES,
+      CHAPTER_RULE,
+      CHAPTER_ROW,
+      CHAPTER_PHOTO_CLIP,
+    ]) {
       expect(to.duration).toBeLessThanOrEqual(0.6);
       expect(to.ease).toBe("power2.out");
     }
@@ -39,15 +44,45 @@ describe("chapter motion values", () => {
   });
 });
 
-describe("parallax and focus values", () => {
+describe("parallax values", () => {
   test("the parallax scale leaves spare room for the full drift", () => {
     const spare = ((CHAPTER_PARALLAX.scale - 1) / 2) * 100;
     expect(CHAPTER_PARALLAX.shiftPercent).toBeLessThan(spare);
   });
+});
 
-  test("dimmed titles stay readable", () => {
-    expect(CHAPTER_FOCUS_MIN_OPACITY).toBeGreaterThanOrEqual(0.5);
-    expect(CHAPTER_FOCUS_MIN_OPACITY).toBeLessThan(1);
+describe("marqueeOffsets", () => {
+  test("a left marquee moves content from right to left", () => {
+    expect(marqueeOffsets("left", 600)).toEqual({ from: 0, to: -600 });
+  });
+
+  test("a right marquee moves content from left to right", () => {
+    expect(marqueeOffsets("right", 600)).toEqual({ from: -600, to: 0 });
+  });
+});
+
+describe("marqueeDuration", () => {
+  test("takes one second per 60px of travel", () => {
+    expect(marqueeDuration(600)).toBe(10);
+  });
+
+  test("a longer track takes longer for one loop", () => {
+    expect(marqueeDuration(1200)).toBeGreaterThan(marqueeDuration(600));
+  });
+});
+
+describe("nextSlideIndex", () => {
+  test("advances one slide at a time", () => {
+    expect(nextSlideIndex(0, 3)).toBe(1);
+    expect(nextSlideIndex(1, 3)).toBe(2);
+  });
+
+  test("wraps back to the first slide after the last", () => {
+    expect(nextSlideIndex(2, 3)).toBe(0);
+  });
+
+  test("stays at zero when there is nothing to show", () => {
+    expect(nextSlideIndex(0, 0)).toBe(0);
   });
 });
 
@@ -55,28 +90,5 @@ describe("formatCountValue", () => {
   test("matches the static Vietnamese price format", () => {
     expect(formatCountValue(700000)).toBe("700.000đ");
     expect(formatCountValue(0)).toBe("0đ");
-  });
-});
-
-describe("previewPosition", () => {
-  const { width, height, gap, edge } = CHAPTER_PREVIEW;
-
-  test("sits to the right of the pointer when there is room", () => {
-    const { x } = previewPosition(200, 400, 1440, 900);
-    expect(x).toBe(200 + gap);
-  });
-
-  test("flips to the left near the right edge", () => {
-    const { x } = previewPosition(1400, 400, 1440, 900);
-    expect(x).toBe(1400 - gap - width);
-  });
-
-  test("centres on the pointer vertically", () => {
-    expect(previewPosition(200, 400, 1440, 900).y).toBe(400 - height / 2);
-  });
-
-  test("clamps to the viewport top and bottom", () => {
-    expect(previewPosition(200, 0, 1440, 900).y).toBe(edge);
-    expect(previewPosition(200, 900, 1440, 900).y).toBe(900 - height - edge);
   });
 });

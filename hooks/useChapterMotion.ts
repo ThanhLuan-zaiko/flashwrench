@@ -7,7 +7,6 @@ import {
   CHAPTER_LINE_SELECTOR,
   CHAPTER_LINES,
   CHAPTER_PHOTO_CLIP,
-  CHAPTER_PHOTO_END,
   CHAPTER_PHOTO_SELECTOR,
   CHAPTER_ROW,
   CHAPTER_ROW_SELECTOR,
@@ -28,8 +27,8 @@ type Tween = gsap.core.Tween;
 
 // Scroll choreography for a home chapter section: headline lines rise out of
 // their masks, hairline rules draw in, rows fade up and photos open as they
-// scroll into view. Line, rule and row tweens run once; photo tweens scrub
-// with the scroll position. `ready` delays setup for sections that render
+// scroll into view. Every tween runs once when its element reaches the
+// trigger line, so nothing is left half-revealed on screen. `ready` delays setup for sections that render
 // after async data. The GSAP runtime loads lazily and reduced-motion
 // users get the final state with nothing downloaded.
 export function useChapterMotion(
@@ -111,15 +110,11 @@ function buildChapter(gsapApi: typeof gsap, root: HTMLElement, once: Tween[]) {
   for (const photo of root.querySelectorAll<HTMLElement>(
     CHAPTER_PHOTO_SELECTOR,
   )) {
-    gsapApi.fromTo(photo, CHAPTER_PHOTO_CLIP.from, {
-      ...CHAPTER_PHOTO_CLIP.to,
-      ease: "none",
-      scrollTrigger: {
-        trigger: photo,
-        start: CHAPTER_START,
-        end: CHAPTER_PHOTO_END,
-        scrub: true,
-      },
-    });
+    once.push(
+      gsapApi.fromTo(photo, CHAPTER_PHOTO_CLIP.from, {
+        ...CHAPTER_PHOTO_CLIP.to,
+        scrollTrigger: onceTrigger(photo),
+      }),
+    );
   }
 }

@@ -4,8 +4,9 @@ import type { ShowcaseMechanic } from "@/lib/home/mechanic-showcase.service";
 
 const MAX_VISIBLE_SKILLS = 3;
 
-// One verified mechanic: a large portrait that opens on scroll (initials when
-// there is no avatar), then name, rating, completed jobs and top skills.
+// One verified mechanic in the drifting row: a portrait (initials when there is
+// no avatar), then name, rating, completed jobs and top skills. The right
+// padding is the gap to the next mechanic when the row loops.
 export function MechanicTile({ item }: { item: ShowcaseMechanic }) {
   const rated = item.ratingCount > 0;
   const visibleSkills = item.skills.slice(0, MAX_VISIBLE_SKILLS);
@@ -13,8 +14,8 @@ export function MechanicTile({ item }: { item: ShowcaseMechanic }) {
   const skills = visibleSkills.map(skillLabel).join(" · ");
 
   return (
-    <li className="min-w-0">
-      <div data-chapter-row className="flex flex-col gap-3">
+    <li className="w-64 shrink-0 pr-10 md:w-72">
+      <div className="flex flex-col gap-3">
         <span className="block aspect-[4/3] overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900">
           {item.avatarUrl ? (
             // biome-ignore lint/performance/noImgElement: user avatar served immutable from media storage; next/image optimizer hop adds no value here.
@@ -22,7 +23,6 @@ export function MechanicTile({ item }: { item: ShowcaseMechanic }) {
               src={item.avatarUrl}
               alt=""
               loading="lazy"
-              data-chapter-photo
               className="h-full w-full object-cover object-top"
             />
           ) : (

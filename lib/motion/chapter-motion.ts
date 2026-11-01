@@ -9,7 +9,6 @@ export const CHAPTER_ROW_SELECTOR = "[data-chapter-row]";
 export const CHAPTER_PHOTO_SELECTOR = "[data-chapter-photo]";
 
 export const CHAPTER_START = "top 88%";
-export const CHAPTER_PHOTO_END = "top 55%";
 
 const CHAPTER_DURATION = 0.6;
 const CHAPTER_EASE = "power2.out";
@@ -51,25 +50,22 @@ export const CHAPTER_ROW: ChapterTween<
   to: { y: 0, opacity: 1, duration: CHAPTER_DURATION, ease: CHAPTER_EASE },
 };
 
-// Photos open from top to bottom through an inset clip-path, scrubbed.
+// Photos open from top to bottom through an inset clip-path, once. A scrubbed
+// reveal would stick half-open whenever the photo stops mid-range on screen.
 export const CHAPTER_PHOTO_CLIP: ChapterTween<
   { clipPath: string },
-  { clipPath: string }
+  { clipPath: string; duration: number; ease: string }
 > = {
   from: { clipPath: "inset(0% 0% 100% 0%)" },
-  to: { clipPath: "inset(0% 0% 0% 0%)" },
+  to: {
+    clipPath: "inset(0% 0% 0% 0%)",
+    duration: CHAPTER_DURATION,
+    ease: CHAPTER_EASE,
+  },
 };
 
 export const CHAPTER_PARALLAX_SELECTOR = "[data-parallax]";
-export const CHAPTER_FOCUS_SELECTOR = "[data-focus]";
 export const CHAPTER_COUNT_SELECTOR = "[data-count-to]";
-export const CHAPTER_PREVIEW_SELECTOR = "[data-preview]";
-export const CHAPTER_PREVIEW_SOURCE_SELECTOR = "[data-preview-src]";
-
-// Focus dimming only runs from md up, where the dimmed title is large text.
-export const CHAPTER_FOCUS_QUERY = "(min-width: 768px)";
-// The cursor preview needs a real pointer and room beside the list.
-export const CHAPTER_PREVIEW_QUERY = "(hover: hover) and (min-width: 1024px)";
 
 // Photos sit inside a clipped frame, scaled up so a vertical drift never
 // exposes the frame edge: 20% scale leaves 10% spare on each side.
@@ -78,38 +74,70 @@ export const CHAPTER_PARALLAX = {
   shiftPercent: 8,
 } as const;
 
-// Titles dim away from the viewport centre but stay readable as large text.
-export const CHAPTER_FOCUS_MIN_OPACITY = 0.55;
-
-export const CHAPTER_PREVIEW = {
-  width: 320,
-  height: 200,
-  gap: 24,
-  edge: 8,
-  followDuration: 0.4,
-  fadeDuration: 0.3,
-  hiddenScale: 0.92,
+// Photo carousels advance on their own every `intervalSec` and crossfade over
+// `fadeDuration`. Reduced motion skips both (see hooks/useCarousel.ts).
+export const CHAPTER_CAROUSEL = {
+  intervalSec: 5,
+  fadeDuration: 0.6,
+  ease: "power2.inOut",
 } as const;
+
+// Index of the next slide, wrapping back to the first after the last.
+export function nextSlideIndex(current: number, count: number): number {
+  if (count <= 0) return 0;
+  return (current + 1) % count;
+}
 
 // Counters tween 0 to the value once, in the same format as the static text.
 export function formatCountValue(value: number): string {
   return `${new Intl.NumberFormat("vi-VN").format(value)}đ`;
 }
 
-export type PreviewPosition = { x: number; y: number };
+export const CHAPTER_RIBBON_SELECTOR = "[data-ribbon-item]";
 
-// Places the preview beside the pointer, flipping to the left near the right
-// edge and clamping vertically so it never leaves the viewport.
-export function previewPosition(
-  pointerX: number,
-  pointerY: number,
-  viewportWidth: number,
-  viewportHeight: number,
-): PreviewPosition {
-  const { width, height, gap, edge } = CHAPTER_PREVIEW;
-  const fitsRight = pointerX + gap + width <= viewportWidth - edge;
-  const x = fitsRight ? pointerX + gap : pointerX - gap - width;
-  const maxY = viewportHeight - height - edge;
-  const y = Math.min(Math.max(pointerY - height / 2, edge), maxY);
-  return { x, y };
+// Ribbon cards start as a flat row and wind into depth as the row crosses
+// the viewport (scrubbed). Each card's phase is its share of one full turn,
+// so neighbours alternate between lifted and lowered, near and far.
+export const CHAPTER_RIBBON = {
+  lift: 24,
+  depth: 120,
+  tilt: 28,
+} as const;
+
+export type RibbonPose = { y: number; z: number; rotateY: number };
+
+// Target pose for one card of a ribbon of `count` cards. Pure, so the GSAP
+// hook only maps the result onto transform properties.
+export function ribbonPose(index: number, count: number): RibbonPose {
+  const phase = (index / Math.max(count, 1)) * Math.PI * 2;
+  const { lift, depth, tilt } = CHAPTER_RIBBON;
+  return {
+    y: Math.sin(phase) * lift,
+    z: Math.cos(phase) * depth,
+    rotateY: -Math.cos(phase) * tilt,
+  };
+}
+
+// Marquee rows (mechanics, reviews) slide one copy of their items to the left
+// at a constant speed, so the loop reads as one steady drift.
+export const CHAPTER_MARQUEE = {
+  pxPerSecond: 60,
+} as const;
+
+// Seconds for one loop that moves `distance` px at the marquee speed.
+export function marqueeDuration(distance: number): number {
+  return distance / CHAPTER_MARQUEE.pxPerSecond;
+}
+
+export type MarqueeDirection = "left" | "right";
+
+// Track offsets (px) for one loop: a "left" marquee slides from 0 to -distance
+// (content moves right to left), a "right" marquee slides the other way.
+export function marqueeOffsets(
+  direction: MarqueeDirection,
+  distance: number,
+): { from: number; to: number } {
+  return direction === "left"
+    ? { from: 0, to: -distance }
+    : { from: -distance, to: 0 };
 }

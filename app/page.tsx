@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { HomeFaq } from "@/components/home/faq/HomeFaq";
 import { HomeCtaBand } from "@/components/home/HomeCtaBand";
 import { HomeHero } from "@/components/home/HomeHero";
 import { MechanicsBento } from "@/components/home/mechanics/MechanicsBento";
@@ -44,6 +45,7 @@ export default async function HomePage() {
       <HomePriceSection services={services} />
       <MechanicsBento items={mechanics} />
       <TestimonialsBento realItems={realReviews} />
+      <HomeFaq />
       <HomeCtaBand />
       <SpeculationRules scope="home" />
     </main>

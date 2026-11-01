@@ -6,6 +6,7 @@ import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { averageRatingOf } from "@/components/home/home-card-utils";
 import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { ShowcaseMechanic } from "@/lib/home/mechanic-showcase.service";
+import { MarqueeTrack } from "../MarqueeTrack";
 import { MaskLines } from "../MaskLines";
 import { MechanicTile } from "./MechanicTile";
 
@@ -54,11 +55,20 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
           aria-hidden="true"
           className="mt-6 block h-px origin-left bg-zinc-200 md:mt-8 dark:bg-zinc-800"
         />
-        <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:mt-8 lg:grid-cols-3">
-          {items.map((item) => (
-            <MechanicTile key={item.id} item={item} />
-          ))}
-        </ul>
+        <div className="mt-6 flex flex-col gap-8 md:mt-8">
+          <MarqueeTrack
+            items={items}
+            label="Thợ uy tín"
+            renderItem={(item) => <MechanicTile item={item} />}
+          />
+          <MarqueeTrack
+            items={[...items].reverse()}
+            label="Thợ uy tín, cuộn ngược"
+            direction="right"
+            decorative
+            renderItem={(item) => <MechanicTile item={item} />}
+          />
+        </div>
         <div data-chapter-row className="mt-8">
           <SmartCtaLink
             guestHref="/booking"
