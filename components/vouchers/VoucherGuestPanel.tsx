@@ -14,7 +14,7 @@ export function VoucherGuestPanel() {
       className="flex flex-col gap-4 border-y border-zinc-200 py-5 md:flex-row md:items-center md:justify-between md:gap-10 dark:border-zinc-800"
     >
       <div>
-        <p className="text-base font-bold text-zinc-900 md:text-lg dark:text-zinc-50">
+        <p className="text-base font-bold text-zinc-900 dark:text-zinc-50">
           Đăng nhập để xem ví voucher
         </p>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">

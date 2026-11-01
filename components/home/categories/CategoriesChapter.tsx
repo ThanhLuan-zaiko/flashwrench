@@ -18,7 +18,7 @@ export function CategoriesChapter({ items }: { items: ServiceCategoryItem[] }) {
     <section
       ref={rootRef}
       aria-label="Loại hình dịch vụ"
-      className="w-full px-4 pt-12 sm:px-6 md:pt-12 lg:px-10"
+      className="mx-auto max-w-7xl w-full px-4 pt-12 sm:px-6 md:pt-12 lg:px-8"
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
         <div>
@@ -27,7 +27,7 @@ export function CategoriesChapter({ items }: { items: ServiceCategoryItem[] }) {
           </p>
           <MaskLines
             lines={["Chọn loại hình,", "rồi chọn dịch vụ"]}
-            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
         </div>
         <p className="max-w-sm text-base text-zinc-600 dark:text-zinc-400">

@@ -197,10 +197,11 @@ decorative block or a stretched image. Pick the method that matches the cause:
    text must show in full. A fixed row height such as `auto-rows-[13.5rem]`
    clips copy in narrow columns. After changing row sizes, measure each card's
    copy in the browser: no text may end below the bottom edge of its card.
-6. **Media grids use the full width.** A section whose content is a grid of
-   photos or cards may span the viewport with horizontal padding
-   (`w-full px-4 sm:px-6 lg:px-10`). A `max-w-6xl` wrapper leaves side voids
-   on wide screens. Keep the max width for text-only sections.
+6. **Sections sit in the header column.** Every section, media grids
+   included, uses `mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8`, the same
+   1280px column as `SiteHeader`. Full-bleed rows made cards and service rows
+   too wide on large screens (client feedback), so only backgrounds may span
+   the viewport, never the content inside them.
 7. **Do not hide content to save room.** Do not move an offer's details behind
    taps, accordions or sliders to fit more items. Show the full content in
    every visible card. When items outnumber the slots, cap the visible count
@@ -521,7 +522,7 @@ Before finishing, verify:
    containers, no nested cards, no unexplained gradients, no empty
    gaps left in grids, no sales-tone copy.
 10. Empty space (3.2) checked at 375, 1024 and 1440px: every cell filled,
-    no text clipped by its card, media grids use the full width.
+    no text clipped by its card, content inside the 1280px column.
 
 ## 8. Anti-Patterns (Forbidden)
 

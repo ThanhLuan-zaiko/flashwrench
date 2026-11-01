@@ -26,10 +26,10 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
     <section
       ref={rootRef}
       aria-label="Giới thiệu FlashWrench"
-      className="rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-8 pb-10 text-white sm:px-6 md:pt-10 md:pb-12"
+      className="rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-8 pb-10 text-white sm:px-6 md:pt-10 md:pb-12 lg:px-0"
     >
       <div
-        className={`mx-auto grid w-full max-w-6xl items-center gap-10 lg:gap-14 ${hasTiles ? "lg:grid-cols-2" : ""}`}
+        className={`mx-auto grid w-full max-w-7xl items-center gap-10 lg:gap-14 lg:px-8 ${hasTiles ? "lg:grid-cols-2" : ""}`}
       >
         <div className="flex flex-col items-start text-left">
           <p
@@ -40,13 +40,13 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
           </p>
           <h1
             data-reveal
-            className="mt-5 text-3xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-4xl lg:text-5xl"
+            className="mt-5 text-2xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-3xl lg:text-4xl"
           >
             Xe hỏng ở đâu, thợ đến đó.
           </h1>
           <p
             data-reveal
-            className="mt-6 max-w-xl text-base leading-relaxed text-pretty text-zinc-200 sm:text-lg"
+            className="mt-6 max-w-xl text-base leading-relaxed text-pretty text-zinc-200"
           >
             Đặt thợ sửa xe tận nơi hoặc cứu hộ khẩn cấp 24/7. Giá báo trước,
             không phát sinh. Theo dõi thợ đang đến trên bản đồ.

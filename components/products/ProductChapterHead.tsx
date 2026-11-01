@@ -17,7 +17,7 @@ export function ProductChapterHead({ title }: ProductChapterHeadProps) {
       />
       <MaskLines
         lines={[title]}
-        className="mt-8 text-2xl font-bold tracking-tight text-zinc-900 md:mt-10 md:text-4xl dark:text-zinc-50"
+        className="mt-8 text-2xl font-bold tracking-tight text-zinc-900 md:mt-10 md:text-3xl dark:text-zinc-50"
       />
     </div>
   );

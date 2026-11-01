@@ -24,7 +24,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
 
   return (
     <section ref={rootRef} aria-label="Thợ uy tín">
-      <div className="w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
@@ -32,7 +32,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
             </p>
             <MaskLines
               lines={["Đội thợ được khách hàng", "chấm điểm từng đơn"]}
-              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
             />
           </div>
           <dl className="flex gap-8 text-zinc-900 dark:text-zinc-50">

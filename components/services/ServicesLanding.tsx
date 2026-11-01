@@ -125,7 +125,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
       />
       <div
         data-tour="guide-services"
-        className="w-full px-4 pt-10 sm:px-6 md:pt-12 lg:px-10"
+        className="mx-auto max-w-7xl w-full px-4 pt-10 sm:px-6 md:pt-12 lg:px-8"
       >
         <PublicCatalogFilter
           categories={categories}
@@ -136,14 +136,14 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         />
       </div>
       {activeCategory && (
-        <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 lg:px-8">
           <ServicesCategoryHeader
             category={activeCategory}
             serviceCount={serviceCounts.get(activeCategory.id) ?? 0}
           />
         </div>
       )}
-      <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 lg:px-8">
         <Link
           href="/rescue"
           prefetch
@@ -153,7 +153,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
             <span className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
               Hỏng xe giữa đường?
             </span>
-            <span className="text-base font-bold text-zinc-900 md:text-lg dark:text-zinc-50">
+            <span className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               Gọi cứu hộ 24/7
             </span>
           </span>
@@ -164,7 +164,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         </Link>
       </div>
       {unknownSlug && (
-        <div className="w-full px-4 py-8 text-center sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl w-full px-4 py-8 text-center sm:px-6 lg:px-8">
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Loại hình này không còn được áp dụng
           </p>
@@ -182,7 +182,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         </div>
       )}
 
-      <div className="w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-8">
         <GuestOfferNote next="/services" />
         <PublicCatalogResults
           pending={catalog.isPending}

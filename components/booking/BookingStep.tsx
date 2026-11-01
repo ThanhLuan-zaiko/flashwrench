@@ -37,7 +37,7 @@ export function BookingStep({
         <div className="min-w-0">
           <h2
             id={headingId}
-            className="text-base font-extrabold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50"
+            className="text-base font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50"
           >
             <span className="sr-only">Bước {step}: </span>
             {title}

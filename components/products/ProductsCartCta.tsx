@@ -18,7 +18,7 @@ export function ProductsCartCta({ isCustomer }: { isCustomer: boolean }) {
       ref={rootRef}
       aria-label="Giỏ hàng của bạn"
       data-tour="products-cart-cta"
-      className="w-full px-4 pt-6 pb-16 sm:px-6 md:pt-10 md:pb-24 lg:px-10"
+      className="mx-auto max-w-7xl w-full px-4 pt-6 pb-16 sm:px-6 md:pt-10 md:pb-24 lg:px-8"
     >
       <span
         data-rule
@@ -29,9 +29,9 @@ export function ProductsCartCta({ isCustomer }: { isCustomer: boolean }) {
         <div data-chapter-row>
           <MaskLines
             lines={["Đã chọn được linh kiện ưng ý?"]}
-            className="text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+            className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
-          <p className="mt-4 max-w-xl text-base text-zinc-600 md:text-lg dark:text-zinc-400">
+          <p className="mt-4 max-w-xl text-base text-zinc-600 dark:text-zinc-400">
             {isCustomer
               ? "Kiểm tra giỏ hàng, áp voucher rồi đặt hàng. Giao tận nơi hoặc nhận tại gara."
               : "Đăng nhập để thêm linh kiện vào giỏ và theo dõi đơn hàng của bạn."}

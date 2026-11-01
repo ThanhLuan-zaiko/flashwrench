@@ -51,12 +51,12 @@ export function VouchersList() {
     <div className="flex w-full flex-col">
       <VouchersIntro countText={countText} />
       {guest ? (
-        <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 lg:px-8">
           <VoucherGuestPanel />
         </div>
       ) : null}
       {hasWallets || walletLoading ? (
-        <div className="w-full px-4 pt-10 sm:px-6 md:pt-12 lg:px-10">
+        <div className="mx-auto max-w-7xl w-full px-4 pt-10 sm:px-6 md:pt-12 lg:px-8">
           {hasWallets ? (
             <WalletBento wallets={items} remainingOffers={remainingOffers} />
           ) : (
@@ -75,11 +75,11 @@ export function VouchersList() {
           showAll
         />
       </div>
-      <div className="w-full px-4 pt-12 pb-16 sm:px-6 md:pt-16 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pt-12 pb-16 sm:px-6 md:pt-16 lg:px-8">
         <VouchersFaq />
       </div>
       {authed ? (
-        <div className="w-full px-4 pb-16 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl w-full px-4 pb-16 sm:px-6 lg:px-8">
           <WalletBoard />
         </div>
       ) : null}

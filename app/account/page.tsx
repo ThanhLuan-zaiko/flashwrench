@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 // avatar and the account panel as ruled sections.
 export default function AccountPage() {
   return (
-    <main className="flex w-full flex-1 flex-col px-4 pt-8 pb-16 sm:px-6 lg:px-10">
+    <main className="mx-auto max-w-7xl flex w-full flex-1 flex-col px-4 pt-8 pb-16 sm:px-6 lg:px-8">
       <BackLink href="/" label="Về trang chủ" />
       <div className="mt-6 flex flex-col gap-8">
         <PageIntro

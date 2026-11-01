@@ -16,7 +16,7 @@ export function RealReviewCard({ review }: { review: LandingReview }) {
       <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
         {reviewTargetLabel(review.targetKind, review.targetName)}
       </p>
-      <blockquote className="mt-3 text-lg font-medium tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
+      <blockquote className="mt-3 text-base font-medium tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
         “{review.quote}”
       </blockquote>
       <p className="mt-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300">

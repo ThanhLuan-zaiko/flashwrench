@@ -47,7 +47,7 @@ export function WalletHeroTicket({ wallet }: { wallet: VoucherWallet }) {
       <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
         Voucher của bạn
       </p>
-      <p className="text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50">
+      <p className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50">
         {heroDiscountLabel(wallet)}
       </p>
       <p className="text-base font-bold text-zinc-900 dark:text-zinc-50">

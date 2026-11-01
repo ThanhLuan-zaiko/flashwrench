@@ -27,7 +27,7 @@ export function ReviewRow({ review }: { review: LandingReview }) {
             {reviewTargetLabel(review.targetKind, review.targetName)}
           </span>
         </span>
-        <blockquote className="text-lg font-medium tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
+        <blockquote className="text-base font-medium tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
           “{review.quote}”
         </blockquote>
         <span className="text-sm font-semibold text-zinc-700 md:text-right dark:text-zinc-300">

@@ -47,7 +47,7 @@ export function PublicServiceCard({
     <article
       data-chapter-row
       aria-label={service.name}
-      className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-4 gap-y-2 py-5 sm:grid-cols-[9rem_minmax(0,1fr)] md:grid-cols-[11rem_minmax(0,1fr)_minmax(0,12rem)_auto] md:items-center md:gap-x-8 md:py-6"
+      className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-4 gap-y-2 py-5 sm:grid-cols-[9rem_minmax(0,1fr)] md:grid-cols-[9rem_minmax(0,1fr)_minmax(0,12rem)_auto] md:items-center md:gap-x-8 md:py-6"
     >
       <button
         type="button"
@@ -75,7 +75,7 @@ export function PublicServiceCard({
         <p className="truncate text-xs font-semibold tracking-[0.08em] text-[#1E3A5F] uppercase dark:text-zinc-400">
           {service.categoryName}
         </p>
-        <h3 className="break-words text-base leading-snug font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
+        <h3 className="break-words text-base leading-snug font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
           {service.name}
         </h3>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{attributes}</p>
@@ -90,7 +90,7 @@ export function PublicServiceCard({
 
       <p className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-zinc-500 md:flex-col md:items-end md:gap-0 dark:text-zinc-400">
         từ
-        <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] md:text-xl dark:text-zinc-50">
+        <span className="text-base font-extrabold tracking-tight text-[#1E3A5F] md:text-lg dark:text-zinc-50">
           {formatVnd(service.basePrice)}
         </span>
         <span className="md:text-xs">

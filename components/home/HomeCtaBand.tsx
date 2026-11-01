@@ -15,7 +15,7 @@ export function HomeCtaBand() {
 
   return (
     <section ref={rootRef} aria-label="Bắt đầu với FlashWrench">
-      <div className="w-full px-4 pt-6 pb-16 sm:px-6 md:pt-6 md:pb-16 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pt-6 pb-16 sm:px-6 md:pt-6 md:pb-16 lg:px-8">
         <span
           data-rule
           aria-hidden="true"
@@ -25,11 +25,11 @@ export function HomeCtaBand() {
           <div>
             <MaskLines
               lines={["Hỏng xe giữa đường?", "Thợ tới tận nơi."]}
-              className="text-3xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-5xl dark:text-zinc-50"
+              className="text-3xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-4xl dark:text-zinc-50"
             />
             <p
               data-chapter-row
-              className="mt-4 max-w-xl text-base text-zinc-600 md:text-lg dark:text-zinc-400"
+              className="mt-4 max-w-xl text-base text-zinc-600 dark:text-zinc-400"
             >
               Đặt thợ trong một phút, hoặc gọi cứu hộ khẩn cấp bất kể ngày đêm.
               Giá chốt trước khi thợ xuất phát.

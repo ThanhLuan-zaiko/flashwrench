@@ -21,7 +21,7 @@ export function StaffAccessDenied({
       <p className="mt-5 text-xs font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
         Không có quyền truy cập
       </p>
-      <h1 className="mt-2 text-3xl leading-tight font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:text-4xl dark:text-zinc-50">
+      <h1 className="mt-2 text-2xl leading-tight font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:text-3xl dark:text-zinc-50">
         {title}
       </h1>
       <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">

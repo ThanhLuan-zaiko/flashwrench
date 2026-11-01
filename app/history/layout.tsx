@@ -19,7 +19,7 @@ export default async function HistoryLayout({
 
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
-      <div className="flex w-full flex-col gap-6 px-4 pt-8 pb-16 sm:px-6 md:gap-8 lg:px-10">
+      <div className="mx-auto max-w-7xl flex w-full flex-col gap-6 px-4 pt-8 pb-16 sm:px-6 md:gap-8 lg:px-8">
         <HistoryTabs />
         {children}
         <SpeculationRules scope="history" />

@@ -21,7 +21,7 @@ export default async function TrackOrderPage({
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <TaskBar title="Theo dõi đơn hàng" backHref="/" />
-      <div className="w-full px-4 pt-8 pb-16 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pt-8 pb-16 sm:px-6 lg:px-8">
         <div className="mb-4 empty:hidden">
           <TrackPlacedBanner kind="order" />
         </div>

@@ -41,7 +41,7 @@ export function MechanicRow({ item }: { item: ShowcaseMechanic }) {
           )}
         </span>
         <span className="min-w-0">
-          <span className="block text-base font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
+          <span className="block text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
             {item.displayName}
           </span>
           <span className="mt-1 block text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -62,7 +62,7 @@ export function MechanicRow({ item }: { item: ShowcaseMechanic }) {
           {skills ? <span>{skills}</span> : null}
         </span>
         <span className="text-sm text-zinc-600 md:text-right dark:text-zinc-400">
-          <span className="text-base font-bold text-zinc-900 md:block md:text-2xl dark:text-zinc-50">
+          <span className="text-base font-bold text-zinc-900 md:block md:text-xl dark:text-zinc-50">
             {item.completedJobs}
           </span>{" "}
           đơn hoàn thành

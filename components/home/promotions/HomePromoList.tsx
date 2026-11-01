@@ -64,7 +64,7 @@ export function HomePromoList({
       <section
         ref={rootRef}
         aria-label={title}
-        className="w-full px-4 pt-12 sm:px-6 md:pt-10 lg:px-10"
+        className="mx-auto max-w-7xl w-full px-4 pt-12 sm:px-6 md:pt-10 lg:px-8"
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -73,7 +73,7 @@ export function HomePromoList({
             </p>
             <MaskLines
               lines={[title]}
-              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
             />
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -99,7 +99,7 @@ export function HomePromoList({
     <section
       ref={rootRef}
       aria-label="Ưu đãi đang chạy"
-      className="w-full px-4 pt-12 sm:px-6 md:pt-10 lg:px-10"
+      className="mx-auto max-w-7xl w-full px-4 pt-12 sm:px-6 md:pt-10 lg:px-8"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -108,7 +108,7 @@ export function HomePromoList({
           </p>
           <MaskLines
             lines={[title]}
-            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
         </div>
         <Link

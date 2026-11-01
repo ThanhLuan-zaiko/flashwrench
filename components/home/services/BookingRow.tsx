@@ -16,7 +16,7 @@ export function BookingRow() {
         className="flex flex-col gap-3 py-6 md:flex-row md:items-center md:justify-between md:gap-10"
       >
         <div>
-          <h3 className="text-lg font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
+          <h3 className="text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
             Đặt lịch trong 1 phút
           </h3>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">

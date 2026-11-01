@@ -36,7 +36,7 @@ export function PageIntro({
       <MaskLines
         as="h1"
         lines={lines}
-        className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+        className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
       />
       {subtitle || action ? (
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

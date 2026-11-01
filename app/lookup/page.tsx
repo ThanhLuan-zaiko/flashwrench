@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function GuestLookupPage() {
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
-      <div className="w-full px-4 pt-8 pb-16 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pt-8 pb-16 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-16">
           <div className="flex min-w-0 flex-col gap-8">
             <PageIntro

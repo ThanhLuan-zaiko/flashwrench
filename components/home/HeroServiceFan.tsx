@@ -86,7 +86,7 @@ export function HeroServiceFan({ services }: { services: ServiceItem[] }) {
                 className="aspect-[4/3] w-full rounded-md object-cover"
               />
               <span className="block px-1 pt-3 pb-1">
-                <span className="block truncate text-base font-extrabold tracking-tight sm:text-lg xl:text-xl">
+                <span className="block truncate text-base font-extrabold tracking-tight xl:text-lg">
                   {service.name}
                 </span>
                 <span className="mt-1 block text-xs text-zinc-600 sm:text-sm">

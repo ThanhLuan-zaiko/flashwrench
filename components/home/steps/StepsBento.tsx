@@ -48,13 +48,13 @@ export function StepsBento() {
 
   return (
     <section ref={rootRef} aria-label="Quy trình">
-      <div className="w-full px-4 pb-16 sm:px-6 md:pb-16 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pb-16 sm:px-6 md:pb-16 lg:px-8">
         <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
           Quy trình
         </p>
         <MaskLines
           lines={["Bốn bước,", "không cần đến garage"]}
-          className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+          className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
         />
         <ol
           data-tour="how-it-works"
@@ -78,7 +78,7 @@ export function StepsBento() {
                   height={160}
                   className="mt-3 h-24 w-24 md:h-36 md:w-36"
                 />
-                <h3 className="mt-4 text-base font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
+                <h3 className="mt-4 text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
                   {stop.title}
                 </h3>
                 <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">

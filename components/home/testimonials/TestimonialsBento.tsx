@@ -23,13 +23,13 @@ export function TestimonialsBento({
 
   return (
     <section ref={rootRef} aria-label="Đánh giá từ khách hàng">
-      <div className="w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-10">
+      <div className="mx-auto max-w-7xl w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-8">
         <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
           Khách hàng nói gì
         </p>
         <MaskLines
           lines={["Đánh giá thật", "từ từng chuyến xe"]}
-          className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+          className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
         />
         <p className="mt-3 max-w-xl text-base text-zinc-600 dark:text-zinc-400">
           Đánh giá từ người dùng dịch vụ sửa xe lưu động, cứu hộ và mua phụ tùng

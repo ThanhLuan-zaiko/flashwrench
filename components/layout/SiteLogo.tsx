@@ -18,7 +18,7 @@ export function SiteLogo({ onNavy = false }: { onNavy?: boolean }) {
       />
       <span className="flex flex-col leading-none">
         <span
-          className={`text-base font-extrabold tracking-tight sm:text-lg sm:font-bold ${onNavy ? "text-white" : "text-zinc-900 dark:text-white"}`}
+          className={`text-base font-extrabold tracking-tight sm:font-bold ${onNavy ? "text-white" : "text-zinc-900 dark:text-white"}`}
         >
           {SITE_NAME}
         </span>

@@ -44,7 +44,7 @@ export function EmptyCartNotice() {
       </div>
       {suggestions.length > 0 ? (
         <section aria-label="Phụ tùng bán chạy">
-          <h2 className="border-b border-zinc-200 pb-3 text-base font-bold text-zinc-900 md:text-lg dark:border-zinc-800 dark:text-zinc-50">
+          <h2 className="border-b border-zinc-200 pb-3 text-base font-bold text-zinc-900 dark:border-zinc-800 dark:text-zinc-50">
             Phụ tùng bán chạy
           </h2>
           <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
