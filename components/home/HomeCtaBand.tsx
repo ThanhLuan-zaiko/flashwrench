@@ -15,17 +15,17 @@ export function HomeCtaBand() {
 
   return (
     <section ref={rootRef} aria-label="Bắt đầu với FlashWrench">
-      <div className="w-full px-4 pt-6 pb-16 sm:px-6 md:pt-10 md:pb-28 lg:px-10">
+      <div className="w-full px-4 pt-6 pb-16 sm:px-6 md:pt-6 md:pb-16 lg:px-10">
         <span
           data-rule
           aria-hidden="true"
           className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
         />
-        <div className="grid grid-cols-1 gap-8 pt-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16 md:pt-16">
+        <div className="grid grid-cols-1 gap-8 pt-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16 md:pt-10">
           <div>
             <MaskLines
               lines={["Hỏng xe giữa đường?", "Thợ tới tận nơi."]}
-              className="text-4xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-7xl dark:text-zinc-50"
+              className="text-3xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-5xl dark:text-zinc-50"
             />
             <p
               data-chapter-row

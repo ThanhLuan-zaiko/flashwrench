@@ -11,13 +11,17 @@ const HISTORY_TABS = [
   { href: "/history/complaints", label: "Khiếu nại", icon: FiFlag },
 ] as const;
 
-// URL tabs for the /history segment: real Links so a switch keeps the
-// browser back button honest and reuses cached queries without remounting
-// the whole shell.
+// URL tabs for the /history segment, drawn as text tabs with a navy rule under
+// the active one (the same tab style as the rest of the customer screens).
+// Real Links so the browser back button stays honest and cached queries are
+// reused without remounting the shell.
 export function HistoryTabs() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Nhóm lịch sử" className="flex flex-wrap gap-2">
+    <nav
+      aria-label="Nhóm lịch sử"
+      className="flex gap-5 overflow-x-auto border-b border-zinc-200 [scrollbar-width:none] dark:border-zinc-800"
+    >
       {HISTORY_TABS.map((tab) => {
         const active =
           tab.href === "/history"
@@ -30,10 +34,10 @@ export function HistoryTabs() {
             href={tab.href}
             scroll={false}
             aria-current={active ? "page" : undefined}
-            className={`flex min-h-[44px] items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
+            className={`-mb-px flex min-h-11 shrink-0 items-center gap-1.5 border-b-2 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] ${
               active
-                ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
-                : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                ? "border-[#1E3A5F] text-[#1E3A5F] dark:border-zinc-100 dark:text-zinc-50"
+                : "border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
             }`}
           >
             <Icon aria-hidden="true" className="h-4 w-4" />

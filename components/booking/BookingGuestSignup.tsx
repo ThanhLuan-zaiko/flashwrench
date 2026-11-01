@@ -29,7 +29,7 @@ export function BookingGuestSignup({
   onConfirmPassword,
 }: BookingGuestSignupProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 p-3 transition-colors duration-200 dark:border-zinc-800">
+    <div className="flex flex-col gap-3 border-t border-zinc-200 pt-3 transition-colors duration-200 dark:border-zinc-800">
       <label className="flex cursor-pointer items-start gap-2.5">
         <input
           type="checkbox"

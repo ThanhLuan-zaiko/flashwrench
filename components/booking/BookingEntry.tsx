@@ -115,7 +115,7 @@ export function BookingEntry({
       <section
         aria-label={guest ? "Đặt lịch với tư cách khách" : "Tài khoản đặt lịch"}
         data-reveal
-        className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 max-sm:hidden sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+        className="flex flex-col gap-3 border-b border-zinc-200 pb-4 max-sm:hidden sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"
       >
         <div className="flex items-center gap-3">
           <FiUser
@@ -156,14 +156,14 @@ export function BookingEntry({
       {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">
           <p className="sr-only">Đang tải dịch vụ đã chọn</p>
-          <div className="h-40 rounded-2xl border border-zinc-200 bg-zinc-100 motion-safe:animate-pulse dark:border-zinc-800 dark:bg-zinc-900" />
+          <div className="h-32 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900" />
         </div>
       )}
       {catalog.isError && (
         <div
           role="alert"
           data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+          className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
         >
           <p className="font-semibold">Không tải được dịch vụ đã chọn.</p>
           <p className="mt-1 text-xs">Vui lòng kiểm tra mạng rồi thử lại.</p>
@@ -178,10 +178,7 @@ export function BookingEntry({
         </div>
       )}
       {(unknownService || message) && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
+        <div data-reveal className="py-8 text-center">
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {message
               ? "Danh sách dịch vụ không hợp lệ"
@@ -205,7 +202,7 @@ export function BookingEntry({
         <section
           aria-label="Yêu cầu đăng nhập"
           data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
+          className="py-8 text-center"
         >
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Cửa hàng đang yêu cầu đăng nhập để đặt lịch

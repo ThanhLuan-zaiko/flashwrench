@@ -45,4 +45,4 @@ export const BRAND_RECEIPT_TOTAL =
   "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 dark:border-zinc-600";
 
 // Navy feature surface (one per section at most).
-export const BRAND_NAVY_SURFACE = "rounded-3xl bg-[#1E3A5F] text-white";
+export const BRAND_NAVY_SURFACE = "rounded-lg bg-[#1E3A5F] text-white";

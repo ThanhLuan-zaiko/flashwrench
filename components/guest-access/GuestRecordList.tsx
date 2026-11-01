@@ -58,7 +58,7 @@ export function GuestRecordList({
       </div>
 
       {records.length === 0 ? (
-        <p className="rounded-lg border border-zinc-200 px-4 py-6 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
           Chưa thấy dịch vụ nào với email này. Hãy kiểm tra lại địa chỉ đã dùng
           khi đặt lịch, hoặc liên hệ hotline để được hỗ trợ.
         </p>

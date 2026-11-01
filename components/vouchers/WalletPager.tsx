@@ -17,7 +17,7 @@ type WalletPagerProps = {
 };
 
 const BUTTON_CLASS =
-  "flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:cursor-not-allowed disabled:text-zinc-400 motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100 dark:disabled:text-zinc-600";
 
 // Cursor pager over sequential pageState tokens: "Sau" is a real /page/N
 // link whose click records the token, so back/forward and copied URLs all
@@ -36,7 +36,7 @@ export function WalletPager({
   return (
     <nav
       aria-label="Phân trang ví voucher"
-      className="flex flex-wrap items-center justify-between gap-2 pt-3"
+      className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
       <p
         aria-live="polite"
@@ -45,7 +45,7 @@ export function WalletPager({
         Trang {page} · Hiển thị {count} voucher
         {canNext ? " · còn voucher tiếp theo" : ""}
       </p>
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-5">
         {canBack && !loading ? (
           <Link
             href={backHref}

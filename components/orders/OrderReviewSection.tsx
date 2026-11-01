@@ -56,7 +56,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
     <section
       data-reveal
       aria-label="Đánh giá và phản hồi"
-      className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Đánh giá đơn hàng
@@ -112,7 +112,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
                         type="button"
                         onClick={() => setOpenPartId(open ? null : item.partId)}
                         aria-expanded={open}
-                        className="flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                       >
                         <FiStar aria-hidden="true" className="h-3.5 w-3.5" />
                         Đánh giá
@@ -151,7 +151,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
       <button
         type="button"
         onClick={() => setComplaintOpen(true)}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
       >
         <FiFlag aria-hidden="true" className="h-4 w-4" />
         Gửi khiếu nại về đơn này

@@ -19,7 +19,7 @@ export function HomeProductCard({ part }: { part: PartItem }) {
         aria-label={`Xem sản phẩm ${part.name}`}
         className="group flex flex-col gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
       >
-        <span className="relative block aspect-[3/4] overflow-hidden rounded-lg bg-white dark:bg-zinc-950">
+        <span className="relative block aspect-[4/5] overflow-hidden rounded-lg bg-white dark:bg-zinc-950">
           {part.imageUrl ? (
             // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
             <img
@@ -42,7 +42,7 @@ export function HomeProductCard({ part }: { part: PartItem }) {
         </span>
         <span className="min-w-0">
           <span className="flex flex-wrap items-baseline gap-1.5">
-            <span className="text-lg font-bold tracking-tight text-[#1E3A5F] md:text-2xl dark:text-zinc-50">
+            <span className="text-base font-bold tracking-tight text-[#1E3A5F] md:text-xl dark:text-zinc-50">
               {formatVnd(part.price)}
             </span>
             {discount > 0 && part.comparePrice !== null && (

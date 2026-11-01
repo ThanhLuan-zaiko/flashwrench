@@ -1,6 +1,6 @@
 import type { PartCategoryItem, PartItem } from "@/lib/parts/parts.types";
 
-export const PRODUCTS_PAGE_SIZE = 8;
+export const PRODUCTS_PAGE_SIZE = 10;
 
 export type ProductsFilter = {
   categoryId: string;

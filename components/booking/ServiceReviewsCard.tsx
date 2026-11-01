@@ -19,7 +19,7 @@ function ServiceReviewsCardInner({ service }: { service: ServiceItem | null }) {
   return (
     <section
       aria-label="Đánh giá dịch vụ"
-      className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div>
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">

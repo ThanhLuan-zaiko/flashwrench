@@ -1,15 +1,17 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { FiLoader, FiRefreshCw } from "react-icons/fi";
 import { CommentSection } from "@/components/feedback/CommentSection";
 import { ReviewList } from "@/components/feedback/ReviewList";
 import { commentKeys } from "@/hooks/comments";
 import { productsKeys } from "@/hooks/products";
 import { reviewKeys, useProductReviews } from "@/hooks/reviews";
+import { useChapterMotion } from "@/hooks/useChapterMotion";
 import { useDomainRealtime } from "@/hooks/useDomainRealtime";
 import { useEmbeddedPage } from "@/hooks/useEmbeddedPage";
 import { partTopic } from "@/lib/realtime/protocol";
+import { ProductChapterHead } from "./ProductChapterHead";
 import { ProductReviewComposer } from "./ProductReviewComposer";
 
 // Public product feedback: the review feed (cursor-paged, with the
@@ -25,6 +27,8 @@ function ProductReviewsSectionInner({
   partId: string;
   partName?: string;
 }) {
+  const rootRef = useRef<HTMLElement>(null);
+  useChapterMotion(rootRef);
   const pager = useEmbeddedPage("rv_page");
   const query = useProductReviews(slug, pager.cursor);
   const reviews = query.data?.reviews;
@@ -40,13 +44,11 @@ function ProductReviewsSectionInner({
 
   return (
     <section
-      data-reveal
+      ref={rootRef}
       aria-label="Đánh giá sản phẩm"
-      className="flex flex-col gap-5 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-8 pt-12 md:pt-16"
     >
-      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        Đánh giá từ khách hàng
-      </h2>
+      <ProductChapterHead title="Đánh giá từ khách hàng" />
 
       {query.isPending && (
         <p
@@ -93,7 +95,7 @@ function ProductReviewsSectionInner({
         />
       )}
 
-      <div className="flex flex-col gap-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+      <div className="flex flex-col gap-8">
         <ProductReviewComposer slug={slug} partName={partName} />
         <CommentSection
           targetType="part"

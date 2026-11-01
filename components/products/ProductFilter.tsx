@@ -36,11 +36,7 @@ export function ProductFilter({
   onQuery,
 }: ProductFilterProps) {
   return (
-    <div
-      data-reveal
-      data-tour="products-filter"
-      className="flex flex-col gap-2.5"
-    >
+    <div data-tour="products-filter" className="flex flex-col gap-2.5">
       <div
         role="tablist"
         aria-label="Lọc theo danh mục"
@@ -91,7 +87,7 @@ export function ProductFilter({
           onChange={(event) => onQuery(event.target.value)}
           placeholder="Tìm theo tên, hãng hoặc mã linh kiện…"
           autoComplete="off"
-          className="h-12 w-full rounded-2xl border border-zinc-300 bg-white pr-3 pl-10 text-[15px] text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="h-12 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-[15px] text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
         />
       </div>
     </div>

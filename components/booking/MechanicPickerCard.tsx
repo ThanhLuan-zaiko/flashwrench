@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  FiChevronDown,
-  FiMessageSquare,
-  FiStar,
-  FiUser,
-  FiWifi,
-} from "react-icons/fi";
+import { FiChevronDown } from "react-icons/fi";
 import type { MechanicDirectoryItem } from "@/lib/mechanic/mechanic-directory.service";
 import { MechanicReviewsPanel } from "./MechanicReviewsPanel";
 
@@ -18,16 +12,16 @@ function formatDistance(distanceKm: number | null): string {
     : `Cách bạn khoảng ${distanceKm.toFixed(1)} km`;
 }
 
-function cardClasses(active: boolean): string {
-  return `flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors duration-200 ${
-    active
-      ? "border-[#1E3A5F] bg-zinc-50 ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:bg-zinc-900 dark:ring-zinc-100"
-      : "border-zinc-300 dark:border-zinc-700"
+// Mechanic rows are ruled list rows; the selected row takes a tinted surface
+// and a bold name, not a bordered box.
+export function mechanicRowClasses(active: boolean): string {
+  return `flex min-h-11 cursor-pointer items-center gap-3 border-b border-zinc-200 py-3 transition-colors duration-200 dark:border-zinc-800 ${
+    active ? "bg-zinc-50 dark:bg-zinc-900" : ""
   }`;
 }
 
-// One mechanic card in the booking picker: radio select plus an
-// expandable public review feed (booking + rescue reviews combined).
+// One mechanic in the booking picker: radio select plus an expandable public
+// review feed (booking + rescue reviews combined).
 export function MechanicPickerCard({
   item,
   selected,
@@ -40,8 +34,8 @@ export function MechanicPickerCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-1">
-      <label className={cardClasses(selected)}>
+    <div className="flex flex-col">
+      <label className={mechanicRowClasses(selected)}>
         <input
           type="radio"
           name="mechanicPick"
@@ -50,17 +44,16 @@ export function MechanicPickerCard({
           aria-label={`Chọn thợ ${item.displayName}`}
           className="h-4 w-4 shrink-0 accent-zinc-900 dark:accent-white"
         />
-        <FiUser
-          aria-hidden="true"
-          className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
-        />
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+          <span
+            className={`block truncate text-sm text-zinc-900 dark:text-zinc-50 ${
+              selected ? "font-bold" : "font-semibold"
+            }`}
+          >
             {item.displayName}
           </span>
-          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-            <span className="flex items-center gap-1">
-              <FiStar aria-hidden="true" className="h-3 w-3" />
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <span>
               {item.ratingCount > 0
                 ? `${item.ratingAvg.toFixed(1)} (${item.ratingCount} đánh giá)`
                 : "Chưa có đánh giá"}{" "}
@@ -69,13 +62,10 @@ export function MechanicPickerCard({
             {item.distanceKm !== null && (
               <span>{formatDistance(item.distanceKm)}</span>
             )}
-            <span className="flex items-center gap-1">
-              <FiWifi aria-hidden="true" className="h-3 w-3" />
-              Đang trực tuyến
-            </span>
+            <span>Đang trực tuyến</span>
           </span>
           {item.skills.length > 0 && (
-            <span className="mt-1 block truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+            <span className="mt-1 block truncate text-xs text-zinc-500 dark:text-zinc-400">
               {item.skills.join(" · ")}
             </span>
           )}
@@ -85,9 +75,9 @@ export function MechanicPickerCard({
           onClick={() => setOpen((prev) => !prev)}
           aria-expanded={open}
           aria-label={`Xem đánh giá của thợ ${item.displayName}`}
-          className="flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg border border-zinc-300 px-2.5 text-[11px] font-semibold text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="flex min-h-11 shrink-0 items-center gap-1 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100"
         >
-          <FiMessageSquare aria-hidden="true" className="h-3.5 w-3.5" />
+          Đánh giá
           <FiChevronDown
             aria-hidden="true"
             className={`h-3.5 w-3.5 motion-safe:transition-transform motion-safe:duration-200 ${

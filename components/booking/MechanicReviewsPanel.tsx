@@ -15,7 +15,7 @@ function MechanicReviewsPanelInner({ mechanicId }: { mechanicId: string }) {
   const page = reviews.data?.reviews;
 
   return (
-    <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+    <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">
       {reviews.isPending && (
         <p
           aria-busy="true"

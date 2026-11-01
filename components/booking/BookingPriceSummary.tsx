@@ -47,10 +47,10 @@ export function BookingPriceSummary({
     <aside
       aria-label="Tóm tắt lịch hẹn"
       data-tour="booking-summary"
-      className="flex min-w-0 flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-4 md:p-6 lg:sticky lg:top-20 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex min-w-0 flex-col gap-4 border-t border-zinc-200 pt-5 lg:sticky lg:top-20 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6 dark:border-zinc-800"
     >
       <div>
-        <h2 className="text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+        <h2 className="text-base font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
           Tóm tắt lịch hẹn
         </h2>
         <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">

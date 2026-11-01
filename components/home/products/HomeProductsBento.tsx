@@ -17,7 +17,7 @@ export function HomeProductsBento({ items }: { items: PartItem[] }) {
 
   return (
     <section ref={rootRef} id="san-pham" aria-label="Phụ tùng nổi bật">
-      <div className="w-full px-4 pb-12 sm:px-6 md:pb-20 lg:px-10">
+      <div className="w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-10">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
@@ -25,7 +25,7 @@ export function HomeProductsBento({ items }: { items: PartItem[] }) {
             </p>
             <MaskLines
               lines={["Phụ tùng chính hãng,", "sẵn kho"]}
-              className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 md:text-5xl dark:text-zinc-50"
+              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
             />
           </div>
           <Link

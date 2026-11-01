@@ -11,10 +11,7 @@ type CheckoutNoticesProps = {
 export function CheckoutNotices({ isStaff, cartEmpty }: CheckoutNoticesProps) {
   if (isStaff) {
     return (
-      <div
-        data-reveal
-        className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-      >
+      <div data-reveal className="py-8 text-center">
         <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Chỉ tài khoản khách hàng mới đặt được hàng
         </p>
@@ -29,10 +26,7 @@ export function CheckoutNotices({ isStaff, cartEmpty }: CheckoutNoticesProps) {
   }
   if (!cartEmpty) return null;
   return (
-    <div
-      data-reveal
-      className="rounded-2xl border border-zinc-200 bg-white p-6 text-center sm:p-10 dark:border-zinc-800 dark:bg-zinc-950"
-    >
+    <div data-reveal className="py-8 text-center">
       <Image
         src="/images/isometric/basket.svg"
         alt=""

@@ -52,7 +52,7 @@ export function CheckoutSummary({
     <aside
       data-reveal
       aria-label="Tóm tắt đơn hàng"
-      className="flex h-fit flex-col gap-2.5 border-t border-zinc-200 pt-4 md:sticky md:top-24 md:col-span-2 md:rounded-3xl md:border md:bg-zinc-50 md:p-5 dark:border-zinc-800 md:dark:bg-zinc-900"
+      className="flex h-fit flex-col gap-2.5 border-t border-zinc-200 pt-4 md:sticky md:top-24 md:col-span-2 md:border-l md:border-t-0 md:pl-6 md:pt-0 dark:border-zinc-800 md:dark:bg-zinc-900"
     >
       <Image
         src={

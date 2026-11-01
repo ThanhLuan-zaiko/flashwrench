@@ -40,7 +40,7 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
           </p>
           <h1
             data-reveal
-            className="mt-5 text-5xl leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl"
+            className="mt-5 text-3xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-4xl lg:text-5xl"
           >
             Xe hỏng ở đâu, thợ đến đó.
           </h1>
@@ -76,7 +76,7 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
           >
             {FACTS.map((fact) => (
               <li key={fact.value}>
-                <p className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                <p className="text-xl font-extrabold tracking-tight sm:text-2xl">
                   {fact.value}
                 </p>
                 <p className="mt-1 text-xs text-zinc-200 sm:text-sm">

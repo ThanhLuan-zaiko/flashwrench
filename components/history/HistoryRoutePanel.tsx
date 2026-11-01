@@ -14,7 +14,7 @@ const TrackingMap = dynamic(
     loading: () => (
       <output
         aria-label="Đang tải bản đồ"
-        className="h-72 w-full motion-safe:animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+        className="h-72 w-full motion-safe:animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-900"
       />
     ),
   },
@@ -46,7 +46,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
   return (
     <section
       aria-label="Lộ trình thợ"
-      className="flex min-w-0 flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex min-w-0 flex-col gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div>
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -59,7 +59,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
       </div>
 
       {!booking && (
-        <div className="flex min-h-72 flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white p-5 text-center dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="flex min-h-72 flex-col items-center justify-center gap-2 p-5 text-center">
           <FiMapPin aria-hidden="true" className="h-5 w-5 text-zinc-500" />
           <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Chọn một đơn để xem lộ trình
@@ -148,7 +148,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           )}
 
           {query.isSuccess && !map.hasMap && (
-            <p className="flex min-h-72 items-center justify-center rounded-2xl border border-zinc-200 bg-white p-5 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-600 dark:text-zinc-300">
               Đơn này chưa có tọa độ để hiển thị trên bản đồ.
             </p>
           )}

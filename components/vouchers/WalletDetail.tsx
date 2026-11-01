@@ -125,7 +125,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   {walletStatusLabel(wallet)}
                 </p>
               </div>
-              <p className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              <p className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                 {promoDiscountLabel(wallet)}
               </p>
               <dl className="divide-y divide-zinc-100 dark:divide-zinc-800">

@@ -22,13 +22,13 @@ export function TrackHero({ stage, etaMin, detail }: TrackHeroProps) {
       </p>
       {etaMin !== null ? (
         <p className="mt-1 flex items-baseline gap-2">
-          <span className="text-5xl leading-none font-extrabold tracking-tight">
+          <span className="text-3xl leading-none font-extrabold tracking-tight">
             {etaMin}
           </span>
           <span className="text-sm font-semibold text-zinc-200">phút nữa</span>
         </p>
       ) : (
-        <p className="mt-1 text-3xl font-extrabold tracking-tight lg:text-4xl">
+        <p className="mt-1 text-2xl font-extrabold tracking-tight lg:text-3xl">
           {label}
         </p>
       )}

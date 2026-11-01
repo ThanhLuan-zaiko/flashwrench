@@ -48,7 +48,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
       {justPlaced && (
         <p
           data-reveal
-          className="flex items-center gap-2 rounded-2xl border border-zinc-900 bg-zinc-900 px-4 py-3 text-sm font-semibold text-white dark:border-white dark:bg-white dark:text-zinc-900"
+          className="flex items-center gap-2 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] hover:bg-[#EA580C]"
         >
           <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
           Đặt hàng thành công. Cửa hàng sẽ xác nhận đơn trong ít phút.
@@ -58,7 +58,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
       {orderQuery.isPending && (
         <div
           aria-busy="true"
-          className="h-64 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+          className="h-64 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
         />
       )}
 
@@ -66,7 +66,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
         <div
           role="alert"
           data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+          className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
         >
           <p className="font-semibold">
             Không tải được đơn hàng hoặc đơn không tồn tại.
@@ -86,7 +86,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
         <>
           <div
             data-reveal
-            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+            className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800"
           >
             <div>
               <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">

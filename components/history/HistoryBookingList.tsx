@@ -80,7 +80,7 @@ export function HistoryBookingList({
   return (
     <section
       aria-label="Danh sách lịch sử đặt lịch"
-      className="flex min-w-0 flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex min-w-0 flex-col gap-4 border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div className="relative">
         <FiSearch
@@ -126,7 +126,7 @@ export function HistoryBookingList({
       )}
 
       {!loading && !error && bookings.length === 0 && (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+        <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-zinc-600 dark:text-zinc-300">
           <p>
             {search
               ? "Không tìm thấy đơn phù hợp. Hãy thử mã đơn, dịch vụ, thợ hoặc biển số khác."
@@ -135,7 +135,7 @@ export function HistoryBookingList({
           {!search && (
             <Link
               href="/services"
-              className="flex min-h-[44px] items-center rounded-xl bg-zinc-900 px-4 py-2 text-xs font-semibold text-white dark:bg-white dark:text-zinc-900"
+              className="flex min-h-11 items-center rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C]"
             >
               Xem dịch vụ
             </Link>
@@ -176,7 +176,7 @@ export function HistoryBookingList({
                     scroll={false}
                     prefetch
                     aria-label="Trang trước"
-                    className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     Trang trước
                   </Link>
@@ -185,7 +185,7 @@ export function HistoryBookingList({
                     type="button"
                     disabled
                     aria-label="Trang trước"
-                    className="min-h-[44px] rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     Trang trước
                   </button>
@@ -196,7 +196,7 @@ export function HistoryBookingList({
                     scroll={false}
                     prefetch
                     aria-label="Trang sau"
-                    className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     Trang sau
                   </Link>
@@ -205,7 +205,7 @@ export function HistoryBookingList({
                     type="button"
                     disabled
                     aria-label="Trang sau"
-                    className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     {loadingNext && (
                       <FiLoader

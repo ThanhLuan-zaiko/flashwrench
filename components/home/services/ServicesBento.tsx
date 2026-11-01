@@ -24,7 +24,7 @@ export function ServicesBento({ services }: { services: ServiceItem[] }) {
       aria-label="Dịch vụ FlashWrench"
       className="scroll-mt-20"
     >
-      <div className="w-full px-4 py-12 sm:px-6 md:py-20 lg:px-10">
+      <div className="w-full px-4 py-12 sm:px-6 md:py-12 lg:px-10">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
           <div>
             <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
@@ -32,7 +32,7 @@ export function ServicesBento({ services }: { services: ServiceItem[] }) {
             </p>
             <MaskLines
               lines={["Sửa xe tại nhà,", "tại xưởng và giữa đường"]}
-              className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 md:text-5xl dark:text-zinc-50"
+              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
             />
           </div>
           <p className="max-w-sm text-base text-zinc-600 dark:text-zinc-400">

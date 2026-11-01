@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FiArrowRight, FiPackage, FiRefreshCw } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PageIntro } from "@/components/ui/PageIntro";
 import { useMe } from "@/hooks/auth";
 import { useMyOrders, useMyOrdersRealtime } from "@/hooks/orders";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
@@ -27,18 +27,14 @@ export function MyOrdersPage() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
+      <PageIntro
         eyebrow="Đơn hàng"
-        title="Theo dõi đơn linh kiện."
+        lines={["Theo dõi đơn linh kiện."]}
         subtitle="Trạng thái cập nhật trực tiếp khi cửa hàng xử lý đơn."
       />
 
       {me.isSuccess && me.data?.role !== "customer" && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
+        <div data-reveal className="py-8 text-center">
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {me.data
               ? "Đơn hàng chỉ dành cho tài khoản khách hàng"
@@ -46,7 +42,7 @@ export function MyOrdersPage() {
           </p>
           <Link
             href={me.data ? "/products" : buildLoginHref("/orders")}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             {me.data ? "Quay lại cửa hàng" : "Đăng nhập"}
           </Link>
@@ -57,7 +53,7 @@ export function MyOrdersPage() {
         <div
           role="alert"
           data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+          className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
         >
           <p className="font-semibold">Không tải được đơn hàng.</p>
           <button
@@ -74,17 +70,14 @@ export function MyOrdersPage() {
       {me.data?.role === "customer" && orders.isPending && (
         <div
           aria-busy="true"
-          className="h-40 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+          className="h-40 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
         />
       )}
 
       {me.data?.role === "customer" &&
         orders.isSuccess &&
         items.length === 0 && (
-          <div
-            data-reveal
-            className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-          >
+          <div data-reveal className="py-8 text-center">
             <FiPackage
               aria-hidden="true"
               className="mx-auto h-8 w-8 text-zinc-300 dark:text-zinc-700"
@@ -94,7 +87,7 @@ export function MyOrdersPage() {
             </p>
             <Link
               href="/products"
-              className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               Mua sắm ngay
             </Link>
@@ -107,7 +100,7 @@ export function MyOrdersPage() {
             <li key={order.id} data-reveal>
               <Link
                 href={`/orders/${order.id}`}
-                className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 transition-colors duration-200 hover:border-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
+                className="flex flex-col gap-3 border-b border-zinc-200 py-4 transition-colors dark:border-zinc-800 duration-200 hover:border-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
               >
                 <div className="min-w-0">
                   <p className="flex flex-wrap items-center gap-2">

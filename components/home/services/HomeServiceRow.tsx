@@ -48,7 +48,7 @@ export function HomeServiceRow({
           <span className="block truncate text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             {service.categoryName}
           </span>
-          <span className="mt-1 flex items-center gap-2 text-lg font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50">
+          <span className="mt-1 flex items-center gap-2 text-base font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
             <span className="line-clamp-2 min-w-0">{service.name}</span>
             <Toggle
               aria-hidden="true"

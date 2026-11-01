@@ -115,7 +115,7 @@ export function AccountPanel() {
     >
       <section
         data-reveal
-        className="rounded-2xl border border-zinc-200 bg-white p-5 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+        className="border-t border-zinc-200 pt-5 lg:col-span-2 dark:border-zinc-800"
       >
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
@@ -179,7 +179,7 @@ export function AccountPanel() {
 
       <section
         data-reveal
-        className="rounded-2xl border border-zinc-200 bg-white p-5 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+        className="border-t border-zinc-200 pt-5 lg:col-span-2 dark:border-zinc-800"
       >
         <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-50">
           <FiMonitor aria-hidden="true" className="h-4 w-4" />

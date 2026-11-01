@@ -9,8 +9,9 @@ type ProductHeroProps = {
 
 // Full-bleed navy band for /products/[slug]. It starts directly under the site
 // header (the layout's top padding is pulled behind it), with the copy on the
-// left and the gallery on a white card on the right. Padding is kept tight so
-// the whole band fits on one laptop-sized screen.
+// left and the gallery on the right, both on the navy surface with no extra
+// card around them. Padding is kept tight so the whole band fits on one
+// laptop-sized screen.
 export function ProductHero({ part, discount }: ProductHeroProps) {
   return (
     <section
@@ -20,9 +21,7 @@ export function ProductHero({ part, discount }: ProductHeroProps) {
     >
       <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-2 lg:items-center lg:gap-14">
         <ProductHeroCopy part={part} discount={discount} />
-        <div className="rounded-3xl bg-white p-3 sm:p-4 dark:bg-zinc-950">
-          <ProductGallery images={part.images} name={part.name} />
-        </div>
+        <ProductGallery images={part.images} name={part.name} />
       </div>
     </section>
   );

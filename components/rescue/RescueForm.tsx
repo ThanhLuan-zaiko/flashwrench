@@ -49,7 +49,7 @@ export function RescueForm({ form }: RescueFormProps) {
       onSubmit={handleSubmit}
       noValidate
       aria-label="Gửi yêu cầu cứu hộ"
-      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 lg:grid lg:grid-cols-2 lg:gap-x-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-4 border-t border-zinc-200 pt-5 lg:grid lg:grid-cols-2 lg:gap-x-5 dark:border-zinc-800"
     >
       {errors.form && (
         <div className="lg:col-span-2">

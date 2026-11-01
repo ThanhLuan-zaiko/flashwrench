@@ -47,7 +47,7 @@ export function CommentComposer({
         // biome-ignore lint/a11y/noAutofocus: the reply box only mounts after the user picks "Trả lời", so focusing it keeps them in the flow they opened.
         autoFocus={autoFocus}
         placeholder={placeholder}
-        className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+        className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
       />
       {error && (
         <p
@@ -77,7 +77,7 @@ export function CommentComposer({
           <button
             type="button"
             onClick={onCancel}
-            className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex min-h-11 items-center text-sm font-bold text-zinc-600 underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-300"
           >
             Hủy
           </button>

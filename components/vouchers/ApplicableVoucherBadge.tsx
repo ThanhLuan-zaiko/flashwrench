@@ -15,9 +15,14 @@ type ApplicableVoucherBadgeProps = {
   subtotal: number;
 };
 
-// Compact ticket strip for catalog cards: one best saving plus the
-// remaining count. Guests get a login hint, everyone else with no usable
-// wallet renders nothing to keep the grid quiet.
+const LOADING_CLASSES =
+  "min-h-11 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900";
+const LINK_CLASSES =
+  "flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+
+// One-line voucher hint for catalog cards: the best saving with the remaining
+// count, as a text link. Guests get a login hint, everyone else with no usable
+// wallet renders nothing to keep the card quiet.
 export function ApplicableVoucherBadge({
   kind,
   subtotal,
@@ -28,10 +33,7 @@ export function ApplicableVoucherBadge({
 
   if (me.isPending || (isAccount && wallets.isPending)) {
     return (
-      <p
-        aria-busy="true"
-        className="min-h-[44px] motion-safe:animate-pulse rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
-      >
+      <p aria-busy="true" className={LOADING_CLASSES}>
         <span className="sr-only">Đang kiểm tra ưu đãi</span>
       </p>
     );
@@ -42,15 +44,10 @@ export function ApplicableVoucherBadge({
       <Link
         href="/login"
         aria-label="Đăng nhập để xem ưu đãi áp được cho món này"
-        className="flex min-h-[44px] items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-white px-3 py-2 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className={LINK_CLASSES}
       >
-        <FiGift aria-hidden="true" className="h-4 w-4 shrink-0" />
-        <span>
-          Đăng nhập để xem ưu đãi
-          <span className="mt-0.5 block text-[11px] font-normal text-zinc-500 dark:text-zinc-400">
-            Voucher gắn thẳng vào tài khoản của bạn
-          </span>
-        </span>
+        <FiGift aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+        Đăng nhập để xem ưu đãi
       </Link>
     );
   }
@@ -66,22 +63,14 @@ export function ApplicableVoucherBadge({
       scroll={false}
       prefetch
       aria-label={`${pick.wallet.campaignName}: ${ticketDiscountText(pick.wallet, pick.discount)} cho món này`}
-      className="flex min-h-[44px] items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-white px-3 py-2 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-800"
+      className={LINK_CLASSES}
     >
-      <FiTag
-        aria-hidden="true"
-        className="h-4 w-4 shrink-0 text-zinc-700 dark:text-zinc-200"
-      />
-      <span className="min-w-0">
-        <span className="block truncate text-xs font-semibold text-zinc-900 dark:text-zinc-50">
-          {ticketDiscountText(pick.wallet, pick.discount)} ·{" "}
-          {pick.wallet.campaignName}
-        </span>
-        <span className="block text-[11px] font-normal text-zinc-500 dark:text-zinc-400">
-          {pick.count > 1
-            ? `Tự trừ ở bước thanh toán · Còn ${pick.count - 1} phiếu khác`
-            : "Tự trừ ở bước thanh toán"}
-        </span>
+      <FiTag aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+      <span className="min-w-0 truncate">
+        {ticketDiscountText(pick.wallet, pick.discount)} ·{" "}
+        {pick.count > 1
+          ? `Còn ${pick.count - 1} phiếu khác`
+          : pick.wallet.campaignName}
       </span>
     </Link>
   );

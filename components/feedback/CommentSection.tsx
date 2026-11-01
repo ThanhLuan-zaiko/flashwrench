@@ -12,6 +12,12 @@ import { AuthApiError } from "@/services/comments.api";
 import { CommentComposer } from "./CommentComposer";
 import { CommentItem } from "./CommentItem";
 
+// Pager links: bold text with an arrow, no border or box.
+const PAGER_LINK =
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+const PAGER_IDLE =
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+
 // One comment thread per entity. The composer appears only for signed-in
 // users; private threads are enforced server-side per target type.
 // Admin/dispatcher sessions additionally see hidden rows and hide/unhide
@@ -51,7 +57,7 @@ function CommentSectionInner({
 
   return (
     <section aria-label={title} className="flex flex-col gap-3">
-      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+      <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
         {title}
       </p>
 
@@ -70,11 +76,11 @@ function CommentSectionInner({
       )}
 
       {items.length === 0 && !query.isPending ? (
-        <p className="rounded-xl border border-zinc-200 p-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
           Chưa có bình luận nào.
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {items.map((item) => (
             <CommentItem
               key={item.id}
@@ -89,28 +95,23 @@ function CommentSectionInner({
       )}
 
       {(pager.canPrev || page?.nextCursor) && (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-5">
           {pager.canPrev ? (
             <Link
               href={pager.prevHref}
               scroll={false}
               prefetch
               aria-label="Trang trước"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className={PAGER_LINK}
             >
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
             </Link>
           ) : (
-            <button
-              type="button"
-              aria-label="Trang trước"
-              disabled
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-            >
+            <span aria-disabled="true" className={PAGER_IDLE}>
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
-            </button>
+            </span>
           )}
           {page?.nextCursor ? (
             <Link
@@ -121,21 +122,16 @@ function CommentSectionInner({
                 if (page.nextCursor) pager.recordNext(page.nextCursor);
               }}
               aria-label="Trang sau"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className={PAGER_LINK}
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           ) : (
-            <button
-              type="button"
-              aria-label="Trang sau"
-              disabled
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-            >
+            <span aria-disabled="true" className={PAGER_IDLE}>
               Sau
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-            </button>
+            </span>
           )}
         </div>
       )}

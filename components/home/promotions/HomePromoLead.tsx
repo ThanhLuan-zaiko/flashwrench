@@ -36,7 +36,7 @@ export function HomePromoLead({ campaign }: HomePromoLeadProps) {
           />
         ) : null}
       </span>
-      <span className="mt-5 block text-4xl leading-none font-bold tracking-tight text-[#1E3A5F] md:text-6xl dark:text-zinc-50">
+      <span className="mt-5 block text-2xl leading-none font-bold tracking-tight text-[#1E3A5F] md:text-4xl dark:text-zinc-50">
         {figure.value}
         <span className="ml-3 align-middle text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
           {figure.unit}

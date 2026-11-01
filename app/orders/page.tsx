@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
-      <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 md:py-14">
+      <div className="w-full px-4 pt-8 pb-16 sm:px-6 lg:px-10">
         <MyOrdersPage />
       </div>
       <SpeculationRules scope="orders" />

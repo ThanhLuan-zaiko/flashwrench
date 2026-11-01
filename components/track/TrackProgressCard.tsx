@@ -12,7 +12,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
   return (
     <section
       aria-label="Tiến độ"
-      className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+      className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div className="flex items-baseline justify-between">
         <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">

@@ -115,14 +115,14 @@ export function OrderTracker({ orderId }: { orderId: string }) {
         />
 
         {tracking.status === "return_requested" && (
-          <p className="rounded-xl border border-zinc-300 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
+          <p className="border-t border-zinc-200 pt-3 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
             Yêu cầu trả hàng của bạn đang được xử lý — shop sẽ liên hệ theo
             thông tin bạn đã để lại.
           </p>
         )}
 
         {tracking.paymentConfirmCode && (
-          <div className="rounded-xl border border-zinc-300 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-950">
+          <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
               Mã xác nhận thanh toán tiền mặt
             </p>

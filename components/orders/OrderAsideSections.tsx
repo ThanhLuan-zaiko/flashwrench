@@ -15,7 +15,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
       <section
         data-reveal
         aria-label="Thông tin giao hàng"
-        className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+        className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
       >
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {order.fulfillmentType === "pickup" ? "Nhận hàng" : "Giao hàng"}
@@ -46,7 +46,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
       <section
         data-reveal
         aria-label="Tiến trình đơn hàng"
-        className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+        className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
       >
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Tiến trình
@@ -111,7 +111,7 @@ export function OrderCancelSection({
   return (
     <section
       data-reveal
-      className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       {confirming ? (
         <div className="flex flex-col gap-3">
@@ -141,7 +141,7 @@ export function OrderCancelSection({
               type="button"
               disabled={cancelOrder.isPending}
               onClick={() => setConfirming(false)}
-              className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
             >
               Giữ đơn
             </button>
@@ -151,7 +151,7 @@ export function OrderCancelSection({
         <button
           type="button"
           onClick={() => setConfirming(true)}
-          className="inline-flex min-h-[44px] items-center justify-center self-start rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
         >
           Hủy đơn hàng
         </button>

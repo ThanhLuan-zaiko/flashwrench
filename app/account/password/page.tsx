@@ -58,7 +58,7 @@ export default function ChangePasswordPage() {
 
           <section
             aria-label="Đổi mật khẩu"
-            className="rounded-2xl border border-zinc-200 bg-white p-6 sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+            className="border-t border-zinc-200 pt-6 sm:col-span-2 sm:pt-8 lg:col-span-2 dark:border-zinc-800"
           >
             <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               Đổi mật khẩu
@@ -76,7 +76,7 @@ export default function ChangePasswordPage() {
             return (
               <div
                 key={tip.id}
-                className="rounded-2xl border border-zinc-200 bg-white p-4 sm:col-span-1 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950"
+                className="border-t border-zinc-200 pt-4 sm:col-span-1 lg:col-span-2 dark:border-zinc-800"
               >
                 <p className="flex items-center gap-2.5">
                   <Icon

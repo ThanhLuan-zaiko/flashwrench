@@ -10,7 +10,7 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
+import { PageIntro } from "@/components/ui/PageIntro";
 import { useMyOrders, useMyOrdersRealtime } from "@/hooks/orders";
 import { formatDateTime } from "@/lib/datetime/format";
 import {
@@ -34,10 +34,9 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
+      <PageIntro
         eyebrow="Lịch sử"
-        title="Đơn mua linh kiện."
+        lines={["Đơn mua linh kiện."]}
         subtitle="Chọn một đơn để xem lộ trình giao hàng; bấm vào dòng để xem chi tiết đơn."
       />
 
@@ -46,7 +45,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
 
         <section
           aria-label="Danh sách đơn mua"
-          className="flex min-w-0 flex-col rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+          className="flex min-w-0 flex-col border-t border-zinc-200 pt-5 dark:border-zinc-800"
         >
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -102,7 +101,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
           )}
 
           {query.isSuccess && orders.length === 0 && (
-            <div className="mt-4 flex flex-col items-center rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="mt-4 flex flex-col items-center py-8 text-center">
               <FiPackage
                 aria-hidden="true"
                 className="h-8 w-8 text-zinc-300 dark:text-zinc-700"
@@ -120,7 +119,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
           )}
 
           {orders.length > 0 && (
-            <ul className="mt-3 divide-y divide-zinc-100 rounded-2xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+            <ul className="mt-3 divide-y divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
               {orders.map((order) => (
                 <li key={order.id} className="flex items-center gap-2">
                   <button

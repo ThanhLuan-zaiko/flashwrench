@@ -19,7 +19,7 @@ export function BookingSelectedCard({ services }: BookingSelectedMiniProps) {
       <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
         Dịch vụ đã chọn
       </p>
-      <ul className="flex flex-col divide-y divide-zinc-200 rounded-2xl border border-zinc-200 px-3 dark:divide-zinc-800 dark:border-zinc-800">
+      <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
         {services.map((service) => (
           <li key={service.id} className="flex items-center gap-3 py-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-900 dark:text-zinc-600">
@@ -70,7 +70,7 @@ export function BookingRunningTotal({
   return (
     <section
       aria-label="Tạm tính"
-      className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
       {services.map((service) => (
         <p
@@ -87,7 +87,7 @@ export function BookingRunningTotal({
         <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
           Tạm tính
         </span>
-        <span className="text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+        <span className="text-xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
           {formatVnd(subtotal)}
         </span>
       </p>

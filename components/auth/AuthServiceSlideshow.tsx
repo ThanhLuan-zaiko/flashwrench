@@ -153,7 +153,7 @@ export function AuthServiceSlideshow({
           })}
         </div>
 
-        <p className="relative mt-4 px-12 pb-2 text-3xl leading-[1.12] font-extrabold tracking-tight text-balance xl:px-20 xl:text-4xl">
+        <p className="relative mt-4 px-12 pb-2 text-2xl leading-[1.12] font-extrabold tracking-tight text-balance xl:px-20 xl:text-3xl">
           Thợ tới tận nơi, giá rõ ràng trước khi làm.
         </p>
         <SegmentBars

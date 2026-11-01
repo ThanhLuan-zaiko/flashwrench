@@ -35,7 +35,7 @@ export function TrackPlacedBanner({ kind }: TrackPlacedBannerProps) {
   return (
     <section
       aria-label={copy.title}
-      className="flex items-center justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex items-center justify-between gap-4 border-b border-zinc-200 py-4 sm:py-5 dark:border-zinc-800"
     >
       <div className="flex min-w-0 flex-col gap-1.5">
         <p className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">

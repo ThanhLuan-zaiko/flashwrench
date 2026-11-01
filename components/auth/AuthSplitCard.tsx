@@ -49,7 +49,7 @@ export function AuthSplitCard({
               {eyebrow}
             </p>
           )}
-          <h1 className="mt-1.5 text-[26px] leading-[1.12] font-extrabold tracking-tight text-zinc-900 sm:text-3xl lg:text-[32px] dark:text-zinc-50">
+          <h1 className="mt-1.5 text-[22px] leading-[1.12] font-extrabold tracking-tight text-zinc-900 sm:text-2xl lg:text-3xl dark:text-zinc-50">
             {title}
           </h1>
           <p className="mt-2 text-sm text-zinc-600 sm:text-[15px] dark:text-zinc-400">

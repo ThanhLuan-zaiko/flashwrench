@@ -8,11 +8,17 @@ import { formatDateTime } from "@/lib/datetime/format";
 import type { ReviewItem } from "@/services/reviews.api";
 import { Stars } from "./Stars";
 
+// Pager links: bold text with an arrow, no border or box.
+const PAGER_LINK =
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+const PAGER_IDLE =
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+
 // Public review feed: rating summary plus a newest-first list with
 // Trước/Sau cursor paging. Used on product pages, mechanic profiles and
 // the booking page. When `moderation` carries the feed's target,
 // admin/dispatcher sessions get an inline hide/unhide per review and see
-// hidden rows dimmed.
+// hidden rows dimmed. Reviews are ruled rows, not boxes.
 export function ReviewList({
   items,
   ratingAvg,
@@ -51,7 +57,7 @@ export function ReviewList({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Stars rating={ratingAvg} />
+        <Stars rating={ratingAvg} size="h-3.5 w-3.5" />
         <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {ratingCount > 0 ? ratingAvg.toFixed(1) : "—"}
         </span>
@@ -61,11 +67,9 @@ export function ReviewList({
       </div>
 
       {items.length === 0 ? (
-        <p className="rounded-xl border border-zinc-200 p-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-          {emptyLabel}
-        </p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">{emptyLabel}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
+        <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {items.map((item) => (
             <li
               key={item.id}
@@ -73,13 +77,13 @@ export function ReviewList({
                 item.hidden ? "opacity-60" : ""
               }`}
             >
-              <div className="flex flex-wrap items-center gap-2">
-                <Stars rating={item.rating} size="h-3.5 w-3.5" />
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <Stars rating={item.rating} size="h-3 w-3" />
                 <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-50">
                   {item.customerName}
                 </span>
                 {item.hidden && (
-                  <span className="rounded-full border border-red-300 px-1.5 py-px text-[11px] font-medium text-red-600 dark:border-red-800 dark:text-red-400">
+                  <span className="text-[11px] font-medium text-red-600 dark:text-red-400">
                     Đã ẩn
                   </span>
                 )}
@@ -112,7 +116,7 @@ export function ReviewList({
                 )}
               </div>
               {item.body && (
-                <p className="text-xs whitespace-pre-line text-zinc-600 dark:text-zinc-300">
+                <p className="text-sm whitespace-pre-line text-zinc-600 dark:text-zinc-300">
                   {item.body}
                 </p>
               )}
@@ -122,28 +126,23 @@ export function ReviewList({
       )}
 
       {(canPrev || canNext) && (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-5">
           {canPrev && prevHref ? (
             <Link
               href={prevHref}
               scroll={false}
               prefetch
               aria-label="Trang trước"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className={PAGER_LINK}
             >
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
             </Link>
           ) : (
-            <button
-              type="button"
-              disabled
-              aria-label="Trang trước"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-            >
+            <span aria-disabled="true" className={PAGER_IDLE}>
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
-            </button>
+            </span>
           )}
           {canNext && nextHref ? (
             <Link
@@ -152,21 +151,16 @@ export function ReviewList({
               prefetch
               onClick={onNextClick}
               aria-label="Trang sau"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className={PAGER_LINK}
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           ) : (
-            <button
-              type="button"
-              disabled
-              aria-label="Trang sau"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-            >
+            <span aria-disabled="true" className={PAGER_IDLE}>
               Sau
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-            </button>
+            </span>
           )}
         </div>
       )}

@@ -87,7 +87,7 @@ function CommentReplyListInner({
               scroll={false}
               prefetch
               aria-label="Trang phản hồi trước"
-              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1E3A5F] underline-offset-4 hover:underline dark:text-zinc-100 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
               Trước
@@ -97,7 +97,7 @@ function CommentReplyListInner({
               type="button"
               aria-label="Trang phản hồi trước"
               disabled
-              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1E3A5F] underline-offset-4 hover:underline dark:text-zinc-100 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
               Trước
@@ -110,7 +110,7 @@ function CommentReplyListInner({
               prefetch
               onClick={() => pager.recordNext(nextCursor)}
               aria-label="Trang phản hồi sau"
-              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1E3A5F] underline-offset-4 hover:underline dark:text-zinc-100 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
@@ -120,7 +120,7 @@ function CommentReplyListInner({
               type="button"
               aria-label="Trang phản hồi sau"
               disabled
-              className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1E3A5F] underline-offset-4 hover:underline dark:text-zinc-100 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />

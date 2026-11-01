@@ -68,7 +68,7 @@ export function MapPicker({
 }: MapPickerProps) {
   const icon = useMemo(() => pinIcon(), []);
   return (
-    <div className="relative z-0 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
+    <div className="relative z-0 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
       <MapContainer
         center={[center.lat, center.lng]}
         zoom={13}

@@ -21,7 +21,7 @@ export function GuestLookupScreen() {
   const { records, sent, selected, step } = flow;
 
   return (
-    <div className="rounded-2xl border border-zinc-200 p-5 sm:p-6 dark:border-zinc-800">
+    <div className="flex flex-col">
       <div className="print:hidden">
         {step === "email" && (
           <OtpRequestStep
@@ -112,7 +112,7 @@ function RetryButton({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+      className="flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
     >
       {label}
     </button>

@@ -53,7 +53,7 @@ export function AuthBrandPanel({
             FW
           </span>
         </p>
-        <p className="mt-5 text-4xl font-extrabold tracking-tight text-balance text-white sm:text-5xl">
+        <p className="mt-5 text-3xl font-extrabold tracking-tight text-balance text-white sm:text-4xl">
           {title}
         </p>
         <p className="mt-3 max-w-md text-sm text-zinc-200 sm:text-base">

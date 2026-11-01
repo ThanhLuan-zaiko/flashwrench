@@ -65,7 +65,7 @@ export function BookingServiceGallery({ service }: BookingServiceGalleryProps) {
         Hình ảnh dịch vụ
       </p>
       {images.length === 0 ? (
-        <div className="flex h-44 items-center justify-center rounded-2xl border border-dashed border-zinc-300 px-4 text-center text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+        <div className="flex h-36 items-center justify-center rounded-lg border border-dashed border-zinc-300 px-4 text-center text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
           {service
             ? "Dịch vụ này chưa có hình ảnh minh họa."
             : "Chọn dịch vụ để xem hình ảnh minh họa."}
@@ -86,7 +86,7 @@ export function BookingServiceGallery({ service }: BookingServiceGalleryProps) {
                     src={src}
                     alt={service ? `${service.name} — ảnh ${i + 1}` : ""}
                     draggable={false}
-                    className="h-44 w-full rounded-2xl border border-zinc-200 object-cover sm:h-52 lg:h-60 dark:border-zinc-800"
+                    className="h-36 w-full rounded-lg bg-zinc-100 object-cover sm:h-44 lg:h-52 dark:bg-zinc-900"
                   />
                 </li>
               ))}

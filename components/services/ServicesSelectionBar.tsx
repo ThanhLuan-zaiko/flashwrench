@@ -47,7 +47,7 @@ export function ServicesSelectionBar({
           </h2>
           {ready ? (
             <p className="flex flex-wrap items-baseline gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
-              <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] sm:text-xl dark:text-zinc-50">
+              <span className="text-base font-extrabold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50">
                 {formatVnd(selection.subtotal)}
               </span>
               <span className="hidden sm:inline">

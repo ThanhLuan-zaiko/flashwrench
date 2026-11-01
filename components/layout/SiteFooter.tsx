@@ -54,7 +54,7 @@ export function SiteFooter() {
               </p>
               <a
                 href={FOOTER_HOTLINE.href}
-                className="mt-2 inline-flex min-h-11 items-center text-3xl font-bold tracking-tight text-white underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F]"
+                className="mt-2 inline-flex min-h-11 items-center text-2xl font-bold tracking-tight text-white underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F]"
               >
                 {FOOTER_HOTLINE.number}
               </a>

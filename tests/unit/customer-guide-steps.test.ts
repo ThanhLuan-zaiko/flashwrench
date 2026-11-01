@@ -21,7 +21,7 @@ const ANCHOR_SOURCES: Record<string, string> = {
   "booking-details": "components/booking/BookingWhereWhenStep.tsx",
   "booking-vehicle": "components/booking/BookingDetailsSection.tsx",
   "booking-summary": "components/booking/BookingPriceSummary.tsx",
-  "vouchers-header": "components/vouchers/VouchersList.tsx",
+  "vouchers-header": "components/vouchers/VouchersIntro.tsx",
   "vouchers-campaigns": "components/vouchers/VouchersList.tsx",
 };
 

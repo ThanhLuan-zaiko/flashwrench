@@ -88,7 +88,7 @@ export function TopMechanicsCard({
   return (
     <section
       aria-label="Thợ được đánh giá cao"
-      className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div>
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -105,7 +105,7 @@ export function TopMechanicsCard({
           {[0, 1].map((skeleton) => (
             <div
               key={skeleton}
-              className="h-16 animate-pulse rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+              className="h-14 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
             />
           ))}
         </div>

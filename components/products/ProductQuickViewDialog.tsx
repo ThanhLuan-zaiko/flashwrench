@@ -85,7 +85,7 @@ export function ProductQuickViewDialog({
               className="flex flex-col gap-2"
             >
               <p className="flex flex-wrap items-baseline gap-2">
-                <span className="text-3xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+                <span className="text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                   {formatVnd(part.price)}
                 </span>
                 {discount > 0 && part.comparePrice !== null && (

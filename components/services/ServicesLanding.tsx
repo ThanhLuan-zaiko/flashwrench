@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
-import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
-import { TourButton } from "@/components/tour/TourButton";
-import {
-  BRAND_NAVY_SURFACE,
-  BRAND_PRIMARY_BUTTON,
-} from "@/components/ui/brand";
+import { HomePromoList } from "@/components/home/promotions/HomePromoList";
 import {
   usePublicCatalog,
   useServiceCatalogRealtime,
@@ -29,7 +23,8 @@ import {
   paginatePublicServices,
   resolveTabCategory,
 } from "./public-catalog-utils";
-import { ServicesAccountCta } from "./ServicesAccountCta";
+import { ServicesClosingCta } from "./ServicesClosingCta";
+import { ServicesIntro } from "./ServicesIntro";
 import { ServicesSelectionBar } from "./ServicesSelectionBar";
 
 // Public /services landing: browse active prices and book. Admin edits on
@@ -43,6 +38,16 @@ import { ServicesSelectionBar } from "./ServicesSelectionBar";
 // the enter animation.
 export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
+  // The catalog always opens at the top: the browser must not restore a scroll
+  // position remembered from an earlier visit, and a plain visit starts at 0.
+  useEffect(() => {
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    if (!window.location.hash) window.scrollTo({ top: 0 });
+    return () => {
+      history.scrollRestoration = previous;
+    };
+  }, []);
   const searchId = useId();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -101,45 +106,20 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   return (
     <div
       ref={rootRef}
-      className={`flex flex-col gap-4 sm:gap-6 md:gap-8 ${draft.serviceIds.length > 0 ? "pb-24 sm:pb-36" : ""}`}
+      className={`flex w-full flex-col ${draft.serviceIds.length > 0 ? "pb-24 sm:pb-36" : ""}`}
     >
-      <BigTypeHeader
-        level={1}
-        eyebrow={
-          catalog.isSuccess ? `Dịch vụ · ${view.total} gói sẵn sàng` : "Dịch vụ"
-        }
-        title="Chọn dịch vụ, thợ tới nơi."
-        subtitle="Giá trọn gói báo trước. Chọn một hoặc nhiều dịch vụ rồi đặt lịch một lần."
-      />
-      <div className="hidden flex-wrap items-center justify-between gap-2 sm:flex">
-        <output
-          aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}
-          className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
-        >
-          <span
-            aria-hidden="true"
-            className={`h-2 w-2 rounded-full ${live ? "bg-[#1E3A5F] dark:bg-white" : "border border-zinc-400 dark:border-zinc-500"}`}
-          />
-          {live ? "Giá cập nhật trực tiếp" : "Đang nối lại giá trực tiếp…"}
-        </output>
-        <p
-          aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
-        >
-          {catalog.isPending
+      <ServicesIntro
+        live={live}
+        countText={
+          catalog.isPending
             ? "Đang tải bảng giá…"
-            : `${view.total} dịch vụ sẵn sàng đặt lịch`}
-        </p>
-      </div>
-
-      <div className="flex justify-end">
-        <TourButton
-          tour="customer-guide"
-          ariaLabel="Mở sổ tay hướng dẫn đặt lịch"
-          label="Sổ tay hướng dẫn"
-        />
-      </div>
-      <div data-tour="guide-services">
+            : `${view.total} dịch vụ sẵn sàng đặt lịch`
+        }
+      />
+      <div
+        data-tour="guide-services"
+        className="w-full px-4 pt-10 sm:px-6 md:pt-12 lg:px-10"
+      >
         <PublicCatalogFilter
           categories={categories}
           activeSlug={unknownSlug ? null : activeSlug}
@@ -148,29 +128,28 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           onQuery={typeQuery}
         />
       </div>
-      <Link
-        href="/rescue"
-        prefetch
-        data-reveal
-        className={`flex items-center justify-between gap-3 px-5 py-4 transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 sm:px-6 ${BRAND_NAVY_SURFACE}`}
-      >
-        <span className="flex flex-col gap-0.5">
-          <span className="text-[11px] font-semibold tracking-[0.1em] text-zinc-300 uppercase">
-            Hỏng xe giữa đường?
-          </span>
-          <span className="text-lg font-extrabold sm:text-xl">
-            Gọi cứu hộ 24/7
-          </span>
-        </span>
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-          <FiArrowRight aria-hidden="true" className="h-5 w-5" />
-        </span>
-      </Link>
-      {unknownSlug && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
+      <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
+        <Link
+          href="/rescue"
+          prefetch
+          className="group flex items-center justify-between gap-4 border-t border-zinc-200 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-800 dark:focus-visible:ring-zinc-100"
         >
+          <span className="flex flex-col gap-0.5">
+            <span className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+              Hỏng xe giữa đường?
+            </span>
+            <span className="text-base font-bold text-zinc-900 md:text-lg dark:text-zinc-50">
+              Gọi cứu hộ 24/7
+            </span>
+          </span>
+          <FiArrowRight
+            aria-hidden="true"
+            className="h-4 w-4 shrink-0 text-[#1E3A5F] motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-0.5 dark:text-zinc-100"
+          />
+        </Link>
+      </div>
+      {unknownSlug && (
+        <div className="w-full px-4 py-8 text-center sm:px-6 lg:px-10">
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Loại hình này không còn được áp dụng
           </p>
@@ -180,7 +159,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           <Link
             href="/services"
             scroll={false}
-            className={`mx-auto mt-4 w-fit ${BRAND_PRIMARY_BUTTON}`}
+            className="mx-auto mt-4 flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100"
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -188,39 +167,21 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         </div>
       )}
 
-      <PublicCatalogResults
-        pending={catalog.isPending}
-        failed={catalog.isError}
-        ready={catalog.isSuccess && !unknownSlug}
-        view={view}
-        hrefFor={pageHref}
-        onRetry={() => void catalog.refetch()}
-        serviceIds={draft.serviceIds}
-        onToggle={draft.toggleService}
-        reasonFor={reasonFor}
-      />
-      <PromoBannerSection
-        title="Ưu đãi cho khách đặt dịch vụ"
-        subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
-        audience="booking"
-      />
-
-      <section
-        aria-label="Đặt lịch trong 1 phút"
-        data-reveal
-        className={`flex flex-col justify-between gap-5 p-5 md:flex-row md:items-center md:p-7 ${BRAND_NAVY_SURFACE}`}
-      >
-        <div className="max-w-xl">
-          <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
-            Đã chọn được dịch vụ ưng ý?
-          </h2>
-          <p className="mt-1 text-sm text-zinc-200">
-            Đặt nhanh một dịch vụ hoặc thêm nhiều dịch vụ vào cùng lịch hẹn. Tạo
-            tài khoản nếu bạn muốn lưu lịch sử và dùng voucher.
-          </p>
-        </div>
-        <ServicesAccountCta />
-      </section>
+      <div className="w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-10">
+        <PublicCatalogResults
+          pending={catalog.isPending}
+          failed={catalog.isError}
+          ready={catalog.isSuccess && !unknownSlug}
+          view={view}
+          hrefFor={pageHref}
+          onRetry={() => void catalog.refetch()}
+          serviceIds={draft.serviceIds}
+          onToggle={draft.toggleService}
+          reasonFor={reasonFor}
+        />
+      </div>
+      <HomePromoList title="Ưu đãi cho khách đặt dịch vụ" audience="booking" />
+      <ServicesClosingCta />
       <ServicesSelectionBar
         serviceIds={draft.serviceIds}
         selection={selection}

@@ -102,9 +102,9 @@ export function BookingSlotPicker({
       )}
       <details
         open={Boolean(error) || !onGrid}
-        className="group rounded-2xl border border-dashed border-zinc-300 px-3 py-2 dark:border-zinc-700"
+        className="group border-t border-zinc-200 pt-3 dark:border-zinc-800"
       >
-        <summary className="flex min-h-[44px] cursor-pointer list-none items-center text-sm font-semibold text-[#1E3A5F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] dark:text-zinc-100">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] dark:text-zinc-100">
           Chọn ngày giờ khác
         </summary>
         <div className="pt-1 pb-2">

@@ -23,7 +23,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
 
   if (gallery.length === 0) {
     return (
-      <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-zinc-200 text-zinc-300 md:h-80 dark:border-zinc-800 dark:text-zinc-700">
+      <div className="flex h-56 w-full items-center justify-center rounded-lg bg-zinc-100 text-zinc-300 md:h-72 dark:bg-zinc-900 dark:text-zinc-700">
         <FiPackage aria-hidden="true" className="h-16 w-16" />
       </div>
     );
@@ -56,7 +56,7 @@ function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
           ref={trackRef}
           onScroll={onScroll}
           aria-label={`Ảnh sản phẩm ${name}`}
-          className={`flex snap-x snap-mandatory overflow-x-auto rounded-2xl motion-safe:scroll-smooth ${HIDE_SCROLLBAR}`}
+          className={`flex snap-x snap-mandatory overflow-x-auto rounded-lg motion-safe:scroll-smooth ${HIDE_SCROLLBAR}`}
         >
           {slides.map((src, position) => {
             const isClone = position >= total;
@@ -71,7 +71,7 @@ function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
                   src={src}
                   alt={isClone ? "" : name}
                   draggable={false}
-                  className="h-64 w-full rounded-2xl border border-zinc-200 object-cover md:h-80 dark:border-zinc-800"
+                  className="h-56 w-full rounded-lg bg-zinc-100 object-cover md:h-72 dark:bg-zinc-900"
                 />
               </li>
             );
@@ -114,7 +114,7 @@ function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
                 aria-label={`Xem ảnh ${position + 1}`}
                 aria-current={position === index}
                 onClick={() => goTo(position)}
-                className={`w-full overflow-hidden rounded-xl border transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
+                className={`w-full overflow-hidden rounded-lg border transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
                   position === index
                     ? "border-[#1E3A5F] ring-1 ring-[#1E3A5F] dark:border-zinc-100 dark:ring-zinc-100"
                     : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
@@ -125,7 +125,7 @@ function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
                   src={image}
                   alt=""
                   loading="lazy"
-                  className="h-16 w-full object-cover"
+                  className="h-14 w-full object-cover"
                 />
               </button>
             </li>

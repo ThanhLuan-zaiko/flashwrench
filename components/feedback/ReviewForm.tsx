@@ -26,7 +26,7 @@ export function ReviewForm({
 
   return (
     <form
-      className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit({ rating, body: body.trim() });

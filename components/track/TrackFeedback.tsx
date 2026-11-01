@@ -41,7 +41,7 @@ export function TrackAborted({
   action,
 }: TrackAbortedProps) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-6 text-center sm:p-10 dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="flex flex-col items-center gap-3 py-8 text-center">
       {illustration && (
         <Image
           src={illustration.src}

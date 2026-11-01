@@ -23,7 +23,7 @@ export const PRODUCTS_TOUR_STEPS: Tour[] = [
         selector: '[data-tour="products-grid"]',
         title: "So sánh ngay trên thẻ",
         content:
-          "Mỗi thẻ có giá, giá gốc và tồn kho. Bấm con mắt để xem nhanh hoặc Thêm vào giỏ để mua.",
+          "Mỗi thẻ có giá, giá gốc và tồn kho. Bấm Xem nhanh để xem chi tiết hoặc Thêm vào giỏ để mua.",
         side: "top",
         ...TOUR_STEP_OPTIONS,
       },

@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { PageBounce } from "@/components/pagination/PageBounce";
+import { PageIntro } from "@/components/ui/PageIntro";
 import { bookingKeys, useMyBookings } from "@/hooks/booking";
 import { useDomainRealtime } from "@/hooks/useDomainRealtime";
 import { useRoutePage } from "@/hooks/useRoutePage";
@@ -127,10 +127,9 @@ export function HistoryEntry({ customerId }: HistoryEntryProps) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
+      <PageIntro
         eyebrow="Lịch sử"
-        title="Đơn hàng của bạn."
+        lines={["Đơn hàng của bạn."]}
         subtitle="Chọn một đơn để xem lộ trình thợ; tìm kiếm và chuyển trang ngay trong danh sách."
       />
 

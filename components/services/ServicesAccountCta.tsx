@@ -5,9 +5,10 @@ import { FiArrowRight, FiLoader } from "react-icons/fi";
 import { useMe } from "@/hooks/auth";
 import { buildRegisterHref } from "@/lib/auth/auth-redirect";
 
-// White button on the navy closing card (orange stays with the booking bar).
+// Secondary action on the closing chapter: a bold text link with an arrow
+// (orange stays with the booking bar).
 const CTA_CLASSES =
-  "flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-[#1E3A5F] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99] md:w-auto";
+  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
 
 // Bottom-of-catalog call to action. Guests are invited to create a free
 // account (returning to /services afterwards); logged-in customers go

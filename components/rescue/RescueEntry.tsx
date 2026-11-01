@@ -95,7 +95,7 @@ export function RescueEntry() {
         {RESCUE_STEPS.map((step, index) => (
           <article
             key={step.title}
-            className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+            className="border-t border-zinc-200 pt-4 dark:border-zinc-800"
           >
             <p className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-sm font-bold text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
               {index + 1}
@@ -121,7 +121,7 @@ export function RescueEntry() {
           return (
             <article
               key={note.title}
-              className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+              className="border-t border-zinc-200 pt-4 dark:border-zinc-800"
             >
               <Icon
                 aria-hidden="true"

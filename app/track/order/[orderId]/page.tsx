@@ -21,11 +21,11 @@ export default async function TrackOrderPage({
   return (
     <main className="flex flex-1 flex-col bg-white dark:bg-zinc-950">
       <TaskBar title="Theo dõi đơn hàng" backHref="/" />
-      <div className="mx-auto w-full max-w-xl px-4 py-10 sm:px-6 md:py-14 lg:max-w-4xl">
+      <div className="w-full px-4 pt-8 pb-16 sm:px-6 lg:px-10">
         <div className="mb-4 empty:hidden">
           <TrackPlacedBanner kind="order" />
         </div>
-        <div className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800 sm:p-6">
+        <div className="border-t border-zinc-200 pt-5 dark:border-zinc-800 sm:p-6">
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
             Theo dõi đơn hàng
           </h1>

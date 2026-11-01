@@ -235,8 +235,12 @@ mechanics or reviews.
    `md:grid-cols-[11rem_12rem_minmax(0,1fr)_16rem]`). On phones the photo
    stays on the left at about 6.5rem wide and the text stacks beside it.
    Four or fewer rows must fit about one 1440x900 viewport.
-4. **Scale.** Headline `text-3xl md:text-5xl font-bold`; list-row title
-   `text-lg md:text-3xl`; section width `w-full px-4 sm:px-6 lg:px-10`.
+4. **Scale.** Customer screens use a compact type scale so more fits on one
+   screen. Chapter headline `text-2xl md:text-4xl font-bold`; home hero
+   headline `text-3xl sm:text-4xl lg:text-5xl`; list-row title and price
+   `text-base md:text-xl font-bold`; body `text-sm md:text-base`; closing call
+   to action headline `text-3xl md:text-5xl`. Chapter vertical rhythm stays
+   near `md:py-12`. Section width `w-full px-4 sm:px-6 lg:px-10`.
 5. **Actions.** Secondary actions are bold text links with an arrow. The
    single orange button of the page is the closing call to action.
 6. **Hide when empty.** Data-driven chapters return `null` when there is

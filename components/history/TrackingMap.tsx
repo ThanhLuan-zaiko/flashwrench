@@ -81,7 +81,7 @@ export function TrackingMap({
       : [fallbackCenter.lat, fallbackCenter.lng];
 
   return (
-    <div className="relative z-0 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
+    <div className="relative z-0 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
       <MapContainer
         center={center}
         zoom={14}

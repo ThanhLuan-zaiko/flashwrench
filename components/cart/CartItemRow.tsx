@@ -30,7 +30,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
   return (
     <li
       data-reveal
-      className="flex gap-3 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex gap-3 border-b border-zinc-200 py-4 dark:border-zinc-800"
     >
       <Link
         href={`/products/${encodeURIComponent(item.partSlug)}`}

@@ -26,7 +26,7 @@ export default async function TrackBookingPage({
         title="FlashWrench"
         trailing={`Phiếu #${bookingTicketCode(bookingId)}`}
       />
-      <div className="mx-auto w-full max-w-xl sm:px-6 sm:py-10 md:py-14 lg:max-w-6xl lg:px-8">
+      <div className="w-full px-4 pt-8 pb-16 sm:px-6 lg:px-10">
         <div className="mb-4 hidden sm:block">
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
             Theo dõi đặt lịch

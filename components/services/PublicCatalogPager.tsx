@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 type PublicCatalogPagerProps = {
   page: number;
@@ -12,9 +12,14 @@ type PublicCatalogPagerProps = {
   hrefFor: (page: number) => string;
 };
 
-// Minimal pager for the public landing: hidden on a single page, previous
-// and next links plus Vietnamese range labels. 44px touch targets. Pages
-// are real links so every /page/N URL stays shareable.
+const LINK_CLASSES =
+  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+const IDLE_CLASSES =
+  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+
+// Ruled pager for the public services list: range summary, then bold text
+// links with arrows. Hidden on a single page. Pages are real links so every
+// /page/N URL stays shareable.
 export function PublicCatalogPager({
   page,
   pageCount,
@@ -24,14 +29,13 @@ export function PublicCatalogPager({
   hrefFor,
 }: PublicCatalogPagerProps) {
   if (pageCount <= 1) return null;
-  const prevDisabled = page <= 0;
-  const nextDisabled = page >= pageCount - 1;
-  const navClass =
-    "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  const hasPrev = page > 0;
+  const hasNext = page < pageCount - 1;
+
   return (
     <nav
       aria-label="Phân trang dịch vụ"
-      className="flex flex-wrap items-center justify-between gap-2"
+      className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
       <p
         aria-live="polite"
@@ -39,49 +43,43 @@ export function PublicCatalogPager({
       >
         Hiển thị {start}–{end} trên {total} dịch vụ
       </p>
-      <div className="flex items-center gap-1.5">
-        {prevDisabled ? (
-          <button
-            type="button"
-            disabled
-            aria-label="Trang trước"
-            className={navClass}
-          >
-            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-          </button>
-        ) : (
+      <div className="flex items-center gap-5">
+        {hasPrev ? (
           <Link
             href={hrefFor(page - 1)}
             scroll={false}
             prefetch
             aria-label="Trang trước"
-            className={navClass}
+            className={LINK_CLASSES}
           >
-            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+            <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
           </Link>
-        )}
-        <span className="px-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-          Trang {page + 1} trên {pageCount}
-        </span>
-        {nextDisabled ? (
-          <button
-            type="button"
-            disabled
-            aria-label="Trang sau"
-            className={navClass}
-          >
-            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-          </button>
         ) : (
+          <span aria-disabled="true" className={IDLE_CLASSES}>
+            <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
+          </span>
+        )}
+        <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+          Trang {page + 1} trên {pageCount}
+        </p>
+        {hasNext ? (
           <Link
             href={hrefFor(page + 1)}
             scroll={false}
             prefetch
             aria-label="Trang sau"
-            className={navClass}
+            className={LINK_CLASSES}
           >
-            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            Sau
+            <FiArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
+        ) : (
+          <span aria-disabled="true" className={IDLE_CLASSES}>
+            Sau
+            <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+          </span>
         )}
       </div>
     </nav>

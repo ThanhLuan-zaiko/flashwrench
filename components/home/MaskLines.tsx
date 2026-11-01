@@ -1,5 +1,5 @@
 type MaskLinesProps = {
-  as?: "h2" | "p";
+  as?: "h1" | "h2" | "p";
   lines: string[];
   className?: string;
 };

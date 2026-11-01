@@ -1,40 +1,26 @@
 "use client";
 
-import type { IconType } from "react-icons";
 import { useCountUp } from "@/hooks/useCountUp";
 
-// 1x1 bento stat: a number that counts up on first paint plus a short
-// label. Numbers arrive as integers; `format` shapes them (plain count or
-// VND).
+// One stat row of the owner's wallet: a label on the left and a number that
+// counts up on first paint on the right. Numbers arrive as integers; `format`
+// shapes them (plain count or VND).
 export function WalletStatTile({
-  icon: Icon,
   value,
   format,
   label,
 }: {
-  icon: IconType;
   value: number;
   format: (value: number) => string;
   label: string;
 }) {
   const countRef = useCountUp(value, format);
   return (
-    <div
-      data-reveal
-      className="flex flex-col justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
-    >
-      <Icon
-        aria-hidden="true"
-        className="h-5 w-5 text-zinc-700 dark:text-zinc-300"
-      />
-      <div>
-        <p className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          <span ref={countRef}>{format(value)}</span>
-        </p>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-          {label}
-        </p>
-      </div>
+    <div className="flex items-baseline justify-between gap-4 py-4">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">{label}</p>
+      <p className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <span ref={countRef}>{format(value)}</span>
+      </p>
     </div>
   );
 }

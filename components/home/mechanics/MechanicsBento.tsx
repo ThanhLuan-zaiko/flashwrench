@@ -22,7 +22,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
 
   return (
     <section ref={rootRef} aria-label="Thợ uy tín">
-      <div className="w-full px-4 pb-12 sm:px-6 md:pb-20 lg:px-10">
+      <div className="w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-10">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
@@ -30,7 +30,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
             </p>
             <MaskLines
               lines={["Đội thợ được khách hàng", "chấm điểm từng đơn"]}
-              className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 md:text-5xl dark:text-zinc-50"
+              className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
             />
           </div>
           <dl className="flex gap-8 text-zinc-900 dark:text-zinc-50">
@@ -38,7 +38,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
               <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 Điểm trung bình
               </dt>
-              <dd className="text-3xl font-bold tracking-tight">
+              <dd className="text-2xl font-bold tracking-tight">
                 {avg > 0 ? avg.toFixed(1) : "—"}
               </dd>
             </div>
@@ -46,7 +46,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
               <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 Đơn hoàn thành
               </dt>
-              <dd className="text-3xl font-bold tracking-tight">{jobs}</dd>
+              <dd className="text-2xl font-bold tracking-tight">{jobs}</dd>
             </div>
           </dl>
         </div>

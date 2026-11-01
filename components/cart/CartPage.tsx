@@ -36,15 +36,12 @@ export function CartPage() {
       {me.isPending && (
         <div
           aria-busy="true"
-          className="h-40 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+          className="h-32 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
         />
       )}
 
       {me.isSuccess && me.data && me.data.role !== "customer" && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
+        <div data-reveal className="py-8 text-center">
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Giỏ hàng chỉ dành cho tài khoản khách hàng
           </p>
@@ -63,7 +60,7 @@ export function CartPage() {
           <div
             role="alert"
             data-reveal
-            className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+            className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
           >
             <p className="font-semibold">Không tải được giỏ hàng.</p>
             <button
@@ -81,10 +78,7 @@ export function CartPage() {
         (me.data === null || me.data.role === "customer") &&
         cartView &&
         (cartView.items.length === 0 ? (
-          <div
-            data-reveal
-            className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-          >
+          <div data-reveal className="py-8 text-center">
             <FiShoppingCart
               aria-hidden="true"
               className="mx-auto h-8 w-8 text-zinc-300 dark:text-zinc-700"
@@ -114,7 +108,7 @@ export function CartPage() {
               <p
                 role="alert"
                 data-reveal
-                className="rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+                className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
               >
                 Một số sản phẩm đã hết hàng hoặc ngừng bán. Hãy điều chỉnh số
                 lượng hoặc xóa khỏi giỏ trước khi đặt hàng.
@@ -124,13 +118,13 @@ export function CartPage() {
             <section
               aria-label="Tổng giỏ hàng"
               data-reveal
-              className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+              className="flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"
             >
               <div>
                 <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   Tạm tính ({cartView.itemCount} sản phẩm)
                 </p>
-                <p className="mt-1 text-3xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+                <p className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                   {formatVnd(cartView.subtotal)}
                 </p>
                 <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">

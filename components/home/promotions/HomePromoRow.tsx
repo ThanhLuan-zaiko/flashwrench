@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FiGift } from "react-icons/fi";
 import {
   promoTermsLabel,
   promoValueParts,
@@ -43,7 +44,11 @@ export function HomePromoRow({ campaign, active }: HomePromoRowProps) {
               data-chapter-photo
               className="h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.04]"
             />
-          ) : null}
+          ) : (
+            <span className="flex h-full w-full items-center justify-center text-zinc-400 dark:text-zinc-600">
+              <FiGift aria-hidden="true" className="h-6 w-6" />
+            </span>
+          )}
         </span>
         <span className="min-w-0">
           <span className="block text-xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-2xl dark:text-zinc-50">

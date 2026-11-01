@@ -24,7 +24,7 @@ export function BookingSuccess({
     <section
       aria-label="Đặt lịch thành công"
       data-reveal
-      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-4 border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1.5">

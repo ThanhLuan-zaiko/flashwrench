@@ -54,13 +54,13 @@ export function PublicCatalogResults({
       {pending && (
         <div
           aria-busy="true"
-          className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3"
+          className="grid grid-cols-1 md:grid-cols-2 md:gap-x-8"
         >
           <p className="sr-only">Đang tải dịch vụ</p>
           {SKELETON_IDS.map((skeletonId) => (
             <div
               key={skeletonId}
-              className="h-36 rounded-3xl border border-zinc-200 bg-zinc-100 motion-safe:animate-pulse dark:border-zinc-800 dark:bg-zinc-900"
+              className="h-24 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
             />
           ))}
         </div>
@@ -68,8 +68,7 @@ export function PublicCatalogResults({
       {failed && (
         <div
           role="alert"
-          data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+          className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
         >
           <p className="font-semibold">Không tải được bảng giá.</p>
           <p className="mt-1 text-xs">Vui lòng kiểm tra mạng rồi thử lại.</p>
@@ -84,10 +83,7 @@ export function PublicCatalogResults({
         </div>
       )}
       {ready && view.total === 0 && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
+        <div data-reveal className="py-8 text-center">
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Chưa có dịch vụ phù hợp
           </p>
@@ -97,19 +93,23 @@ export function PublicCatalogResults({
         </div>
       )}
       {ready && view.total > 0 && (
-        <div className="flex flex-col gap-3 md:gap-4">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
+        <div className="flex flex-col gap-4">
+          <ul className="grid grid-cols-1 md:grid-cols-2 md:gap-x-8">
             {view.pageItems.map((service) => (
-              <PublicServiceCard
+              <li
                 key={service.id}
-                service={service}
-                selected={serviceIds.includes(service.id)}
-                disabledReason={reasonFor(service)}
-                onToggle={() => onToggle(service.id)}
-                onPreview={() => setPreviewId(service.id)}
-              />
+                className="border-b border-zinc-200 dark:border-zinc-800"
+              >
+                <PublicServiceCard
+                  service={service}
+                  selected={serviceIds.includes(service.id)}
+                  disabledReason={reasonFor(service)}
+                  onToggle={() => onToggle(service.id)}
+                  onPreview={() => setPreviewId(service.id)}
+                />
+              </li>
             ))}
-          </div>
+          </ul>
           <PublicCatalogPager
             page={view.safePage}
             pageCount={view.pageCount}

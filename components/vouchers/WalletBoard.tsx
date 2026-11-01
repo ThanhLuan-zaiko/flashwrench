@@ -23,14 +23,14 @@ export function WalletBoard() {
   }
   if (wallets.isPending) {
     return (
-      <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:border-zinc-800 dark:text-zinc-400">
+      <p className="text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
         Đang tải ví voucher…
       </p>
     );
   }
   if (wallets.isError) {
     return (
-      <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+      <p className="text-sm text-zinc-600 dark:text-zinc-300">
         Không tải được ví voucher. Vui lòng đăng nhập rồi thử lại.
       </p>
     );
@@ -39,7 +39,7 @@ export function WalletBoard() {
   const nextCursor = wallets.data?.nextCursor ?? null;
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-zinc-200 p-6 text-center dark:border-zinc-800">
+      <div className="py-8 text-center">
         <p className="text-sm font-semibold text-zinc-900 dark:text-white">
           Chưa có voucher nào
         </p>
@@ -55,10 +55,10 @@ export function WalletBoard() {
       aria-label="Tất cả voucher của bạn"
       className="flex flex-col gap-3"
     >
-      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+      <h2 className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50">
         Tất cả voucher
       </h2>
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
+      <ul className="flex flex-col divide-y divide-zinc-200 border-t border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
         {items.map((wallet) => (
           <li key={wallet.id}>
             <WalletCard wallet={wallet} />

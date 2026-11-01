@@ -26,7 +26,7 @@ export function AvatarSection() {
     return (
       <output
         aria-label="Đang tải ảnh đại diện"
-        className="flex items-center gap-2 rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-500 md:p-5 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400"
+        className="flex items-center gap-2 py-4 text-sm text-zinc-500 dark:text-zinc-400"
       >
         <FiLoader
           aria-hidden="true"
@@ -66,7 +66,7 @@ export function AvatarSection() {
     <section
       aria-label="Ảnh đại diện"
       data-reveal
-      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-col gap-4 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center dark:border-zinc-800"
     >
       {user.avatarUrl ? (
         // biome-ignore lint/performance/noImgElement: dynamic cropped upload served immutable; next/image optimizer hop needs sharp for zero benefit.

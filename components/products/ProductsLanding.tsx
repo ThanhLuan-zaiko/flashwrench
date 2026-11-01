@@ -1,39 +1,21 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useId, useMemo, useState } from "react";
-import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
-import { PromoBannerSection } from "@/components/promotions/PromoBannerSection";
-import { TourButton } from "@/components/tour/TourButton";
+import { HomePromoList } from "@/components/home/promotions/HomePromoList";
 import { useMe } from "@/hooks/auth";
 import { usePartsCatalogRealtime, usePublicParts } from "@/hooks/products";
-import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
-import { ProductFilter } from "./ProductFilter";
 import { ProductsCartCta } from "./ProductsCartCta";
-import { ProductsResults } from "./ProductsResults";
+import { ProductsIntro } from "./ProductsIntro";
+import { type CatalogStatus, ProductsShelf } from "./ProductsShelf";
 import {
   filterPublicParts,
   PRODUCTS_PAGE_SIZE,
   paginateParts,
   resolveCategoryBySlug,
 } from "./products-utils";
-import { PRODUCTS_TOUR_NAME } from "./tour/products-tour.steps";
-
-// Static skeleton ids keep React keys stable without array indexes.
-const SKELETON_IDS = [
-  "skeleton-1",
-  "skeleton-2",
-  "skeleton-3",
-  "skeleton-4",
-  "skeleton-5",
-  "skeleton-6",
-  "skeleton-7",
-  "skeleton-8",
-];
 
 // Public /products landing: browse the active parts shelf and add to cart.
 // Admin catalog edits publish to the parts-catalog topic; this screen
@@ -45,7 +27,6 @@ const SKELETON_IDS = [
 // catalog, keeps the search text, resets only the pager, and never
 // replays the enter animation.
 export function ProductsLanding() {
-  const rootRef = useBentoReveal<HTMLDivElement>();
   const searchId = useId();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -97,134 +78,31 @@ export function ProductsLanding() {
   useCanonicalizePage(view.pageCount, catalog.isSuccess);
 
   const showCartCta = me.isSuccess && me.data?.role === "customer";
+  const status: CatalogStatus = catalog.isSuccess
+    ? "success"
+    : catalog.isError
+      ? "error"
+      : "pending";
+  const countText = catalog.isPending
+    ? "Đang tải sản phẩm…"
+    : `${view.total} sản phẩm đang bán`;
 
   return (
-    <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
-        eyebrow="Sản phẩm"
-        title="Linh kiện chính hãng, giao tận nơi."
-        subtitle="Giá công khai, tồn kho cập nhật trực tiếp. Thêm vào giỏ và đặt hàng trong vài bước."
-      />
-      <div data-reveal className="flex">
-        <TourButton
-          tour={PRODUCTS_TOUR_NAME}
-          ariaLabel="Bắt đầu hướng dẫn mua linh kiện"
-        />
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <output
-          aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}
-          className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
-        >
-          <span
-            aria-hidden="true"
-            className={`h-2 w-2 rounded-full ${
-              live
-                ? "bg-[#1E3A5F] dark:bg-white"
-                : "border border-zinc-400 dark:border-zinc-500"
-            }`}
-          />
-          {live ? "Giá cập nhật trực tiếp" : "Đang nối lại giá trực tiếp…"}
-        </output>
-        <p
-          aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
-        >
-          {catalog.isPending
-            ? "Đang tải sản phẩm…"
-            : `${view.total} sản phẩm đang bán`}
-        </p>
-      </div>
-
-      <ProductFilter
+    <div className="flex w-full flex-col">
+      <ProductsIntro live={live} countText={countText} />
+      <ProductsShelf
+        status={status}
+        onRetry={() => void catalog.refetch()}
         categories={categories}
-        activeSlug={unknownSlug ? null : activeSlug}
+        activeSlug={activeSlug}
+        unknownSlug={unknownSlug}
         query={query}
         searchId={searchId}
         onQuery={typeQuery}
+        view={view}
+        pageHref={pageHref}
       />
-
-      <PromoBannerSection
-        title="Ưu đãi cho đơn linh kiện"
-        subtitle="Tạo tài khoản để hệ thống tự phát voucher khi đủ điều kiện."
-        audience="order"
-      />
-
-      {unknownSlug && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Danh mục này không còn được áp dụng
-          </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Cửa hàng vừa thay đổi danh mục. Hãy xem toàn bộ sản phẩm đang có.
-          </p>
-          <Link
-            href="/products"
-            scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
-          >
-            Xem tất cả sản phẩm
-            <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-          </Link>
-        </div>
-      )}
-
-      {catalog.isPending && (
-        <div
-          aria-busy="true"
-          className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
-        >
-          <p className="sr-only">Đang tải sản phẩm</p>
-          {SKELETON_IDS.map((skeletonId) => (
-            <div
-              key={skeletonId}
-              className="h-44 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
-            />
-          ))}
-        </div>
-      )}
-
-      {catalog.isError && (
-        <div
-          role="alert"
-          data-reveal
-          className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
-        >
-          <p className="font-semibold">Không tải được danh sách sản phẩm.</p>
-          <p className="mt-1 text-xs">Vui lòng kiểm tra mạng rồi thử lại.</p>
-          <button
-            type="button"
-            onClick={() => void catalog.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
-          >
-            <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
-            Thử tải lại
-          </button>
-        </div>
-      )}
-
-      {catalog.isSuccess && !unknownSlug && view.total === 0 && (
-        <div
-          data-reveal
-          className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950"
-        >
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            Chưa có sản phẩm phù hợp
-          </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Hãy thử từ khóa khác hoặc chọn danh mục khác.
-          </p>
-        </div>
-      )}
-
-      {catalog.isSuccess && !unknownSlug && view.total > 0 && (
-        <ProductsResults view={view} hrefFor={pageHref} />
-      )}
-
+      <HomePromoList title="Ưu đãi cho đơn linh kiện" audience="order" />
       <ProductsCartCta isCustomer={showCartCta} />
     </div>
   );

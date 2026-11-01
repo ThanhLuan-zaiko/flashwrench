@@ -31,7 +31,7 @@ export function OrderReturnSection({
     <section
       data-reveal
       aria-label="Đổi trả / hoàn tiền"
-      className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+      className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Đổi trả / hoàn tiền

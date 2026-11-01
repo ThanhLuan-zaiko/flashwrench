@@ -103,7 +103,7 @@ export function ServiceQuickViewDialog({
               className="flex flex-col gap-2"
             >
               <p className="flex items-baseline gap-1.5">
-                <span className="text-3xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+                <span className="text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
                   {formatVnd(service.basePrice)}
                 </span>
                 <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">

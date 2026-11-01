@@ -25,7 +25,7 @@ export function BookingStep({
     <section
       aria-labelledby={headingId}
       data-tour={tour}
-      className="flex min-w-0 flex-col gap-3 sm:gap-4 sm:rounded-3xl sm:border sm:border-zinc-200 sm:bg-white sm:p-4 md:p-6 dark:sm:border-zinc-800 dark:sm:bg-zinc-950"
+      className="flex min-w-0 flex-col gap-3 border-t border-zinc-200 pt-5 first:border-t-0 first:pt-0 sm:gap-4 dark:border-zinc-800"
     >
       <div className="flex items-start gap-3">
         <span
@@ -37,7 +37,7 @@ export function BookingStep({
         <div className="min-w-0">
           <h2
             id={headingId}
-            className="text-xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50"
+            className="text-base font-extrabold tracking-tight text-[#1E3A5F] sm:text-lg dark:text-zinc-50"
           >
             <span className="sr-only">Bước {step}: </span>
             {title}

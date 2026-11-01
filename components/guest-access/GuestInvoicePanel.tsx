@@ -62,7 +62,7 @@ export function GuestInvoicePanel({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            className="flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
           >
             <FiX aria-hidden="true" className="h-4 w-4" />
             Đóng

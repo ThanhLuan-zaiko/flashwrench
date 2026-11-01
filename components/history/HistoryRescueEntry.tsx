@@ -9,12 +9,12 @@ import {
   FiLoader,
   FiRefreshCw,
 } from "react-icons/fi";
-import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { RESCUE_ISSUE_OPTIONS } from "@/components/rescue/rescue-constants";
 import {
   rescueStatusBadgeClass,
   rescueStatusLabel,
 } from "@/components/rescue/rescue-format";
+import { PageIntro } from "@/components/ui/PageIntro";
 import { useMyRescues, useMyRescuesRealtime } from "@/hooks/rescue";
 import { formatDateTime } from "@/lib/datetime/format";
 import { HistoryRescueDialog } from "./HistoryRescueDialog";
@@ -56,16 +56,15 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      <BigTypeHeader
-        level={1}
+      <PageIntro
         eyebrow="Lịch sử"
-        title="Cứu hộ khẩn cấp."
+        lines={["Cứu hộ khẩn cấp."]}
         subtitle="Mọi yêu cầu cứu hộ bạn đã gửi. Trạng thái tự cập nhật khi điều phối giao thợ."
       />
 
       <section
         aria-label="Danh sách cứu hộ"
-        className="flex min-w-0 flex-col rounded-2xl border border-zinc-200 bg-white p-4 md:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+        className="flex min-w-0 flex-col border-t border-zinc-200 pt-5 dark:border-zinc-800"
       >
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -118,7 +117,7 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
         )}
 
         {query.isSuccess && items.length === 0 && (
-          <div className="mt-4 flex flex-col items-center rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="mt-4 flex flex-col items-center py-8 text-center">
             <FiLifeBuoy
               aria-hidden="true"
               className="h-8 w-8 text-zinc-300 dark:text-zinc-700"
@@ -136,7 +135,7 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
         )}
 
         {items.length > 0 && (
-          <ul className="mt-3 divide-y divide-zinc-100 rounded-2xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+          <ul className="mt-3 divide-y divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
             {items.map((rescue) => (
               <li key={rescue.requestId}>
                 <button

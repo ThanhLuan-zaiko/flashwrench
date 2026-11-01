@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 type ProductsPagerProps = {
   page: number;
@@ -12,11 +12,15 @@ type ProductsPagerProps = {
   hrefFor: (page: number) => string;
 };
 
-const BUTTON_CLASSES =
-  "flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+const LINK_CLASSES =
+  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
 
-// Numeric summary + prev/next for the public products shelf. Pages are
-// real links so every /page/N URL stays shareable.
+const IDLE_CLASSES =
+  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+
+// Ruled pager under the shelf: range summary, then bold text links with arrows.
+// Pages are real links so every /page/N URL stays shareable. Hidden when the
+// whole list fits on one page.
 export function ProductsPager({
   page,
   pageCount,
@@ -25,57 +29,58 @@ export function ProductsPager({
   total,
   hrefFor,
 }: ProductsPagerProps) {
-  if (total === 0) return null;
+  if (total === 0 || pageCount <= 1) return null;
+  const hasPrev = page > 0;
+  const hasNext = page < pageCount - 1;
+
   return (
     <nav
-      data-reveal
       aria-label="Phân trang sản phẩm"
-      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950"
+      className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
-      <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-        Hiển thị{" "}
-        <span className="font-semibold">
-          {start}–{end}
-        </span>{" "}
-        trong <span className="font-semibold">{total}</span> sản phẩm
+      <p
+        aria-live="polite"
+        className="text-xs text-zinc-500 dark:text-zinc-400"
+      >
+        Hiển thị {start}–{end} trên {total} sản phẩm
       </p>
-      <div className="flex items-center gap-2">
-        {page <= 0 ? (
-          <button type="button" disabled className={BUTTON_CLASSES}>
-            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
-            Trước
-          </button>
-        ) : (
+      <div className="flex items-center gap-5">
+        {hasPrev ? (
           <Link
             href={hrefFor(page - 1)}
             scroll={false}
             prefetch
             aria-label="Trang trước"
-            className={BUTTON_CLASSES}
+            className={LINK_CLASSES}
           >
-            <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
+            <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
             Trước
           </Link>
-        )}
-        <span className="px-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-          {page + 1}/{pageCount}
-        </span>
-        {page >= pageCount - 1 ? (
-          <button type="button" disabled className={BUTTON_CLASSES}>
-            Sau
-            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
-          </button>
         ) : (
+          <span aria-disabled="true" className={IDLE_CLASSES}>
+            <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
+            Trước
+          </span>
+        )}
+        <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+          Trang {page + 1} trên {pageCount}
+        </p>
+        {hasNext ? (
           <Link
             href={hrefFor(page + 1)}
             scroll={false}
             prefetch
             aria-label="Trang sau"
-            className={BUTTON_CLASSES}
+            className={LINK_CLASSES}
           >
             Sau
-            <FiChevronRight aria-hidden="true" className="h-4 w-4" />
+            <FiArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
+        ) : (
+          <span aria-disabled="true" className={IDLE_CLASSES}>
+            Sau
+            <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+          </span>
         )}
       </div>
     </nav>

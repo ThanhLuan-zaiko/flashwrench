@@ -71,7 +71,7 @@ export function DownloadInvoiceButton({
       onClick={handleClick}
       disabled={pending}
       aria-label="Tải hóa đơn dạng PDF"
-      className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-zinc-900 px-3 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950 print:hidden"
+      className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 print:hidden"
     >
       <FiDownload aria-hidden="true" className="h-4 w-4" />
       {pending ? "Đang tạo PDF…" : "Tải PDF"}
