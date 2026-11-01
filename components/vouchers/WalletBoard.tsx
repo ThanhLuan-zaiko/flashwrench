@@ -31,7 +31,7 @@ export function WalletBoard() {
   if (wallets.isError) {
     return (
       <p className="text-sm text-zinc-600 dark:text-zinc-300">
-        Không tải được ví voucher. Vui lòng đăng nhập rồi thử lại.
+        Không tải được ví voucher. Vui lòng tải lại trang.
       </p>
     );
   }

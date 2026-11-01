@@ -65,7 +65,7 @@ export function BookingServiceGallery({ service }: BookingServiceGalleryProps) {
         Hình ảnh dịch vụ
       </p>
       {images.length === 0 ? (
-        <div className="flex h-36 items-center justify-center rounded-lg border border-dashed border-zinc-300 px-4 text-center text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+        <div className="flex h-36 items-center justify-center rounded-lg bg-zinc-100 px-4 text-center text-xs text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
           {service
             ? "Dịch vụ này chưa có hình ảnh minh họa."
             : "Chọn dịch vụ để xem hình ảnh minh họa."}

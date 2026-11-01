@@ -14,6 +14,17 @@ import { SHOWCASE_BUDGET_MS } from "./mechanic-showcase.service";
 
 export const LANDING_REVIEW_LIMIT = 6;
 export const LANDING_MIN_RATING = 4;
+// Quotes at least this long lead the chapter; one-word reviews ("Tốt") only
+// fill the remaining slots.
+export const LANDING_SUBSTANTIAL_QUOTE_CHARS = 24;
+
+function reviewText(row: TargetReviewRow): string {
+  return [row.title ?? "", row.body ?? ""].join(" ").trim();
+}
+
+function isSubstantial(row: TargetReviewRow): number {
+  return reviewText(row).length >= LANDING_SUBSTANTIAL_QUOTE_CHARS ? 1 : 0;
+}
 // Buffer over the limit: hidden rows, low ratings, duplicate projections
 // and unresolvable targets all shrink the scan before it reaches the page.
 export const LANDING_SCAN_LIMIT = 60;
@@ -35,9 +46,10 @@ type ResolvedTarget = {
   name: string;
 };
 
-// Keep only visible positive rows with real content, newest first. The
-// same review can project under several targets (booking review writes a
-// mechanic row and a service row), so dedupe by review id.
+// Keep only visible positive rows with real content: substantial quotes
+// first, newest first within each group. The same review can project under
+// several targets (booking review writes a mechanic row and a service row),
+// so dedupe by review id.
 export function pickLandingReviewRows(
   rows: TargetReviewRow[],
   limit = LANDING_REVIEW_LIMIT,
@@ -46,11 +58,11 @@ export function pickLandingReviewRows(
   return rows
     .filter((row) => row.is_hidden !== true)
     .filter((row) => (row.rating ?? 0) >= LANDING_MIN_RATING)
-    .filter(
-      (row) => [row.title ?? "", row.body ?? ""].join(" ").trim().length > 0,
-    )
+    .filter((row) => reviewText(row).length > 0)
     .sort(
-      (a, b) => (b.created_at?.getTime() ?? 0) - (a.created_at?.getTime() ?? 0),
+      (a, b) =>
+        isSubstantial(b) - isSubstantial(a) ||
+        (b.created_at?.getTime() ?? 0) - (a.created_at?.getTime() ?? 0),
     )
     .filter((row) => {
       if (seen.has(row.review_id)) return false;

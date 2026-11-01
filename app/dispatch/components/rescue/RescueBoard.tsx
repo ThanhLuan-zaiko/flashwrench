@@ -69,11 +69,11 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
 
       <div data-tour="disp-rescue-list">
         {board.isPending ? (
-          <p className="rounded-2xl border border-zinc-200 bg-white p-6 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
+          <p className="py-6 text-center text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
             Đang tải cứu hộ…
           </p>
         ) : board.isError ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="py-6 text-center">
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               Không tải được cứu hộ
             </p>

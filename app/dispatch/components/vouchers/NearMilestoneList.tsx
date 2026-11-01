@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { FiCopy } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import type { NearMilestoneEntry } from "@/lib/vouchers/auto-rule.types";
 import type { VoucherProgress } from "@/services/vouchers.api";
 import { describeNearMilestone } from "./auto-rule-format";
@@ -48,9 +50,10 @@ function MilestoneRow({ entry }: { entry: NearMilestoneEntry }) {
 export function NearMilestoneList({ progress }: { progress: VoucherProgress }) {
   if (progress.entries.length === 0) {
     return (
-      <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-        Chưa có khách nào sắp đạt mốc thưởng.
-      </p>
+      <StaffEmptyState
+        art={STAFF_ART.gift}
+        title="Chưa có khách sắp đạt mốc thưởng"
+      />
     );
   }
   return (

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { FiArrowRight, FiImage, FiMinus, FiPlus } from "react-icons/fi";
 import {
+  formatDuration,
   formatVnd,
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
+import { buildBookingHref } from "@/lib/auth/auth-redirect";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { ServiceGallery } from "./ServiceGallery";
 import { servicePhotos } from "./service-photos";
@@ -15,9 +17,30 @@ type HomeServiceRowProps = {
   onToggle: () => void;
 };
 
+const ROW_LINK =
+  "inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+
+type ServiceFact = { label: string; value: string };
+
+// Duration, where the job happens and the price unit for the open panel.
+function serviceFacts(service: ServiceItem): ServiceFact[] {
+  const places = [
+    service.isHomeSupported ? "Tại nhà" : null,
+    service.isEmergencySupported ? "Cứu hộ" : null,
+  ].filter(Boolean);
+  return [
+    { label: "Thời gian làm", value: formatDuration(service.durationMin) },
+    {
+      label: "Hình thức",
+      value: places.length > 0 ? places.join(" · ") : "Tại xưởng",
+    },
+    { label: "Cách tính giá", value: PRICE_UNIT_LABELS[service.priceUnit] },
+  ];
+}
+
 // One catalog service as an accordion row. The closed row shows the number,
-// name, starting price and a small photo. Opening it reveals a wide photo and
-// the description; the panel links to the service detail page.
+// name, starting price and a small photo. Opening it reveals a wide photo, the
+// description and the job facts, with links to book it or see all prices.
 export function HomeServiceRow({
   service,
   index,
@@ -87,20 +110,43 @@ export function HomeServiceRow({
         <div className="min-h-0 overflow-hidden">
           <div className="grid gap-6 pb-8 pl-12 sm:pl-14 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-10 md:pl-24">
             <ServiceGallery photos={servicePhotos(service)} active={open} />
-            <div className="flex flex-col justify-between gap-4">
-              {service.description ? (
-                <p className="line-clamp-4 text-sm text-zinc-600 md:text-base dark:text-zinc-400">
-                  {service.description}
-                </p>
-              ) : null}
-              <Link
-                href={`/services/${encodeURIComponent(service.slug)}`}
-                aria-label={`Xem dịch vụ ${service.name}`}
-                className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
-              >
-                Xem dịch vụ
-                <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-              </Link>
+            <div className="flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-4">
+                {service.description ? (
+                  <p className="line-clamp-4 text-sm text-zinc-600 md:text-base dark:text-zinc-400">
+                    {service.description}
+                  </p>
+                ) : null}
+                <dl className="divide-y divide-zinc-200 border-y border-zinc-200 text-sm dark:divide-zinc-800 dark:border-zinc-800">
+                  {serviceFacts(service).map((fact) => (
+                    <div
+                      key={fact.label}
+                      className="flex items-baseline justify-between gap-4 py-2.5"
+                    >
+                      <dt className="text-zinc-500 dark:text-zinc-400">
+                        {fact.label}
+                      </dt>
+                      <dd className="text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                        {fact.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              <div className="flex flex-wrap gap-x-6">
+                <Link
+                  href={buildBookingHref(service.id)}
+                  aria-label={`Đặt lịch ${service.name}`}
+                  className={ROW_LINK}
+                >
+                  Đặt lịch dịch vụ này
+                  <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+                </Link>
+                <Link href="/services" prefetch className={ROW_LINK}>
+                  Xem bảng giá
+                  <FiArrowRight aria-hidden="true" className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

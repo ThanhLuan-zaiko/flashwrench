@@ -52,10 +52,7 @@ export function PublicCatalogResults({
   return (
     <>
       {pending && (
-        <div
-          aria-busy="true"
-          className="grid grid-cols-1 md:grid-cols-2 md:gap-x-8"
-        >
+        <div aria-busy="true" className="flex flex-col gap-3">
           <p className="sr-only">Đang tải dịch vụ</p>
           {SKELETON_IDS.map((skeletonId) => (
             <div
@@ -94,7 +91,7 @@ export function PublicCatalogResults({
       )}
       {ready && view.total > 0 && (
         <div className="flex flex-col gap-4">
-          <ul className="grid grid-cols-1 md:grid-cols-2 md:gap-x-8">
+          <ul className="border-t border-zinc-200 dark:border-zinc-800">
             {view.pageItems.map((service) => (
               <li
                 key={service.id}

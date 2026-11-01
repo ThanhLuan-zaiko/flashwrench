@@ -2,10 +2,12 @@ import type {
   CreateCategoryInput,
   CreateServiceInput,
   ServiceByCategoryRow,
+  ServiceCategoryItem,
   ServiceCategoryRow,
   ServiceItem,
   ServiceRow,
 } from "@/lib/catalog/service-catalog.types";
+import { toCategoryItem } from "@/lib/catalog/service-categories.mapper";
 import { toServiceItem } from "@/lib/catalog/services.mapper";
 
 // Builders for the catalog suites. Each test derives its own rows instead
@@ -106,4 +108,10 @@ export function makeServiceByCategoryRow(
 
 export function makeServiceItem(overrides?: Partial<ServiceItem>): ServiceItem {
   return { ...toServiceItem(makeServiceRow()), ...overrides };
+}
+
+export function makeCategoryItem(
+  overrides?: Partial<ServiceCategoryItem>,
+): ServiceCategoryItem {
+  return { ...toCategoryItem(makeCategoryRow(), 0), ...overrides };
 }

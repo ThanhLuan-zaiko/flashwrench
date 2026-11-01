@@ -31,7 +31,7 @@ function BubbleShell({
       <div
         className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
           mine
-            ? "rounded-br-md bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+            ? "rounded-br-md bg-[#1E3A5F] text-white dark:bg-zinc-100 dark:text-zinc-900"
             : "rounded-bl-md bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
         }`}
       >

@@ -85,6 +85,15 @@ export function PublicCatalogFilter({
                 active ? ACTIVE_PILL_CLASSES : IDLE_PILL_CLASSES
               }`}
             >
+              {category.imageUrl ? (
+                // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
+                <img
+                  src={category.imageUrl}
+                  alt=""
+                  loading="lazy"
+                  className="mr-2 -ml-2 h-6 w-6 shrink-0 rounded-full bg-zinc-100 object-cover sm:-ml-2.5 sm:h-7 sm:w-7 dark:bg-zinc-900"
+                />
+              ) : null}
               {category.name}
             </Link>
           );

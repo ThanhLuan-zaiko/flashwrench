@@ -11,17 +11,17 @@ type BookingServiceMediaProps = {
 
 // In-flow preview panel inside step 1: the gallery and facts of the
 // service the customer last inspected. With several services the
-// per-line image toggles switch what this panel shows.
+// per-line image toggles switch what this panel shows. With no service picked
+// the panel is left out and the picker spans the step.
 export function BookingServiceMedia({
   service,
   multiple,
 }: BookingServiceMediaProps) {
+  if (!service) return null;
   return (
-    <div
-      className={`min-w-0 flex-col gap-3 ${service ? "flex" : "hidden md:flex"}`}
-    >
-      <BookingServiceGallery key={service?.id ?? "none"} service={service} />
-      {service && <BookingServiceSummary service={service} />}
+    <div className="flex min-w-0 flex-col gap-3">
+      <BookingServiceGallery key={service.id} service={service} />
+      <BookingServiceSummary service={service} />
       {multiple && (
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
           Bấm biểu tượng ảnh ở từng dịch vụ để xem ảnh và đánh giá tương ứng.

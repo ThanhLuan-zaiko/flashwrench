@@ -13,6 +13,9 @@ import {
 type ApplicableVoucherBadgeProps = {
   kind: VoucherKind;
   subtotal: number;
+  // List cards pass false: the guest login hint is shown once above the
+  // list (GuestOfferNote) instead of on every card.
+  guestHint?: boolean;
 };
 
 const LOADING_CLASSES =
@@ -26,11 +29,13 @@ const LINK_CLASSES =
 export function ApplicableVoucherBadge({
   kind,
   subtotal,
+  guestHint = true,
 }: ApplicableVoucherBadgeProps) {
   const me = useMe();
   const isAccount = me.isSuccess && me.data?.role === "customer";
   const wallets = useMyWallets(isAccount, { limit: 100 });
 
+  if (!guestHint && !isAccount && !me.isPending) return null;
   if (me.isPending || (isAccount && wallets.isPending)) {
     return (
       <p aria-busy="true" className={LOADING_CLASSES}>

@@ -22,11 +22,11 @@ export function AutoRulesSection() {
       </header>
       <AutoRuleForm />
       {rules.isPending ? (
-        <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:border-zinc-800 dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
           Đang tải quy tắc…
         </p>
       ) : rules.isError ? (
-        <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-500 dark:text-zinc-400">
           Không tải được quy tắc.
         </p>
       ) : (
@@ -36,11 +36,11 @@ export function AutoRulesSection() {
         Khách sắp đạt mốc
       </h3>
       {progress.isPending ? (
-        <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:border-zinc-800 dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
           Đang tải tiến độ…
         </p>
       ) : progress.isError ? (
-        <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-500 dark:text-zinc-400">
           Không tải được tiến độ khách hàng.
         </p>
       ) : (

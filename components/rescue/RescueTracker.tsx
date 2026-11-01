@@ -92,7 +92,7 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
                 {done ? (
                   <FiCheck className="h-3 w-3" />
                 ) : active ? (
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-900 motion-safe:animate-pulse dark:bg-white" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse dark:bg-white" />
                 ) : null}
               </span>
               <span

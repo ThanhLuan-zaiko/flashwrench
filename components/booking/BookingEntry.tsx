@@ -106,23 +106,17 @@ export function BookingEntry({
           }
         />
       </div>
-      <div data-reveal className="hidden sm:flex">
-        <TourButton
-          tour={BOOKING_TOUR_NAME}
-          ariaLabel="Bắt đầu hướng dẫn đặt lịch"
-        />
-      </div>
       <section
         aria-label={guest ? "Đặt lịch với tư cách khách" : "Tài khoản đặt lịch"}
         data-reveal
-        className="flex flex-col gap-3 border-b border-zinc-200 pb-4 max-sm:hidden sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"
+        className="flex flex-col gap-3 border-y border-zinc-200 py-4 max-sm:hidden lg:flex-row lg:items-center lg:justify-between dark:border-zinc-800"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-3">
           <FiUser
             aria-hidden="true"
-            className="h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200"
+            className="mt-0.5 h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200"
           />
-          <div>
+          <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               {guest ? "Đặt lịch với tư cách khách" : userName}
             </p>
@@ -131,27 +125,31 @@ export function BookingEntry({
                 ? "Sau khi đặt bạn sẽ nhận được link theo dõi tiến trình."
                 : (userContact ?? "")}
             </p>
+            <PromoTeaser audience="booking" />
           </div>
         </div>
-        {guest ? (
-          <Link
-            href={buildLoginHref(buildBookingHref(current.serviceIds))}
-            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
-          >
-            Đăng nhập
-          </Link>
-        ) : (
-          <Link
-            href="/account"
-            className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
-          >
-            Quản lý tài khoản
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <TourButton
+            tour={BOOKING_TOUR_NAME}
+            ariaLabel="Bắt đầu hướng dẫn đặt lịch"
+          />
+          {guest ? (
+            <Link
+              href={buildLoginHref(buildBookingHref(current.serviceIds))}
+              className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+            >
+              Đăng nhập
+            </Link>
+          ) : (
+            <Link
+              href="/account"
+              className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+            >
+              Quản lý tài khoản
+            </Link>
+          )}
+        </div>
       </section>
-      <div className="hidden sm:block">
-        <PromoTeaser audience="booking" />
-      </div>
 
       {(catalog.isPending || (!guest && lastBooking.isPending)) && (
         <div aria-busy="true" className="flex flex-col gap-3">

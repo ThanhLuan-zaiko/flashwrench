@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CampaignUsageChart } from "@/components/charts/CampaignUsageChart";
 import { PromoCarousel } from "@/components/promotions/PromoCarousel";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
 import { STAFF_ART } from "@/components/staff/staff-art";
 import { DropdownSelect } from "@/components/ui/DropdownSelect";
@@ -132,17 +133,18 @@ export function DispatchVoucherBoard() {
           trước khi phát tay.
         </p>
         {publicCampaigns.isPending ? (
-          <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:border-zinc-800 dark:text-zinc-400">
+          <p className="py-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
             Đang tải ưu đãi công khai…
           </p>
         ) : publicCampaigns.isError ? (
-          <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+          <p className="py-4 text-sm text-zinc-500 dark:text-zinc-400">
             Không tải được ưu đãi công khai.
           </p>
         ) : visible.length === 0 ? (
-          <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-            Chưa có ưu đãi nào đang chạy cho khách.
-          </p>
+          <StaffEmptyState
+            art={STAFF_ART.gift}
+            title="Chưa có ưu đãi nào đang chạy cho khách"
+          />
         ) : (
           <PromoCarousel campaigns={visible} />
         )}

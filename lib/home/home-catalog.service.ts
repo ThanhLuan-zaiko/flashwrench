@@ -4,15 +4,22 @@
 // hides its section instead of failing the page.
 
 import { cache } from "react";
+import { countServicesByCategory } from "@/lib/catalog/catalog-counts";
 import { listPublicCatalog } from "@/lib/catalog/public-catalog.service";
-import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import type {
+  ServiceCategoryItem,
+  ServiceItem,
+} from "@/lib/catalog/service-catalog.types";
 import type { PartItem } from "@/lib/parts/parts.types";
 import { listPublicParts } from "@/lib/parts/public-parts.service";
 import { deadlineAfter } from "./budget";
 import { SHOWCASE_BUDGET_MS } from "./mechanic-showcase.service";
+import { type PriceRange, priceRangeOf } from "./price-terms";
 
 export const HOME_SERVICE_LIMIT = 4;
 export const HOME_PRODUCT_LIMIT = 8;
+// Keeps the categories chapter within the chapter-motion trigger budget.
+export const HOME_CATEGORY_LIMIT = 6;
 export const AUTH_SERVICE_LIMIT = 5;
 // Upper bound on the hero carousel so its rotation stays short however large
 // the catalog grows.
@@ -36,6 +43,30 @@ export function pickHomeServices(
       if (imageA !== imageB) return imageB - imageA;
       return a.name.localeCompare(b.name, "vi");
     })
+    .slice(0, Math.max(0, limit));
+}
+
+// Categories for the home chapter: live ones that hold at least one bookable
+// service, in the admin sort order (name breaks ties). serviceCount is
+// replaced by the live count so the row never promises hidden services.
+export function pickHomeCategories(
+  categories: ServiceCategoryItem[],
+  services: ServiceItem[],
+  limit = HOME_CATEGORY_LIMIT,
+): ServiceCategoryItem[] {
+  const counts = countServicesByCategory(
+    services.filter((service) => service.isActive && !service.isDeleted),
+  );
+  return categories
+    .filter((category) => category.isActive && !category.isDeleted)
+    .map((category) => ({
+      ...category,
+      serviceCount: counts.get(category.id) ?? 0,
+    }))
+    .filter((category) => category.serviceCount > 0)
+    .sort(
+      (a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, "vi"),
+    )
     .slice(0, Math.max(0, limit));
 }
 
@@ -89,6 +120,28 @@ export function pickHomeProducts(
 async function loadHomeServices(limit: number): Promise<ServiceItem[]> {
   const result = await getPublicCatalog();
   return result.ok ? pickHomeServices(result.data.services, limit) : [];
+}
+
+async function loadHomeCategories(
+  limit: number,
+): Promise<ServiceCategoryItem[]> {
+  const result = await getPublicCatalog();
+  return result.ok
+    ? pickHomeCategories(result.data.categories, result.data.services, limit)
+    : [];
+}
+
+export async function listHomeCategories(
+  limit = HOME_CATEGORY_LIMIT,
+): Promise<ServiceCategoryItem[]> {
+  try {
+    return await Promise.race([
+      loadHomeCategories(limit),
+      deadlineAfter(SHOWCASE_BUDGET_MS, "Home categories"),
+    ]);
+  } catch {
+    return [];
+  }
 }
 
 async function loadHeroServices(limit: number): Promise<ServiceItem[]> {
@@ -151,5 +204,22 @@ export async function listHomeProducts(
     ]);
   } catch {
     return [];
+  }
+}
+
+async function loadHomePriceRange(): Promise<PriceRange | null> {
+  const result = await getPublicCatalog();
+  return result.ok ? priceRangeOf(result.data.services) : null;
+}
+
+// Catalog-wide price range for the price chapter (not just the home rows).
+export async function listHomePriceRange(): Promise<PriceRange | null> {
+  try {
+    return await Promise.race([
+      loadHomePriceRange(),
+      deadlineAfter(SHOWCASE_BUDGET_MS, "Home price range"),
+    ]);
+  } catch {
+    return null;
   }
 }

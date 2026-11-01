@@ -37,7 +37,7 @@ export function TrackStepper({
                   aria-hidden="true"
                   className={`absolute top-5 -bottom-4 left-[9px] w-0.5 ${
                     done
-                      ? "bg-zinc-900 dark:bg-white"
+                      ? "bg-[#1E3A5F] dark:bg-white"
                       : "bg-zinc-200 dark:bg-zinc-800"
                   }`}
                 />
@@ -46,7 +46,7 @@ export function TrackStepper({
                 aria-hidden="true"
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                   done
-                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                    ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-white dark:bg-white dark:text-zinc-900"
                     : active
                       ? "border-zinc-900 dark:border-white"
                       : "border-zinc-300 dark:border-zinc-700"
@@ -55,7 +55,7 @@ export function TrackStepper({
                 {done ? (
                   <FiCheck className="h-3 w-3" />
                 ) : active ? (
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-900 motion-safe:animate-pulse dark:bg-white" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse dark:bg-white" />
                 ) : null}
               </span>
               <span

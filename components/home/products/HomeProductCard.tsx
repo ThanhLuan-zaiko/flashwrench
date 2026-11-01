@@ -8,11 +8,17 @@ import type { PartItem } from "@/lib/parts/parts.types";
 // page surface with no border, then the price, name and brand. The product
 // photo is contained so packaging is never cropped. The whole tile links to
 // the product detail page.
-export function HomeProductCard({ part }: { part: PartItem }) {
+export function HomeProductCard({
+  part,
+  phoneHidden = false,
+}: {
+  part: PartItem;
+  phoneHidden?: boolean;
+}) {
   const discount = discountPercent(part.price, part.comparePrice ?? 0);
 
   return (
-    <li className="min-w-0">
+    <li className={`min-w-0 ${phoneHidden ? "hidden sm:block" : ""}`}>
       <Link
         href={`/products/${encodeURIComponent(part.slug)}`}
         data-chapter-row

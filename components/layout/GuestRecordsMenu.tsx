@@ -49,7 +49,7 @@ export function GuestRecordsMenu({ onNavy = false }: { onNavy?: boolean }) {
         {activeCount > 0 && (
           <span
             aria-hidden="true"
-            className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900"
+            className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1E3A5F] px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900"
           >
             {activeCount > 9 ? "9+" : activeCount}
           </span>

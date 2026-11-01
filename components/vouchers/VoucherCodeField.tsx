@@ -19,7 +19,7 @@ type VoucherCodeFieldProps = {
 };
 
 const ACTION_CLASS =
-  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200";
+  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200";
 
 // Typed redeem-code input shared by /booking and /checkout. Guests see a
 // login link instead of the apply button — the code only works for

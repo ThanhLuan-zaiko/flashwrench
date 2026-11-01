@@ -46,7 +46,8 @@ const TEXT_ACTION =
 
 // Product tile on the page surface, as on the home parts chapter: the photo sits
 // contained on white, then the price above the name. The only solid button is
-// add-to-cart; the other actions are plain text links.
+// add-to-cart (outlined, so a full grid stays light); quick view is a text
+// link and the photo and name open the detail page.
 export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
   const discount = discountPercent(part.price, part.comparePrice ?? 0);
   const href = `/products/${encodeURIComponent(part.slug)}`;
@@ -108,25 +109,20 @@ export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
           {stockLabel(part)} · SKU {part.sku}
         </p>
         <div className="mt-auto flex flex-col gap-1 pt-2">
-          <ApplicableVoucherBadge kind="order" subtotal={part.price} />
-          <AddToCartButton part={part} />
-          <div className="flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={onPreview}
-              aria-label={`Xem nhanh chi tiết ${part.name}`}
-              className={TEXT_ACTION}
-            >
-              Xem nhanh
-            </button>
-            <Link
-              href={href}
-              aria-label={`Xem chi tiết sản phẩm ${part.name}`}
-              className={TEXT_ACTION}
-            >
-              Chi tiết
-            </Link>
-          </div>
+          <ApplicableVoucherBadge
+            kind="order"
+            subtotal={part.price}
+            guestHint={false}
+          />
+          <AddToCartButton part={part} emphasis="outline" />
+          <button
+            type="button"
+            onClick={onPreview}
+            aria-label={`Xem nhanh chi tiết ${part.name}`}
+            className={TEXT_ACTION}
+          >
+            Xem nhanh
+          </button>
         </div>
       </div>
     </article>

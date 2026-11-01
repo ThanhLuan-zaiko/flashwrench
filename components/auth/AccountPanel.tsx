@@ -97,7 +97,7 @@ export function AccountPanel() {
         <button
           type="button"
           onClick={goLogin}
-          className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="rounded-lg bg-[#1E3A5F] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#0F1E33] motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           Đến trang đăng nhập
         </button>
@@ -169,7 +169,7 @@ export function AccountPanel() {
             type="button"
             disabled={busy}
             onClick={handleLogoutAll}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1E3A5F] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#0F1E33] disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             <FiShield aria-hidden="true" className="h-4 w-4" />
             {logoutAll.isPending ? "Đang xử lý…" : "Đăng xuất tất cả thiết bị"}

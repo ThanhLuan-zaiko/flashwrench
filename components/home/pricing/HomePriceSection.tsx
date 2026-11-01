@@ -1,29 +1,63 @@
 "use client";
 
 import { useRef } from "react";
-import { FiImage } from "react-icons/fi";
-import {
-  formatVnd,
-  PRICE_UNIT_LABELS,
-} from "@/app/admin/components/services/catalog-format";
-import { useChapterExtras } from "@/hooks/useChapterExtras";
+import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { useChapterMotion } from "@/hooks/useChapterMotion";
-import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import type { PriceRange } from "@/lib/home/price-terms";
 import { MaskLines } from "../MaskLines";
 
-const PRICE_POINTS = [
-  "Báo giá trước khi xác nhận",
-  "Không phí ẩn",
-  "Thanh toán sau khi nghiệm thu",
-];
+type PriceTerm = { term: string; detail: string };
 
-// Price chapter: the heading and promises on the left, one ruled row per live
-// catalog service on the right, each with its photo. The promises always
-// show; the list hides when the catalog is empty.
-export function HomePriceSection({ services }: { services: ServiceItem[] }) {
+type HomePriceSectionProps = {
+  range: PriceRange | null;
+  cancelCutoffHours: number | null;
+};
+
+// What makes up the bill, one ruled row per term. The service list itself is
+// the chapter above, so this chapter states the terms instead: the catalog
+// price range, travel, parts, the cancel window from the admin booking policy
+// and when payment happens. Rows without data drop out.
+function priceTerms({
+  range,
+  cancelCutoffHours,
+}: HomePriceSectionProps): PriceTerm[] {
+  const terms: (PriceTerm | null)[] = [
+    range
+      ? {
+          term: "Tiền công",
+          detail:
+            range.min === range.max
+              ? `${formatVnd(range.min)} theo bảng giá từng dịch vụ.`
+              : `Từ ${formatVnd(range.min)} đến ${formatVnd(range.max)}, theo bảng giá từng dịch vụ.`,
+        }
+      : null,
+    {
+      term: "Phí di chuyển",
+      detail: "Đã gồm trong giá dịch vụ khi thợ đến trong khu vực nội thành.",
+    },
+    {
+      term: "Phụ tùng",
+      detail: "Tính theo giá thị trường. Thợ báo giá trước khi thay.",
+    },
+    cancelCutoffHours
+      ? {
+          term: "Hủy lịch",
+          detail: `Hủy trên trang lịch sử trước giờ hẹn ít nhất ${cancelCutoffHours} giờ.`,
+        }
+      : null,
+    {
+      term: "Thanh toán",
+      detail: "Sau khi bạn kiểm tra và nghiệm thu công việc.",
+    },
+  ];
+  return terms.filter((term): term is PriceTerm => term !== null);
+}
+
+// Price chapter: the heading on the left, the billing terms as ruled rows on
+// the right.
+export function HomePriceSection(props: HomePriceSectionProps) {
   const rootRef = useRef<HTMLElement>(null);
   useChapterMotion(rootRef);
-  useChapterExtras(rootRef);
 
   return (
     <section
@@ -39,7 +73,7 @@ export function HomePriceSection({ services }: { services: ServiceItem[] }) {
           className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
         />
       </div>
-      <div className="grid w-full gap-10 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-10">
+      <div className="grid w-full gap-8 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-10">
         <div>
           <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             Bảng giá
@@ -48,68 +82,33 @@ export function HomePriceSection({ services }: { services: ServiceItem[] }) {
             lines={["Giá niêm yết.", "Không phí ẩn."]}
             className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
           />
-          <p className="mt-4 text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
-            Phí di chuyển đã bao gồm trong khu vực nội thành. Phụ tùng tính theo
-            giá thị trường, báo trước khi thay.
+          <p className="mt-4 max-w-md text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
+            Giá từng dịch vụ có trong mục Dịch vụ. Các khoản dưới đây áp dụng
+            cho mọi lịch hẹn.
           </p>
-          <ul className="mt-6 divide-y divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-            {PRICE_POINTS.map((point) => (
-              <li
-                key={point}
-                data-chapter-row
-                className="py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300"
-              >
-                {point}
-              </li>
-            ))}
-          </ul>
         </div>
-        {services.length > 0 && (
-          <ul className="self-start">
-            {services.map((service) => (
-              <li key={service.id}>
-                <span
-                  data-rule
-                  aria-hidden="true"
-                  className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
-                />
-                <div
-                  data-chapter-row
-                  className="flex items-center gap-4 py-4 md:gap-6"
-                >
-                  <span className="block h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-100 md:h-20 md:w-32 dark:bg-zinc-900">
-                    {service.imageUrl ? (
-                      // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
-                      <img
-                        src={service.imageUrl}
-                        alt=""
-                        loading="lazy"
-                        data-chapter-photo
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-700">
-                        <FiImage aria-hidden="true" className="h-6 w-6" />
-                      </span>
-                    )}
-                  </span>
-                  <span className="min-w-0 flex-1 text-sm font-semibold text-zinc-900 sm:text-base dark:text-zinc-50">
-                    {service.name}
-                  </span>
-                  <span className="shrink-0 text-right text-sm font-bold text-zinc-900 sm:text-lg dark:text-zinc-50">
-                    từ{" "}
-                    <span data-count-to={service.basePrice}>
-                      {formatVnd(service.basePrice)}
-                    </span>
-                    <span className="block text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
-                      {PRICE_UNIT_LABELS[service.priceUnit]}
-                    </span>
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <dl className="self-start border-b border-zinc-200 dark:border-zinc-800">
+          {priceTerms(props).map((item) => (
+            <div key={item.term}>
+              <span
+                data-rule
+                aria-hidden="true"
+                className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
+              />
+              <div
+                data-chapter-row
+                className="grid gap-1 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 md:py-5"
+              >
+                <dt className="text-base font-bold text-zinc-900 md:text-lg dark:text-zinc-50">
+                  {item.term}
+                </dt>
+                <dd className="text-sm text-zinc-600 md:text-base dark:text-zinc-400">
+                  {item.detail}
+                </dd>
+              </div>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

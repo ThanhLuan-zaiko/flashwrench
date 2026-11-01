@@ -10,4 +10,6 @@ export const CHAT_PANEL_CLASSES = `fixed bottom-24 right-4 ${CHAT_FLOAT_Z} flex 
 // A docked bottom action bar (marked `data-dock-bar`) lifts the launcher
 // above it so the bar's primary button is never covered. Bars marked
 // `data-dock-bar="phone"` are hidden from lg up, so the lift stops there.
-export const CHAT_FAB_CLASSES = `fixed bottom-5 right-5 [body:has([data-dock-bar])_&]:bottom-24 sm:[body:has([data-dock-bar])_&]:bottom-44 lg:[body:has([data-dock-bar=phone])_&]:bottom-5 ${CHAT_FLOAT_Z} flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900`;
+// Phones get a 48px launcher closer to the corner so it covers less of the
+// row it floats over.
+export const CHAT_FAB_CLASSES = `fixed bottom-4 right-4 sm:bottom-5 sm:right-5 [body:has([data-dock-bar])_&]:bottom-24 sm:[body:has([data-dock-bar])_&]:bottom-44 lg:[body:has([data-dock-bar=phone])_&]:bottom-5 ${CHAT_FLOAT_Z} flex h-12 w-12 items-center justify-center rounded-full bg-[#1E3A5F] sm:h-14 sm:w-14 text-white shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900`;

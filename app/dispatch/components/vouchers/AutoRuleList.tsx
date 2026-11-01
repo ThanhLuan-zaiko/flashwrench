@@ -1,6 +1,8 @@
 "use client";
 
 import { FiZap } from "react-icons/fi";
+import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
+import { STAFF_ART } from "@/components/staff/staff-art";
 import { useToggleAutoRule } from "@/hooks/useVouchers";
 import type { VoucherAutoRule } from "@/lib/vouchers/auto-rule.types";
 import { describeRule } from "./auto-rule-format";
@@ -10,10 +12,11 @@ export function AutoRuleList({ rules }: { rules: VoucherAutoRule[] }) {
 
   if (rules.length === 0) {
     return (
-      <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-        Chưa có quy tắc tự động nào. Tạo quy tắc để voucher tự phát khi khách
-        đạt điều kiện.
-      </p>
+      <StaffEmptyState
+        art={STAFF_ART.clipboard}
+        title="Chưa có quy tắc tự động"
+        hint="Tạo quy tắc để voucher tự phát khi khách đạt điều kiện."
+      />
     );
   }
 

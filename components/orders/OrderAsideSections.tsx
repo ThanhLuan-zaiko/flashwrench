@@ -61,7 +61,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
                 aria-hidden="true"
                 className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
                   index === order.history.length - 1
-                    ? "bg-zinc-900 dark:bg-white"
+                    ? "bg-[#1E3A5F] dark:bg-white"
                     : "border border-zinc-300 dark:border-zinc-700"
                 }`}
               />
@@ -127,7 +127,7 @@ export function OrderCancelSection({
               type="button"
               disabled={cancelOrder.isPending}
               onClick={cancel}
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               {cancelOrder.isPending && (
                 <FiLoader

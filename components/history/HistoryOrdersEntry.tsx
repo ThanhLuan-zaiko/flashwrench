@@ -111,7 +111,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
               </p>
               <Link
                 href="/products"
-                className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 Mua sắm ngay
               </Link>

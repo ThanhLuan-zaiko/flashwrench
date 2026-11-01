@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { PartCategoryItem } from "@/lib/parts/parts.types";
+import { GuestOfferNote } from "../vouchers/GuestOfferNote";
 import { ProductFilter } from "./ProductFilter";
 import { ProductsResults } from "./ProductsResults";
 import {
@@ -58,7 +59,10 @@ export function ProductsShelf({
         searchId={searchId}
         onQuery={onQuery}
       />
-      <div className="mt-8 md:mt-10">
+      <div className="mt-6">
+        <GuestOfferNote next="/products" />
+      </div>
+      <div className="mt-2 md:mt-4">
         {status === "pending" && <ProductsSkeleton />}
         {status === "error" && <ProductsErrorNotice onRetry={onRetry} />}
         {status === "success" && unknownSlug && <ProductsUnknownCategory />}

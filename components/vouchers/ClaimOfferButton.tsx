@@ -49,7 +49,7 @@ export function ClaimOfferButton({
             },
           );
         }}
-        className="flex min-h-[44px] items-center justify-center rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold whitespace-nowrap text-white transition-colors duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-3 py-2 text-xs font-semibold whitespace-nowrap text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
         {claim.isPending ? "Đang nhận…" : "Nhận & áp dụng"}
       </button>

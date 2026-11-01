@@ -16,7 +16,8 @@ import { ProductReviewComposer } from "./ProductReviewComposer";
 
 // Public product feedback: the review feed (cursor-paged, with the
 // rating summary), the buyer-only star rating entry and the public comment
-// thread for the part. The review page lives in ?rv_page=N so the parent
+// thread for the part, side by side from lg so a short feed does not leave
+// the row half empty. The review page lives in ?rv_page=N so the parent
 // product URL stays untouched.
 function ProductReviewsSectionInner({
   slug,
@@ -50,58 +51,62 @@ function ProductReviewsSectionInner({
     >
       <ProductChapterHead title="Đánh giá từ khách hàng" />
 
-      {query.isPending && (
-        <p
-          aria-busy="true"
-          className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
-        >
-          <FiLoader
-            aria-hidden="true"
-            className="h-4 w-4 motion-safe:animate-spin"
-          />
-          Đang tải đánh giá…
-        </p>
-      )}
-      {query.isError && (
-        <div
-          role="alert"
-          className="flex items-center justify-between gap-3 rounded-xl border border-red-300 bg-red-50 p-3 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
-        >
-          Không tải được đánh giá.
-          <button
-            type="button"
-            onClick={() => void query.refetch()}
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
-          >
-            <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
-            Thử lại
-          </button>
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="flex min-w-0 flex-col gap-8">
+          {query.isPending && (
+            <p
+              aria-busy="true"
+              className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+            >
+              <FiLoader
+                aria-hidden="true"
+                className="h-4 w-4 motion-safe:animate-spin"
+              />
+              Đang tải đánh giá…
+            </p>
+          )}
+          {query.isError && (
+            <div
+              role="alert"
+              className="flex items-center justify-between gap-3 rounded-xl border border-red-300 bg-red-50 p-3 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+            >
+              Không tải được đánh giá.
+              <button
+                type="button"
+                onClick={() => void query.refetch()}
+                className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+              >
+                <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
+                Thử lại
+              </button>
+            </div>
+          )}
+
+          {reviews && (
+            <ReviewList
+              items={reviews.items}
+              ratingAvg={reviews.ratingAvg}
+              ratingCount={reviews.ratingCount}
+              canPrev={pager.canPrev}
+              canNext={Boolean(reviews.nextCursor)}
+              prevHref={pager.prevHref}
+              nextHref={pager.nextHref}
+              onNextClick={() => {
+                if (reviews.nextCursor) pager.recordNext(reviews.nextCursor);
+              }}
+              moderation={{ targetType: "part", targetId: partId }}
+            />
+          )}
+
+          <ProductReviewComposer slug={slug} partName={partName} />
         </div>
-      )}
-
-      {reviews && (
-        <ReviewList
-          items={reviews.items}
-          ratingAvg={reviews.ratingAvg}
-          ratingCount={reviews.ratingCount}
-          canPrev={pager.canPrev}
-          canNext={Boolean(reviews.nextCursor)}
-          prevHref={pager.prevHref}
-          nextHref={pager.nextHref}
-          onNextClick={() => {
-            if (reviews.nextCursor) pager.recordNext(reviews.nextCursor);
-          }}
-          moderation={{ targetType: "part", targetId: partId }}
-        />
-      )}
-
-      <div className="flex flex-col gap-8">
-        <ProductReviewComposer slug={slug} partName={partName} />
-        <CommentSection
-          targetType="part"
-          targetId={partId}
-          title="Hỏi đáp & bình luận"
-        />
+        <div className="min-w-0">
+          <CommentSection
+            targetType="part"
+            targetId={partId}
+            title="Hỏi đáp & bình luận"
+          />
+        </div>
       </div>
     </section>
   );

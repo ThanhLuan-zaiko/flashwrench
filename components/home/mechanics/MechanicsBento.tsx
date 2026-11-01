@@ -8,6 +8,8 @@ import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { ShowcaseMechanic } from "@/lib/home/mechanic-showcase.service";
 import { MarqueeTrack } from "../MarqueeTrack";
 import { MaskLines } from "../MaskLines";
+import { shouldDrift } from "../marquee-items";
+import { MechanicRow } from "./MechanicRow";
 import { MechanicTile } from "./MechanicTile";
 
 // Trusted mechanics chapter. Data is fetched server-side; when no verified
@@ -34,14 +36,16 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
             />
           </div>
           <dl className="flex gap-8 text-zinc-900 dark:text-zinc-50">
-            <div>
-              <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                Điểm trung bình
-              </dt>
-              <dd className="text-2xl font-bold tracking-tight">
-                {avg > 0 ? avg.toFixed(1) : "—"}
-              </dd>
-            </div>
+            {avg > 0 ? (
+              <div>
+                <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                  Điểm trung bình
+                </dt>
+                <dd className="text-2xl font-bold tracking-tight">
+                  {avg.toFixed(1)}
+                </dd>
+              </div>
+            ) : null}
             <div>
               <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 Đơn hoàn thành
@@ -50,25 +54,35 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
             </div>
           </dl>
         </div>
-        <span
-          data-rule
-          aria-hidden="true"
-          className="mt-6 block h-px origin-left bg-zinc-200 md:mt-8 dark:bg-zinc-800"
-        />
-        <div className="mt-6 flex flex-col gap-8 md:mt-8">
-          <MarqueeTrack
-            items={items}
-            label="Thợ uy tín"
-            renderItem={(item) => <MechanicTile item={item} />}
-          />
-          <MarqueeTrack
-            items={[...items].reverse()}
-            label="Thợ uy tín, cuộn ngược"
-            direction="right"
-            decorative
-            renderItem={(item) => <MechanicTile item={item} />}
-          />
-        </div>
+        {shouldDrift(items.length) ? (
+          <>
+            <span
+              data-rule
+              aria-hidden="true"
+              className="mt-6 block h-px origin-left bg-zinc-200 md:mt-8 dark:bg-zinc-800"
+            />
+            <div className="mt-6 flex flex-col gap-8 md:mt-8">
+              <MarqueeTrack
+                items={items}
+                label="Thợ uy tín"
+                renderItem={(item) => <MechanicTile item={item} />}
+              />
+              <MarqueeTrack
+                items={[...items].reverse()}
+                label="Thợ uy tín, cuộn ngược"
+                direction="right"
+                decorative
+                renderItem={(item) => <MechanicTile item={item} />}
+              />
+            </div>
+          </>
+        ) : (
+          <ol aria-label="Thợ uy tín" className="mt-6 md:mt-8">
+            {items.map((item) => (
+              <MechanicRow key={item.id} item={item} />
+            ))}
+          </ol>
+        )}
         <div data-chapter-row className="mt-8">
           <SmartCtaLink
             guestHref="/booking"

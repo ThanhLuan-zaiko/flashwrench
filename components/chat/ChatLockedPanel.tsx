@@ -22,7 +22,7 @@ export function ChatLockedPanel() {
       <div className="mt-1 flex items-center gap-2">
         <Link
           href="/login"
-          className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition-transform duration-150 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-full bg-[#1E3A5F] px-5 py-2 text-sm font-medium text-white transition-transform duration-150 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
         >
           Đăng nhập
         </Link>

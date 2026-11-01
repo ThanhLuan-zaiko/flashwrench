@@ -60,7 +60,9 @@ export function BookingServiceSection({
       title={`Dịch vụ đã chọn (${serviceIds.length})`}
       description={`Cùng một xe, một địa chỉ và một khung giờ. Tối đa ${BOOKING_MAX_SERVICES} dịch vụ.`}
     >
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start">
+      <div
+        className={`grid grid-cols-1 gap-4 md:items-start ${activeService ? "md:grid-cols-2" : ""}`}
+      >
         <div className="flex min-w-0 flex-col gap-3">
           {serviceIds.length > 0 && (
             <SelectedServiceLines

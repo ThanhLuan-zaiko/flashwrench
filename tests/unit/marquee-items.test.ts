@@ -1,5 +1,20 @@
 import { describe, expect, test } from "bun:test";
-import { marqueeRow } from "@/components/home/marquee-items";
+import {
+  MARQUEE_DRIFT_MIN,
+  marqueeRow,
+  shouldDrift,
+} from "@/components/home/marquee-items";
+
+describe("shouldDrift", () => {
+  test("keeps short lists static and drifts from the threshold up", () => {
+    expect(MARQUEE_DRIFT_MIN).toBe(4);
+    expect(shouldDrift(0)).toBe(false);
+    expect(shouldDrift(1)).toBe(false);
+    expect(shouldDrift(3)).toBe(false);
+    expect(shouldDrift(4)).toBe(true);
+    expect(shouldDrift(2, 2)).toBe(true);
+  });
+});
 
 describe("marqueeRow", () => {
   test("keeps a long list as one copy in order", () => {

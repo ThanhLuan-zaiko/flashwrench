@@ -33,7 +33,7 @@ export function CartLink({ onNavy = false }: { onNavy?: boolean }) {
           className={
             onNavy
               ? "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-[#1E3A5F]"
-              : "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900"
+              : "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1E3A5F] px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900"
           }
         >
           {count > 99 ? "99+" : count}

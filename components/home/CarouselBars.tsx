@@ -26,7 +26,7 @@ export function CarouselBars({
           className="flex min-h-11 flex-1 items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
         >
           <span
-            className={`block h-0.5 w-full ${position === current ? "bg-zinc-900 dark:bg-zinc-50" : "bg-zinc-300 dark:bg-zinc-700"}`}
+            className={`block h-0.5 w-full ${position === current ? "bg-[#1E3A5F] dark:bg-zinc-50" : "bg-zinc-300 dark:bg-zinc-700"}`}
           />
         </button>
       ))}

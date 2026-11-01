@@ -8,6 +8,9 @@ import type { PartItem } from "@/lib/parts/parts.types";
 import { MaskLines } from "../MaskLines";
 import { HomeProductCard } from "./HomeProductCard";
 
+// Phones show the first two rows only; the full list is one link away.
+const HOME_PRODUCT_PHONE_LIMIT = 4;
+
 // Parts chapter: real in-stock parts as large photo tiles on the page
 // surface. Hidden entirely when the catalog has nothing to show.
 export function HomeProductsBento({ items }: { items: PartItem[] }) {
@@ -42,8 +45,12 @@ export function HomeProductsBento({ items }: { items: PartItem[] }) {
           className="mt-6 block h-px origin-left bg-zinc-200 md:mt-8 dark:bg-zinc-800"
         />
         <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 md:mt-8 lg:grid-cols-4">
-          {items.map((part) => (
-            <HomeProductCard key={part.id} part={part} />
+          {items.map((part, index) => (
+            <HomeProductCard
+              key={part.id}
+              part={part}
+              phoneHidden={index >= HOME_PRODUCT_PHONE_LIMIT}
+            />
           ))}
         </ul>
       </div>

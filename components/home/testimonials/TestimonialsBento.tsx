@@ -5,7 +5,9 @@ import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { LandingReview } from "@/lib/home/landing-reviews.service";
 import { MarqueeTrack } from "../MarqueeTrack";
 import { MaskLines } from "../MaskLines";
+import { shouldDrift } from "../marquee-items";
 import { RealReviewCard } from "./RealReviewCard";
+import { ReviewRow } from "./ReviewRow";
 
 // Customer quote chapter built only from real, visible reviews fetched
 // server-side. With no qualifying review yet the whole section stays out of
@@ -33,25 +35,15 @@ export function TestimonialsBento({
           Đánh giá từ người dùng dịch vụ sửa xe lưu động, cứu hộ và mua phụ tùng
           trên FlashWrench.
         </p>
-        <span
-          data-rule
-          aria-hidden="true"
-          className="mt-8 block h-px origin-left bg-zinc-200 md:mt-10 dark:bg-zinc-800"
-        />
-        <div className="flex flex-col gap-8 py-6 md:py-8">
-          <MarqueeTrack
-            items={realItems}
-            label="Đánh giá từ khách hàng"
-            renderItem={(review) => <RealReviewCard review={review} />}
-          />
-          <MarqueeTrack
-            items={[...realItems].reverse()}
-            label="Đánh giá từ khách hàng, cuộn ngược"
-            direction="right"
-            decorative
-            renderItem={(review) => <RealReviewCard review={review} />}
-          />
-        </div>
+        {shouldDrift(realItems.length) ? (
+          <DriftingReviews items={realItems} />
+        ) : (
+          <ol aria-label="Đánh giá từ khách hàng" className="mt-8 md:mt-10">
+            {realItems.map((review) => (
+              <ReviewRow key={review.id} review={review} />
+            ))}
+          </ol>
+        )}
         <span
           data-rule
           aria-hidden="true"
@@ -59,5 +51,32 @@ export function TestimonialsBento({
         />
       </div>
     </section>
+  );
+}
+
+// Two marquee rows, the second reversed and decorative.
+function DriftingReviews({ items }: { items: LandingReview[] }) {
+  return (
+    <>
+      <span
+        data-rule
+        aria-hidden="true"
+        className="mt-8 block h-px origin-left bg-zinc-200 md:mt-10 dark:bg-zinc-800"
+      />
+      <div className="flex flex-col gap-8 py-6 md:py-8">
+        <MarqueeTrack
+          items={items}
+          label="Đánh giá từ khách hàng"
+          renderItem={(review) => <RealReviewCard review={review} />}
+        />
+        <MarqueeTrack
+          items={[...items].reverse()}
+          label="Đánh giá từ khách hàng, cuộn ngược"
+          direction="right"
+          decorative
+          renderItem={(review) => <RealReviewCard review={review} />}
+        />
+      </div>
+    </>
   );
 }

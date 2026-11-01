@@ -24,10 +24,10 @@ const TOGGLE_OFF =
 const TEXT_ACTION =
   "flex min-h-11 items-center text-base font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
 
-// One catalog row for a bookable service: a small cover, category, name and
-// the price line, with duration and options as plain text. The row sits on the
-// page surface between hairlines (the list wrapper draws them). Select is the
-// row's solid action; quick view is a text link.
+// One bookable service as a full-width ruled row. Phones keep the cover on
+// the left with the text stacked beside it; from md the row reads cover,
+// category and name with duration and options, the price, then the actions.
+// The list wrapper draws the hairlines between rows.
 export function PublicServiceCard({
   service,
   selected,
@@ -47,14 +47,14 @@ export function PublicServiceCard({
     <article
       data-chapter-row
       aria-label={service.name}
-      className="flex min-w-0 gap-3 py-5 sm:gap-5 sm:py-6"
+      className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-4 gap-y-2 py-5 sm:grid-cols-[9rem_minmax(0,1fr)] md:grid-cols-[11rem_minmax(0,1fr)_minmax(0,12rem)_auto] md:items-center md:gap-x-8 md:py-6"
     >
       <button
         type="button"
         onClick={onPreview}
         tabIndex={-1}
         aria-hidden="true"
-        className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-24 sm:w-24 dark:bg-zinc-900"
+        className="row-span-3 h-20 overflow-hidden rounded-lg bg-zinc-100 sm:h-24 md:row-span-1 md:h-28 dark:bg-zinc-900"
       >
         {service.imageUrl ? (
           // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
@@ -71,24 +71,35 @@ export function PublicServiceCard({
         )}
       </button>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <div className="flex min-w-0 flex-col gap-0.5">
         <p className="truncate text-xs font-semibold tracking-[0.08em] text-[#1E3A5F] uppercase dark:text-zinc-400">
           {service.categoryName}
         </p>
-        <h3 className="break-words text-base leading-snug font-bold tracking-tight text-zinc-900 sm:text-lg dark:text-zinc-50">
+        <h3 className="break-words text-base leading-snug font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">
           {service.name}
         </h3>
-        <p className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-zinc-500 dark:text-zinc-400">
-          từ
-          <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] sm:text-xl dark:text-zinc-50">
-            {formatVnd(service.basePrice)}
-          </span>
-          · {PRICE_UNIT_LABELS[service.priceUnit]}
-        </p>
-        <p className="hidden text-sm text-zinc-500 sm:block dark:text-zinc-400">
-          {attributes}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{attributes}</p>
+        <div className="hidden md:block">
+          <ApplicableVoucherBadge
+            kind="booking"
+            subtotal={service.basePrice}
+            guestHint={false}
+          />
+        </div>
+      </div>
+
+      <p className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-zinc-500 md:flex-col md:items-end md:gap-0 dark:text-zinc-400">
+        từ
+        <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] md:text-xl dark:text-zinc-50">
+          {formatVnd(service.basePrice)}
+        </span>
+        <span className="md:text-xs">
+          {PRICE_UNIT_LABELS[service.priceUnit]}
+        </span>
+      </p>
+
+      <div className="flex flex-col gap-1 md:items-end">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 md:flex-row-reverse">
           <button
             type="button"
             aria-pressed={selected}
@@ -113,13 +124,10 @@ export function PublicServiceCard({
           </button>
         </div>
         {!selected && disabledReason && (
-          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p className="max-w-xs text-sm leading-relaxed text-zinc-600 md:text-right dark:text-zinc-400">
             {disabledReason}
           </p>
         )}
-        <div className="hidden sm:block">
-          <ApplicableVoucherBadge kind="booking" subtotal={service.basePrice} />
-        </div>
       </div>
     </article>
   );

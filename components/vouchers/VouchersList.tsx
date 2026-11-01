@@ -5,6 +5,7 @@ import { useMe } from "@/hooks/auth";
 import { useVoucherGrantToast } from "@/hooks/useVoucherGrantToast";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { useMyWallets, usePublicCampaigns } from "@/hooks/useVouchers";
+import { VoucherGuestPanel } from "./VoucherGuestPanel";
 import { VouchersFaq } from "./VouchersFaq";
 import { VouchersIntro } from "./VouchersIntro";
 import { WalletBento } from "./WalletBento";
@@ -21,6 +22,7 @@ export function VouchersList() {
   useVoucherRealtime(ownerId ?? undefined, false);
   useVoucherGrantToast(ownerId);
   const authed = me.isSuccess && Boolean(me.data?.id);
+  const guest = !me.isPending && !authed;
   // One wide wallet page supplies both the wallet block and the owned
   // campaign id set; WalletBoard keeps its own paged read for the archive.
   const wallets = useMyWallets(authed, { limit: 100 });
@@ -37,15 +39,22 @@ export function VouchersList() {
   const remainingOffers = (campaigns.data ?? []).filter(
     (campaign) => !ownedIds.has(campaign.id),
   ).length;
-  const countText = walletLoading
-    ? "Đang tải ví…"
-    : hasWallets
-      ? `${items.length} voucher trong ví`
-      : "Chưa có voucher trong ví";
+  const countText = guest
+    ? "Chưa đăng nhập"
+    : walletLoading
+      ? "Đang tải ví…"
+      : hasWallets
+        ? `${items.length} voucher trong ví`
+        : "Chưa có voucher trong ví";
 
   return (
     <div className="flex w-full flex-col">
       <VouchersIntro countText={countText} />
+      {guest ? (
+        <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
+          <VoucherGuestPanel />
+        </div>
+      ) : null}
       {hasWallets || walletLoading ? (
         <div className="w-full px-4 pt-10 sm:px-6 md:pt-12 lg:px-10">
           {hasWallets ? (
@@ -69,9 +78,11 @@ export function VouchersList() {
       <div className="w-full px-4 pt-12 pb-16 sm:px-6 md:pt-16 lg:px-10">
         <VouchersFaq />
       </div>
-      <div className="w-full px-4 pb-16 sm:px-6 lg:px-10">
-        <WalletBoard />
-      </div>
+      {authed ? (
+        <div className="w-full px-4 pb-16 sm:px-6 lg:px-10">
+          <WalletBoard />
+        </div>
+      ) : null}
     </div>
   );
 }

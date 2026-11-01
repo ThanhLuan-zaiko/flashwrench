@@ -61,6 +61,23 @@ describe("pickLandingReviewRows", () => {
     ]);
   });
 
+  test("puts substantial quotes ahead of newer one-word reviews", () => {
+    const picked = pickLandingReviewRows([
+      makeRow("short-new", {
+        body: "Tốt",
+        created_at: new Date("2026-09-25T10:00:00.000Z"),
+      }),
+      makeRow("long-old", {
+        body: "Thợ đến đúng giờ, báo giá trước khi thay phụ tùng.",
+        created_at: new Date("2026-09-01T10:00:00.000Z"),
+      }),
+    ]);
+    expect(picked.map((row) => row.review_id)).toEqual([
+      "long-old",
+      "short-new",
+    ]);
+  });
+
   test("caps the pick at the requested limit", () => {
     const rows = Array.from({ length: 10 }, (_, i) =>
       makeRow(`r${i}`, {

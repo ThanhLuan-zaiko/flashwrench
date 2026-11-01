@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { FiArrowLeft, FiRefreshCw, FiShoppingCart } from "react-icons/fi";
+import { FiArrowLeft, FiRefreshCw } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { BigTypeHeader } from "@/components/bento/BigTypeHeader";
 import { useMe } from "@/hooks/auth";
 import { useCart, useClearCart } from "@/hooks/cart";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { CartItemRow } from "./CartItemRow";
+import { EmptyCartNotice } from "./EmptyCartNotice";
 
 // Shared /cart page for customers and guests: review lines, adjust
 // quantities and head to checkout. Guests keep a token-keyed cart;
@@ -78,24 +79,7 @@ export function CartPage() {
         (me.data === null || me.data.role === "customer") &&
         cartView &&
         (cartView.items.length === 0 ? (
-          <div data-reveal className="py-8 text-center">
-            <FiShoppingCart
-              aria-hidden="true"
-              className="mx-auto h-8 w-8 text-zinc-300 dark:text-zinc-700"
-            />
-            <p className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              Giỏ hàng đang trống
-            </p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-              Chọn linh kiện tại cửa hàng để bắt đầu.
-            </p>
-            <Link
-              href="/products"
-              className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
-            >
-              Xem sản phẩm
-            </Link>
-          </div>
+          <EmptyCartNotice />
         ) : (
           <>
             <ul className="flex flex-col gap-3">

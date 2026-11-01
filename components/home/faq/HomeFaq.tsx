@@ -6,24 +6,27 @@ import { useChapterMotion } from "@/hooks/useChapterMotion";
 import { MaskLines } from "../MaskLines";
 import { HOME_FAQ } from "./home-faq.content";
 
-// Questions and answers under the reviews: ruled rows, each a native <details>
-// so it works from the keyboard and with screen readers. The plus turns into a
-// cross while a row is open.
+// Questions and answers under the reviews: the heading on the left and, from
+// lg, the ruled rows beside it so short questions do not stretch across the
+// full width. Each row is a native <details> so it works from the keyboard
+// and with screen readers. The plus turns into a cross while a row is open.
 export function HomeFaq() {
   const rootRef = useRef<HTMLElement>(null);
   useChapterMotion(rootRef);
 
   return (
     <section ref={rootRef} aria-label="Hỏi đáp">
-      <div className="w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-10">
-        <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
-          Hỏi đáp
-        </p>
-        <MaskLines
-          lines={["Bạn cần biết gì", "trước khi đặt lịch"]}
-          className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
-        />
-        <ul className="mt-8 md:mt-10">
+      <div className="grid w-full gap-8 px-4 pb-12 sm:px-6 md:pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-10">
+        <div>
+          <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+            Hỏi đáp
+          </p>
+          <MaskLines
+            lines={["Bạn cần biết gì", "trước khi đặt lịch"]}
+            className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-50"
+          />
+        </div>
+        <ul>
           {HOME_FAQ.map((item) => (
             <li key={item.question}>
               <span
@@ -32,7 +35,7 @@ export function HomeFaq() {
                 className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
               />
               <details data-chapter-row className="group py-5 md:py-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-bold tracking-tight text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 md:text-2xl dark:text-zinc-50 [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-bold tracking-tight text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 md:text-xl dark:text-zinc-50 [&::-webkit-details-marker]:hidden">
                   {item.question}
                   <FiPlus
                     aria-hidden="true"

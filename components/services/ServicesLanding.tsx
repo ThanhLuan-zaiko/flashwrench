@@ -14,7 +14,9 @@ import { useBookingServiceSelection } from "@/hooks/useBookingServiceSelection";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
 import { getBookingServiceSelection } from "@/lib/booking/booking-service-selection";
+import { countServicesByCategory } from "@/lib/catalog/catalog-counts";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import { GuestOfferNote } from "../vouchers/GuestOfferNote";
 import { PublicCatalogFilter } from "./PublicCatalogFilter";
 import { PublicCatalogResults } from "./PublicCatalogResults";
 import {
@@ -23,6 +25,7 @@ import {
   paginatePublicServices,
   resolveTabCategory,
 } from "./public-catalog-utils";
+import { ServicesCategoryHeader } from "./ServicesCategoryHeader";
 import { ServicesClosingCta } from "./ServicesClosingCta";
 import { ServicesIntro } from "./ServicesIntro";
 import { ServicesSelectionBar } from "./ServicesSelectionBar";
@@ -72,6 +75,10 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
     [categories, activeSlug],
   );
   const categoryId = activeCategory?.id ?? "";
+  const serviceCounts = useMemo(
+    () => countServicesByCategory(services),
+    [services],
+  );
   // An unknown slug only counts once the catalog has loaded: while pending
   // the category may simply not have arrived yet.
   const unknownSlug =
@@ -128,6 +135,14 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           onQuery={typeQuery}
         />
       </div>
+      {activeCategory && (
+        <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
+          <ServicesCategoryHeader
+            category={activeCategory}
+            serviceCount={serviceCounts.get(activeCategory.id) ?? 0}
+          />
+        </div>
+      )}
       <div className="w-full px-4 pt-8 sm:px-6 lg:px-10">
         <Link
           href="/rescue"
@@ -168,6 +183,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
       )}
 
       <div className="w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-10">
+        <GuestOfferNote next="/services" />
         <PublicCatalogResults
           pending={catalog.isPending}
           failed={catalog.isError}

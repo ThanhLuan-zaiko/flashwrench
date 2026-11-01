@@ -66,7 +66,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
           className={
             onNavy
               ? "hidden items-center gap-1.5 rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-[0.98] sm:flex"
-              : "hidden items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+              : "hidden items-center gap-1.5 rounded-lg bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
           }
         >
           <FiLogIn aria-hidden="true" className="h-4 w-4 shrink-0" />

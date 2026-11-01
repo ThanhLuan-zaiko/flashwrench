@@ -2,6 +2,14 @@
 // mechanics) still fills a wide screen and the loop never shows an empty gap.
 export const MARQUEE_MIN_ITEMS = 6;
 
+// Below this many distinct items a drifting row only shows the same few
+// cards over and over, so chapters list them as static ruled rows instead.
+export const MARQUEE_DRIFT_MIN = 4;
+
+export function shouldDrift(count: number, min = MARQUEE_DRIFT_MIN): boolean {
+  return count >= min;
+}
+
 export type MarqueeEntry<T> = { key: string; item: T };
 
 // One copy of the marquee: the items repeated until there are at least
