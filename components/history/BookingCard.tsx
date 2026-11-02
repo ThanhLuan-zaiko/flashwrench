@@ -1,6 +1,6 @@
 "use client";
 
-import { FiChevronRight, FiMapPin, FiTool, FiUser } from "react-icons/fi";
+import { FiChevronRight } from "react-icons/fi";
 import type { BookingSummary } from "@/lib/booking/workspace.types";
 import { formatDateTime } from "@/lib/datetime/format";
 import { STATUS_LABELS } from "@/lib/mechanic/mechanic-status";
@@ -57,19 +57,12 @@ export function BookingCard({
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
-          <span className="inline-flex items-center gap-1">
-            <FiUser aria-hidden="true" className="h-3.5 w-3.5" />
-            {booking.mechanicName || "Đang tìm thợ"}
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <FiTool aria-hidden="true" className="h-3.5 w-3.5" />
-            {booking.vehiclePlate}
-          </span>
-          <span className="inline-flex min-w-0 items-center gap-1">
-            <FiMapPin aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{booking.addressText}</span>
-          </span>
+        <div className="flex flex-col gap-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="truncate">
+            Thợ: {booking.mechanicName || "Đang tìm thợ"}
+          </p>
+          <p className="truncate">Xe: {booking.vehiclePlate}</p>
+          <p className="truncate">{booking.addressText}</p>
         </div>
       </button>
 
