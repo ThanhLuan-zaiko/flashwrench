@@ -33,7 +33,7 @@ export const BRAND_OUTLINE_BUTTON = `flex min-h-[44px] items-center justify-cent
 
 // Filter chips and segmented choices.
 export const BRAND_CHIP_ACTIVE =
-  "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900";
+  "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900";
 export const BRAND_CHIP_IDLE =
   "border-zinc-300 bg-white text-zinc-800 hover:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:border-zinc-500";
 

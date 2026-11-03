@@ -72,7 +72,7 @@ export function HomePromoList({
           <Link
             href="/vouchers"
             prefetch
-            className="flex min-h-11 w-fit shrink-0 items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+            className="flex min-h-11 w-fit shrink-0 items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100"
           >
             Xem tất cả {items.length} ưu đãi
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

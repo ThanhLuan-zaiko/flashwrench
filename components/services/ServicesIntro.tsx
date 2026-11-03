@@ -61,7 +61,7 @@ export function ServicesIntro({ live, countText }: ServicesIntroProps) {
             aria-hidden="true"
             className={`h-2 w-2 rounded-full ${
               live
-                ? "bg-[#FACC15] dark:bg-white"
+                ? "bg-green-600 dark:bg-green-400"
                 : "border border-zinc-400 dark:border-zinc-500"
             }`}
           />

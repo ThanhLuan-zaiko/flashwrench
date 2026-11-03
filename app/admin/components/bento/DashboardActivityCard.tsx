@@ -50,7 +50,7 @@ export function DashboardActivityCard({
         <span className="flex items-center gap-1.5 text-xs font-bold text-[#111111] dark:text-zinc-100">
           <span
             aria-hidden="true"
-            className="h-2 w-2 rounded-full bg-[#FACC15] dark:bg-zinc-100"
+            className="h-2 w-2 rounded-full bg-[#111111] dark:bg-zinc-100"
           />
           Trực tiếp
         </span>

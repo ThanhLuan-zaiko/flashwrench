@@ -48,7 +48,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
     return (
       <output
         aria-label="Đang tải thông tin tài khoản"
-        className="flex h-10 w-10 items-center justify-center rounded-lg text-[#111111]/50"
+        className="flex h-10 w-10 items-center justify-center rounded-lg text-[#111111]/70"
       >
         <FiLoader
           aria-hidden="true"

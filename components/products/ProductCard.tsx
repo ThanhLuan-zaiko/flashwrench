@@ -42,7 +42,7 @@ const TILE_CLASSES: Record<
 };
 
 const TEXT_ACTION =
-  "flex min-h-11 items-center text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 items-center text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 
 // Product tile on the page surface, as on the home parts chapter: the photo sits
 // contained on white, then the price above the name. The only solid button is

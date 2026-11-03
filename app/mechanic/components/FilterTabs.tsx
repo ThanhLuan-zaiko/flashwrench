@@ -74,7 +74,7 @@ export function FilterTabs({
             aria-current={selected ? "page" : undefined}
             className={`flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-95 ${
               selected
-                ? "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
+                ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
                 : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
             }`}
           >

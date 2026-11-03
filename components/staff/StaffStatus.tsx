@@ -12,7 +12,7 @@ export function StaffStatusPill({ live, label }: StaffStatusPillProps) {
         aria-hidden="true"
         className={`h-1.5 w-1.5 rounded-full ${
           live
-            ? "bg-[#FACC15] motion-safe:animate-pulse dark:bg-zinc-100"
+            ? "bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
             : "border border-zinc-400 dark:border-zinc-500"
         }`}
       />
@@ -33,7 +33,7 @@ export function StaffStatusNote({ title, detail }: StaffStatusNoteProps) {
       <p className="flex items-center gap-1.5 text-xs font-bold text-[#111111] dark:text-zinc-100">
         <span
           aria-hidden="true"
-          className="h-1.5 w-1.5 rounded-full bg-[#FACC15] motion-safe:animate-pulse dark:bg-zinc-100"
+          className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
         />
         {title}
       </p>

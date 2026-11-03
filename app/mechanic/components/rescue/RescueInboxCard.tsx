@@ -101,7 +101,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
           >
             <span
               aria-hidden="true"
-              className="h-1.5 w-1.5 rounded-full bg-[#FACC15] motion-safe:animate-pulse dark:bg-zinc-100"
+              className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
             />
             {secondsLeft}s
           </p>

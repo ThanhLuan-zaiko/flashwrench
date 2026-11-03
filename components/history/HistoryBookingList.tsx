@@ -178,7 +178,7 @@ export function HistoryBookingList({
                     onClick={scrollToPageTop}
                     prefetch
                     aria-label="Trang trước"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
                   >
                     Trang trước
                   </Link>
@@ -187,7 +187,7 @@ export function HistoryBookingList({
                     type="button"
                     disabled
                     aria-label="Trang trước"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
                   >
                     Trang trước
                   </button>
@@ -199,7 +199,7 @@ export function HistoryBookingList({
                     onClick={scrollToPageTop}
                     prefetch
                     aria-label="Trang sau"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
                   >
                     Trang sau
                   </Link>
@@ -208,7 +208,7 @@ export function HistoryBookingList({
                     type="button"
                     disabled
                     aria-label="Trang sau"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
                   >
                     {loadingNext && (
                       <FiLoader

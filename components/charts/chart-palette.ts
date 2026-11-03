@@ -1,5 +1,5 @@
 // Approved chart palette for staff dashboards (AGENTS.md Section 6):
-// navy, sky, teal, amber in that order. Navy disappears on the dark
+// black, sky, teal, violet in that order. Black disappears on the dark
 // surface, so dark mode swaps the first series for zinc-200. Only canvas
 // charts and their legend swatches may use these hues.
 
@@ -7,13 +7,13 @@ export const CHART_SERIES_LIGHT = [
   "#111111",
   "#0EA5E9",
   "#14B8A6",
-  "#F59E0B",
+  "#7C3AED",
 ] as const;
 export const CHART_SERIES_DARK = [
   "#E4E4E7",
   "#38BDF8",
   "#2DD4BF",
-  "#FBBF24",
+  "#A78BFA",
 ] as const;
 export const CHART_ALERT = { light: "#DC2626", dark: "#F87171" } as const;
 
@@ -22,7 +22,7 @@ export const CHART_SWATCH_CLASSES = [
   "bg-[#111111] dark:bg-zinc-200",
   "bg-[#0EA5E9] dark:bg-[#38BDF8]",
   "bg-[#14B8A6] dark:bg-[#2DD4BF]",
-  "bg-[#F59E0B] dark:bg-[#FBBF24]",
+  "bg-[#7C3AED] dark:bg-[#A78BFA]",
 ] as const;
 
 export type ChartTheme = {

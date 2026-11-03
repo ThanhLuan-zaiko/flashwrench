@@ -43,7 +43,7 @@ export function StatsSection() {
             <span className="flex items-center gap-2.5 rounded-2xl border border-zinc-200 px-3.5 py-2.5 text-[13px] text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
               <span
                 aria-hidden="true"
-                className="h-2.5 w-2.5 rounded-full bg-[#FACC15] dark:bg-zinc-100"
+                className="h-2.5 w-2.5 rounded-full bg-[#111111] dark:bg-zinc-100"
               />
               Vừa thu{" "}
               <b className="text-[#111111] dark:text-zinc-50">

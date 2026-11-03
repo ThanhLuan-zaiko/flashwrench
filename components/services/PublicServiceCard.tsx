@@ -16,7 +16,7 @@ type PublicServiceCardProps = {
 };
 
 const ADD_BUTTON =
-  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#FACC15] bg-[#FACC15] px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EAB308] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white";
+  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#111111] bg-[#FACC15] px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EAB308] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white";
 const REMOVE_BUTTON =
   "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#111111] bg-white px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#FACC15]/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900";
 // Bare eye icon: a 44px touch target with no box around the glyph.

@@ -20,7 +20,7 @@ const SECTION_CLASSES =
 
 // Secondary actions on the detail page are bold text links with an arrow.
 const LINK_CLASSES =
-  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 
 // Voucher line for the detail page: best saving, terms and the wallet link.
 // Guests get a login call to action instead of an empty block.

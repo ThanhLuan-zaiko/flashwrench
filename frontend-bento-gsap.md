@@ -403,7 +403,7 @@ Rules:
   resize (`ResizeObserver`) and on `dark` class changes so the
   chart stays crisp and readable in both themes.
 - Colors come from `components/charts/chart-palette.ts` (black, sky, teal
-  and amber by default; see `AGENTS.md` Section 6). Resolve theme-aware
+  and violet by default; see `AGENTS.md` Section 6). Resolve theme-aware
   colors at draw time and never retype hexes inside a component.
 - The allowed-motion limits in 4.3 still apply: max 0.6s,
   `ease: "power2.out"`, no infinite loops.

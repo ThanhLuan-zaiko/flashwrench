@@ -3,11 +3,11 @@
 type Vec3 = [number, number, number];
 type Point = { x: number; y: number };
 
-export const NAVY_DEEP = "#0F1E33";
-export const NAVY = "#1E3A5F";
-export const SKY = "#8FB3D9";
-export const ORANGE = "#F97316";
-export const ORANGE_LIGHT = "#FDBA74";
+export const INK = "#111111";
+export const YELLOW = "#FACC15";
+export const SKY = "#BFDBFE";
+export const BLUE = "#2563EB";
+export const BLUE_LIGHT = "#93C5FD";
 export const KRAFT = "#E2C9A0";
 export const PAPER = "#F4F4F5";
 export const ZINC = "#D4D4D8";
@@ -40,8 +40,8 @@ function mix(hex: string, target: string, amount: number): string {
 function shades(base: string) {
   return {
     top: base,
-    left: mix(base, NAVY_DEEP, 0.14),
-    right: mix(base, NAVY_DEEP, 0.3),
+    left: mix(base, INK, 0.14),
+    right: mix(base, INK, 0.3),
   };
 }
 
@@ -89,14 +89,14 @@ export class Scene {
         [x + w, y + d, z],
         [x, y + d, z],
       ],
-      NAVY_DEEP,
+      INK,
       SHADOW_OPACITY,
     );
   }
 
   shadowDisc(center: Vec3, radius: number): void {
     const [cx, cy, z] = center;
-    this.polygon(ringPoints(cx, cy, z, radius), NAVY_DEEP, SHADOW_OPACITY);
+    this.polygon(ringPoints(cx, cy, z, radius), INK, SHADOW_OPACITY);
   }
 
   box(at: Vec3, size: Vec3, base: string): void {

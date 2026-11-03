@@ -94,7 +94,7 @@ export function PromoGridCompact({
           scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
-          className="inline-flex min-h-11 items-center gap-1 self-start rounded-lg text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+          className="inline-flex min-h-11 items-center gap-1 self-start rounded-lg text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100"
         >
           Xem chi tiết
           <FiArrowRight aria-hidden="true" className="h-3.5 w-3.5" />

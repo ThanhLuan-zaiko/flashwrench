@@ -76,7 +76,7 @@ export function CheckoutPaymentFields({
                 }`}
               >
                 {active && (
-                  <span className="h-2 w-2 rounded-full bg-[#FACC15] dark:bg-zinc-100" />
+                  <span className="h-2 w-2 rounded-full bg-[#111111] dark:bg-zinc-100" />
                 )}
               </span>
               <Icon

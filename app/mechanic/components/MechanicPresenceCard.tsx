@@ -132,7 +132,7 @@ export function MechanicPresenceCard({
               aria-hidden="true"
               className={`h-1.5 w-1.5 rounded-full ${
                 onlineNow
-                  ? "bg-[#FACC15] motion-safe:animate-pulse dark:bg-zinc-100"
+                  ? "bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
                   : "bg-zinc-400 dark:bg-zinc-600"
               }`}
             />
@@ -183,7 +183,7 @@ export function MechanicPresenceCard({
                     aria-pressed={active}
                     className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-95 ${
                       active
-                        ? "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                        ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
                         : "border-zinc-300 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900"
                     }`}
                   >

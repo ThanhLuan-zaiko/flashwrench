@@ -23,7 +23,7 @@ export function BookingWizardProgress({
             key={label}
             className={`h-1 flex-1 rounded-full ${
               index <= step
-                ? "bg-[#FACC15] dark:bg-zinc-100"
+                ? "bg-[#111111] dark:bg-zinc-100"
                 : "bg-zinc-200 dark:bg-zinc-800"
             }`}
           />

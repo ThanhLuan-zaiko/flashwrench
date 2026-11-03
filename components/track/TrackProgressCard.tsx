@@ -38,7 +38,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                   aria-hidden="true"
                   className={`absolute top-5 -bottom-4 left-[7px] w-0.5 ${
                     done
-                      ? "bg-[#FACC15] dark:bg-zinc-100"
+                      ? "bg-[#111111] dark:bg-zinc-100"
                       : "bg-zinc-200 dark:bg-zinc-800"
                   }`}
                 />
@@ -47,9 +47,9 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                 aria-hidden="true"
                 className={`relative mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
                   done
-                    ? "border-[#FACC15] bg-[#FACC15] dark:border-zinc-100 dark:bg-zinc-100"
+                    ? "border-[#111111] bg-[#FACC15] dark:border-zinc-100 dark:bg-zinc-100"
                     : active
-                      ? "border-[#FACC15] bg-white dark:border-zinc-100 dark:bg-zinc-950"
+                      ? "border-[#111111] bg-white dark:border-zinc-100 dark:bg-zinc-950"
                       : "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-950"
                 }`}
               />

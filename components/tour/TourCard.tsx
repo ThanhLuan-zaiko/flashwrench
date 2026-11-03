@@ -79,7 +79,7 @@ export function TourCard({
                 key={position}
                 className={
                   position === currentStep
-                    ? "h-1.5 w-4 rounded-full bg-[#FACC15] dark:bg-zinc-100"
+                    ? "h-1.5 w-4 rounded-full bg-[#111111] dark:bg-zinc-100"
                     : "h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700"
                 }
               />

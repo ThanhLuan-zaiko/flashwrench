@@ -61,7 +61,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
                 aria-hidden="true"
                 className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
                   index === order.history.length - 1
-                    ? "bg-[#FACC15] dark:bg-white"
+                    ? "bg-[#111111] dark:bg-white"
                     : "border border-zinc-300 dark:border-zinc-700"
                 }`}
               />
@@ -141,7 +141,7 @@ export function OrderCancelSection({
               type="button"
               disabled={cancelOrder.isPending}
               onClick={() => setConfirming(false)}
-              className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+              className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
             >
               Giữ đơn
             </button>
@@ -151,7 +151,7 @@ export function OrderCancelSection({
         <button
           type="button"
           onClick={() => setConfirming(true)}
-          className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+          className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
         >
           Hủy đơn hàng
         </button>

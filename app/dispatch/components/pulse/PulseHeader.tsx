@@ -35,7 +35,7 @@ export function PulseHeader({ updatedAt, isFetching }: PulseHeaderProps) {
         >
           <span
             aria-hidden="true"
-            className={`h-2.5 w-2.5 rounded-full bg-[#FACC15] motion-safe:transition-transform motion-safe:duration-300 dark:bg-zinc-100 ${
+            className={`h-2.5 w-2.5 rounded-full bg-[#111111] motion-safe:transition-transform motion-safe:duration-300 dark:bg-zinc-100 ${
               isFetching ? "scale-150 opacity-60" : ""
             }`}
           />

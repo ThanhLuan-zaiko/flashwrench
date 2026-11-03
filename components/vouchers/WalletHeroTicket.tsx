@@ -22,7 +22,7 @@ function grantedDayLabel(wallet: VoucherWallet): string | null {
 }
 
 const TEXT_LINK =
-  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 
 // The customer's best usable voucher, as a text block: the discount figure,
 // the campaign, then scope, expiry and grant date on one line. No box.

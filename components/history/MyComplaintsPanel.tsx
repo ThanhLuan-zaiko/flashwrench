@@ -122,7 +122,7 @@ export function MyComplaintsPanel() {
                 type="button"
                 onClick={() => setOpenThreadId(open ? null : item.id)}
                 aria-expanded={open}
-                className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
               >
                 <FiMessageSquare aria-hidden="true" className="h-3.5 w-3.5" />
                 Trao đổi với đội ngũ

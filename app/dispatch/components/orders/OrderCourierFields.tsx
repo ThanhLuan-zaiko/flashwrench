@@ -81,7 +81,7 @@ export function OrderCourierFields({
               aria-pressed={active}
               className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] ${
                 active
-                  ? "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
+                  ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
                   : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >

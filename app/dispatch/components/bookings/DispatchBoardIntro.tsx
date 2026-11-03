@@ -33,7 +33,7 @@ export function DispatchBoardIntro({ status, month }: DispatchBoardIntroProps) {
       <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
         <span
           aria-hidden="true"
-          className="h-1.5 w-1.5 rounded-full bg-[#FACC15] motion-safe:animate-pulse dark:bg-zinc-100"
+          className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
         />
         Đang xem: {DISPATCH_STATUS_LABELS[status]} · {formatMonthKey(month)}
       </p>

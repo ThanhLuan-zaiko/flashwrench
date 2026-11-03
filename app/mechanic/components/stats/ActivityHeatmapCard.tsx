@@ -7,10 +7,10 @@ import { WEEKDAY_LONG } from "./stats-format";
 
 const LEGEND_CLASSES = [
   "bg-zinc-200 dark:bg-zinc-800",
-  "bg-[#FACC15]/25 dark:bg-zinc-200/25",
-  "bg-[#FACC15]/50 dark:bg-zinc-200/50",
-  "bg-[#FACC15]/75 dark:bg-zinc-200/75",
-  "bg-[#FACC15] dark:bg-zinc-200",
+  "bg-[#111111]/25 dark:bg-zinc-200/25",
+  "bg-[#111111]/50 dark:bg-zinc-200/50",
+  "bg-[#111111]/75 dark:bg-zinc-200/75",
+  "bg-[#111111] dark:bg-zinc-200",
 ];
 
 // 12-week completion heatmap plus four day-level facts beside it.

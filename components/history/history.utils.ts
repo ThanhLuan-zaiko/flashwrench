@@ -56,11 +56,11 @@ const STATUS_CHIP_TONE: Record<MechanicBookingStatus, string> = {
   mechanic_assigned:
     "border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300",
   en_route:
-    "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900",
+    "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900",
   in_progress:
-    "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900",
+    "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900",
   completed:
-    "border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900",
+    "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900",
   cancelled:
     "border-zinc-300 bg-white text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-500",
   no_show:
