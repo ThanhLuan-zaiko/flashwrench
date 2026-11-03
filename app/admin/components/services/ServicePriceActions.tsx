@@ -16,7 +16,7 @@ type ServicePriceActionsProps = {
 
 // Update actions (edit, toggle, restore): navy outline.
 const ROW_BUTTON =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#1E3A5F] px-3 py-2 text-xs font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
 // Soft delete: red outline.
 const DELETE_ROW_BUTTON =

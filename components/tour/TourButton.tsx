@@ -12,8 +12,8 @@ type TourButtonProps = {
 };
 
 const VARIANT_CLASSES = {
-  default: "text-[#1E3A5F] focus-visible:ring-[#1E3A5F] dark:text-zinc-100",
-  inverse: "text-white focus-visible:ring-white",
+  default: "text-[#111111] focus-visible:ring-[#111111] dark:text-zinc-100",
+  inverse: "text-[#111111] focus-visible:ring-[#111111]",
 } as const;
 
 // Opt-in trigger for a page guide tour, shown as a bold text link with a

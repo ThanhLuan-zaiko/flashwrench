@@ -57,7 +57,7 @@ export function ProductTrustStrip({ brand }: { brand: string }) {
               className="h-20 w-20 shrink-0"
             />
             <div className="min-w-0">
-              <h3 className="text-base font-bold text-[#1E3A5F] dark:text-zinc-50">
+              <h3 className="text-base font-bold text-[#111111] dark:text-zinc-50">
                 {item.title}
               </h3>
               <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">

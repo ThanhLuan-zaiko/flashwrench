@@ -35,7 +35,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
       <Link
         href={LOGIN_HREF}
         onClick={onNavigate}
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#1E3A5F] px-4 py-3 text-center text-base font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+        className="flex items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-3 text-center text-base font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
       >
         <FiLogIn aria-hidden="true" className="h-5 w-5 shrink-0" />
         {LOGIN_LABEL}
@@ -92,7 +92,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
         type="button"
         disabled={logout.isPending}
         onClick={handleLogout}
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#1E3A5F] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="flex items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
         {logout.isPending ? (
           <FiLoader

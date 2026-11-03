@@ -36,7 +36,7 @@ export function BookingCard({
         onClick={onSelect}
         aria-pressed={selected}
         aria-label={`Chọn đơn ${booking.serviceNames.join(", ")}`}
-        className="flex w-full flex-col gap-2 py-4 text-left motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-100"
+        className="flex w-full flex-col gap-2 py-4 text-left motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-100"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -77,7 +77,7 @@ export function BookingCard({
           <button
             type="button"
             onClick={onOpen}
-            className="flex min-h-11 items-center gap-1 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100"
+            className="flex min-h-11 items-center gap-1 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100"
           >
             Chi tiết
             <FiChevronRight aria-hidden="true" className="h-4 w-4" />

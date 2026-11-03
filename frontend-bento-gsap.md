@@ -29,10 +29,10 @@ Always respect these from `AGENTS.md`:
   No custom CSS files, no `@keyframes`, no `@theme` tokens.
 - No `style={{}}` for static styling. All static styling is Tailwind.
 - Neutral palette: white, zinc scale, black + `dark:` variants.
-  Brand colors are navy `#1E3A5F` and orange `#F97316`. Customer screens
-  use navy for surfaces and orange for the one primary action per screen
-  (see `AGENTS.md` Section 6). Staff portals use navy (shared frame in
-  `components/staff/`) but never orange. Other hues are allowed where the
+  The brand color is yellow `#FACC15` with black `#111111`. Customer screens
+  use yellow for surfaces and a black (white in dark) button for the one
+  primary action per screen (see `AGENTS.md` Section 6). Staff portals use
+  yellow (shared frame in `components/staff/`) but never the primary button. Other hues are allowed where the
   design needs them, with readable contrast in both themes.
   Approved: validation errors in red (`text-red-600 dark:text-red-400`,
   alert boxes like `components/auth/FormAlert.tsx`); toasts carry a
@@ -249,7 +249,7 @@ card grid (rule 7), except the hero and the closing call-to-action band.
    to action headline `text-3xl md:text-5xl`. Chapter vertical rhythm stays
    near `md:py-12`. Section width `w-full px-4 sm:px-6 lg:px-10`.
 5. **Actions.** Secondary actions are bold text links with an arrow. The
-   single orange button of the page is the closing call to action.
+   single primary (black) button of the page is the closing call to action.
 6. **Hide when empty.** Data-driven chapters return `null` when there is
    nothing to show.
 7. **Card-grid chapters.** Every home chapter uses cards: services
@@ -264,8 +264,8 @@ card grid (rule 7), except the hero and the closing call-to-action band.
    text link. Each card is an `<li data-chapter-row>` inside a `<ul>` grid;
    the photo keeps `data-chapter-photo`. Rescue and the booking entry are
    cards too, and the closing call-to-action band stays a band.
-8. **Site footer.** `components/layout/SiteFooter.tsx` is the one navy band
-   below the page (`#1E3A5F`, white text): a marquee strip of promises, the
+8. **Site footer.** `components/layout/SiteFooter.tsx` is the one yellow band
+   below the page (`#FACC15`, black text): a marquee strip of promises, the
    hotline and ruled link columns, then an oversized wordmark that rises in
    with `useChapterMotion`. It is hidden on staff portals and flow screens
    (`components/layout/site-footer.routes.ts`).
@@ -402,7 +402,7 @@ Rules:
 - Scale the canvas for `devicePixelRatio`, and re-draw on
   resize (`ResizeObserver`) and on `dark` class changes so the
   chart stays crisp and readable in both themes.
-- Colors come from `components/charts/chart-palette.ts` (navy, sky, teal
+- Colors come from `components/charts/chart-palette.ts` (black, sky, teal
   and amber by default; see `AGENTS.md` Section 6). Resolve theme-aware
   colors at draw time and never retype hexes inside a component.
 - The allowed-motion limits in 4.3 still apply: max 0.6s,

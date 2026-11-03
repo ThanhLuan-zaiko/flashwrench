@@ -124,7 +124,7 @@ export function RescueCancelSection({
           type="button"
           disabled={cancelRescue.isPending}
           onClick={cancel}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
         >
           {cancelRescue.isPending && (
             <FiLoader

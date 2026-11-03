@@ -23,7 +23,7 @@ describe("rescueStatusLabel", () => {
 describe("rescueStatusBadgeClass", () => {
   test("terminal and in-flight statuses get distinct treatments", () => {
     expect(rescueStatusBadgeClass("cancelled")).toContain("text-zinc-500");
-    expect(rescueStatusBadgeClass("completed")).toContain("bg-[#1E3A5F]");
+    expect(rescueStatusBadgeClass("completed")).toContain("bg-[#FACC15]");
     expect(rescueStatusBadgeClass("dispatched")).toContain("border-zinc-400");
     expect(rescueStatusBadgeClass(null)).toContain("border-zinc-400");
   });

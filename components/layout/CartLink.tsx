@@ -22,7 +22,7 @@ export function CartLink({ onNavy = false }: { onNavy?: boolean }) {
       aria-label={count > 0 ? `Giỏ hàng, ${count} sản phẩm` : "Giỏ hàng"}
       className={
         onNavy
-          ? "relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-100 transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95"
+          ? "relative flex h-10 w-10 items-center justify-center rounded-lg text-[#111111] transition-all duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95"
           : "relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
       }
     >
@@ -32,8 +32,8 @@ export function CartLink({ onNavy = false }: { onNavy?: boolean }) {
           aria-hidden="true"
           className={
             onNavy
-              ? "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-[#1E3A5F]"
-              : "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1E3A5F] px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900"
+              ? "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-[#111111]"
+              : "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#FACC15] px-1 text-[10px] font-bold text-[#111111] dark:bg-white dark:text-zinc-900"
           }
         >
           {count > 99 ? "99+" : count}

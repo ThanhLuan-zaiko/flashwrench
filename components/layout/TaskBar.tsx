@@ -13,13 +13,13 @@ type TaskBarProps = {
 // bar carries the back link and the task name instead.
 export function TaskBar({ title, backHref, trailing }: TaskBarProps) {
   return (
-    <div className="sticky top-0 z-50 bg-[#1E3A5F] text-white sm:hidden">
+    <div className="sticky top-0 z-50 bg-[#FACC15] text-[#111111] sm:hidden">
       <div className="flex h-12 items-center gap-1 px-2">
         {backHref ? (
           <Link
             href={backHref}
             aria-label="Quay lại"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
           >
             <FiChevronLeft aria-hidden="true" className="h-5 w-5" />
           </Link>
@@ -28,7 +28,7 @@ export function TaskBar({ title, backHref, trailing }: TaskBarProps) {
         )}
         <p className="min-w-0 flex-1 truncate text-sm font-bold">{title}</p>
         {trailing && (
-          <div className="shrink-0 pr-2 text-[11px] font-semibold text-zinc-300">
+          <div className="shrink-0 pr-2 text-[11px] font-semibold text-[#111111]/70">
             {trailing}
           </div>
         )}

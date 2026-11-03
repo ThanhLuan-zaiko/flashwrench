@@ -56,7 +56,7 @@ export function HomePromoList({
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+          <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
             Khuyến mãi
           </p>
           <MaskLines
@@ -72,7 +72,7 @@ export function HomePromoList({
           <Link
             href="/vouchers"
             prefetch
-            className="flex min-h-11 w-fit shrink-0 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+            className="flex min-h-11 w-fit shrink-0 items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
           >
             Xem tất cả {items.length} ưu đãi
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

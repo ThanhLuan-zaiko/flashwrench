@@ -76,7 +76,7 @@ export function PulseKpiRow({ pulse }: { pulse: DispatchPulse }) {
             {kpi.label}
           </p>
           <p className="flex flex-wrap items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-[#1E3A5F] tabular-nums sm:text-3xl dark:text-zinc-50">
+            <span className="text-2xl font-extrabold text-[#111111] tabular-nums sm:text-3xl dark:text-zinc-50">
               {kpi.value}
             </span>
             {kpi.delta && (
@@ -84,7 +84,7 @@ export function PulseKpiRow({ pulse }: { pulse: DispatchPulse }) {
                 className={`rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-bold dark:border-zinc-800 ${
                   kpi.negative
                     ? "text-red-600 dark:text-red-400"
-                    : "text-[#1E3A5F] dark:text-zinc-200"
+                    : "text-[#111111] dark:text-zinc-200"
                 }`}
               >
                 {kpi.delta}

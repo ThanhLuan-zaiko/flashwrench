@@ -23,7 +23,7 @@ export function VouchersIntro({ countText }: VouchersIntroProps) {
       data-tour="vouchers-header"
       className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-8"
     >
-      <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
         Ví voucher
       </p>
       <MaskLines

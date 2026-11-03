@@ -55,7 +55,7 @@ export function AutoRuleList({ rules }: { rules: VoucherAutoRule[] }) {
             onClick={() =>
               toggle.mutate({ ruleId: rule.id, isActive: !rule.isActive })
             }
-            className="flex min-h-[44px] shrink-0 items-center rounded-xl border border-[#1E3A5F] px-3 text-xs font-semibold text-[#1E3A5F] disabled:opacity-50 motion-safe:transition-colors dark:border-zinc-100 dark:text-zinc-100"
+            className="flex min-h-[44px] shrink-0 items-center rounded-xl border border-[#111111] px-3 text-xs font-semibold text-[#111111] disabled:opacity-50 motion-safe:transition-colors dark:border-zinc-100 dark:text-zinc-100"
             aria-label={
               rule.isActive
                 ? `Tắt quy tắc ${rule.name}`

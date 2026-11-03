@@ -54,10 +54,10 @@ export function OrderInvoiceDialog({
           <div className="flex items-start gap-2.5">
             <FiFileText
               aria-hidden="true"
-              className="mt-0.5 h-5 w-5 shrink-0 text-[#1E3A5F] dark:text-zinc-50"
+              className="mt-0.5 h-5 w-5 shrink-0 text-[#111111] dark:text-zinc-50"
             />
             <div>
-              <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+              <h2 className="text-base font-bold tracking-tight text-[#111111] dark:text-zinc-50">
                 Hóa đơn bán linh kiện
               </h2>
               <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">

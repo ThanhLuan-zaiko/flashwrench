@@ -136,7 +136,7 @@ export function HistoryBookingList({
           {!search && (
             <Link
               href="/services"
-              className="flex min-h-11 items-center rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C]"
+              className="flex min-h-11 items-center rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
             >
               Xem dịch vụ
             </Link>
@@ -178,7 +178,7 @@ export function HistoryBookingList({
                     onClick={scrollToPageTop}
                     prefetch
                     aria-label="Trang trước"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     Trang trước
                   </Link>
@@ -187,7 +187,7 @@ export function HistoryBookingList({
                     type="button"
                     disabled
                     aria-label="Trang trước"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     Trang trước
                   </button>
@@ -199,7 +199,7 @@ export function HistoryBookingList({
                     onClick={scrollToPageTop}
                     prefetch
                     aria-label="Trang sau"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     Trang sau
                   </Link>
@@ -208,7 +208,7 @@ export function HistoryBookingList({
                     type="button"
                     disabled
                     aria-label="Trang sau"
-                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                    className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
                   >
                     {loadingNext && (
                       <FiLoader

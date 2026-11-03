@@ -14,7 +14,7 @@ const SUBMIT_TONE = {
   create:
     "bg-green-700 text-white hover:bg-green-800 dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400",
   update:
-    "bg-[#1E3A5F] text-white hover:bg-[#0F1E33] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200",
+    "bg-[#FACC15] text-[#111111] hover:bg-[#EAB308] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200",
 } as const;
 
 // Shared sticky action bar for tall dialogs. The panel is the only scroll

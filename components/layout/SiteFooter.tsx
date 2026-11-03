@@ -28,13 +28,13 @@ export function SiteFooter() {
   if (hidden) return null;
 
   return (
-    <footer ref={rootRef} className="bg-[#1E3A5F] text-white">
-      <div className="border-b border-white/15 py-4 md:py-5">
+    <footer ref={rootRef} className="bg-[#FACC15] text-[#111111]">
+      <div className="border-b border-[#111111]/15 py-4 md:py-5">
         <MarqueeTrack
           items={FOOTER_PHRASES}
           label="Cam kết của FlashWrench"
           renderItem={(phrase) => (
-            <li className="shrink-0 pr-12 text-lg font-bold tracking-tight text-white md:text-xl">
+            <li className="shrink-0 pr-12 text-lg font-bold tracking-tight text-[#111111] md:text-xl">
               {phrase.text}
             </li>
           )}
@@ -44,17 +44,17 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 md:pt-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-12 md:gap-x-10">
           <div className="flex flex-col justify-between gap-10 md:col-span-5">
-            <p className="max-w-sm text-base text-zinc-300">
+            <p className="max-w-sm text-base text-[#111111]/70">
               Sửa xe lưu động tận nơi, cứu hộ khẩn cấp và phụ tùng sẵn kho cho
               xe của bạn.
             </p>
             <div>
-              <p className="text-xs font-semibold tracking-wide text-zinc-300 uppercase">
+              <p className="text-xs font-semibold tracking-wide text-[#111111]/70 uppercase">
                 {FOOTER_HOTLINE.label}
               </p>
               <a
                 href={FOOTER_HOTLINE.href}
-                className="mt-2 inline-flex min-h-11 items-center text-2xl font-bold tracking-tight text-white underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F]"
+                className="mt-2 inline-flex min-h-11 items-center text-2xl font-bold tracking-tight text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15]"
               >
                 {FOOTER_HOTLINE.number}
               </a>
@@ -67,7 +67,7 @@ export function SiteFooter() {
           >
             {FOOTER_COLUMNS.map((column) => (
               <div key={column.title}>
-                <p className="text-xs font-semibold tracking-wide text-zinc-300 uppercase">
+                <p className="text-xs font-semibold tracking-wide text-[#111111]/70 uppercase">
                   {column.title}
                 </p>
                 <ul className="mt-4">
@@ -76,13 +76,13 @@ export function SiteFooter() {
                       <span
                         data-rule
                         aria-hidden="true"
-                        className="block h-px origin-left bg-white/15"
+                        className="block h-px origin-left bg-[#111111]/15"
                       />
                       <Link
                         href={link.href}
                         prefetch
                         data-chapter-row
-                        className="group flex min-h-11 items-center justify-between gap-3 py-2 text-base font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F]"
+                        className="group flex min-h-11 items-center justify-between gap-3 py-2 text-base font-semibold text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15]"
                       >
                         {link.label}
                         <FiArrowRight
@@ -96,7 +96,7 @@ export function SiteFooter() {
                     <span
                       data-rule
                       aria-hidden="true"
-                      className="block h-px origin-left bg-white/15"
+                      className="block h-px origin-left bg-[#111111]/15"
                     />
                   </li>
                 </ul>
@@ -108,11 +108,11 @@ export function SiteFooter() {
         <MaskLines
           as="p"
           lines={[SITE_NAME]}
-          className="mt-12 text-[clamp(3rem,13.5vw,12rem)] leading-[0.95] font-extrabold tracking-tight text-white md:mt-16"
+          className="mt-12 text-[clamp(3rem,13.5vw,12rem)] leading-[0.95] font-extrabold tracking-tight text-[#111111] md:mt-16"
         />
       </div>
 
-      <div className="mx-auto max-w-7xl mt-8 flex flex-col gap-3 border-t border-white/15 px-4 py-6 text-sm text-zinc-300 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+      <div className="mx-auto max-w-7xl mt-8 flex flex-col gap-3 border-t border-[#111111]/15 px-4 py-6 text-sm text-[#111111]/70 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
         <p>
           © {new Date().getFullYear()} {SITE_NAME}. Bảo lưu mọi quyền.
         </p>
@@ -124,7 +124,7 @@ export function SiteFooter() {
               behavior: prefersReducedMotion() ? "auto" : "smooth",
             })
           }
-          className="inline-flex min-h-11 items-center font-semibold text-white underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F]"
+          className="inline-flex min-h-11 items-center font-semibold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15]"
         >
           Về đầu trang
         </button>

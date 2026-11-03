@@ -71,7 +71,7 @@ function ThreadRow({
             {thread.lastMessagePreview || "Bắt đầu cuộc trò chuyện"}
           </span>
           {thread.unreadCount > 0 ? (
-            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] px-1.5 text-[10px] font-semibold text-white dark:bg-zinc-100 dark:text-zinc-900">
+            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#FACC15] px-1.5 text-[10px] font-semibold text-[#111111] dark:bg-zinc-100 dark:text-zinc-900">
               {thread.unreadCount > 99 ? "99+" : thread.unreadCount}
             </span>
           ) : null}
@@ -130,7 +130,7 @@ export function ChatThreadList({
               href={action.href}
               className={
                 index === 0
-                  ? "rounded-full bg-[#1E3A5F] px-4 py-2 text-xs font-medium text-white transition-transform duration-150 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
+                  ? "rounded-full bg-[#FACC15] px-4 py-2 text-xs font-medium text-[#111111] transition-transform duration-150 hover:scale-105 active:scale-95 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
                   : "rounded-full border border-zinc-200 px-4 py-2 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
               }
             >

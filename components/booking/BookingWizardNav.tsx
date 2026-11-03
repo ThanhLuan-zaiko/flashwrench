@@ -23,7 +23,7 @@ export function BookingWizardProgress({
             key={label}
             className={`h-1 flex-1 rounded-full ${
               index <= step
-                ? "bg-[#1E3A5F] dark:bg-zinc-100"
+                ? "bg-[#FACC15] dark:bg-zinc-100"
                 : "bg-zinc-200 dark:bg-zinc-800"
             }`}
           />
@@ -33,7 +33,7 @@ export function BookingWizardProgress({
         aria-live="polite"
         className="text-sm text-zinc-600 dark:text-zinc-400"
       >
-        <span className="font-bold text-[#1E3A5F] dark:text-zinc-100">
+        <span className="font-bold text-[#111111] dark:text-zinc-100">
           Bước {step + 1}/{labels.length}
         </span>{" "}
         · {labels[step]}

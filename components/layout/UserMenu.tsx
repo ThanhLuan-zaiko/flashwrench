@@ -48,7 +48,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
     return (
       <output
         aria-label="Đang tải thông tin tài khoản"
-        className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-400 dark:text-zinc-500"
+        className="flex h-10 w-10 items-center justify-center rounded-lg text-[#111111]/50"
       >
         <FiLoader
           aria-hidden="true"
@@ -65,8 +65,8 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
           href={LOGIN_HREF}
           className={
             onNavy
-              ? "hidden items-center gap-1.5 rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-[0.98] sm:flex"
-              : "hidden items-center gap-1.5 rounded-lg bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+              ? "hidden items-center gap-1.5 rounded-lg border border-[#111111]/40 px-4 py-2 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.98] sm:flex"
+              : "hidden items-center gap-1.5 rounded-lg bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
           }
         >
           <FiLogIn aria-hidden="true" className="h-4 w-4 shrink-0" />
@@ -77,7 +77,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
           aria-label={LOGIN_LABEL}
           className={
             onNavy
-              ? "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-100 transition-colors duration-200 hover:bg-white/10 sm:hidden"
+              ? "flex h-10 w-10 items-center justify-center rounded-lg text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 sm:hidden"
               : "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 sm:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
           }
         >
@@ -105,7 +105,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
         title={user.fullName}
         className={
           onNavy
-            ? "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/40 bg-white/10 text-sm font-bold text-white transition-all duration-200 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95"
+            ? "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[#111111]/40 bg-[#111111]/10 text-sm font-bold text-[#111111] transition-all duration-200 hover:bg-[#111111]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95"
             : "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-zinc-300 bg-zinc-100 text-sm font-bold text-zinc-800 transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
         }
       >

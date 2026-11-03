@@ -14,10 +14,10 @@ export function PulseHourlyCard({ pulse }: { pulse: DispatchPulse }) {
     <BentoCard label="Đơn theo giờ" className="lg:col-span-2">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+          <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
             Đơn theo giờ
           </h3>
-          <p className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+          <p className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111] tabular-nums dark:text-zinc-50">
             {pulse.todayTotal} đơn
           </p>
           <p className="text-xs text-zinc-600 dark:text-zinc-400">

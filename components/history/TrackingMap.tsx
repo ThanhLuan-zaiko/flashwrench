@@ -19,7 +19,7 @@ type TrackingMapProps = {
 function destinationIcon(): L.DivIcon {
   return L.divIcon({
     className: "",
-    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#1E3A5F] dark:bg-white"><span class="h-2.5 w-2.5 rounded-full bg-white dark:bg-zinc-900"></span></span>',
+    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#111111] bg-[#FACC15] dark:bg-white"><span class="h-2.5 w-2.5 rounded-full bg-white dark:bg-zinc-900"></span></span>',
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });
@@ -28,7 +28,7 @@ function destinationIcon(): L.DivIcon {
 function mechanicIcon(): L.DivIcon {
   return L.divIcon({
     className: "",
-    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#1E3A5F] bg-white dark:border-white dark:bg-zinc-900"><span class="h-2.5 w-2.5 rounded-full bg-[#1E3A5F] dark:bg-white"></span></span>',
+    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#FACC15] bg-white dark:border-white dark:bg-zinc-900"><span class="h-2.5 w-2.5 rounded-full bg-[#FACC15] dark:bg-white"></span></span>',
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });

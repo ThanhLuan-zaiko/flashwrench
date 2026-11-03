@@ -12,7 +12,7 @@ export function PulseFunnelCard({ pulse }: { pulse: DispatchPulse }) {
 
   return (
     <BentoCard label="Phễu trạng thái" className="flex flex-col">
-      <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+      <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
         Phễu trạng thái
       </h3>
       <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -38,7 +38,7 @@ export function PulseFunnelCard({ pulse }: { pulse: DispatchPulse }) {
           {pulse.funnel.map((step) => (
             <li
               key={step.stage}
-              className="flex h-12 items-center justify-end text-[13px] font-extrabold text-[#1E3A5F] tabular-nums dark:text-zinc-50"
+              className="flex h-12 items-center justify-end text-[13px] font-extrabold text-[#111111] tabular-nums dark:text-zinc-50"
             >
               {step.count}
             </li>
@@ -47,7 +47,7 @@ export function PulseFunnelCard({ pulse }: { pulse: DispatchPulse }) {
       </div>
       <p className="mt-auto pt-3 text-xs text-zinc-600 dark:text-zinc-400">
         Tỉ lệ hoàn tất:{" "}
-        <b className="text-[#1E3A5F] dark:text-zinc-50">
+        <b className="text-[#111111] dark:text-zinc-50">
           {formatRate(pulse.completionRate)}
         </b>
       </p>

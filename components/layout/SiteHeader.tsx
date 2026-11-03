@@ -27,7 +27,7 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-white/10 bg-[#1E3A5F] ${taskRoute ? "max-sm:hidden" : ""}`}
+      className={`sticky top-0 z-50 border-b border-[#111111]/10 bg-[#FACC15] ${taskRoute ? "max-sm:hidden" : ""}`}
     >
       <div className="mx-auto flex h-12 max-w-7xl sm:h-16 items-center justify-between gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
         <SiteLogo onNavy />
@@ -58,7 +58,7 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-100 transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95 xl:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-[#111111] transition-all duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95 xl:hidden"
           >
             {menuOpen ? (
               <FiX aria-hidden="true" className="h-6 w-6" />

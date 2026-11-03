@@ -14,7 +14,7 @@ const styles = {
   totalRow:
     "flex items-baseline justify-between gap-3 border-t border-dashed border-zinc-400 pt-3 text-sm dark:border-zinc-600",
   total:
-    "text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50",
+    "text-2xl font-extrabold tracking-tight text-[#111111] dark:text-zinc-50",
 } as const;
 
 export function VoucherTotals({

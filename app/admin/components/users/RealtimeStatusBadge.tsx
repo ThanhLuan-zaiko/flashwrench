@@ -18,7 +18,7 @@ export function RealtimeStatusBadge() {
         aria-hidden="true"
         className={`h-2 w-2 rounded-full ${
           live
-            ? "bg-[#1E3A5F] dark:bg-white"
+            ? "bg-[#FACC15] dark:bg-white"
             : "border border-zinc-400 dark:border-zinc-500"
         }`}
       />

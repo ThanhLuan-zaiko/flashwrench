@@ -33,7 +33,7 @@ export function orderStatusBadgeClass(status: OrderStatus): string {
     return `${base} border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400`;
   }
   if (status === "delivered") {
-    return `${base} border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-white dark:bg-white dark:text-zinc-900`;
+    return `${base} border-[#FACC15] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900`;
   }
   return `${base} border-zinc-400 text-zinc-700 dark:border-zinc-600 dark:text-zinc-300`;
 }

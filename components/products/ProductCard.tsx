@@ -42,7 +42,7 @@ const TILE_CLASSES: Record<
 };
 
 const TEXT_ACTION =
-  "flex min-h-11 items-center text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 items-center text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
 
 // Product tile on the page surface, as on the home parts chapter: the photo sits
 // contained on white, then the price above the name. The only solid button is
@@ -62,7 +62,7 @@ export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
       <Link
         href={href}
         aria-label={`Xem chi tiết ${part.name}`}
-        className={`group block ${classes.photo} focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-100`}
+        className={`group block ${classes.photo} focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-100`}
       >
         <span className="relative block aspect-[3/4] overflow-hidden rounded-lg bg-white dark:bg-zinc-950">
           {part.imageUrl ? (
@@ -88,7 +88,7 @@ export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
       </Link>
       <div className={classes.body}>
         <p className="flex flex-wrap items-baseline gap-1.5">
-          <span className="text-base font-bold tracking-tight text-[#1E3A5F] md:text-lg dark:text-zinc-50">
+          <span className="text-base font-bold tracking-tight text-[#111111] md:text-lg dark:text-zinc-50">
             {formatVnd(part.price)}
           </span>
           {discount > 0 && part.comparePrice !== null && (

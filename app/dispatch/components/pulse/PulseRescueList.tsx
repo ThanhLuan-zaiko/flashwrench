@@ -29,7 +29,7 @@ export function PulseRescueList({ rescues, total }: PulseRescueListProps) {
   return (
     <BentoCard label="Cứu hộ đang mở" className="lg:col-span-2">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+        <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
           Cứu hộ đang mở
         </h3>
         <Link
@@ -53,7 +53,7 @@ export function PulseRescueList({ rescues, total }: PulseRescueListProps) {
                 key={rescue.requestId}
                 className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 border-t border-zinc-100 py-2.5 sm:grid-cols-[96px_minmax(0,1fr)_128px_84px] dark:border-zinc-900"
               >
-                <span className="font-mono text-[13px] font-bold text-[#1E3A5F] dark:text-zinc-100">
+                <span className="font-mono text-[13px] font-bold text-[#111111] dark:text-zinc-100">
                   {rescueCode(rescue.requestId)}
                 </span>
                 <span className="truncate text-[13px] text-zinc-700 dark:text-zinc-300">
@@ -67,7 +67,7 @@ export function PulseRescueList({ rescues, total }: PulseRescueListProps) {
                   className={`col-start-3 row-span-2 row-start-1 justify-self-end text-[15px] font-extrabold tabular-nums sm:col-start-auto sm:row-span-1 sm:row-start-auto ${
                     late
                       ? "text-red-600 dark:text-red-400"
-                      : "text-[#1E3A5F] dark:text-zinc-50"
+                      : "text-[#111111] dark:text-zinc-50"
                   }`}
                 >
                   <span className="sr-only">Đã chờ </span>

@@ -28,7 +28,7 @@ export function StaffChartCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+          <h2 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
             {title}
           </h2>
           {subtitle && (
@@ -67,7 +67,7 @@ export function ChartHeadline({
 }) {
   return (
     <p className="text-right">
-      <span className="block text-2xl font-extrabold text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+      <span className="block text-2xl font-extrabold text-[#111111] tabular-nums dark:text-zinc-50">
         {value}
       </span>
       <span className="text-xs text-zinc-600 dark:text-zinc-400">

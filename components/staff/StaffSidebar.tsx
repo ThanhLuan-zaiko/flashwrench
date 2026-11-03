@@ -76,7 +76,7 @@ export function StaffSidebar({
 
       <aside
         aria-label={`Menu ${copy.scope}`}
-        className={`fixed inset-y-0 left-0 z-[60] flex w-[304px] max-w-[88vw] bg-[#1E3A5F] text-white transition-transform duration-200 motion-safe:ease-out md:sticky md:top-16 md:bottom-auto md:z-30 md:h-[calc(100vh-4rem)] md:max-w-none md:shrink-0 md:self-start md:border-t md:border-white/10 ${
+        className={`fixed inset-y-0 left-0 z-[60] flex w-[304px] max-w-[88vw] bg-[#FACC15] text-[#111111] transition-transform duration-200 motion-safe:ease-out md:sticky md:top-16 md:bottom-auto md:z-30 md:h-[calc(100vh-4rem)] md:max-w-none md:shrink-0 md:self-start md:border-t md:border-white/10 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 ${collapsed ? "md:w-[72px]" : "md:w-[304px]"}`}
       >

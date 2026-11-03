@@ -17,7 +17,7 @@ type PromoActiveCopyProps = {
 };
 
 const NAV_BUTTON =
-  "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/30 text-white transition-colors duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95";
+  "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#111111]/30 text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95";
 
 // Copy of the open campaign: scope, name, the discount figure, terms and the
 // actions. Lines carry data-promo-anim so a slide change can stagger them in.
@@ -38,7 +38,7 @@ export function PromoActiveCopy({
       >
         <p
           data-promo-anim
-          className="text-[11px] font-bold tracking-[0.12em] text-zinc-300 uppercase"
+          className="text-[11px] font-bold tracking-[0.12em] text-[#111111]/70 uppercase"
         >
           {promoScopeLabel(campaign.scope)}
         </p>
@@ -52,15 +52,18 @@ export function PromoActiveCopy({
           <span className="text-[2.75rem] leading-none font-extrabold tracking-[-0.03em] lg:text-[3.25rem]">
             {figure.value}
           </span>
-          <span className="text-xs font-bold tracking-[0.08em] text-zinc-300 uppercase">
+          <span className="text-xs font-bold tracking-[0.08em] text-[#111111]/70 uppercase">
             {figure.unit}
           </span>
         </p>
-        <p data-promo-anim className="text-sm text-zinc-300">
+        <p data-promo-anim className="text-sm text-[#111111]/70">
           {promoTermsLabel(campaign)}
         </p>
         {campaign.description ? (
-          <p data-promo-anim className="text-sm leading-relaxed text-zinc-200">
+          <p
+            data-promo-anim
+            className="text-sm leading-relaxed text-[#111111]/85"
+          >
             {campaign.description}
           </p>
         ) : null}
@@ -71,7 +74,7 @@ export function PromoActiveCopy({
           scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
-          className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-[#1E3A5F] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E3A5F] motion-safe:active:scale-[0.99] lg:flex-none"
+          className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-[#111111] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15] motion-safe:active:scale-[0.99] lg:flex-none"
         >
           Xem chi tiết
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />

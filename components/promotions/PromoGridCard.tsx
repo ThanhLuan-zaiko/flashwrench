@@ -29,7 +29,7 @@ export function PromoGridFeatured({
   onNext,
 }: PromoGridFeaturedProps) {
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-[#1E3A5F] text-white lg:grid lg:grid-cols-2">
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-[#FACC15] text-[#111111] lg:grid lg:grid-cols-2">
       <div className="relative h-52 shrink-0 overflow-hidden lg:h-auto">
         <div data-promo-cover="active" className="absolute inset-0">
           <CoverImage
@@ -77,7 +77,7 @@ export function PromoGridCompact({
           <h3 className="text-[15px] leading-snug font-extrabold tracking-tight text-zinc-900 lg:text-base dark:text-zinc-50">
             {campaign.name}
           </h3>
-          <p className="text-xl leading-tight font-extrabold text-[#1E3A5F] lg:text-2xl dark:text-zinc-100">
+          <p className="text-xl leading-tight font-extrabold text-[#111111] lg:text-2xl dark:text-zinc-100">
             {figure.value}
           </p>
           <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -94,7 +94,7 @@ export function PromoGridCompact({
           scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
-          className="inline-flex min-h-11 items-center gap-1 self-start rounded-lg text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+          className="inline-flex min-h-11 items-center gap-1 self-start rounded-lg text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
         >
           Xem chi tiết
           <FiArrowRight aria-hidden="true" className="h-3.5 w-3.5" />

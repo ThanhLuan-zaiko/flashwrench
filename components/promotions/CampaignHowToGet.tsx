@@ -38,10 +38,10 @@ export function CampaignHowToGet() {
       className="flex flex-col gap-4"
     >
       <div>
-        <p className="text-xs font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
+        <p className="text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
           Nhận ưu đãi
         </p>
-        <h2 className="mt-1 text-xl font-extrabold tracking-tight text-[#1E3A5F] sm:text-2xl dark:text-zinc-50">
+        <h2 className="mt-1 text-xl font-extrabold tracking-tight text-[#111111] sm:text-2xl dark:text-zinc-50">
           Cách nhận voucher
         </h2>
       </div>
@@ -54,7 +54,7 @@ export function CampaignHowToGet() {
             <div className="flex items-start justify-between gap-3">
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E3A5F] text-sm font-bold text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FACC15] text-sm font-bold text-[#111111]"
               >
                 {step.numeral}
               </span>

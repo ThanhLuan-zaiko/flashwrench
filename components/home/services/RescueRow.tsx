@@ -16,7 +16,7 @@ export function RescueRow() {
         data-chapter-row
         className="grid grid-cols-1 items-center gap-4 py-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-10 md:py-8"
       >
-        <p className="text-3xl leading-none font-bold tracking-tight text-[#1E3A5F] md:text-4xl dark:text-zinc-50">
+        <p className="text-3xl leading-none font-bold tracking-tight text-[#111111] md:text-4xl dark:text-zinc-50">
           24/7
         </p>
         <div className="min-w-0">
@@ -31,7 +31,7 @@ export function RescueRow() {
           <Link
             href="/rescue"
             aria-label="Gửi yêu cầu cứu hộ ngay, không cần đăng nhập"
-            className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+            className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
           >
             Đặt cứu hộ ngay
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

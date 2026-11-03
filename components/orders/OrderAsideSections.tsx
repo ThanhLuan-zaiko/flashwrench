@@ -61,7 +61,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
                 aria-hidden="true"
                 className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
                   index === order.history.length - 1
-                    ? "bg-[#1E3A5F] dark:bg-white"
+                    ? "bg-[#FACC15] dark:bg-white"
                     : "border border-zinc-300 dark:border-zinc-700"
                 }`}
               />
@@ -127,7 +127,7 @@ export function OrderCancelSection({
               type="button"
               disabled={cancelOrder.isPending}
               onClick={cancel}
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               {cancelOrder.isPending && (
                 <FiLoader
@@ -141,7 +141,7 @@ export function OrderCancelSection({
               type="button"
               disabled={cancelOrder.isPending}
               onClick={() => setConfirming(false)}
-              className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+              className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
             >
               Giữ đơn
             </button>
@@ -151,7 +151,7 @@ export function OrderCancelSection({
         <button
           type="button"
           onClick={() => setConfirming(true)}
-          className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+          className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#111111] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
         >
           Hủy đơn hàng
         </button>

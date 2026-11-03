@@ -25,7 +25,7 @@ export function ServicesCategoryHeader({
       className="grid gap-5 border-t border-zinc-200 pt-6 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-center md:gap-10 dark:border-zinc-800"
     >
       <div className="min-w-0">
-        <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+        <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
           Loại hình
         </p>
         <h2 className="mt-1 text-lg font-bold tracking-tight text-zinc-900 md:text-xl dark:text-zinc-50">

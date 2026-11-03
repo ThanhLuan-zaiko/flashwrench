@@ -18,7 +18,7 @@ const LOOKUP_SCOPE = [
 export function LookupScopeList() {
   return (
     <section aria-label="Thông tin tra cứu được">
-      <h2 className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+      <h2 className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
         Bạn xem được
       </h2>
       <dl className="mt-3 divide-y divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">

@@ -45,18 +45,18 @@ export function AuthBrandPanel({
   return (
     <div
       data-reveal
-      className={`flex flex-col justify-between gap-6 rounded-2xl bg-[#1E3A5F] p-6 text-white sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 ${className}`}
+      className={`flex flex-col justify-between gap-6 rounded-2xl bg-[#FACC15] p-6 text-[#111111] sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 ${className}`}
     >
       <div>
         <p>
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-sm font-bold text-[#1E3A5F]">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-sm font-bold text-[#111111]">
             FW
           </span>
         </p>
-        <p className="mt-5 text-2xl font-extrabold tracking-tight text-balance text-white sm:text-3xl">
+        <p className="mt-5 text-2xl font-extrabold tracking-tight text-balance text-[#111111] sm:text-3xl">
           {title}
         </p>
-        <p className="mt-3 max-w-md text-sm text-zinc-200 sm:text-base">
+        <p className="mt-3 max-w-md text-sm text-[#111111]/85 sm:text-base">
           {description}
         </p>
       </div>
@@ -66,17 +66,17 @@ export function AuthBrandPanel({
           return (
             <li
               key={item.title}
-              className="flex items-center gap-3 rounded-xl bg-white/10 p-3"
+              className="flex items-center gap-3 rounded-xl bg-[#111111]/10 p-3"
             >
               <Icon
                 aria-hidden="true"
-                className="h-5 w-5 shrink-0 text-white"
+                className="h-5 w-5 shrink-0 text-[#111111]"
               />
               <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-white">
+                <span className="block truncate text-sm font-semibold text-[#111111]">
                   {item.title}
                 </span>
-                <span className="block truncate text-xs text-zinc-300">
+                <span className="block truncate text-xs text-[#111111]/70">
                   {item.hint}
                 </span>
               </span>

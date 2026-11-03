@@ -38,7 +38,7 @@ export function StaffNavRail({
     <div className="flex w-[72px] shrink-0 flex-col items-center gap-2 bg-[#152C48] py-3">
       <span
         aria-hidden="true"
-        className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-sm font-extrabold text-[#1E3A5F]"
+        className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-sm font-extrabold text-[#111111]"
       >
         FW
       </span>
@@ -63,8 +63,8 @@ export function StaffNavRail({
               title={group.label}
               className={`relative flex h-14 w-14 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl transition-colors duration-200 ${STAFF_ON_NAVY_FOCUS} ${
                 selected
-                  ? "bg-[#1E3A5F] text-white ring-1 ring-white/20"
-                  : "text-zinc-400 hover:bg-white/10 hover:text-white"
+                  ? "bg-[#111111] text-white"
+                  : "text-[#111111]/70 hover:bg-[#111111]/10 hover:text-[#111111]"
               }`}
             >
               <Icon aria-hidden="true" className="h-5 w-5" />

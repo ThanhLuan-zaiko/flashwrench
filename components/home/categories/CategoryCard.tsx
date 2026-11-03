@@ -18,7 +18,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
         href={`/services/${encodeURIComponent(category.slug)}`}
         prefetch
         aria-label={`Xem ${category.serviceCount} dịch vụ ${category.name}`}
-        className="group flex w-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
+        className="group flex w-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
       >
         <span className="relative block aspect-[16/10] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
           {cover ? (
@@ -48,7 +48,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
               {category.description}
             </span>
           ) : null}
-          <span className="mt-auto inline-flex items-center gap-1.5 border-t border-zinc-200 pt-3 text-sm font-bold text-[#1E3A5F] dark:border-zinc-800 dark:text-zinc-100">
+          <span className="mt-auto inline-flex items-center gap-1.5 border-t border-zinc-200 pt-3 text-sm font-bold text-[#111111] dark:border-zinc-800 dark:text-zinc-100">
             Xem dịch vụ
             <FiArrowRight
               aria-hidden="true"

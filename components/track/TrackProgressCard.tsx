@@ -15,7 +15,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
       className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div className="flex items-baseline justify-between">
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
+        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
           Tiến độ
         </p>
         <p className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
@@ -38,7 +38,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                   aria-hidden="true"
                   className={`absolute top-5 -bottom-4 left-[7px] w-0.5 ${
                     done
-                      ? "bg-[#1E3A5F] dark:bg-zinc-100"
+                      ? "bg-[#FACC15] dark:bg-zinc-100"
                       : "bg-zinc-200 dark:bg-zinc-800"
                   }`}
                 />
@@ -47,9 +47,9 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                 aria-hidden="true"
                 className={`relative mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
                   done
-                    ? "border-[#1E3A5F] bg-[#1E3A5F] dark:border-zinc-100 dark:bg-zinc-100"
+                    ? "border-[#FACC15] bg-[#FACC15] dark:border-zinc-100 dark:bg-zinc-100"
                     : active
-                      ? "border-[#1E3A5F] bg-white dark:border-zinc-100 dark:bg-zinc-950"
+                      ? "border-[#FACC15] bg-white dark:border-zinc-100 dark:bg-zinc-950"
                       : "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-950"
                 }`}
               />
@@ -57,7 +57,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                 <span
                   className={`text-sm ${
                     active
-                      ? "font-bold text-[#1E3A5F] dark:text-zinc-50"
+                      ? "font-bold text-[#111111] dark:text-zinc-50"
                       : done
                         ? "font-semibold text-zinc-900 dark:text-zinc-100"
                         : "font-semibold text-zinc-500 dark:text-zinc-500"

@@ -30,7 +30,7 @@ export function BookingServiceQuickPick({
               type="button"
               disabled={disabled}
               onClick={() => onPick(service.id)}
-              className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-zinc-300 px-3 text-sm font-medium text-[#1E3A5F] transition-colors duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:opacity-50 motion-safe:active:scale-95 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-zinc-300 px-3 text-sm font-medium text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:opacity-50 motion-safe:active:scale-95 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
             >
               <FiPlus aria-hidden="true" className="h-4 w-4 shrink-0" />
               {service.name}

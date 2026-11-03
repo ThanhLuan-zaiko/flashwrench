@@ -38,7 +38,7 @@ export function DashboardTopMechanics({
 
   return (
     <BentoCard label="Top thợ" tour="admin-dash-top">
-      <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+      <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
         Top thợ
       </h3>
       <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -79,7 +79,7 @@ export function DashboardTopMechanics({
                 key={row.key}
                 className="flex h-11 flex-col justify-center text-xs text-zinc-600 tabular-nums dark:text-zinc-400"
               >
-                <span className="font-bold text-[#1E3A5F] dark:text-zinc-50">
+                <span className="font-bold text-[#111111] dark:text-zinc-50">
                   {formatVnd(row.amount)}
                 </span>
                 <span>

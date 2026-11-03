@@ -4,7 +4,7 @@
 // charts and their legend swatches may use these hues.
 
 export const CHART_SERIES_LIGHT = [
-  "#1E3A5F",
+  "#111111",
   "#0EA5E9",
   "#14B8A6",
   "#F59E0B",
@@ -19,7 +19,7 @@ export const CHART_ALERT = { light: "#DC2626", dark: "#F87171" } as const;
 
 // Legend swatches: same order as the canvas series, theme-aware.
 export const CHART_SWATCH_CLASSES = [
-  "bg-[#1E3A5F] dark:bg-zinc-200",
+  "bg-[#111111] dark:bg-zinc-200",
   "bg-[#0EA5E9] dark:bg-[#38BDF8]",
   "bg-[#14B8A6] dark:bg-[#2DD4BF]",
   "bg-[#F59E0B] dark:bg-[#FBBF24]",
