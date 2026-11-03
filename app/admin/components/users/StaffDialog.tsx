@@ -215,7 +215,11 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
                 type="button"
                 disabled={pending}
                 onClick={submit}
-                className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] ${
+                  isCreate
+                    ? "bg-green-700 hover:bg-green-800 focus-visible:ring-green-700 dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400 dark:focus-visible:ring-green-400"
+                    : "bg-[#1E3A5F] hover:bg-[#0F1E33] focus-visible:ring-[#1E3A5F] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-400"
+                }`}
               >
                 {pending ? (
                   <FiLoader

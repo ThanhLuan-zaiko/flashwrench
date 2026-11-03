@@ -14,11 +14,17 @@ type ServicePriceActionsProps = {
   onRestore: (item: ServiceItem) => void;
 };
 
+// Update actions (edit, toggle, restore): navy outline.
 const ROW_BUTTON =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#1E3A5F] px-3 py-2 text-xs font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
+// Soft delete: red outline.
+const DELETE_ROW_BUTTON =
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40";
+
+// Hard delete: red solid.
 const DANGER_BUTTON =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#1E3A5F] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400";
 
 // Row action buttons for one price item: toggle/edit/soft delete live,
 // restore/hard delete in trash mode. Extracted to keep the list small.
@@ -87,7 +93,7 @@ export function ServicePriceActions({
         disabled={busy}
         onClick={() => onSoftDelete(item)}
         aria-label={`Xóa mềm ${item.name}`}
-        className={ROW_BUTTON}
+        className={DELETE_ROW_BUTTON}
       >
         <FiTrash2 aria-hidden="true" className="h-3.5 w-3.5" />
         Xóa mềm

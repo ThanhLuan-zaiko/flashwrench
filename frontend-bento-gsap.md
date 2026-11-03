@@ -29,11 +29,11 @@ Always respect these from `AGENTS.md`:
   No custom CSS files, no `@keyframes`, no `@theme` tokens.
 - No `style={{}}` for static styling. All static styling is Tailwind.
 - Neutral palette: white, zinc scale, black + `dark:` variants.
-  Customer screens add the brand palette: navy `#1E3A5F` surfaces and
-  orange `#F97316` for the one primary action per screen only (see
-  `AGENTS.md` Section 6). Staff portals use navy (shared frame in
-  `components/staff/`) but never orange. No other
-  accent hues except explicitly requested semantic states.
+  Brand colors are navy `#1E3A5F` and orange `#F97316`. Customer screens
+  use navy for surfaces and orange for the one primary action per screen
+  (see `AGENTS.md` Section 6). Staff portals use navy (shared frame in
+  `components/staff/`) but never orange. Other hues are allowed where the
+  design needs them, with readable contrast in both themes.
   Approved: validation errors in red (`text-red-600 dark:text-red-400`,
   alert boxes like `components/auth/FormAlert.tsx`); toasts carry a
   colored left edge plus matching icon (success green, error red,
@@ -69,8 +69,8 @@ Rules:
 6. Uniform gaps: `gap-3 md:gap-4`. Uniform radius: `rounded-2xl`.
    Uniform border: `border border-zinc-200 dark:border-zinc-800`.
 7. Card surface: `bg-white dark:bg-zinc-950`. Inner content is never
-   a tinted or bordered box (see 3.1 rule 3); separate it with
-   `divide-*` or spacing. Text: `text-zinc-900 dark:text-zinc-100`,
+   a tinted box; a bordered inner box, `divide-*` or spacing are fine
+   (see 3.1 rule 3). Text: `text-zinc-900 dark:text-zinc-100`,
    secondary: `text-zinc-500 dark:text-zinc-400`.
 8. Minimum touch target 44px for all interactive cards and buttons.
 9. No horizontal overflow on 360px wide viewport. Test this.
@@ -146,9 +146,12 @@ They override generic dashboard or landing-page defaults.
    Limit: at most one bare icon per card, and only when it carries
    meaning (status, direction, action). Icon-per-card grids used as
    decoration are forbidden. Icons stay in `react-icons`.
-3. **No nested cards.** A card never contains another bordered box,
-   tile or panel. Split content inside one card with `divide-y`,
-   `divide-x`, or spacing. Inner blocks are never cards.
+3. **No nested cards.** A card never contains another card: no inner
+   fill, no inner radius-plus-padding panel. Inside a card, content may
+   sit in a bordered box (`border border-zinc-200 dark:border-zinc-800`,
+   no fill, same `bg-white dark:bg-zinc-950` surface), and rows split with
+   `divide-y`, `divide-x`, hairlines or spacing. A tinted box inside a
+   card stays forbidden.
 4. **Gradients need a stated purpose.** Forbidden: decorative
    gradient backgrounds, gradient text, gradient buttons, gradient
    borders, blurred blobs and background patterns. A gradient is
@@ -186,10 +189,11 @@ decorative block or a stretched image. Pick the method that matches the cause:
    For chip rows, use `flex-wrap` with `md:flex-1 md:basis-44` so the last
    row grows to the full width instead of leaving a gap. On phones keep the
    horizontal scroll.
-3. **Verify the layout with a placement test.** Simulate the browser's
-   auto-placement (`grid-auto-flow: row`: the cursor only moves forward) and
-   assert that every cell up to the last used row is occupied. See
-   `tests/unit/promo-grid-layout.test.ts`.
+3. **Check the placement by eye.** Auto-placement (`grid-auto-flow: row`:
+   the cursor only moves forward) must leave no empty cell before the last
+   used row. Check at 375, 1024 and 1440px. UI-only work needs no new test
+   (`AGENTS.md` Section 10.4); the existing `tests/unit/promo-grid-layout.test.ts`
+   must stay green.
 4. **Equal-height cards: stretch, do not pin.** Cards in one row share the
    row height through `h-full` on the grid item and `flex-1` on the content.
    Do not give each card its own fixed height; long text is then clipped.
@@ -215,49 +219,51 @@ decorative block or a stretched image. Pick the method that matches the cause:
 
 ## 3.3 Chapter Layout (home and marketing pages)
 
-Home page sections are "chapters", not bento grids. Use this layout for
-landing sections that list services, parts, vouchers, steps, prices,
-mechanics or reviews.
+Home page sections are "chapters", not bento grids. Every home chapter is a
+card grid (rule 7), except the hero and the closing call-to-action band.
 
-1. **Ruled list on the page surface.** A chapter is a header (eyebrow,
-   large masked headline, optional link) followed by rows separated by
-   hairline rules (`h-px bg-zinc-200 dark:bg-zinc-800`, `data-rule`). No
-   card borders, no tinted boxes, no bento spans.
+1. **Card grid per chapter.** A chapter is a header (eyebrow, large masked
+   headline, optional link) followed by a `ul` grid of cards: rounded
+   `rounded-2xl` border on the white surface, no tinted box, no bento
+   spans. Hairline rules (`h-px`, `data-rule`) may separate content inside
+   a card, and the closing band keeps its hairline.
 2. **Show the image whenever the data has one.** Services use `imageUrl`,
-   parts `imageUrl`, vouchers `imageUrl`, mechanics `avatarUrl`. A row or
-   tile that has an API image must render it; text-only rows are only for
-   data with no image field (reviews, price promises). Wrap each photo in a
+   parts `imageUrl`, vouchers `imageUrl`, mechanics `avatarUrl`. A card
+   that has an API image must render it; text-only cards are only for data
+   with no image field (reviews, price terms, FAQ). Wrap each photo in a
    fixed-size clipped frame (`overflow-hidden rounded-lg bg-zinc-100
    dark:bg-zinc-900`), mark the `<img>` `data-chapter-photo`, use
    `object-cover` and `loading="lazy"`. When the image is missing, keep the
    frame: a bare `react-icons` glyph for catalog items, initials for people.
-3. **Row anatomy (desktop).** Photo, large figure or name, supporting text,
-   then the value or terms, in fixed grid columns (for example
-   `md:grid-cols-[11rem_12rem_minmax(0,1fr)_16rem]`). On phones the photo
-   stays on the left at about 6.5rem wide and the text stacks beside it.
-   Four or fewer rows must fit about one 1440x900 viewport.
+3. **Card anatomy.** Photo on top in a fixed-aspect frame (`aspect-[16/10]`
+   or `aspect-[4/3]`), then the label, the title, the supporting text, and
+   the price, figure or terms with the one action last. Cards in one row
+   share a height (`h-full` on the item, `flex-1` on the body), so text is
+   never clipped. Grids are one column up to `sm`, two from `sm`, and three
+   or four from `lg`.
 4. **Scale.** Customer screens use a compact type scale so more fits on one
    screen. Chapter headline `text-2xl md:text-4xl font-bold`; home hero
-   headline `text-3xl sm:text-4xl lg:text-5xl`; list-row title and price
-   `text-base md:text-xl font-bold`; body `text-sm md:text-base`; closing call
+   headline `text-3xl sm:text-4xl lg:text-5xl`; card title
+   `text-base md:text-lg font-bold`; card figure `text-lg md:text-xl
+   font-extrabold`; body `text-sm md:text-base`; closing call
    to action headline `text-3xl md:text-5xl`. Chapter vertical rhythm stays
    near `md:py-12`. Section width `w-full px-4 sm:px-6 lg:px-10`.
 5. **Actions.** Secondary actions are bold text links with an arrow. The
    single orange button of the page is the closing call to action.
 6. **Hide when empty.** Data-driven chapters return `null` when there is
    nothing to show.
-7. **Image pattern per chapter.** Promotions show the live campaigns as a
-   wide lead carousel (GSAP crossfade via `hooks/useCarousel.ts`, the same
-   timing as services, bars below) beside ruled rows that list every shown
-   campaign; the row for the campaign on show carries a navy rule and
-   `aria-current`. Services are
-   an accordion: a closed row keeps a small photo, and the open row reveals a
-   wide photo carousel and the description (one row open at a time, the first
-   open by default). The carousel is a GSAP crossfade driven by
-   `hooks/useCarousel.ts`: it advances every 5 s while its row is open, and
-   bars below the photo jump to one directly. Reduced motion turns off the
-   timer and the fade. Products are tall tiles with the photo contained on white
-   (`object-contain`), price above the name.
+7. **Card-grid chapters.** Every home chapter uses cards: services
+   (`HomeServiceCard`), promotions (`PromoCampaignCard`, 1 / 2 / 4 columns on
+   the home page, 3 on `/vouchers`), products (tall tiles, photo contained
+   on white with `object-contain`, price above the name), service categories
+   (`CategoryCard`), steps (numbered step cards with a drawn illustration),
+   price terms (cards, the first term spanning two columns), mechanics
+   (`MechanicTile`), reviews (`RealReviewCard`) and FAQ (one `<details>`
+   card per question). A card holds a photo in a fixed frame on top when
+   the data has one, then the label, the title, the figure or terms and one
+   text link. Each card is an `<li data-chapter-row>` inside a `<ul>` grid;
+   the photo keeps `data-chapter-photo`. Rescue and the booking entry are
+   cards too, and the closing call-to-action band stays a band.
 8. **Site footer.** `components/layout/SiteFooter.tsx` is the one navy band
    below the page (`#1E3A5F`, white text): a marquee strip of promises, the
    hotline and ruled link columns, then an oversized wordmark that rises in
@@ -396,11 +402,9 @@ Rules:
 - Scale the canvas for `devicePixelRatio`, and re-draw on
   resize (`ResizeObserver`) and on `dark` class changes so the
   chart stays crisp and readable in both themes.
-- Colors come from the zinc scale plus the brand palette in
-  `AGENTS.md` Section 6; staff dashboards add the approved chart
-  palette (navy, sky, teal, amber) via `components/charts/chart-palette.ts`.
-  Resolve theme-aware colors at draw time; never hardcode
-  accent hues.
+- Colors come from `components/charts/chart-palette.ts` (navy, sky, teal
+  and amber by default; see `AGENTS.md` Section 6). Resolve theme-aware
+  colors at draw time and never retype hexes inside a component.
 - The allowed-motion limits in 4.3 still apply: max 0.6s,
   `ease: "power2.out"`, no infinite loops.
 - Canvas is invisible to screen readers: expose the chart's key
@@ -528,7 +532,8 @@ Before finishing, verify:
 
 - Inter or any second font family (see 3.1 rule 1).
 - Icons inside rounded containers, or decorative icon-per-card grids.
-- Nested cards, or tinted/bordered boxes inside a card.
+- Nested cards, or tinted boxes inside a card (bordered inner boxes are
+  allowed, see 3.1 rule 3).
 - Decorative gradients, gradient text, blobs or background patterns.
 - Half-empty grid cells or sections padded with filler.
 - Fixed row heights that clip card copy (see 3.2 rule 5).
@@ -538,7 +543,8 @@ Before finishing, verify:
   (see 3.2 rule 7).
 - Slogans, superlatives and ad-style copy in user-facing text.
 - Rows or tiles that drop an image the API provides (see 3.3 rule 2).
-- Bordered card grids for home chapter sections (see 3.3).
+- Ruled-row lists in place of card grids for home chapter sections (see
+  3.3 rule 7).
 - Full-page GSAP timelines spanning unrelated sections.
 - Per-card `useEffect` creating separate ScrollTriggers.
 - Missing `ctx.revert()` cleanup.

@@ -32,8 +32,8 @@ export const rescueInboxKeys = {
   mechanic: ["rescue-inbox", "mechanic"] as const,
   detail: (requestId: string) =>
     ["rescue-inbox", "detail", { requestId }] as const,
-  dispatch: (status: string, cursor: string | null) =>
-    ["rescue-inbox", "dispatch", { status, cursor }] as const,
+  dispatch: (status: string, cursor: string | null, search = "") =>
+    ["rescue-inbox", "dispatch", { status, cursor, search }] as const,
 };
 
 // Mechanic inbox: invalidates on every rescue offer so the 30s card
@@ -173,10 +173,14 @@ export function useDispatchRescueAction() {
 // Dispatcher board page per status tab. The page index and cursor chain
 // live in useCursorRoutePage on the caller — this hook only fetches the
 // page the URL asks for, so back/forward stays consistent.
-export function useDispatchRescues(status: string, cursor: string | null) {
+export function useDispatchRescues(
+  status: string,
+  cursor: string | null,
+  search = "",
+) {
   return useQuery({
-    queryKey: rescueInboxKeys.dispatch(status, cursor),
-    queryFn: () => fetchDispatchRescues(status, cursor),
+    queryKey: rescueInboxKeys.dispatch(status, cursor, search),
+    queryFn: () => fetchDispatchRescues(status, cursor, search),
     staleTime: 10 * 1000,
     gcTime: 5 * 60 * 1000,
     retry: false,

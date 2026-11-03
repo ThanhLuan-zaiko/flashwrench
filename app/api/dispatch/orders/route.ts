@@ -5,8 +5,8 @@ import {
   readJsonObject,
 } from "@/lib/http/workspace-route";
 import { createCounterSale } from "@/lib/orders/counter-sale.service";
-import { listStaffOrders } from "@/lib/orders/orders.service";
 import type { CounterSaleInput } from "@/lib/orders/orders.types";
+import { listStaffOrders } from "@/lib/orders/orders-board.service";
 import { OPERATIONS_TOPIC } from "@/lib/realtime/protocol";
 import { publishRealtimeEvent } from "@/lib/realtime/publish";
 
@@ -22,6 +22,7 @@ export async function GET(request: Request) {
       month: url.searchParams.get("month") ?? undefined,
       cursor: url.searchParams.get("cursor"),
       limit: url.searchParams.get("limit") ?? undefined,
+      search: url.searchParams.get("q") ?? undefined,
     });
     if (!result.ok)
       return NextResponse.json(

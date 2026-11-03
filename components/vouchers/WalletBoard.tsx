@@ -58,9 +58,9 @@ export function WalletBoard() {
       <h2 className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50">
         Tất cả voucher
       </h2>
-      <ul className="flex flex-col divide-y divide-zinc-200 border-t border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((wallet) => (
-          <li key={wallet.id}>
+          <li key={wallet.id} className="flex">
             <WalletCard wallet={wallet} />
           </li>
         ))}

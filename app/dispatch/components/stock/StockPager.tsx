@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 import { pageButtons } from "./stock-pager";
 
 type StockPagerProps = {
@@ -58,6 +59,7 @@ export function StockPager({
           <Link
             href={hrefFor(page - 1)}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang trước"
             className={nav}
@@ -91,6 +93,7 @@ export function StockPager({
               key={entry}
               href={hrefFor(entry)}
               scroll={false}
+              onClick={scrollToPageTop}
               prefetch
               aria-label={`Trang ${entry}`}
               className={idle}
@@ -108,6 +111,7 @@ export function StockPager({
           <Link
             href={hrefFor(page + 1)}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang sau"
             className={nav}

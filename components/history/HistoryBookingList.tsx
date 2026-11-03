@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiAlertCircle, FiLoader, FiSearch } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 import type { BookingSummary } from "@/lib/booking/workspace.types";
 import { BookingCard } from "./BookingCard";
 import { splitBookings } from "./history.utils";
@@ -169,11 +170,12 @@ export function HistoryBookingList({
               Trang {pageNumber} · {bookings.length} đơn
             </p>
             {(hasPrevious || hasNext) && (
-              <div className="flex gap-2">
+              <div data-pager className="flex gap-2">
                 {hasPrevious ? (
                   <Link
                     href={backHref}
                     scroll={false}
+                    onClick={scrollToPageTop}
                     prefetch
                     aria-label="Trang trước"
                     className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
@@ -194,6 +196,7 @@ export function HistoryBookingList({
                   <Link
                     href={nextHref}
                     scroll={false}
+                    onClick={scrollToPageTop}
                     prefetch
                     aria-label="Trang sau"
                     className="flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"

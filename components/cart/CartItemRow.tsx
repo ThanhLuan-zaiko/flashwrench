@@ -99,7 +99,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
               disabled={busy}
               onClick={() => removeItem.mutate({ partId: item.partId })}
               aria-label={`Xóa ${item.partName} khỏi giỏ`}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-50 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 disabled:pointer-events-none disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
             >
               <FiTrash2 aria-hidden="true" className="h-3.5 w-3.5" />
             </button>

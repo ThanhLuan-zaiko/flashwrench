@@ -138,7 +138,7 @@ export function ImageUploader({
         type="button"
         disabled={busy}
         onClick={() => inputRef.current?.click()}
-        className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+        className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-green-700 px-4 py-2.5 text-sm font-semibold text-green-800 transition-colors duration-200 hover:bg-green-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-green-500 dark:text-green-400 dark:hover:bg-zinc-900"
       >
         {busy ? (
           <FiLoader

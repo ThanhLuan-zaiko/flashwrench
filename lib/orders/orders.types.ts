@@ -214,6 +214,8 @@ export type OrderItem = {
 
 export type OrderSummary = {
   id: string;
+  customerName: string;
+  customerPhone: string;
   status: OrderStatus;
   paymentStatus: string;
   paymentMethod: string;
@@ -334,10 +336,6 @@ export type OrderFieldErrors = Partial<
 export type OrdersResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number; errors: OrderFieldErrors };
-
-export function orderToIso(value: Date | null): string | null {
-  return value ? new Date(value).toISOString() : null;
-}
 
 // Tracking shapes live in orders-tracking.types.ts; re-exported here so
 // existing "@/lib/orders/orders.types" imports keep working.

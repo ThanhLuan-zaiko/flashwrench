@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 
 type WalletPagerProps = {
   page: number;
@@ -50,6 +51,7 @@ export function WalletPager({
           <Link
             href={backHref}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang trước"
             className={BUTTON_CLASS}
@@ -73,7 +75,10 @@ export function WalletPager({
             href={nextHref}
             scroll={false}
             prefetch
-            onClick={onNextClick}
+            onClick={(event) => {
+              scrollToPageTop(event);
+              onNextClick();
+            }}
             aria-label="Trang sau"
             className={BUTTON_CLASS}
           >

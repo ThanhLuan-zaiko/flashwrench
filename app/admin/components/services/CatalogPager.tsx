@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useId, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 import { pageWindow, parsePageInput } from "./catalog-pagination";
 
 type CatalogPagerProps = {
@@ -80,6 +81,7 @@ export function CatalogPager({
           <Link
             href={hrefFor(current - 1)}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang trước"
             className={navClass}
@@ -120,6 +122,7 @@ export function CatalogPager({
               key={token}
               href={hrefFor(token)}
               scroll={false}
+              onClick={scrollToPageTop}
               prefetch
               aria-label={`Trang ${token + 1}`}
               className={numIdle}
@@ -141,6 +144,7 @@ export function CatalogPager({
           <Link
             href={hrefFor(current + 1)}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang sau"
             className={navClass}

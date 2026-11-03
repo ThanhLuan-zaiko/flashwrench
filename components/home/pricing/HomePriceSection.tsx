@@ -13,10 +13,10 @@ type HomePriceSectionProps = {
   cancelCutoffHours: number | null;
 };
 
-// What makes up the bill, one ruled row per term. The service list itself is
-// the chapter above, so this chapter states the terms instead: the catalog
-// price range, travel, parts, the cancel window from the admin booking policy
-// and when payment happens. Rows without data drop out.
+// What makes up the bill, one card per term. The service list itself is the
+// chapter above, so this chapter states the terms instead: the catalog price
+// range, travel, parts, the cancel window from the admin booking policy and
+// when payment happens. Rows without data drop out.
 function priceTerms({
   range,
   cancelCutoffHours,
@@ -53,11 +53,12 @@ function priceTerms({
   return terms.filter((term): term is PriceTerm => term !== null);
 }
 
-// Price chapter: the heading on the left, the billing terms as ruled rows on
-// the right.
+// Price chapter: the heading on the left, the billing terms as cards on the
+// right. The first term spans two columns so the grid never ends half-empty.
 export function HomePriceSection(props: HomePriceSectionProps) {
   const rootRef = useRef<HTMLElement>(null);
   useChapterMotion(rootRef);
+  const terms = priceTerms(props);
 
   return (
     <section
@@ -66,14 +67,7 @@ export function HomePriceSection(props: HomePriceSectionProps) {
       aria-label="Bảng giá"
       className="scroll-mt-20"
     >
-      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
-        <span
-          data-rule
-          aria-hidden="true"
-          className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
-        />
-      </div>
-      <div className="mx-auto max-w-7xl grid w-full gap-8 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-8">
         <div>
           <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             Bảng giá
@@ -87,25 +81,19 @@ export function HomePriceSection(props: HomePriceSectionProps) {
             cho mọi lịch hẹn.
           </p>
         </div>
-        <dl className="self-start border-b border-zinc-200 dark:border-zinc-800">
-          {priceTerms(props).map((item) => (
-            <div key={item.term}>
-              <span
-                data-rule
-                aria-hidden="true"
-                className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
-              />
-              <div
-                data-chapter-row
-                className="grid gap-1 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 md:py-5"
-              >
-                <dt className="text-base font-bold text-zinc-900 dark:text-zinc-50">
-                  {item.term}
-                </dt>
-                <dd className="text-sm text-zinc-600 md:text-base dark:text-zinc-400">
-                  {item.detail}
-                </dd>
-              </div>
+        <dl className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2 md:gap-5">
+          {terms.map((item, index) => (
+            <div
+              key={item.term}
+              data-chapter-row
+              className={`flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-950 ${index === 0 ? "sm:col-span-2" : ""}`}
+            >
+              <dt className="text-base font-bold text-zinc-900 dark:text-zinc-50">
+                {item.term}
+              </dt>
+              <dd className="text-sm text-zinc-600 md:text-base dark:text-zinc-400">
+                {item.detail}
+              </dd>
             </div>
           ))}
         </dl>

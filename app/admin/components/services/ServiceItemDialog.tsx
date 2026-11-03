@@ -228,6 +228,7 @@ export function ServiceItemDialog({
         )}
 
         <DialogFooter
+          intent={editing ? "update" : "create"}
           submitLabel={submitLabel}
           pending={pending}
           submitDisabled={!editing && !categoryId}

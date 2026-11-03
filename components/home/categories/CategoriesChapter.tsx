@@ -4,11 +4,11 @@ import { useRef } from "react";
 import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
 import { MaskLines } from "../MaskLines";
-import { CategoryRow } from "./CategoryRow";
+import { CategoryCard } from "./CategoryCard";
 
 // Service categories chapter: the covers and descriptions set in
-// /admin/services/categories as ruled rows, each linking to its /services
-// tab. Data is read server-side; with no live category the section hides.
+// /admin/services/categories as cards, each linking to its /services tab.
+// Data is read server-side; with no live category the section hides.
 export function CategoriesChapter({ items }: { items: ServiceCategoryItem[] }) {
   const rootRef = useRef<HTMLElement>(null);
   useChapterMotion(rootRef);
@@ -35,11 +35,11 @@ export function CategoriesChapter({ items }: { items: ServiceCategoryItem[] }) {
           từng dịch vụ.
         </p>
       </div>
-      <ol className="mt-8 md:mt-10">
-        {items.map((category, index) => (
-          <CategoryRow key={category.id} category={category} index={index} />
+      <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3">
+        {items.map((category) => (
+          <CategoryCard key={category.id} category={category} />
         ))}
-      </ol>
+      </ul>
     </section>
   );
 }

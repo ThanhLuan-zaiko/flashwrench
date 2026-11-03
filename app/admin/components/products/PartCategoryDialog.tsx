@@ -178,6 +178,7 @@ export function PartCategoryDialog({
           </p>
         )}
         <DialogFooter
+          intent={editing ? "update" : "create"}
           submitLabel={
             pending ? "Đang lưu…" : editing ? "Lưu thay đổi" : "Tạo danh mục"
           }

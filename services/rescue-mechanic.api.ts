@@ -40,9 +40,11 @@ export function rescueExpireRequest(
 export function fetchDispatchRescues(
   status: string,
   cursor?: string | null,
+  search = "",
 ): Promise<{ items: RescueDetail[]; nextCursor: string | null }> {
   const params = new URLSearchParams({ status });
   if (cursor) params.set("cursor", cursor);
+  if (search) params.set("q", search);
   return apiRequest<{ items: RescueDetail[]; nextCursor: string | null }>(
     `/api/dispatch/rescue?${params}`,
   );

@@ -10,12 +10,17 @@ import {
   type OrderReturnDecision,
   type OrderRow,
   type OrderSummary,
-  orderToIso,
 } from "./orders.types";
+
+function orderToIso(value: Date | null): string | null {
+  return value ? new Date(value).toISOString() : null;
+}
 
 export function toOrderSummary(row: OrderRow): OrderSummary {
   return {
     id: row.order_id,
+    customerName: row.customer_name ?? "",
+    customerPhone: row.customer_phone ?? "",
     status: isOrderStatus(row.status) ? row.status : "pending",
     paymentStatus: row.payment_status ?? "unpaid",
     paymentMethod: row.payment_method ?? "cod",

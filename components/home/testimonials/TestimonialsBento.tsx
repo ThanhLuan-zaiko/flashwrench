@@ -7,7 +7,6 @@ import { MarqueeTrack } from "../MarqueeTrack";
 import { MaskLines } from "../MaskLines";
 import { shouldDrift } from "../marquee-items";
 import { RealReviewCard } from "./RealReviewCard";
-import { ReviewRow } from "./ReviewRow";
 
 // Customer quote chapter built only from real, visible reviews fetched
 // server-side. With no qualifying review yet the whole section stays out of
@@ -38,11 +37,18 @@ export function TestimonialsBento({
         {shouldDrift(realItems.length) ? (
           <DriftingReviews items={realItems} />
         ) : (
-          <ol aria-label="Đánh giá từ khách hàng" className="mt-8 md:mt-10">
+          <ul
+            aria-label="Đánh giá từ khách hàng"
+            className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3"
+          >
             {realItems.map((review) => (
-              <ReviewRow key={review.id} review={review} />
+              <RealReviewCard
+                key={review.id}
+                review={review}
+                className="flex"
+              />
             ))}
-          </ol>
+          </ul>
         )}
         <span
           data-rule
@@ -67,14 +73,24 @@ function DriftingReviews({ items }: { items: LandingReview[] }) {
         <MarqueeTrack
           items={items}
           label="Đánh giá từ khách hàng"
-          renderItem={(review) => <RealReviewCard review={review} />}
+          renderItem={(review) => (
+            <RealReviewCard
+              review={review}
+              className="w-80 shrink-0 pr-10 md:w-[28rem]"
+            />
+          )}
         />
         <MarqueeTrack
           items={[...items].reverse()}
           label="Đánh giá từ khách hàng, cuộn ngược"
           direction="right"
           decorative
-          renderItem={(review) => <RealReviewCard review={review} />}
+          renderItem={(review) => (
+            <RealReviewCard
+              review={review}
+              className="w-80 shrink-0 pr-10 md:w-[28rem]"
+            />
+          )}
         />
       </div>
     </>

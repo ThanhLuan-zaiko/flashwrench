@@ -1,9 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { FiLayers, FiLoader } from "react-icons/fi";
 import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { STAFF_ART } from "@/components/staff/staff-art";
+import { ListNoMatch, ListSearchField } from "@/components/ui/ListSearchField";
 import type { PartItem } from "@/lib/parts/parts.types";
+import { matchesSearch } from "@/lib/search-text";
 import { CatalogCoverStack } from "../services/CatalogCoverStack";
 import { CatalogPager } from "../services/CatalogPager";
 import { formatVnd } from "../services/catalog-format";
@@ -57,7 +60,24 @@ export function PartList({
   onRestore,
   onRetry,
 }: PartListProps) {
-  const pager = usePagination(items.length);
+  const [query, setQuery] = useState("");
+  const visible = useMemo(
+    () =>
+      items.filter((item) =>
+        matchesSearch(query, [
+          item.name,
+          item.sku,
+          item.brand,
+          item.categoryName,
+        ]),
+      ),
+    [items, query],
+  );
+  const pager = usePagination(visible.length);
+  const handleQuery = (value: string) => {
+    pager.reset();
+    setQuery(value);
+  };
   const handleFilterChange = (categoryId: string) => {
     pager.reset();
     onFilterChange(categoryId);
@@ -125,8 +145,14 @@ export function PartList({
         />
       ) : (
         <>
+          <ListSearchField
+            id="part-search"
+            value={query}
+            onChange={handleQuery}
+            placeholder="Tên, mã SKU, thương hiệu…"
+          />
           <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-            {pager.slice(items).map((item) => {
+            {pager.slice(visible).map((item) => {
               const busy = pendingId === item.id;
               return (
                 <li
@@ -170,14 +196,18 @@ export function PartList({
               );
             })}
           </ul>
-          <CatalogPager
-            page={pager.page}
-            pageCount={pager.pageCount}
-            start={pager.range.start}
-            end={pager.range.end}
-            total={items.length}
-            hrefFor={pager.hrefFor}
-          />
+          {visible.length === 0 ? (
+            <ListNoMatch />
+          ) : (
+            <CatalogPager
+              page={pager.page}
+              pageCount={pager.pageCount}
+              start={pager.range.start}
+              end={pager.range.end}
+              total={visible.length}
+              hrefFor={pager.hrefFor}
+            />
+          )}
         </>
       )}
     </div>

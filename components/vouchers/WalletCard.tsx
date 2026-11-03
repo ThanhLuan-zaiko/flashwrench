@@ -11,46 +11,51 @@ function discountLabel(wallet: VoucherWallet): string {
   return `Giảm ${wallet.remainingValue.toLocaleString("vi-VN")}đ`;
 }
 
-// One row of the voucher archive: a small cover, the campaign and its
-// discount, the status line and a text link to the voucher.
+// One voucher as a card: the campaign cover on top, then the discount, the
+// status line and a link to the voucher. Spent or expired vouchers are dimmed.
 export function WalletCard({ wallet }: { wallet: VoucherWallet }) {
   const usable = wallet.spendable;
   return (
-    <article className={`flex gap-4 py-4 ${usable ? "" : "opacity-70"}`}>
-      <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-zinc-100 md:h-20 md:w-28 dark:bg-zinc-900">
+    <article
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 ${usable ? "" : "opacity-70"}`}
+    >
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
         {wallet.imageUrl ? (
           <Image
             src={wallet.imageUrl}
             alt={wallet.campaignName}
             fill
-            sizes="112px"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover"
           />
         ) : (
           <span className="flex h-full w-full items-center justify-center text-zinc-400">
-            <FiGift aria-hidden="true" className="h-6 w-6" />
+            <FiGift aria-hidden="true" className="h-8 w-8" />
           </span>
         )}
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p className="text-sm font-bold text-zinc-900 dark:text-white">
+      <div className="flex flex-1 flex-col gap-2 p-4 md:p-5">
+        <p className="line-clamp-2 text-sm font-bold text-zinc-900 dark:text-white">
           {wallet.campaignName}
         </p>
-        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+        <p className="text-lg font-extrabold tracking-tight text-[#1E3A5F] tabular-nums dark:text-zinc-50">
           {discountLabel(wallet)}
         </p>
         <p
           aria-live="polite"
           className="text-xs text-zinc-500 dark:text-zinc-400"
         >
-          {walletStatusLabel(wallet)} · Mã gắn tài khoản, không chia sẻ được
+          {walletStatusLabel(wallet)}
+        </p>
+        <p className="mt-auto pt-3 text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800">
+          Mã gắn tài khoản, không chia sẻ được
         </p>
         <Link
           href={walletDetailHref(wallet.id)}
           scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${wallet.campaignName}`}
-          className="mt-1 flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+          className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
         >
           Xem chi tiết
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />

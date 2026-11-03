@@ -39,9 +39,9 @@ const STOPS: Stop[] = [
   },
 ];
 
-// Process chapter: four steps in a row, each under its own drawn rule with a
-// large flat isometric illustration, a numeral and one line of copy. Phones
-// get a 2x2 grid so each hint keeps a readable line length.
+// Process chapter: four step cards, each with a flat isometric illustration,
+// a numeral, a title and one line of copy. Phones get a single column, tablets
+// two, desktop four.
 export function StepsBento() {
   const rootRef = useRef<HTMLElement>(null);
   useChapterMotion(rootRef);
@@ -58,17 +58,16 @@ export function StepsBento() {
         />
         <ol
           data-tour="how-it-works"
-          className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-4 sm:gap-x-8 md:mt-12"
+          className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:gap-6 lg:grid-cols-4"
         >
           {STOPS.map((stop) => (
-            <li key={stop.numeral} className="min-w-0">
-              <span
-                data-rule
-                aria-hidden="true"
-                className="block h-px origin-left bg-zinc-300 dark:bg-zinc-700"
-              />
-              <div data-chapter-row>
-                <p className="mt-4 text-sm font-semibold text-zinc-500 tabular-nums dark:text-zinc-400">
+            <li
+              key={stop.numeral}
+              data-chapter-row
+              className="flex min-w-0 flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-950"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-zinc-500 tabular-nums dark:text-zinc-400">
                   {stop.numeral}
                 </p>
                 <Image
@@ -76,15 +75,15 @@ export function StepsBento() {
                   alt=""
                   width={160}
                   height={160}
-                  className="mt-3 h-24 w-24 md:h-36 md:w-36"
+                  className="h-16 w-16 md:h-20 md:w-20"
                 />
-                <h3 className="mt-4 text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
-                  {stop.title}
-                </h3>
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                  {stop.hint}
-                </p>
               </div>
+              <h3 className="mt-auto border-t border-zinc-200 pt-4 text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:border-zinc-800 dark:text-zinc-50">
+                {stop.title}
+              </h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                {stop.hint}
+              </p>
             </li>
           ))}
         </ol>

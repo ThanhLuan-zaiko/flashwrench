@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight, FiEye, FiEyeOff } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 import { useAccountSession } from "@/hooks/auth";
 import { useModerateReview } from "@/hooks/reviews";
 import { formatDateTime } from "@/lib/datetime/format";
@@ -104,7 +105,7 @@ export function ReviewList({
                         action: item.hidden ? "unhide" : "hide",
                       })
                     }
-                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                   >
                     {item.hidden ? (
                       <FiEye aria-hidden="true" className="h-3.5 w-3.5" />
@@ -126,11 +127,12 @@ export function ReviewList({
       )}
 
       {(canPrev || canNext) && (
-        <div className="flex items-center justify-end gap-5">
+        <div data-pager className="flex items-center justify-end gap-5">
           {canPrev && prevHref ? (
             <Link
               href={prevHref}
               scroll={false}
+              onClick={scrollToPageTop}
               prefetch
               aria-label="Trang trước"
               className={PAGER_LINK}
@@ -149,7 +151,10 @@ export function ReviewList({
               href={nextHref}
               scroll={false}
               prefetch
-              onClick={onNextClick}
+              onClick={(event) => {
+                scrollToPageTop(event);
+                onNextClick?.();
+              }}
               aria-label="Trang sau"
               className={PAGER_LINK}
             >

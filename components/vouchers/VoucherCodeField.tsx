@@ -21,6 +21,10 @@ type VoucherCodeFieldProps = {
 const ACTION_CLASS =
   "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200";
 
+// Applying a typed code claims it, which creates a wallet entry: green.
+const CLAIM_CLASS =
+  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400";
+
 // Typed redeem-code input shared by /booking and /checkout. Guests see a
 // login link instead of the apply button — the code only works for
 // accounts, since the claimed wallet binds to one.
@@ -122,7 +126,7 @@ export function VoucherCodeField({
             type="button"
             onClick={apply}
             disabled={disabled || applying || value.trim() === ""}
-            className={ACTION_CLASS}
+            className={CLAIM_CLASS}
           >
             {applying ? "Đang áp dụng…" : "Áp dụng"}
           </button>

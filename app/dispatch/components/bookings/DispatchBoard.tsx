@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { PageBounce } from "@/components/pagination/PageBounce";
 import { useToast } from "@/components/toast/useToast";
+import { ListSearchField } from "@/components/ui/ListSearchField";
 import { useDispatchBookings } from "@/hooks/dispatch";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
@@ -73,7 +74,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
     month: appliedMonth,
     cursor,
     limit: DISPATCH_PAGE_SIZE,
-    search: trackingStatus ? appliedSearch : undefined,
+    search: appliedSearch,
   });
   const items = query.data?.items ?? [];
   const nextCursor = query.data?.nextCursor ?? null;
@@ -140,6 +141,14 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
           className="sm:col-span-2 lg:col-span-2"
         >
           <div className="flex flex-wrap items-end justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <ListSearchField
+                id="dispatch-search"
+                value={search}
+                onChange={setSearch}
+                placeholder="Khách, số điện thoại, biển số, địa chỉ, dịch vụ…"
+              />
+            </div>
             <div className="min-w-0 flex-1">
               <label
                 htmlFor="dispatch-month"

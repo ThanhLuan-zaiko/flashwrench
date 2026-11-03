@@ -91,4 +91,64 @@ describe("listStaffOrders", () => {
     if (result.ok) return;
     expect(result.status).toBe(400);
   });
+
+  test("search keeps only orders whose customer matches", async () => {
+    orderStubs.statusPage = {
+      rows: [
+        makeOrderRow({
+          order_id: "11111111-1111-4111-8111-111111111111",
+          customer_name: "Nguyễn Văn An",
+        }),
+        makeOrderRow({
+          order_id: "22222222-2222-4222-8222-222222222222",
+          customer_name: "Trần Thị Bình",
+        }),
+      ],
+      pageState: null,
+    };
+    const result = await listStaffOrders({
+      status: "pending",
+      month: "2026-01",
+      search: "TRAN thi",
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items.map((item) => item.id)).toEqual([
+      "22222222-2222-4222-8222-222222222222",
+    ]);
+    expect(result.data.items[0]?.customerName).toBe("Trần Thị Bình");
+  });
+
+  test("search walks later pages until a match fills the board", async () => {
+    orderRepoMocks.listOrderRowsByStatus
+      .mockImplementationOnce(async () => ({
+        rows: [
+          makeOrderRow({
+            order_id: "33333333-3333-4333-8333-333333333333",
+            customer_name: "Lê Văn Cường",
+          }),
+        ],
+        pageState: "page-2",
+      }))
+      .mockImplementationOnce(async () => ({
+        rows: [
+          makeOrderRow({
+            order_id: "44444444-4444-4444-8444-444444444444",
+            customer_name: "Trần Thị Bình",
+          }),
+        ],
+        pageState: null,
+      }));
+    const result = await listStaffOrders({
+      status: "pending",
+      month: "2026-01",
+      search: "tran",
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.items.map((item) => item.id)).toEqual([
+      "44444444-4444-4444-8444-444444444444",
+    ]);
+    expect(orderRepoMocks.listOrderRowsByStatus.mock.calls).toHaveLength(2);
+  });
 });

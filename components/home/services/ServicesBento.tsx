@@ -1,20 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useChapterMotion } from "@/hooks/useChapterMotion";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { MaskLines } from "../MaskLines";
 import { BookingRow } from "./BookingRow";
-import { HomeServiceRow } from "./HomeServiceRow";
+import { HomeServiceCard } from "./HomeServiceCard";
 import { RescueRow } from "./RescueRow";
-import { toggleOpenService } from "./service-accordion";
 
-// Services chapter: a ruled accordion on the page surface instead of a card
-// grid. Rescue opens the list, the catalog services follow and the booking
-// entry closes it. The first service starts open so a photo shows at once.
+// Services chapter: catalog services as a card grid. Rescue and the booking
+// entry stay as ruled rows around it, since they are not catalog items.
 export function ServicesBento({ services }: { services: ServiceItem[] }) {
   const rootRef = useRef<HTMLElement>(null);
-  const [openId, setOpenId] = useState<string | null>(services[0]?.id ?? null);
   useChapterMotion(rootRef);
 
   return (
@@ -40,21 +37,18 @@ export function ServicesBento({ services }: { services: ServiceItem[] }) {
             khi làm.
           </p>
         </div>
-        <ol data-tour="services" className="mt-8 md:mt-10">
-          <RescueRow />
-          {services.map((service, index) => (
-            <HomeServiceRow
-              key={service.id}
-              service={service}
-              index={index}
-              open={service.id === openId}
-              onToggle={() =>
-                setOpenId((current) => toggleOpenService(current, service.id))
-              }
-            />
+        <ul
+          data-tour="services"
+          className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-4"
+        >
+          {services.map((service) => (
+            <HomeServiceCard key={service.id} service={service} />
           ))}
+        </ul>
+        <ul className="mt-6 md:mt-8">
+          <RescueRow />
           <BookingRow />
-        </ol>
+        </ul>
       </div>
     </section>
   );

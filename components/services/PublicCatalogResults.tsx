@@ -52,12 +52,15 @@ export function PublicCatalogResults({
   return (
     <>
       {pending && (
-        <div aria-busy="true" className="flex flex-col gap-3">
+        <div
+          aria-busy="true"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
           <p className="sr-only">Đang tải dịch vụ</p>
           {SKELETON_IDS.map((skeletonId) => (
             <div
               key={skeletonId}
-              className="h-24 rounded-lg bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
+              className="h-72 rounded-2xl bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
             />
           ))}
         </div>
@@ -91,12 +94,9 @@ export function PublicCatalogResults({
       )}
       {ready && view.total > 0 && (
         <div className="flex flex-col gap-4">
-          <ul className="border-t border-zinc-200 dark:border-zinc-800">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {view.pageItems.map((service) => (
-              <li
-                key={service.id}
-                className="border-b border-zinc-200 dark:border-zinc-800"
-              >
+              <li key={service.id} className="flex">
                 <PublicServiceCard
                   service={service}
                   selected={serviceIds.includes(service.id)}

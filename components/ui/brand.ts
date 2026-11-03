@@ -15,6 +15,18 @@ export const BRAND_PRIMARY_BUTTON = `flex min-h-[44px] items-center justify-cent
 // confirm inside a card) when an orange CTA already exists on the screen.
 export const BRAND_SOLID_BUTTON = `flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white ${FOCUS}`;
 
+// Create actions (add to cart, claim, submit a new record): green solid.
+export const BRAND_CREATE_BUTTON = `flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400 ${FOCUS}`;
+
+// Create actions in a catalog grid: green outline.
+export const BRAND_CREATE_OUTLINE = `flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-green-700 bg-white px-4 py-2.5 text-sm font-semibold text-green-800 transition-colors duration-200 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-green-500 dark:bg-zinc-950 dark:text-green-400 dark:hover:bg-zinc-900 ${FOCUS}`;
+
+// Delete actions (clear cart, remove, revoke): red solid.
+export const BRAND_DELETE_BUTTON = `flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400 ${FOCUS}`;
+
+// Delete actions beside other row actions: red outline.
+export const BRAND_DELETE_OUTLINE = `flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-red-300 bg-white px-4 py-2.5 text-sm font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-red-900 dark:bg-zinc-950 dark:text-red-300 dark:hover:bg-red-950/40 ${FOCUS}`;
+
 // White bordered secondary button.
 export const BRAND_OUTLINE_BUTTON = `flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-900 transition-colors duration-200 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-zinc-900 ${FOCUS}`;
 

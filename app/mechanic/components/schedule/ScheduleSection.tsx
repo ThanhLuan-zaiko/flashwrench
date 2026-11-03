@@ -1,10 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useToast } from "@/components/toast/useToast";
+import { ListSearchField } from "@/components/ui/ListSearchField";
 import { useMechanicBookings } from "@/hooks/mechanic";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
+import { matchesSearch } from "@/lib/search-text";
 import type { MechanicBookingSummary } from "@/services/mechanic.api";
 import { BentoCard } from "../../../admin/components/bento/BentoCard";
 import { FilterTabs } from "../FilterTabs";
@@ -31,8 +34,10 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
   const toast = useToast();
   // The pager lives on the URL (/page/N); a tab switch changes the
   // [status] segment and drops the page segment by itself.
-  const { page, hrefFor } = useRoutePage();
+  const { page, hrefFor, firstPageHref } = useRoutePage();
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   const query = useMechanicBookings({ status });
   // Unfiltered load for the per-tab counts. Shares the cache key with the
@@ -43,15 +48,34 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
     () => query.data?.bookings ?? [],
     [query.data],
   );
-  const pageCount = pageCountOf(bookings.length, MECHANIC_PAGE_SIZE);
+  // The schedule is one bounded load (not cursor-paged), so search filters
+  // the rows already in hand before paging.
+  const matching = useMemo(() => {
+    const needle = search.trim();
+    if (!needle) return bookings;
+    return bookings.filter((booking) =>
+      matchesSearch(needle, [
+        booking.id,
+        booking.customerName,
+        booking.vehiclePlate,
+        booking.addressText,
+        booking.serviceNames.join(" "),
+      ]),
+    );
+  }, [bookings, search]);
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    if (page > 1) router.replace(firstPageHref, { scroll: false });
+  };
+  const pageCount = pageCountOf(matching.length, MECHANIC_PAGE_SIZE);
   // The URL segment is 1-based; the slicing helpers take a 0-based index.
-  const safePage = clampMechanicPage(page - 1, bookings.length);
+  const safePage = clampMechanicPage(page - 1, matching.length);
   useCanonicalizePage(pageCount, query.isSuccess);
   const visible = useMemo(
-    () => paginateMechanicItems(bookings, safePage),
-    [bookings, safePage],
+    () => paginateMechanicItems(matching, safePage),
+    [matching, safePage],
   );
-  const range = pageRangeLabel(safePage, bookings.length);
+  const range = pageRangeLabel(safePage, matching.length);
   const filterLabel =
     SCHEDULE_TABS.find((item) => item.id === status)?.label ?? "Tất cả";
   const counts = useMemo<Record<string, number> | undefined>(() => {
@@ -92,6 +116,14 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
               tour="mech-schedule-tabs"
             />
           </div>
+          <div className="mt-4">
+            <ListSearchField
+              id="schedule-search"
+              value={search}
+              onChange={handleSearch}
+              placeholder="Khách, biển số, địa chỉ, dịch vụ…"
+            />
+          </div>
           <ScheduleBody
             isPending={query.isPending}
             isError={query.isError}
@@ -100,12 +132,12 @@ export function ScheduleSection({ status }: { status: ScheduleTab }) {
             onRetry={() => void query.refetch()}
             onOpen={setSelectedId}
           />
-          {bookings.length > MECHANIC_PAGE_SIZE && (
+          {matching.length > MECHANIC_PAGE_SIZE && (
             <SchedulePager
               page={safePage}
               pageCount={pageCount}
               range={range}
-              total={bookings.length}
+              total={matching.length}
               hrefFor={(index) => hrefFor(index + 1)}
             />
           )}

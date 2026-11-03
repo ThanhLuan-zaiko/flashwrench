@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     const result = await listDispatchRescues(user, {
       status: url.searchParams.get("status") ?? undefined,
       cursor: url.searchParams.get("cursor"),
+      search: url.searchParams.get("q") ?? undefined,
     });
     if (!result.ok) {
       return NextResponse.json(

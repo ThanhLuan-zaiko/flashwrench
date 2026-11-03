@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 
 type ProductsPagerProps = {
   page: number;
@@ -49,6 +50,7 @@ export function ProductsPager({
           <Link
             href={hrefFor(page - 1)}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang trước"
             className={LINK_CLASSES}
@@ -69,6 +71,7 @@ export function ProductsPager({
           <Link
             href={hrefFor(page + 1)}
             scroll={false}
+            onClick={scrollToPageTop}
             prefetch
             aria-label="Trang sau"
             className={LINK_CLASSES}

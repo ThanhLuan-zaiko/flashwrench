@@ -144,7 +144,7 @@ export function AutoRuleForm() {
       <button
         type="submit"
         disabled={create.isPending || !name.trim() || !campaignId}
-        className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-4 text-sm font-semibold text-white disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900"
+        className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl bg-green-700 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
       >
         {create.isPending ? "Đang tạo…" : "Tạo quy tắc"}
       </button>

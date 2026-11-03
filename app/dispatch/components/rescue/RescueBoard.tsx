@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -11,9 +12,11 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import { PageBounce } from "@/components/pagination/PageBounce";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 import { RESCUE_ISSUE_OPTIONS } from "@/components/rescue/rescue-constants";
 import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { STAFF_ART } from "@/components/staff/staff-art";
+import { ListSearchField } from "@/components/ui/ListSearchField";
 import { useDispatchRescues, useRescueOperations } from "@/hooks/rescue-inbox";
 import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
 import { FilterTabs } from "../../../mechanic/components/FilterTabs";
@@ -34,12 +37,26 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
   // The page index lives on the URL (/page/N); the pageState chain lives
   // in an in-memory map keyed by that index. Cold loads on N>1 bounce to
   // the tab root because mid-chain cursors cannot be reconstructed.
-  const { page, cursor, known, recordNext, reset, hrefFor } =
+  const { page, cursor, known, recordNext, reset, firstPageHref, hrefFor } =
     useCursorRoutePage();
-  const board = useDispatchRescues(status, cursor);
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const board = useDispatchRescues(status, cursor, appliedSearch);
   const [appliedStatus, setAppliedStatus] = useState(status);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   useRescueOperations();
+
+  // Debounced search restarts the cursor walk and drops the /page/N
+  // segment so the narrowed result set always starts on page 1.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setAppliedSearch(search.trim());
+      reset();
+      router.replace(firstPageHref, { scroll: false });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [search, reset, firstPageHref, router]);
 
   // Reset cursors on tab switch during render, never in an effect — the
   // new tab's URL already carries no page segment.
@@ -65,6 +82,13 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
         activeId={status}
         ariaLabel="Trạng thái cứu hộ"
         tour="disp-rescue-tabs"
+      />
+
+      <ListSearchField
+        id="rescue-search"
+        value={search}
+        onChange={setSearch}
+        placeholder="Mã, khách, số điện thoại, biển số, địa chỉ…"
       />
 
       <div data-tour="disp-rescue-list">
@@ -159,6 +183,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
             <Link
               href={hrefFor(page - 1)}
               scroll={false}
+              onClick={scrollToPageTop}
               aria-label="Trang trước"
               className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
@@ -180,7 +205,8 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
             <Link
               href={hrefFor(page + 1)}
               scroll={false}
-              onClick={() => {
+              onClick={(event) => {
+                scrollToPageTop(event);
                 if (nextCursor) recordNext(nextCursor);
               }}
               aria-label="Trang sau"

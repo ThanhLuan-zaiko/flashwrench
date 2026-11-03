@@ -147,11 +147,8 @@ export function PartDialog({ dialog, categories, onClose }: PartDialogProps) {
   };
 
   const alert = formError(error, "Không lưu được sản phẩm.");
-  const submitLabel = partSubmitLabel(
-    saver.uploading,
-    pending,
-    Boolean(editing),
-  );
+  const isEdit = Boolean(editing);
+  const submitLabel = partSubmitLabel(saver.uploading, pending, isEdit);
 
   return (
     <div
@@ -232,6 +229,7 @@ export function PartDialog({ dialog, categories, onClose }: PartDialogProps) {
         )}
 
         <DialogFooter
+          intent={isEdit ? "update" : "create"}
           submitLabel={submitLabel}
           pending={pending}
           submitDisabled={!editing && !categoryId}

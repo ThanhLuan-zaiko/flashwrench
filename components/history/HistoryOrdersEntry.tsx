@@ -119,46 +119,55 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
           )}
 
           {orders.length > 0 && (
-            <ul className="mt-3 divide-y divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-              {orders.map((order) => (
-                <li key={order.id} className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedId(order.id)}
-                    aria-pressed={order.id === selectedId}
-                    className={`flex min-w-0 flex-1 flex-col gap-1 px-3 py-3 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 ${
-                      order.id === selectedId
-                        ? "bg-zinc-100 dark:bg-zinc-900"
-                        : "hover:bg-zinc-50 dark:hover:bg-zinc-900"
-                    }`}
-                  >
-                    <span className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                        Đơn #{order.id.slice(0, 8)}
-                      </span>
-                      <span className={orderStatusBadgeClass(order.status)}>
-                        {ORDER_STATUS_LABELS[order.status]}
-                      </span>
-                      <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
-                        {order.fulfillmentType === "pickup"
-                          ? "Nhận tại xưởng"
-                          : "Giao tận nơi"}
-                      </span>
-                    </span>
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                      {formatDateTime(order.createdAt)} ·{" "}
-                      {formatVnd(order.total)}
-                    </span>
-                  </button>
-                  <Link
-                    href={`/orders/${order.id}`}
-                    aria-label={`Xem chi tiết đơn ${order.id.slice(0, 8)}`}
-                    className="mr-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
-                  >
-                    <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-                  </Link>
-                </li>
-              ))}
+            <ul className="mt-3 flex flex-col gap-3">
+              {orders.map((order) => {
+                const selected = order.id === selectedId;
+                return (
+                  <li key={order.id} className="flex">
+                    <article
+                      className={`flex w-full overflow-hidden rounded-2xl border bg-white transition-colors duration-200 dark:bg-zinc-950 ${
+                        selected
+                          ? "border-[#1E3A5F] dark:border-zinc-100"
+                          : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setSelectedId(order.id)}
+                        aria-pressed={selected}
+                        className="flex min-w-0 flex-1 flex-col gap-2 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] md:p-5 dark:focus-visible:ring-zinc-100"
+                      >
+                        <span className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                            Đơn #{order.id.slice(0, 8)}
+                          </span>
+                          <span className={orderStatusBadgeClass(order.status)}>
+                            {ORDER_STATUS_LABELS[order.status]}
+                          </span>
+                          <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+                            {order.fulfillmentType === "pickup"
+                              ? "Nhận tại xưởng"
+                              : "Giao tận nơi"}
+                          </span>
+                        </span>
+                        <span className="flex items-baseline justify-between gap-3 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                          <span>{formatDateTime(order.createdAt)}</span>
+                          <span className="text-sm font-extrabold tracking-tight text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+                            {formatVnd(order.total)}
+                          </span>
+                        </span>
+                      </button>
+                      <Link
+                        href={`/orders/${order.id}`}
+                        aria-label={`Xem chi tiết đơn ${order.id.slice(0, 8)}`}
+                        className="flex w-12 shrink-0 items-center justify-center border-l border-zinc-200 text-zinc-500 transition-colors duration-200 hover:text-[#1E3A5F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100"
+                      >
+                        <FiArrowRight aria-hidden="true" className="h-5 w-5" />
+                      </Link>
+                    </article>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>

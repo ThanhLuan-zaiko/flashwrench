@@ -1,6 +1,9 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { FiInbox, FiLoader } from "react-icons/fi";
+import { ListNoMatch, ListSearchField } from "@/components/ui/ListSearchField";
+import { matchesSearch } from "@/lib/search-text";
 import type { VoucherCampaign } from "@/lib/vouchers/voucher.types";
 import { CatalogCoverStack } from "../services/CatalogCoverStack";
 import { CatalogPager } from "../services/CatalogPager";
@@ -61,7 +64,16 @@ export function CampaignList({
   onRestore,
   onRetry,
 }: CampaignListProps) {
-  const pager = usePagination(items.length);
+  const [query, setQuery] = useState("");
+  const visible = useMemo(
+    () => items.filter((item) => matchesSearch(query, [item.name, item.slug])),
+    [items, query],
+  );
+  const pager = usePagination(visible.length);
+  const handleQuery = (value: string) => {
+    pager.reset();
+    setQuery(value);
+  };
   if (isPending) {
     return (
       <ul
@@ -120,8 +132,14 @@ export function CampaignList({
   }
   return (
     <div className="flex flex-col gap-2">
+      <ListSearchField
+        id="campaign-search"
+        value={query}
+        onChange={handleQuery}
+        placeholder="Tên hoặc slug chiến dịch…"
+      />
       <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-        {pager.slice(items).map((item) => {
+        {pager.slice(visible).map((item) => {
           const busy = pendingId === item.id;
           return (
             <li
@@ -165,14 +183,18 @@ export function CampaignList({
           );
         })}
       </ul>
-      <CatalogPager
-        page={pager.page}
-        pageCount={pager.pageCount}
-        start={pager.range.start}
-        end={pager.range.end}
-        total={items.length}
-        hrefFor={pager.hrefFor}
-      />
+      {visible.length === 0 ? (
+        <ListNoMatch />
+      ) : (
+        <CatalogPager
+          page={pager.page}
+          pageCount={pager.pageCount}
+          start={pager.range.start}
+          end={pager.range.end}
+          total={visible.length}
+          hrefFor={pager.hrefFor}
+        />
+      )}
     </div>
   );
 }

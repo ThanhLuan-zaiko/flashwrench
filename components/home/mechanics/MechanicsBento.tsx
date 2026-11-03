@@ -9,7 +9,6 @@ import type { ShowcaseMechanic } from "@/lib/home/mechanic-showcase.service";
 import { MarqueeTrack } from "../MarqueeTrack";
 import { MaskLines } from "../MaskLines";
 import { shouldDrift } from "../marquee-items";
-import { MechanicRow } from "./MechanicRow";
 import { MechanicTile } from "./MechanicTile";
 
 // Trusted mechanics chapter. Data is fetched server-side; when no verified
@@ -65,23 +64,36 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
               <MarqueeTrack
                 items={items}
                 label="Thợ uy tín"
-                renderItem={(item) => <MechanicTile item={item} />}
+                renderItem={(item) => (
+                  <MechanicTile
+                    item={item}
+                    className="w-64 shrink-0 pr-10 md:w-72"
+                  />
+                )}
               />
               <MarqueeTrack
                 items={[...items].reverse()}
                 label="Thợ uy tín, cuộn ngược"
                 direction="right"
                 decorative
-                renderItem={(item) => <MechanicTile item={item} />}
+                renderItem={(item) => (
+                  <MechanicTile
+                    item={item}
+                    className="w-64 shrink-0 pr-10 md:w-72"
+                  />
+                )}
               />
             </div>
           </>
         ) : (
-          <ol aria-label="Thợ uy tín" className="mt-6 md:mt-8">
+          <ul
+            aria-label="Thợ uy tín"
+            className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-8 md:gap-6 lg:grid-cols-4"
+          >
             {items.map((item) => (
-              <MechanicRow key={item.id} item={item} />
+              <MechanicTile key={item.id} item={item} className="flex" />
             ))}
-          </ol>
+          </ul>
         )}
         <div data-chapter-row className="mt-8">
           <SmartCtaLink

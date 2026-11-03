@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import {
   FiEdit2,
   FiLoader,
@@ -9,7 +10,9 @@ import {
 } from "react-icons/fi";
 import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { STAFF_ART } from "@/components/staff/staff-art";
+import { ListNoMatch, ListSearchField } from "@/components/ui/ListSearchField";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
+import { matchesSearch } from "@/lib/search-text";
 import { CatalogCoverStack } from "./CatalogCoverStack";
 import { CatalogPager } from "./CatalogPager";
 import { usePagination } from "./usePagination";
@@ -57,7 +60,16 @@ export function ServiceCategoryList({
   onRestore,
   onRetry,
 }: ServiceCategoryListProps) {
-  const pager = usePagination(items.length);
+  const [query, setQuery] = useState("");
+  const visible = useMemo(
+    () => items.filter((item) => matchesSearch(query, [item.name, item.slug])),
+    [items, query],
+  );
+  const pager = usePagination(visible.length);
+  const handleQuery = (value: string) => {
+    pager.reset();
+    setQuery(value);
+  };
   if (isPending) {
     return (
       <ul
@@ -109,8 +121,14 @@ export function ServiceCategoryList({
   }
   return (
     <div className="flex flex-col gap-2">
+      <ListSearchField
+        id="service-category-search"
+        value={query}
+        onChange={handleQuery}
+        placeholder="Tên hoặc slug loại hình…"
+      />
       <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-        {pager.slice(items).map((item) => {
+        {pager.slice(visible).map((item) => {
           const busy = pendingId === item.id;
           return (
             <li
@@ -143,7 +161,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onRestore(item)}
                       aria-label={`Khôi phục ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#1E3A5F] px-3 py-2 text-xs font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <FiRotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
                       Khôi phục
@@ -153,7 +171,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onHardDelete(item)}
                       aria-label={`Xóa vĩnh viễn ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#1E3A5F] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400"
                     >
                       <FiTrash2 aria-hidden="true" className="h-3.5 w-3.5" />
                       Xóa cứng
@@ -170,7 +188,7 @@ export function ServiceCategoryList({
                           ? `Tạm tắt ${item.name}`
                           : `Bật lại ${item.name}`
                       }
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#1E3A5F] px-3 py-2 text-xs font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <FiPower aria-hidden="true" className="h-3.5 w-3.5" />
                       {item.isActive ? "Tạm tắt" : "Bật lại"}
@@ -180,7 +198,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onEdit(item)}
                       aria-label={`Sửa ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#1E3A5F] px-3 py-2 text-xs font-semibold text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <FiEdit2 aria-hidden="true" className="h-3.5 w-3.5" />
                       Sửa
@@ -190,7 +208,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onSoftDelete(item)}
                       aria-label={`Xóa mềm ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40"
                     >
                       <FiTrash2 aria-hidden="true" className="h-3.5 w-3.5" />
                       Xóa mềm
@@ -202,14 +220,18 @@ export function ServiceCategoryList({
           );
         })}
       </ul>
-      <CatalogPager
-        page={pager.page}
-        pageCount={pager.pageCount}
-        start={pager.range.start}
-        end={pager.range.end}
-        total={items.length}
-        hrefFor={pager.hrefFor}
-      />
+      {visible.length === 0 ? (
+        <ListNoMatch />
+      ) : (
+        <CatalogPager
+          page={pager.page}
+          pageCount={pager.pageCount}
+          start={pager.range.start}
+          end={pager.range.end}
+          total={visible.length}
+          hrefFor={pager.hrefFor}
+        />
+      )}
     </div>
   );
 }

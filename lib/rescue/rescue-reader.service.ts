@@ -3,9 +3,11 @@
 // stay staff-only.
 import type { PublicUser } from "@/lib/auth/user.types";
 import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
+import { MAX_LIST_SEARCH_LENGTH, normalizeSearchText } from "@/lib/search-text";
 import { isUuid } from "@/lib/validation";
 import type { RescueResult } from "./rescue.types";
 import { getDispatchConfig } from "./rescue-config.service";
+import { matchesRescueSearch } from "./rescue-search";
 import {
   findRescueRowById,
   listRescueHistoryRows,
@@ -182,7 +184,7 @@ const RESCUE_BOARD_PAGE_SIZE = 8;
 // page another.
 export async function listDispatchRescues(
   actor: PublicUser,
-  params: { status?: string; cursor?: string | null } = {},
+  params: { status?: string; cursor?: string | null; search?: string } = {},
 ): Promise<RescueResult<{ items: RescueDetail[]; nextCursor: string | null }>> {
   if (actor.role !== "dispatcher" && actor.role !== "admin") {
     return fail(403, "Bạn không có quyền thực hiện thao tác này.");
@@ -195,7 +197,18 @@ export async function listDispatchRescues(
       errors: { form: "Trạng thái không hợp lệ." },
     };
   }
-  const scope = `dispatch-rescue:${actor.id}:${status}`;
+  const rawSearch = params.search ?? "";
+  if (rawSearch.length > MAX_LIST_SEARCH_LENGTH) {
+    return {
+      ok: false,
+      status: 400,
+      errors: { form: "Từ khóa tìm kiếm không hợp lệ." },
+    };
+  }
+  const search = normalizeSearchText(rawSearch);
+  const scope = search
+    ? `dispatch-rescue:${actor.id}:${status}:search:${search}`
+    : `dispatch-rescue:${actor.id}:${status}`;
   let pageState: string | null = null;
   try {
     pageState = decodeCursor(params.cursor, scope);
@@ -206,21 +219,34 @@ export async function listDispatchRescues(
       errors: { form: "Con trỏ trang không hợp lệ." },
     };
   }
-  const page = await listRescueRefsByStatus(
-    status,
-    RESCUE_BOARD_PAGE_SIZE,
-    pageState,
-  );
+
+  // With a search the walk continues past non-matching refs, fetching only
+  // as many refs as the board still has room for, so one page never exceeds
+  // RESCUE_BOARD_PAGE_SIZE.
   const config = await getDispatchConfig();
   const items: RescueDetail[] = [];
-  for (const ref of page.rows) {
-    const row = await findRescueRowById(ref.request_id);
-    if (row && row.status === status)
-      items.push(toDetail(row, config.offerTimeoutMs));
+  let shouldContinue = true;
+  while (shouldContinue && items.length < RESCUE_BOARD_PAGE_SIZE) {
+    const previousPageState: string | null = pageState;
+    const page = await listRescueRefsByStatus(
+      status,
+      RESCUE_BOARD_PAGE_SIZE - items.length,
+      pageState,
+    );
+    for (const ref of page.rows) {
+      const row = await findRescueRowById(ref.request_id);
+      if (!row || row.status !== status) continue;
+      const detail = toDetail(row, config.offerTimeoutMs);
+      if (!search || matchesRescueSearch(detail, search)) items.push(detail);
+    }
+    pageState = page.pageState;
+    shouldContinue = Boolean(
+      search && pageState && pageState !== previousPageState,
+    );
   }
   return {
     ok: true,
-    data: { items, nextCursor: encodeCursor(page.pageState, scope) },
+    data: { items, nextCursor: encodeCursor(pageState, scope) },
   };
 }
 

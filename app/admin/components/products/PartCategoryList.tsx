@@ -1,9 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { FiLoader } from "react-icons/fi";
 import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { STAFF_ART } from "@/components/staff/staff-art";
+import { ListNoMatch, ListSearchField } from "@/components/ui/ListSearchField";
 import type { PartCategoryItem } from "@/lib/parts/parts.types";
+import { matchesSearch } from "@/lib/search-text";
 import { CatalogPager } from "../services/CatalogPager";
 import { usePagination } from "../services/usePagination";
 import { PartRowActions } from "./PartRowActions";
@@ -48,7 +51,16 @@ export function PartCategoryList({
   onRestore,
   onRetry,
 }: PartCategoryListProps) {
-  const pager = usePagination(items.length);
+  const [query, setQuery] = useState("");
+  const visible = useMemo(
+    () => items.filter((item) => matchesSearch(query, [item.name, item.slug])),
+    [items, query],
+  );
+  const pager = usePagination(visible.length);
+  const handleQuery = (value: string) => {
+    pager.reset();
+    setQuery(value);
+  };
   if (isPending) {
     return (
       <ul
@@ -100,8 +112,14 @@ export function PartCategoryList({
   }
   return (
     <div className="flex flex-col gap-2">
+      <ListSearchField
+        id="part-category-search"
+        value={query}
+        onChange={handleQuery}
+        placeholder="Tên hoặc slug danh mục…"
+      />
       <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-        {pager.slice(items).map((item) => {
+        {pager.slice(visible).map((item) => {
           const busy = pendingId === item.id;
           return (
             <li
@@ -134,14 +152,18 @@ export function PartCategoryList({
           );
         })}
       </ul>
-      <CatalogPager
-        page={pager.page}
-        pageCount={pager.pageCount}
-        start={pager.range.start}
-        end={pager.range.end}
-        total={items.length}
-        hrefFor={pager.hrefFor}
-      />
+      {visible.length === 0 ? (
+        <ListNoMatch />
+      ) : (
+        <CatalogPager
+          page={pager.page}
+          pageCount={pager.pageCount}
+          start={pager.range.start}
+          end={pager.range.end}
+          total={visible.length}
+          hrefFor={pager.hrefFor}
+        />
+      )}
     </div>
   );
 }

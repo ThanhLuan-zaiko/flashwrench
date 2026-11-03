@@ -187,6 +187,7 @@ export function CampaignDialog({ dialog, onClose }: CampaignDialogProps) {
           </p>
         )}
         <DialogFooter
+          intent={editing ? "update" : "create"}
           submitLabel={submitLabel}
           pending={pending}
           onClose={guard.requestClose}

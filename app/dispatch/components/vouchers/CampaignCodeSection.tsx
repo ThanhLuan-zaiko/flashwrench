@@ -18,7 +18,7 @@ const INPUT =
 const PRIMARY_BUTTON =
   "flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-4 text-sm font-semibold text-white disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900";
 const GHOST_BUTTON =
-  "flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 text-sm font-semibold text-zinc-700 transition-colors duration-150 hover:bg-zinc-100 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] items-center justify-center rounded-xl border border-[#1E3A5F] px-4 text-sm font-semibold text-[#1E3A5F] transition-colors duration-150 hover:bg-[#1E3A5F]/5 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
 function readError(error: unknown): string {
   if (error instanceof AuthApiError) {

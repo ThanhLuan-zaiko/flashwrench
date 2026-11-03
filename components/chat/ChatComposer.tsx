@@ -92,7 +92,7 @@ export function ChatComposer({ threadId }: { threadId: string }) {
           type="submit"
           disabled={!body.trim() || busy}
           aria-label="Gửi tin nhắn"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-white transition-transform duration-150 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-safe:transition-transform dark:bg-zinc-100 dark:text-zinc-900"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-700 text-white transition-transform duration-150 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-safe:transition-transform dark:bg-green-500 dark:text-zinc-950"
         >
           <FiSend className="h-4 w-4" aria-hidden />
         </button>

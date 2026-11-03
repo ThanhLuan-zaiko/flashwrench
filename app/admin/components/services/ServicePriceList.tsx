@@ -1,9 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { FiLayers, FiLoader } from "react-icons/fi";
 import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { STAFF_ART } from "@/components/staff/staff-art";
+import { ListNoMatch, ListSearchField } from "@/components/ui/ListSearchField";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import { matchesSearch } from "@/lib/search-text";
 import { CatalogCoverStack } from "./CatalogCoverStack";
 import { CatalogPager } from "./CatalogPager";
 import { formatDuration, formatVnd, PRICE_UNIT_LABELS } from "./catalog-format";
@@ -61,7 +64,19 @@ export function ServicePriceList({
   onRestore,
   onRetry,
 }: ServicePriceListProps) {
-  const pager = usePagination(items.length);
+  const [query, setQuery] = useState("");
+  const visible = useMemo(
+    () =>
+      items.filter((item) =>
+        matchesSearch(query, [item.name, item.slug, item.categoryName]),
+      ),
+    [items, query],
+  );
+  const pager = usePagination(visible.length);
+  const handleQuery = (value: string) => {
+    pager.reset();
+    setQuery(value);
+  };
   const handleFilterChange = (categoryId: string) => {
     pager.reset();
     onFilterChange(categoryId);
@@ -129,8 +144,14 @@ export function ServicePriceList({
         />
       ) : (
         <div className="flex flex-col gap-2">
+          <ListSearchField
+            id="service-price-search"
+            value={query}
+            onChange={handleQuery}
+            placeholder="Tên mục giá, slug, loại hình…"
+          />
           <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-            {pager.slice(items).map((item) => {
+            {pager.slice(visible).map((item) => {
               const busy = pendingId === item.id;
               return (
                 <li
@@ -183,14 +204,18 @@ export function ServicePriceList({
               );
             })}
           </ul>
-          <CatalogPager
-            page={pager.page}
-            pageCount={pager.pageCount}
-            start={pager.range.start}
-            end={pager.range.end}
-            total={items.length}
-            hrefFor={pager.hrefFor}
-          />
+          {visible.length === 0 ? (
+            <ListNoMatch />
+          ) : (
+            <CatalogPager
+              page={pager.page}
+              pageCount={pager.pageCount}
+              start={pager.range.start}
+              end={pager.range.end}
+              total={visible.length}
+              hrefFor={pager.hrefFor}
+            />
+          )}
         </div>
       )}
     </div>

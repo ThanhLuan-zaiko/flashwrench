@@ -1,5 +1,4 @@
 import type { UserRole } from "@/lib/auth/user.types";
-import { decodeCursor, encodeCursor } from "@/lib/db/cursor";
 import { MECHANIC_TIME_ZONE, monthKey } from "@/lib/mechanic/mechanic-period";
 import { clearPaymentPrompt } from "@/lib/payments/payment-prompt.service";
 import { handleVoucherOrderTransition } from "@/lib/vouchers/auto-grant.service";
@@ -11,8 +10,7 @@ import { restockOrderItems } from "./order-restock";
 import { projectOrderReceipts, refundOrderReceipts } from "./order-revenue";
 import { refundOrderWallet } from "./order-wallet-restore";
 import { ORDER_CONFLICT_MESSAGE } from "./orders.constants";
-import { toOrderSummary } from "./orders.mapper";
-import { findOrderRowById, listOrderRowsByStatus } from "./orders.repository";
+import { findOrderRowById } from "./orders.repository";
 import {
   type CourierConfigInput,
   canTransitionForOrder,
@@ -21,7 +19,6 @@ import {
   type OrderDetail,
   type OrderRow,
   type OrderStatus,
-  type OrderSummary,
   type OrdersResult,
   RESTOCK_TRANSITIONS,
   requiresAdminTransition,
@@ -40,8 +37,11 @@ import {
   updateOrderStatusRows,
 } from "./orders-write.repository";
 
-const ORDERS_CURSOR_SCOPE = "dispatch-orders";
-const ORDERS_PAGE_LIMIT = 20;
+export {
+  listStaffOrders,
+  type StaffOrdersPage,
+  type StaffOrdersParams,
+} from "./orders-board.service";
 
 // Customer cancel: only while the order is still pending. Items go back
 // into stock and the history row records who cancelled.
@@ -79,54 +79,6 @@ export async function cancelMyOrder(
   const detail = await loadOrderDetail(orderId);
   if (!detail) return fail(500, "Không cập nhật được đơn hàng.");
   return { ok: true, data: detail };
-}
-
-export type StaffOrdersParams = {
-  status: string;
-  month?: string;
-  cursor?: string | null;
-  limit?: string;
-};
-
-export type StaffOrdersPage = {
-  items: OrderSummary[];
-  nextCursor: string | null;
-};
-
-// Dispatcher board: page one status partition of one month bucket.
-export async function listStaffOrders(
-  params: StaffOrdersParams,
-): Promise<OrdersResult<StaffOrdersPage>> {
-  if (!isOrderStatus(params.status)) {
-    return failFields(400, { status: "Trạng thái đơn hàng không hợp lệ." });
-  }
-  const month = params.month ?? monthKey(new Date(), MECHANIC_TIME_ZONE);
-  if (!/^\d{4}-\d{2}$/.test(month)) {
-    return failFields(400, { status: "Tháng không hợp lệ." });
-  }
-  const limit = Math.min(
-    Math.max(Number.parseInt(params.limit ?? "", 10) || ORDERS_PAGE_LIMIT, 1),
-    50,
-  );
-  let pageState: string | null = null;
-  try {
-    pageState = decodeCursor(params.cursor ?? null, ORDERS_CURSOR_SCOPE);
-  } catch {
-    return failFields(400, { status: "Con trỏ phân trang không hợp lệ." });
-  }
-  const page = await listOrderRowsByStatus(
-    params.status,
-    month,
-    limit,
-    pageState,
-  );
-  return {
-    ok: true,
-    data: {
-      items: page.rows.map(toOrderSummary),
-      nextCursor: encodeCursor(page.pageState, ORDERS_CURSOR_SCOPE),
-    },
-  };
 }
 
 // Staff transition: the fulfillment-aware state machine guards the move,

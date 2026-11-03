@@ -219,7 +219,7 @@ export function AccountPanel() {
                   disabled={revoke.isPending}
                   onClick={() => handleRevoke(s.familyId)}
                   aria-label={`Thu hồi phiên ${s.deviceLabel}`}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-50 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-red-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-700 disabled:opacity-50 motion-safe:active:scale-95 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
                 >
                   <FiTrash2 aria-hidden="true" className="h-4 w-4" />
                 </button>

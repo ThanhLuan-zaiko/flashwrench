@@ -56,7 +56,7 @@ export function StaffAvatarField({
               disabled={disabled}
               onClick={avatar.removeExisting}
               aria-label="Xóa ảnh thợ hiện tại"
-              className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-red-300 dark:hover:bg-red-950/40"
             >
               <FiX aria-hidden="true" className="h-4 w-4 shrink-0" />
               <span className="hidden sm:inline">Xóa</span>
@@ -95,7 +95,7 @@ export function StaffAvatarField({
                 disabled={disabled}
                 onClick={avatar.removeStaged}
                 aria-label="Xóa ảnh thợ chờ lưu"
-                className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-zinc-200 dark:hover:bg-zinc-800"
+                className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-red-300 dark:hover:bg-red-950/40"
               >
                 <FiX aria-hidden="true" className="h-4 w-4 shrink-0" />
                 <span className="hidden sm:inline">Xóa</span>

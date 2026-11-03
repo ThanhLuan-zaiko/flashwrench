@@ -29,6 +29,7 @@ export type DispatchOrdersQuery = {
   month?: string;
   cursor?: string | null;
   limit?: number;
+  search?: string;
 };
 
 function toOrdersQueryString(query: DispatchOrdersQuery): string {
@@ -37,6 +38,7 @@ function toOrdersQueryString(query: DispatchOrdersQuery): string {
   if (query.month) params.set("month", query.month);
   if (query.cursor) params.set("cursor", query.cursor);
   if (query.limit) params.set("limit", String(query.limit));
+  if (query.search) params.set("q", query.search);
   const text = params.toString();
   return text ? `?${text}` : "";
 }

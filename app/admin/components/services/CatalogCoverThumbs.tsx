@@ -26,12 +26,14 @@ function ThumbButton({
   ariaLabel,
   onClick,
   disabled,
+  tone = "default",
   children,
 }: {
   label: string;
   ariaLabel: string;
   onClick: () => void;
   disabled: boolean;
+  tone?: "default" | "danger";
   children: ReactNode;
 }) {
   return (
@@ -41,7 +43,11 @@ function ThumbButton({
       onClick={onClick}
       aria-label={ariaLabel}
       title={ariaLabel}
-      className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-zinc-200 dark:hover:bg-zinc-800"
+      className={`flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors duration-200 disabled:opacity-60 motion-safe:active:scale-[0.98] ${
+        tone === "danger"
+          ? "text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/40"
+          : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+      }`}
     >
       {children}
       <span className="hidden sm:inline">{label}</span>
@@ -118,6 +124,7 @@ export function CatalogCoverThumbs({
               <ThumbButton
                 label="Xóa"
                 ariaLabel={`Xóa ảnh ${index + 1}`}
+                tone="danger"
                 onClick={() => onRemoveExisting(url)}
                 disabled={disabled}
               >
@@ -165,6 +172,7 @@ export function CatalogCoverThumbs({
               <ThumbButton
                 label="Xóa"
                 ariaLabel={`Xóa ảnh chờ ${index + 1}`}
+                tone="danger"
                 onClick={() => onRemoveStaged(item.id)}
                 disabled={disabled}
               >

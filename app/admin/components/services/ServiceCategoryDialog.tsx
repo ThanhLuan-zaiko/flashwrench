@@ -191,6 +191,7 @@ export function ServiceCategoryDialog({
           </p>
         )}
         <DialogFooter
+          intent={editing ? "update" : "create"}
           submitLabel={submitLabel}
           pending={pending}
           onClose={guard.requestClose}

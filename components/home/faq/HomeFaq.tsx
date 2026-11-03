@@ -6,10 +6,9 @@ import { useChapterMotion } from "@/hooks/useChapterMotion";
 import { MaskLines } from "../MaskLines";
 import { HOME_FAQ } from "./home-faq.content";
 
-// Questions and answers under the reviews: the heading on the left and, from
-// lg, the ruled rows beside it so short questions do not stretch across the
-// full width. Each row is a native <details> so it works from the keyboard
-// and with screen readers. The plus turns into a cross while a row is open.
+// Questions and answers: the heading on the left and, from lg, one card per
+// question beside it. Each card is a native <details> so it works from the
+// keyboard and with screen readers. The plus turns into a cross while open.
 export function HomeFaq() {
   const rootRef = useRef<HTMLElement>(null);
   useChapterMotion(rootRef);
@@ -26,15 +25,10 @@ export function HomeFaq() {
             className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
         </div>
-        <ul>
+        <ul className="grid grid-cols-1 content-start gap-3 md:gap-4">
           {HOME_FAQ.map((item) => (
-            <li key={item.question}>
-              <span
-                data-rule
-                aria-hidden="true"
-                className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
-              />
-              <details data-chapter-row className="group py-5 md:py-6">
+            <li key={item.question} data-chapter-row>
+              <details className="group rounded-2xl border border-zinc-200 bg-white p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-950">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-base font-bold tracking-tight text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 md:text-lg dark:text-zinc-50 [&::-webkit-details-marker]:hidden">
                   {item.question}
                   <FiPlus
@@ -42,19 +36,12 @@ export function HomeFaq() {
                     className="h-5 w-5 shrink-0 text-zinc-500 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none dark:text-zinc-400"
                   />
                 </summary>
-                <p className="mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
+                <p className="mt-3 border-t border-zinc-200 pt-3 text-base text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
                   {item.answer}
                 </p>
               </details>
             </li>
           ))}
-          <li>
-            <span
-              data-rule
-              aria-hidden="true"
-              className="block h-px origin-left bg-zinc-200 dark:bg-zinc-800"
-            />
-          </li>
         </ul>
       </div>
     </section>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { scrollToPageTop } from "@/components/pagination/scroll-to-page-top";
 import { useAccountSession } from "@/hooks/auth";
 import { useAddComment, useComments } from "@/hooks/comments";
 import { useEmbeddedPage } from "@/hooks/useEmbeddedPage";
@@ -95,11 +96,12 @@ function CommentSectionInner({
       )}
 
       {(pager.canPrev || page?.nextCursor) && (
-        <div className="flex items-center justify-end gap-5">
+        <div data-pager className="flex items-center justify-end gap-5">
           {pager.canPrev ? (
             <Link
               href={pager.prevHref}
               scroll={false}
+              onClick={scrollToPageTop}
               prefetch
               aria-label="Trang trước"
               className={PAGER_LINK}
@@ -118,7 +120,8 @@ function CommentSectionInner({
               href={pager.nextHref}
               scroll={false}
               prefetch
-              onClick={() => {
+              onClick={(event) => {
+                scrollToPageTop(event);
                 if (page.nextCursor) pager.recordNext(page.nextCursor);
               }}
               aria-label="Trang sau"

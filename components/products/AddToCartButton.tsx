@@ -2,9 +2,9 @@
 
 import { FiLoader, FiShoppingCart } from "react-icons/fi";
 import {
-  BRAND_OUTLINE_BUTTON,
+  BRAND_CREATE_BUTTON,
+  BRAND_CREATE_OUTLINE,
   BRAND_PRIMARY_BUTTON,
-  BRAND_SOLID_BUTTON,
 } from "@/components/ui/brand";
 import { useMe } from "@/hooks/auth";
 import { useAddToCart } from "@/hooks/cart";
@@ -13,8 +13,8 @@ import type { PartItem } from "@/lib/parts/parts.types";
 type AddToCartButtonProps = {
   part: PartItem;
   // "primary": the orange main action on a product detail or quick view.
-  // "solid": navy, for a single secondary add-to-cart.
-  // "outline": bordered, for the many cards of a catalog grid.
+  // "solid": green, for a single secondary add-to-cart.
+  // "outline": green outline, for the many cards of a catalog grid.
   emphasis?: "primary" | "solid" | "outline";
 };
 
@@ -27,8 +27,8 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
   const BUTTON_CLASSES = {
     primary: BRAND_PRIMARY_BUTTON,
-    solid: BRAND_SOLID_BUTTON,
-    outline: BRAND_OUTLINE_BUTTON,
+    solid: BRAND_CREATE_BUTTON,
+    outline: BRAND_CREATE_OUTLINE,
   }[emphasis];
   const me = useMe();
   const addToCart = useAddToCart();

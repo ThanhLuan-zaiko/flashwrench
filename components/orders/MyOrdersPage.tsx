@@ -95,12 +95,12 @@ export function MyOrdersPage() {
         )}
 
       {items.length > 0 && (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((order) => (
-            <li key={order.id} data-reveal>
+            <li key={order.id} data-reveal className="flex">
               <Link
                 href={`/orders/${order.id}`}
-                className="flex flex-col gap-3 border-b border-zinc-200 py-4 transition-colors dark:border-zinc-800 duration-200 hover:border-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
+                className="group flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] md:p-5 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
               >
                 <div className="min-w-0">
                   <p className="flex flex-wrap items-center gap-2">
@@ -125,8 +125,8 @@ export function MyOrdersPage() {
                     {formatDateTime(order.createdAt)}
                   </p>
                 </div>
-                <p className="flex items-center gap-3">
-                  <span className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                <p className="mt-auto flex items-center justify-between gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+                  <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] tabular-nums dark:text-zinc-50">
                     {formatVnd(order.total)}
                   </span>
                   <FiArrowRight

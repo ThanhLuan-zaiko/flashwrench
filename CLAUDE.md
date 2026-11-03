@@ -6,7 +6,7 @@ The full rules are in `frontend-bento-gsap.md` Section 3.1, and `AGENTS.md` Sect
 
 - Font: Be Vietnam Pro only. Inter is forbidden.
 - Icons: never inside rounded containers. Limit to one bare icon per card, and only when it adds meaning.
-- Cards: no nested cards and no bordered or tinted boxes inside a card.
+- Cards: no nested cards and no tinted boxes inside a card. Bordered boxes inside a card are allowed (border only, same white surface).
 - Gradients: forbidden unless the spec names a functional purpose.
 - Space: no dead space in grids or sections. Fill it with content or span, never filler. Apply the layout fixes in `frontend-bento-gsap.md` Section 3.2, and check cell fit and clipped text at 375, 1024 and 1440px.
 - Copy: plain and factual. No slogans, superlatives or ad-style wording.
@@ -14,7 +14,7 @@ The full rules are in `frontend-bento-gsap.md` Section 3.1, and `AGENTS.md` Sect
 
 ## Home chapter layout and motion
 
-Home sections (promotions, services, parts, steps, price, mechanics, reviews, closing call to action) are ruled-row chapters, not card grids or banners: masked headline, hairline rules, rows on the page surface. Layout rules are in `frontend-bento-gsap.md` Section 3.3.
+Home chapters (services, promotions, products, categories, steps, price, mechanics, reviews, FAQ) are card grids under a masked headline. The hero and the closing call-to-action band are the only exceptions. Layout rules are in `frontend-bento-gsap.md` Section 3.3.
 
 Motion comes from one hook, `hooks/useChapterMotion.ts`, using the attributes `data-lines`/`data-line` (via `components/home/MaskLines.tsx`), `data-rule`, `data-chapter-row` and `data-chapter-photo`. Optional extras (`hooks/useChapterExtras.ts`): `data-parallax` and `data-count-to`. Values live in `lib/motion/chapter-motion.ts`; limits are in Section 4.7. Do not write a new timeline per section, and do not pin or use sticky columns.
 

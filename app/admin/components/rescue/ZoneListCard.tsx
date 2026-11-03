@@ -4,7 +4,9 @@ import { useState } from "react";
 import { FiEdit2, FiPlus } from "react-icons/fi";
 import { StaffEmptyState } from "@/components/staff/StaffEmptyState";
 import { STAFF_ART } from "@/components/staff/staff-art";
+import { ListNoMatch, ListSearchField } from "@/components/ui/ListSearchField";
 import { useAdminZones } from "@/hooks/admin-rescue";
+import { matchesSearch } from "@/lib/search-text";
 import { ZoneDialog, type ZoneDialogState } from "./ZoneDialog";
 
 // Zone directory: every service zone with radius and active state.
@@ -14,6 +16,10 @@ export function ZoneListCard() {
   const zones = useAdminZones();
   const [dialog, setDialog] = useState<ZoneDialogState | null>(null);
   const items = zones.data?.items ?? [];
+  const [query, setQuery] = useState("");
+  const visible = items.filter((zone) =>
+    matchesSearch(query, [zone.name, zone.city]),
+  );
 
   return (
     <section
@@ -33,7 +39,7 @@ export function ZoneListCard() {
         <button
           type="button"
           onClick={() => setDialog({ mode: "create" })}
-          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
         >
           <FiPlus aria-hidden="true" className="h-4 w-4" />
           Thêm
@@ -53,36 +59,47 @@ export function ZoneListCard() {
           hint="Mọi ca đang được gửi tới toàn hệ thống."
         />
       ) : (
-        <ul className="mt-3 divide-y divide-zinc-200 dark:divide-zinc-800">
-          {items.map((zone) => (
-            <li
-              key={zone.zoneId}
-              className="flex items-center justify-between gap-2 py-2.5"
-            >
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                  {zone.name}
-                  {!zone.isActive && (
-                    <span className="ml-2 rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-                      Tắt
-                    </span>
-                  )}
-                </p>
-                <p className="mt-0.5 truncate text-[11px] text-zinc-500 dark:text-zinc-400">
-                  {zone.city ?? "—"} · Bán kính {zone.radiusKm ?? "—"} km
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setDialog({ mode: "edit", item: zone })}
-                aria-label={`Sửa ${zone.name}`}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        <>
+          <div className="mt-3">
+            <ListSearchField
+              id="zone-search"
+              value={query}
+              onChange={setQuery}
+              placeholder="Tên vùng, thành phố…"
+            />
+          </div>
+          <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            {visible.map((zone) => (
+              <li
+                key={zone.zoneId}
+                className="flex items-center justify-between gap-2 py-2.5"
               >
-                <FiEdit2 aria-hidden="true" className="h-4 w-4" />
-              </button>
-            </li>
-          ))}
-        </ul>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                    {zone.name}
+                    {!zone.isActive && (
+                      <span className="ml-2 rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                        Tắt
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-0.5 truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+                    {zone.city ?? "—"} · Bán kính {zone.radiusKm ?? "—"} km
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDialog({ mode: "edit", item: zone })}
+                  aria-label={`Sửa ${zone.name}`}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                >
+                  <FiEdit2 aria-hidden="true" className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          {visible.length === 0 && <ListNoMatch />}
+        </>
       )}
 
       {dialog && (
