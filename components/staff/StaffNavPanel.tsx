@@ -34,10 +34,10 @@ export function StaffNavPanel({
   onCloseMobile,
 }: StaffNavPanelProps) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col border-l border-[#111111]/10">
+    <div className="flex min-w-0 flex-1 flex-col border-l border-white/10">
       <div className="flex items-start justify-between gap-2 px-4 pt-5 pb-3">
         <span className="min-w-0">
-          <span className="block truncate text-[11px] font-bold tracking-[0.14em] text-[#111111]/70 uppercase">
+          <span className="block truncate text-[11px] font-bold tracking-[0.14em] text-zinc-400 uppercase">
             {copy.areaName}
           </span>
           <span className="mt-0.5 block truncate text-xl font-extrabold tracking-tight">
@@ -48,7 +48,7 @@ export function StaffNavPanel({
           type="button"
           onClick={onCloseMobile}
           aria-label={`Đóng menu ${copy.scope}`}
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 md:hidden ${STAFF_ON_NAVY_FOCUS}`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white transition-colors duration-200 hover:bg-white/10 md:hidden ${STAFF_ON_NAVY_FOCUS}`}
         >
           <FiX aria-hidden="true" className="h-5 w-5" />
         </button>
@@ -82,7 +82,7 @@ export function StaffNavPanel({
                         className={`flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                           selected
                             ? "bg-[#111111] text-white"
-                            : "bg-[#111111]/15 text-[#111111]"
+                            : "bg-white/15 text-white"
                         }`}
                       >
                         {badge}
@@ -91,7 +91,7 @@ export function StaffNavPanel({
                   </span>
                   <span
                     className={`mt-0.5 block text-xs leading-snug ${
-                      selected ? "text-zinc-600" : "text-[#111111]/70"
+                      selected ? "text-[#111111]/70" : "text-zinc-400"
                     }`}
                   >
                     {section.description}
