@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FiLock } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { authKeys, useAccountSession } from "@/hooks/auth";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import { useRealtimeTopic } from "@/hooks/useRealtimeTopic";
 import {
@@ -104,6 +105,8 @@ export function AccountLockGuard() {
     },
   });
 
+  const dialogRef = useDialogFocus<HTMLDivElement>();
+
   const onAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
   if (block === null || onAuthPath) return null;
 
@@ -112,6 +115,8 @@ export function AccountLockGuard() {
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={notice.title}
       className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-4"

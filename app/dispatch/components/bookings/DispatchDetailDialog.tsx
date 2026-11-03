@@ -6,6 +6,7 @@ import {
   useDispatchBooking,
   useDispatchBookingRealtime,
 } from "@/hooks/dispatch";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { DispatchActions } from "./DispatchActions";
 import { DispatchBookingInfo } from "./DispatchBookingInfo";
 
@@ -31,9 +32,13 @@ export function DispatchDetailDialog({
   useDispatchBookingRealtime(bookingId);
   const booking = query.data?.booking ?? null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Chi tiết đơn hàng"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

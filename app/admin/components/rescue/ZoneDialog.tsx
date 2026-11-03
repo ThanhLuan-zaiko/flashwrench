@@ -5,6 +5,7 @@ import { FiLoader, FiX } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useZoneMutation } from "@/hooks/admin-rescue";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import {
   AdminRescueApiError,
   type ZoneItem,
@@ -73,9 +74,13 @@ export function ZoneDialog({
     );
   }
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={editing ? "Sửa khu vực" : "Thêm khu vực"}
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

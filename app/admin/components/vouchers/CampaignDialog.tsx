@@ -6,6 +6,7 @@ import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { useCreateCampaign, useUpdateCampaign } from "@/hooks/useVouchers";
 import type { VoucherCampaign } from "@/lib/vouchers/voucher.types";
@@ -92,6 +93,8 @@ export function CampaignDialog({ dialog, onClose }: CampaignDialogProps) {
     isGalleryDirty(initialGallery, covers.existing, covers.staged.length);
   const guard = useUnsavedChangesGuard(dirty, onClose);
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(guard.requestClose);
+
   if (!dialog) return null;
 
   const set = <K extends keyof CampaignFormState>(
@@ -117,6 +120,8 @@ export function CampaignDialog({ dialog, onClose }: CampaignDialogProps) {
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={editing ? "Sửa chiến dịch" : "Thêm chiến dịch"}
       className={DIALOG_OVERLAY_CLASSES}

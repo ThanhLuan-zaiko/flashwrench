@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import {
   FiCheck,
   FiClock,
@@ -18,6 +17,7 @@ import { BookingServiceGallery } from "@/components/booking/BookingServiceGaller
 import { ServiceReviewsCard } from "@/components/booking/ServiceReviewsCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { ApplicableVoucherBadge } from "@/components/vouchers/ApplicableVoucherBadge";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { BOOKING_DEFAULT_DURATION_MIN } from "@/lib/booking/booking-services.constants";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 
@@ -39,17 +39,13 @@ export function ServiceQuickViewDialog({
   onToggle,
   onClose,
 }: ServiceQuickViewDialogProps) {
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
 
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={`Chi tiết dịch vụ ${service.name}`}
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

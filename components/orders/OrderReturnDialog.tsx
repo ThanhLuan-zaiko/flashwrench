@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FiLoader, FiX } from "react-icons/fi";
 import { useRequestOrderReturn } from "@/hooks/orders";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { RETURN_IMAGE_MAX, RETURN_REASON_MAX } from "@/lib/orders/order-return";
 import type { OrderFieldErrors } from "@/lib/orders/orders.types";
 import { AuthApiError } from "@/services/auth.api";
@@ -105,9 +106,13 @@ export function OrderReturnDialog({
     }
   };
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Yêu cầu đổi trả / hoàn tiền"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

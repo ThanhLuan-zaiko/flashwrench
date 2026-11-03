@@ -11,6 +11,7 @@ import {
   parseCollectAmount,
 } from "@/app/mechanic/components/collect-payment";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { MechanicIncomeEntry } from "@/lib/mechanic/mechanic.types";
 import type { BookingPaymentMethod } from "@/lib/payments/booking-payment.types";
 import { formatVnd } from "../mechanic-format";
@@ -49,6 +50,8 @@ export function CollectPaymentDialog({
   const [confirmCode, setConfirmCode] = useState("");
   const [paymentId, setPaymentId] = useState("");
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   if (!entry) return null;
   const outstanding = entry.outstanding;
   const parsed = parseCollectAmount(amountText, outstanding);
@@ -81,6 +84,8 @@ export function CollectPaymentDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Xác nhận thu tiền"
       className={DIALOG_OVERLAY_CLASSES}

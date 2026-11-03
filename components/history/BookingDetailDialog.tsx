@@ -8,6 +8,7 @@ import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
 import { useMyBooking } from "@/hooks/booking";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { formatDateTime } from "@/lib/datetime/format";
 import { STATUS_LABELS } from "@/lib/mechanic/mechanic-status";
 import { BookingCancelSection } from "./BookingCancelSection";
@@ -46,9 +47,13 @@ export function BookingDetailDialog({
     booking && isTrackableStatus(booking.status) && booking.location !== null,
   );
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Chi tiết đơn hàng"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

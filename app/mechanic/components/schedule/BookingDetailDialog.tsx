@@ -3,6 +3,7 @@
 import { FiAlertCircle, FiLoader, FiX } from "react-icons/fi";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useBookingRealtime, useMechanicBooking } from "@/hooks/mechanic";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { BookingActions } from "./BookingActions";
 import { BookingCollectSection } from "./BookingCollectSection";
 import { BookingInfo } from "./BookingInfo";
@@ -28,9 +29,13 @@ export function BookingDetailDialog({
   useBookingRealtime(bookingId);
   const booking = query.data?.booking ?? null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Chi tiết đơn hàng"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

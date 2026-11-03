@@ -4,6 +4,7 @@ import { useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import "react-easy-crop/react-easy-crop.css";
 import { FiCheck, FiLoader, FiRotateCw, FiX, FiZoomIn } from "react-icons/fi";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { cropImageToBlob } from "./image-crop";
 
 export type AspectPreset = { label: string; value: number | null };
@@ -68,9 +69,13 @@ export function ImageCropDialog({
     }
   }
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onCancel);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={title}
       className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-4"

@@ -9,6 +9,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { UserActionTarget } from "./useUserRowActions";
 
 type UserActionDialogProps = {
@@ -50,6 +51,8 @@ export function UserActionDialog({
   onClose,
   onConfirm,
 }: UserActionDialogProps) {
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   if (!target) return null;
   const copy = ACTION_COPY[target.action];
   const Icon = copy.icon;
@@ -57,6 +60,8 @@ export function UserActionDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={copy.title}
       className={DIALOG_OVERLAY_CLASSES}

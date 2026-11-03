@@ -2,6 +2,7 @@
 
 import { FiArrowLeft, FiX } from "react-icons/fi";
 import { useChatThread } from "@/hooks/chat";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { ChatConversation } from "./ChatConversation";
 import { ChatLockedPanel } from "./ChatLockedPanel";
 import { ChatThreadList } from "./ChatThreadList";
@@ -30,8 +31,16 @@ export function ChatPanel({
   const peerName = detail.data?.peerName ?? "";
   const showConversation = !isLocked && activeThreadId !== null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose, { modal: false });
+
   return (
-    <div role="dialog" aria-label="Hộp thư" className={CHAT_PANEL_CLASSES}>
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-label="Hộp thư"
+      className={CHAT_PANEL_CLASSES}
+    >
       <div className="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-200 px-3 dark:border-zinc-800">
         {showConversation ? (
           <button

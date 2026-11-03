@@ -13,6 +13,7 @@ import {
 import { PaymentCodeCard } from "@/components/revenue/PaymentCodeCard";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMyRescueDetail } from "@/hooks/rescue";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { formatDateTime } from "@/lib/datetime/format";
 import { RescueFeedbackSection } from "./RescueFeedbackSection";
 
@@ -37,9 +38,13 @@ export function HistoryRescueDialog({
   const detail = useMyRescueDetail(requestId);
   const rescue = detail.data?.rescue ?? null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Chi tiết cứu hộ"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

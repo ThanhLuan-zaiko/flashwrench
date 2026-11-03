@@ -5,6 +5,7 @@ import { FaQrcode } from "react-icons/fa";
 import { FiLoader, FiX } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { usePayOrderOnline } from "@/hooks/orders";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useSessionExpired } from "@/hooks/useSessionExpired";
 import { AuthApiError } from "@/services/auth.api";
 
@@ -69,9 +70,13 @@ export function MockPaymentDialog({
     }, MOCK_PROCESSING_MS);
   };
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Thanh toán online giả lập"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

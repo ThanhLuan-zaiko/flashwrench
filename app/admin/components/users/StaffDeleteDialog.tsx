@@ -8,6 +8,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 
 export type StaffDeleteTarget = {
   mode: "soft" | "hard";
@@ -38,6 +39,8 @@ export function StaffDeleteDialog({
   onClose,
   onConfirm,
 }: StaffDeleteDialogProps) {
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   if (!target) return null;
   const isHard = target.mode === "hard";
   const canConfirm =
@@ -46,6 +49,8 @@ export function StaffDeleteDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={isHard ? "Xóa vĩnh viễn" : "Xóa mềm"}
       className={DIALOG_OVERLAY_CLASSES}

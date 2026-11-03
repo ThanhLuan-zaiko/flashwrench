@@ -8,6 +8,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { CampaignDeleteTarget } from "./useCampaignRowActions";
 
 type CampaignDeleteDialogProps = {
@@ -31,6 +32,8 @@ export function CampaignDeleteDialog({
   onClose,
   onConfirm,
 }: CampaignDeleteDialogProps) {
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   if (!target) return null;
   const isHard = target.mode === "hard";
   const canConfirm =
@@ -39,6 +42,8 @@ export function CampaignDeleteDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={isHard ? "Xóa vĩnh viễn" : "Xóa mềm"}
       className={DIALOG_OVERLAY_CLASSES}

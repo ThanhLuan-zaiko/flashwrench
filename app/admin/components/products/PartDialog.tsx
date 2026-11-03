@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ConfirmDiscardDialog } from "@/components/ui/ConfirmDiscardDialog";
 import { DialogFooter } from "@/components/ui/DialogFooter";
 import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreatePart, useUpdatePart } from "@/hooks/admin-parts";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import type { PartCategoryItem, PartItem } from "@/lib/parts/parts.types";
 import { CatalogCoverField } from "../services/CatalogCoverField";
@@ -27,6 +28,7 @@ import {
   partSubmitLabel,
   specsToText,
 } from "./part-form-utils";
+import { useDefaultPartCategory } from "./useDefaultPartCategory";
 
 export type PartDialogState =
   | { mode: "create"; presetCategoryId?: string }
@@ -133,12 +135,9 @@ export function PartDialog({ dialog, categories, onClose }: PartDialogProps) {
   );
   const guard = useUnsavedChangesGuard(dirty, onClose);
 
-  useEffect(() => {
-    if (editing || live.length === 0) return;
-    if (!categoryId || !live.some((c) => c.id === categoryId)) {
-      if (liveFirstId) setCategoryId(liveFirstId);
-    }
-  }, [editing, categoryId, live, liveFirstId]);
+  useDefaultPartCategory(editing, categoryId, setCategoryId, live, liveFirstId);
+
+  const dialogRef = useDialogFocus<HTMLDivElement>(guard.requestClose);
 
   if (!dialog) return null;
 
@@ -157,6 +156,8 @@ export function PartDialog({ dialog, categories, onClose }: PartDialogProps) {
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={editing ? "Sửa sản phẩm" : "Thêm sản phẩm"}
       className={DIALOG_OVERLAY_CLASSES}

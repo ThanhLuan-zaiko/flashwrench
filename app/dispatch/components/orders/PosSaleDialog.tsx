@@ -9,6 +9,7 @@ import {
   useCreateCounterSale,
   useDispatchParts,
 } from "@/hooks/dispatch-orders";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { OrderFieldErrors } from "@/lib/orders/orders.types";
 import { AuthApiError } from "@/services/auth.api";
 import { PosSaleLines, type SaleLine } from "./PosSaleLines";
@@ -96,9 +97,13 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
     );
   };
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Bán hàng tại quầy"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

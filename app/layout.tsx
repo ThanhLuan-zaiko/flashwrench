@@ -16,6 +16,7 @@ import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { getServerAccountSession } from "@/lib/auth/server-session";
 import { baseMetadata } from "@/lib/seo/site";
 import "./globals.css";
+import { SkipLink } from "@/components/layout/SkipLink";
 
 // Site-wide brand face (first shipped on the homepage). The Vietnamese
 // subset covers the full diacritics used across the UI copy.
@@ -51,6 +52,7 @@ export default async function RootLayout({
       className={`${brandFont.variable} h-full antialiased ${SCROLLBAR_CLASSES}`}
     >
       <body className="flex min-h-full flex-col bg-white font-[family-name:var(--font-brand)] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+        <SkipLink />
         <ThemeInitScript />
         <QueryProvider initialSession={session}>
           <ToastProvider>

@@ -10,6 +10,7 @@ import {
   useCreatePartCategory,
   useUpdatePartCategory,
 } from "@/hooks/admin-parts";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { PartCategoryItem } from "@/lib/parts/parts.types";
@@ -52,6 +53,8 @@ export function PartCategoryDialog({
     sortOrder !== String(editing?.sortOrder ?? 0);
   const guard = useUnsavedChangesGuard(dirty, onClose);
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(guard.requestClose);
+
   if (!dialog) return null;
 
   const submit = () => {
@@ -79,6 +82,8 @@ export function PartCategoryDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={editing ? "Sửa danh mục" : "Thêm danh mục"}
       className={DIALOG_OVERLAY_CLASSES}

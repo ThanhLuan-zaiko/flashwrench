@@ -6,6 +6,7 @@ import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateComplaint, useTransitionComplaint } from "@/hooks/complaints";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type {
   ComplaintAction,
   ComplaintItem,
@@ -47,6 +48,8 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
   const pending = createMutation.isPending || transitionMutation.isPending;
   const error = createMutation.error ?? transitionMutation.error ?? null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   if (!dialog) return null;
 
   const submitCreate = () => {
@@ -75,6 +78,8 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={handling ? "Xử lý khiếu nại" : "Ghi nhận khiếu nại"}
       className={DIALOG_OVERLAY_CLASSES}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FiLoader, FiX } from "react-icons/fi";
 import { useCreateMyComplaint } from "@/hooks/complaints";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { CustomerComplaintInput } from "@/services/complaints.api";
 import { AuthApiError } from "@/services/complaints.api";
 
@@ -26,9 +27,13 @@ export function ComplaintFormDialog({
   onClose: () => void;
   onSubmitted?: () => void;
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Gửi khiếu nại"
       className="fixed inset-0 z-[60] flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

@@ -2,6 +2,7 @@
 
 import { FiAlertTriangle, FiX } from "react-icons/fi";
 import { DIALOG_OVERLAY_NESTED_CLASSES } from "@/components/ui/dialog-overlay";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 
 type ConfirmDiscardDialogProps = {
   open: boolean;
@@ -27,10 +28,13 @@ export function ConfirmDiscardDialog({
   onStay,
   onDiscard,
 }: ConfirmDiscardDialogProps) {
+  const dialogRef = useDialogFocus<HTMLDivElement>(onStay);
   if (!open) return null;
   return (
     <div
+      ref={dialogRef}
       role="alertdialog"
+      tabIndex={-1}
       aria-modal="true"
       aria-label={title}
       className={DIALOG_OVERLAY_NESTED_CLASSES}

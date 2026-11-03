@@ -10,6 +10,7 @@ import {
 } from "@/components/orders/order-format";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useDispatchOrderInvoice } from "@/hooks/dispatch-orders";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { formatDateTime } from "@/lib/datetime/format";
 
 type OrderInvoiceDialogProps = {
@@ -29,9 +30,13 @@ export function OrderInvoiceDialog({
   const order = invoice?.order ?? null;
   const payment = invoice?.payment ?? null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Hóa đơn linh kiện"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

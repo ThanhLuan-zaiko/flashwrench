@@ -11,6 +11,7 @@ import {
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useMe } from "@/hooks/auth";
 import { useDispatchOrder } from "@/hooks/dispatch-orders";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { OrderCollectSection } from "./OrderCollectSection";
 import { OrderOpsDetail } from "./OrderOpsDetail";
 import { OrderOpsTransitions } from "./OrderOpsTransitions";
@@ -38,9 +39,13 @@ export function OrderOpsDialog({
 
   const isAdmin = me.data?.role === "admin";
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Chi tiết đơn linh kiện"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FiLoader, FiSave, FiX } from "react-icons/fi";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateStaff, useUpdateStaff } from "@/hooks/admin";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { AdminUserItem } from "@/lib/auth/admin-users.service";
 import type { UserRole } from "@/lib/auth/user.types";
 import { AuthApiError } from "@/services/admin.api";
@@ -111,6 +112,8 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
   const formError = formErrorText(error);
   const created = createMutation.data ?? null;
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   if (!dialog) return null;
   const isCreate = dialog.mode === "create";
   // Customers self-register, so create stays staff-only; the edit form is
@@ -126,6 +129,8 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={title}
       className={DIALOG_OVERLAY_CLASSES}

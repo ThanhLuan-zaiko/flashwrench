@@ -7,6 +7,7 @@ import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateCategory, useUpdateCategory } from "@/hooks/service-catalog";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { slugifyName } from "@/lib/catalog/catalog-validation";
 import type { ServiceCategoryItem } from "@/lib/catalog/service-catalog.types";
@@ -98,6 +99,8 @@ export function ServiceCategoryDialog({
     );
   const guard = useUnsavedChangesGuard(dirty, onClose);
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(guard.requestClose);
+
   if (!dialog) return null;
 
   const submit = () => {
@@ -117,6 +120,8 @@ export function ServiceCategoryDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={editing ? "Sửa loại hình" : "Thêm loại hình"}
       className={DIALOG_OVERLAY_CLASSES}

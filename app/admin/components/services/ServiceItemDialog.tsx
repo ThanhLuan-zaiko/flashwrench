@@ -7,6 +7,7 @@ import { DialogHeader } from "@/components/ui/DialogHeader";
 import { DialogPanel } from "@/components/ui/DialogPanel";
 import { DIALOG_OVERLAY_CLASSES } from "@/components/ui/dialog-overlay";
 import { useCreateService, useUpdateService } from "@/hooks/service-catalog";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import type {
   PriceUnit,
@@ -138,6 +139,8 @@ export function ServiceItemDialog({
     }
   }, [editing, categoryId, live, liveFirstId]);
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(guard.requestClose);
+
   if (!dialog) return null;
 
   const submit = () => {
@@ -157,6 +160,8 @@ export function ServiceItemDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={editing ? "Sửa mục giá" : "Thêm mục giá"}
       className={DIALOG_OVERLAY_CLASSES}

@@ -6,6 +6,7 @@ import { rescueStatusLabel } from "@/components/rescue/rescue-format";
 import { useToast } from "@/components/toast/useToast";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { useDispatchRescueDetail } from "@/hooks/rescue-inbox";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { RescueAssignSection } from "./RescueAssignSection";
 import { RescueCancelSection } from "./RescueCancelSection";
 
@@ -45,9 +46,13 @@ export function RescueDetailDialog({
     void detail.refetch();
   }
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label="Chi tiết cứu hộ"
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
 import { FiArrowRight, FiPackage, FiTag, FiX } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { SCROLLBAR_CLASSES } from "@/components/ui/scrollbar";
 import { ApplicableVoucherBadge } from "@/components/vouchers/ApplicableVoucherBadge";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import type { PartItem } from "@/lib/parts/parts.types";
 import { AddToCartButton } from "./AddToCartButton";
 import { ProductGallery } from "./ProductGallery";
@@ -25,13 +25,7 @@ export function ProductQuickViewDialog({
   part,
   onClose,
 }: ProductQuickViewDialogProps) {
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
 
   const detailHref = `/products/${encodeURIComponent(part.slug)}`;
   const discount = discountPercent(part.price, part.comparePrice ?? 0);
@@ -40,6 +34,8 @@ export function ProductQuickViewDialog({
   return (
     <div
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
       aria-label={`Chi tiết sản phẩm ${part.name}`}
       className="fixed inset-0 z-50 flex h-dvh items-end justify-center p-0 sm:items-center sm:p-4"
