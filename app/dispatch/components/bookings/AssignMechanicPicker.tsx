@@ -85,7 +85,7 @@ export function AssignMechanicPicker({
                     isCurrent
                       ? "cursor-not-allowed border-zinc-200 opacity-60 dark:border-zinc-800"
                       : selected
-                        ? "cursor-pointer border-[#1E3A5F] bg-zinc-100 dark:border-white dark:bg-zinc-900"
+                        ? "cursor-pointer border-[#111111] bg-zinc-100 dark:border-white dark:bg-zinc-900"
                         : "cursor-pointer border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
                   }`}
                 >
@@ -96,7 +96,7 @@ export function AssignMechanicPicker({
                     disabled={isCurrent}
                     onChange={() => onChange(item.id, item.displayName)}
                     aria-label={`Chọn thợ ${item.displayName}`}
-                    className="h-4 w-4 shrink-0 accent-[#1E3A5F] dark:accent-white"
+                    className="h-4 w-4 shrink-0 accent-[#FACC15] dark:accent-white"
                   />
                   <FiUser
                     aria-hidden="true"

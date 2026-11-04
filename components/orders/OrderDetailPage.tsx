@@ -48,7 +48,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
       {justPlaced && (
         <p
           data-reveal
-          className="flex items-center gap-2 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] hover:bg-[#EA580C]"
+          className="flex items-center gap-2 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
         >
           <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
           Đặt hàng thành công. Cửa hàng sẽ xác nhận đơn trong ít phút.

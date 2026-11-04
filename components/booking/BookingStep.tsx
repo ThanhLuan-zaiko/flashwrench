@@ -30,14 +30,14 @@ export function BookingStep({
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-xs font-bold text-white sm:flex dark:bg-zinc-100 dark:text-zinc-900"
+          className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FACC15] text-xs font-bold text-[#111111] sm:flex dark:bg-zinc-100 dark:text-zinc-900"
         >
           {step}
         </span>
         <div className="min-w-0">
           <h2
             id={headingId}
-            className="text-base font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50"
+            className="text-base font-extrabold tracking-tight text-[#111111] dark:text-zinc-50"
           >
             <span className="sr-only">Bước {step}: </span>
             {title}

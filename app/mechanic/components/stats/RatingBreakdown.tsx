@@ -44,7 +44,7 @@ export function RatingBreakdown({
           max={5}
           label={`Điểm trung bình ${averageText} trên 5`}
         >
-          <span className="text-2xl font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+          <span className="text-2xl font-extrabold text-[#111111] dark:text-zinc-50">
             {averageText}
           </span>
           <span className="text-[11px] text-zinc-500 dark:text-zinc-400">

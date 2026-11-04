@@ -1,5 +1,5 @@
 // Only booking/checkout/track flows swap the site header for a TaskBar on
-// phones; staff portals keep the (navy) site header.
+// phones; staff portals keep the (yellow) site header.
 import { describe, expect, test } from "bun:test";
 import { usesTaskBar } from "@/components/layout/header-tone";
 

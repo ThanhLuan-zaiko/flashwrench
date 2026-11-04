@@ -30,7 +30,7 @@ Use this skill when a page needs decorative 3D-style illustrations (flat isometr
 
 **Rules for the output:**
 
-- Colours are free for illustrations. The shade objects (`NAVY`, `STEEL`, `RUBBER`, `LIGHT`) are a starting set, and you may add more. The navy/zinc palette in `AGENTS.md` governs UI surfaces, text and controls, not drawings.
+- Colours are free for illustrations. The shade objects (`YELLOW`, `INK`, `BLUE`, `STEEL`, `RUBBER`, `LIGHT`) are a starting set, and you may add more. The yellow/black/zinc palette in `AGENTS.md` governs UI surfaces, text and controls, not drawings.
 - `viewBox` is cropped to the artwork with an equal 4-unit margin, so the drawing fills the square frame and stays centred. Do not go back to a square viewBox sized by the longest diagonal, which leaves the drawing small and off-centre.
 - The root `<svg>` carries `aria-hidden="true"` (Biome `noSvgWithoutTitle` requires it for decorative SVGs).
 - Render with `next/image` and `alt=""`, passing `width`/`height` and sizing with Tailwind classes.

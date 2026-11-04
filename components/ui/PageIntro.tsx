@@ -30,7 +30,7 @@ export function PageIntro({
 
   return (
     <section ref={rootRef} className="flex w-full flex-col">
-      <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
         {eyebrow}
       </p>
       <MaskLines

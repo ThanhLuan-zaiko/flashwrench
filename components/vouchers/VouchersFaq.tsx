@@ -25,7 +25,7 @@ export function VouchersFaq() {
             data-tour={`vouchers-faq-${index}`}
             className="group py-4"
           >
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-base font-bold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-base font-bold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-100">
               {item.question}
               <span
                 aria-hidden="true"

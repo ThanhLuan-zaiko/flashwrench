@@ -25,7 +25,7 @@ type StaffDialogProps = {
 };
 
 const INPUT_CLASS =
-  "mt-1.5 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500";
+  "mt-1.5 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500";
 
 const LABEL_CLASS = "text-xs font-semibold text-zinc-700 dark:text-zinc-300";
 
@@ -150,7 +150,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
             type="button"
             onClick={onClose}
             aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -207,7 +207,7 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
               >
                 Hủy bỏ
               </button>
@@ -215,10 +215,10 @@ export function StaffDialog({ dialog, onClose }: StaffDialogProps) {
                 type="button"
                 disabled={pending}
                 onClick={submit}
-                className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] ${
+                className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] ${
                   isCreate
                     ? "bg-green-700 hover:bg-green-800 focus-visible:ring-green-700 dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400 dark:focus-visible:ring-green-400"
-                    : "bg-[#1E3A5F] hover:bg-[#0F1E33] focus-visible:ring-[#1E3A5F] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-400"
+                    : "bg-[#FACC15] hover:bg-[#EAB308] focus-visible:ring-[#111111] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-400"
                 }`}
               >
                 {pending ? (

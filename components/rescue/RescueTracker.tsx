@@ -83,16 +83,16 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
                 aria-hidden="true"
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                   done
-                    ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                    ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
                     : active
-                      ? "border-[#1E3A5F] dark:border-white"
+                      ? "border-[#111111] dark:border-white"
                       : "border-zinc-300 dark:border-zinc-700"
                 }`}
               >
                 {done ? (
                   <FiCheck className="h-3 w-3" />
                 ) : active ? (
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse dark:bg-white" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400" />
                 ) : null}
               </span>
               <span

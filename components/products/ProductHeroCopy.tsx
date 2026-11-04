@@ -22,11 +22,11 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
     <div className="flex min-w-0 flex-col gap-4">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <BackLink href="/products" label="Quay lại cửa hàng" onDark />
-        <p className="text-xs font-semibold tracking-wide text-zinc-200 uppercase">
+        <p className="text-xs font-semibold tracking-wide text-[#111111]/85 uppercase">
           {part.categoryName} · {part.brand}
         </p>
         {part.soldCount > 0 && (
-          <p className="text-xs font-semibold text-zinc-200">
+          <p className="text-xs font-semibold text-[#111111]/85">
             Đã bán {part.soldCount}
           </p>
         )}
@@ -36,7 +36,9 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
         <h1 className="text-2xl leading-[1.1] font-extrabold tracking-tight text-balance lg:text-3xl">
           {part.name}
         </h1>
-        <p className="mt-2 text-xs font-medium text-zinc-300">SKU {part.sku}</p>
+        <p className="mt-2 text-xs font-medium text-[#111111]/70">
+          SKU {part.sku}
+        </p>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -46,29 +48,29 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
           </span>
           {discount > 0 && part.comparePrice !== null && (
             <>
-              <span className="text-sm text-zinc-300 line-through">
+              <span className="text-sm text-[#111111]/70 line-through">
                 {formatVnd(part.comparePrice)}
               </span>
-              <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-[#1E3A5F]">
+              <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-[#111111]">
                 -{discount}%
               </span>
             </>
           )}
         </div>
         {saving > 0 && (
-          <p className="text-xs text-zinc-300">
+          <p className="text-xs text-[#111111]/70">
             Tiết kiệm {formatVnd(saving)} so với giá gốc
           </p>
         )}
       </div>
 
       {part.description && (
-        <p className="max-w-xl text-base leading-relaxed whitespace-pre-line text-zinc-200">
+        <p className="max-w-xl text-base leading-relaxed whitespace-pre-line text-[#111111]/85">
           {part.description}
         </p>
       )}
 
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-zinc-100">
+      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-[#111111]">
         <span>{stockLabel(part)}</span>
         {part.carBrands.length > 0 && (
           <span>Dùng cho xe {part.carBrands.join(", ")}</span>

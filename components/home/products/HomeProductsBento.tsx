@@ -23,7 +23,7 @@ export function HomeProductsBento({ items }: { items: PartItem[] }) {
       <div className="mx-auto max-w-7xl w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+            <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
               Phụ tùng
             </p>
             <MaskLines
@@ -33,7 +33,7 @@ export function HomeProductsBento({ items }: { items: PartItem[] }) {
           </div>
           <Link
             href="/products"
-            className="flex min-h-11 items-center gap-1.5 self-start text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] md:self-auto dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+            className="flex min-h-11 items-center gap-1.5 self-start text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] md:self-auto dark:text-blue-300 dark:focus-visible:ring-zinc-100"
           >
             Xem tất cả phụ tùng
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

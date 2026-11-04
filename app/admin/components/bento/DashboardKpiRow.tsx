@@ -65,7 +65,7 @@ export function DashboardKpiRow({ report, dashboard }: DashboardKpiRowProps) {
             <p className="text-[13px] font-semibold text-zinc-600 dark:text-zinc-400">
               {tile.label}
             </p>
-            <p className="mt-1.5 truncate text-xl font-extrabold text-[#1E3A5F] tabular-nums sm:text-2xl dark:text-zinc-50">
+            <p className="mt-1.5 truncate text-xl font-extrabold text-[#111111] tabular-nums sm:text-2xl dark:text-zinc-50">
               {tile.value}
             </p>
             {tile.delta && (
@@ -73,7 +73,7 @@ export function DashboardKpiRow({ report, dashboard }: DashboardKpiRowProps) {
                 className={`mt-1.5 inline-block rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-bold dark:border-zinc-800 ${
                   tile.negative
                     ? "text-red-600 dark:text-red-400"
-                    : "text-[#1E3A5F] dark:text-zinc-200"
+                    : "text-[#111111] dark:text-zinc-200"
                 }`}
               >
                 {tile.delta}

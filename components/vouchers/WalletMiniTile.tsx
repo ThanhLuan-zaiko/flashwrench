@@ -19,7 +19,7 @@ export function WalletMiniTile({ wallet }: { wallet: VoucherWallet }) {
       scroll={false}
       prefetch
       aria-label={`Mở voucher ${wallet.campaignName}`}
-      className="group flex min-h-11 items-center justify-between gap-4 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-100"
+      className="group flex min-h-11 items-center justify-between gap-4 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-100"
     >
       <span className="min-w-0">
         <span className="block text-sm font-bold text-zinc-900 dark:text-zinc-50">
@@ -31,7 +31,7 @@ export function WalletMiniTile({ wallet }: { wallet: VoucherWallet }) {
       </span>
       <FiArrowRight
         aria-hidden="true"
-        className="h-4 w-4 shrink-0 text-[#1E3A5F] motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-0.5 dark:text-zinc-100"
+        className="h-4 w-4 shrink-0 text-[#111111] motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-0.5 dark:text-zinc-100"
       />
     </Link>
   );

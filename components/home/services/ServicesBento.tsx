@@ -24,7 +24,7 @@ export function ServicesBento({ services }: { services: ServiceItem[] }) {
       <div className="mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 md:py-12 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
           <div>
-            <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+            <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
               Dịch vụ
             </p>
             <MaskLines

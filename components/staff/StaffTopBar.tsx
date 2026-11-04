@@ -40,7 +40,7 @@ export function StaffTopBar({
           type="button"
           onClick={onOpenMenu}
           aria-label={`Mở menu ${copy.scope}`}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 text-[#1E3A5F] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-95 md:hidden dark:border-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-zinc-100"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95 md:hidden dark:border-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-zinc-100"
         >
           <FiSidebar aria-hidden="true" className="h-5 w-5" />
         </button>
@@ -48,10 +48,10 @@ export function StaffTopBar({
           <SectionIcon aria-hidden="true" className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="hidden truncate text-[11px] font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase sm:block dark:text-zinc-400">
+          <p className="hidden truncate text-[11px] font-semibold tracking-[0.14em] text-[#111111] uppercase sm:block dark:text-zinc-400">
             {copy.areaName}
           </p>
-          <h1 className="truncate text-base leading-tight font-extrabold tracking-tight text-[#1E3A5F] sm:text-xl dark:text-zinc-50">
+          <h1 className="truncate text-base leading-tight font-extrabold tracking-tight text-[#111111] sm:text-xl dark:text-zinc-50">
             {section.label}
           </h1>
           <p className="truncate text-xs text-zinc-500 sm:hidden dark:text-zinc-400">

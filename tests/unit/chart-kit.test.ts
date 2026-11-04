@@ -86,8 +86,8 @@ describe("chart palette", () => {
   test("uses the approved order in light and a readable first hue in dark", () => {
     expect(chartTheme(false).series).toEqual(CHART_SERIES_LIGHT);
     expect(chartTheme(true).series).toEqual(CHART_SERIES_DARK);
-    expect(CHART_SERIES_LIGHT[0]).toBe("#1E3A5F");
-    expect(CHART_SERIES_DARK[0]).not.toBe("#1E3A5F");
+    expect(CHART_SERIES_LIGHT[0]).toBe("#111111");
+    expect(CHART_SERIES_DARK[0]).not.toBe("#111111");
   });
 
   test("series and swatches cycle within the palette", () => {
@@ -97,6 +97,6 @@ describe("chart palette", () => {
   });
 
   test("withAlpha converts hex to rgba", () => {
-    expect(withAlpha("#1E3A5F", 0.5)).toBe("rgba(30, 58, 95, 0.5)");
+    expect(withAlpha("#111111", 0.5)).toBe("rgba(17, 17, 17, 0.5)");
   });
 });

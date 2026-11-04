@@ -77,7 +77,7 @@ export function HeroServiceFan({ services }: { services: ServiceItem[] }) {
               href={`/services/${encodeURIComponent(service.slug)}`}
               aria-label={`Xem dịch vụ ${service.name}`}
               inert={!visible}
-              className={`absolute block rounded-xl bg-white p-3 text-[#0F1E33] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out sm:p-3.5 ${visible ? `${FAN_SLOTS[slot]} motion-safe:hover:z-40 motion-safe:hover:-translate-y-1` : HIDDEN_SLOT}`}
+              className={`absolute block rounded-xl bg-white p-3 text-[#111111] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out sm:p-3.5 ${visible ? `${FAN_SLOTS[slot]} motion-safe:hover:z-40 motion-safe:hover:-translate-y-1` : HIDDEN_SLOT}`}
             >
               {/* biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit. */}
               <img
@@ -91,7 +91,7 @@ export function HeroServiceFan({ services }: { services: ServiceItem[] }) {
                 </span>
                 <span className="mt-1 block text-xs text-zinc-600 sm:text-sm">
                   từ{" "}
-                  <span className="font-bold text-[#0F1E33]">
+                  <span className="font-bold text-[#111111]">
                     {formatVnd(service.basePrice)}
                   </span>{" "}
                   {PRICE_UNIT_LABELS[service.priceUnit]}

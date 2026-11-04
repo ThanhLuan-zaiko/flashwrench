@@ -147,10 +147,10 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
         <Link
           href="/rescue"
           prefetch
-          className="group flex items-center justify-between gap-4 border-t border-zinc-200 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-800 dark:focus-visible:ring-zinc-100"
+          className="group flex items-center justify-between gap-4 border-t border-zinc-200 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-800 dark:focus-visible:ring-zinc-100"
         >
           <span className="flex flex-col gap-0.5">
-            <span className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+            <span className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
               Hỏng xe giữa đường?
             </span>
             <span className="text-base font-bold text-zinc-900 dark:text-zinc-50">
@@ -159,7 +159,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           </span>
           <FiArrowRight
             aria-hidden="true"
-            className="h-4 w-4 shrink-0 text-[#1E3A5F] motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-0.5 dark:text-zinc-100"
+            className="h-4 w-4 shrink-0 text-[#111111] motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-0.5 dark:text-zinc-100"
           />
         </Link>
       </div>
@@ -174,7 +174,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           <Link
             href="/services"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100"
+            className="mx-auto mt-4 flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300"
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

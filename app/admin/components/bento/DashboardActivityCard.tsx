@@ -44,13 +44,13 @@ export function DashboardActivityCard({
   return (
     <BentoCard label="Hoạt động mới" tour="admin-dash-activity">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+        <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
           Hoạt động mới
         </h3>
-        <span className="flex items-center gap-1.5 text-xs font-bold text-[#1E3A5F] dark:text-zinc-100">
+        <span className="flex items-center gap-1.5 text-xs font-bold text-[#111111] dark:text-zinc-100">
           <span
             aria-hidden="true"
-            className="h-2 w-2 rounded-full bg-[#1E3A5F] dark:bg-zinc-100"
+            className="h-2 w-2 rounded-full bg-[#111111] dark:bg-zinc-100"
           />
           Trực tiếp
         </span>
@@ -91,7 +91,7 @@ export function DashboardActivityCard({
                   className={`w-[76px] shrink-0 rounded-full border border-zinc-200 py-0.5 text-center text-[11px] font-bold dark:border-zinc-800 ${
                     failed
                       ? "text-red-600 dark:text-red-400"
-                      : "text-[#1E3A5F] dark:text-zinc-200"
+                      : "text-[#111111] dark:text-zinc-200"
                   }`}
                 >
                   {ACTION_TAGS[event.action ?? ""] ?? "Khác"}

@@ -33,7 +33,7 @@ export function StatsSection() {
             <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
               Thợ · Tuần này
             </p>
-            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
               Hiệu suất của bạn
             </h2>
           </div>
@@ -43,10 +43,10 @@ export function StatsSection() {
             <span className="flex items-center gap-2.5 rounded-2xl border border-zinc-200 px-3.5 py-2.5 text-[13px] text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
               <span
                 aria-hidden="true"
-                className="h-2.5 w-2.5 rounded-full bg-[#1E3A5F] dark:bg-zinc-100"
+                className="h-2.5 w-2.5 rounded-full bg-[#111111] dark:bg-zinc-100"
               />
               Vừa thu{" "}
-              <b className="text-[#1E3A5F] dark:text-zinc-50">
+              <b className="text-[#111111] dark:text-zinc-50">
                 +{formatVnd(collected)}
               </b>
             </span>

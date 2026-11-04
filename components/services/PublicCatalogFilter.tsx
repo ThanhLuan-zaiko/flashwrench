@@ -18,7 +18,7 @@ function tabHref(slug: string | null): string {
 }
 
 const PILL_CLASSES =
-  "flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors sm:min-h-[44px] sm:px-4 sm:py-2 sm:text-sm duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-100 motion-safe:active:scale-[0.99]";
+  "flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors sm:min-h-[44px] sm:px-4 sm:py-2 sm:text-sm duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-100 motion-safe:active:scale-[0.99]";
 
 const ACTIVE_PILL_CLASSES = BRAND_CHIP_ACTIVE;
 
@@ -51,7 +51,7 @@ export function PublicCatalogFilter({
           onChange={(event) => onQuery(event.target.value)}
           placeholder="Tìm theo tên dịch vụ"
           autoComplete="off"
-          className="h-11 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-sm text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] sm:h-12 sm:text-[15px] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="h-11 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-sm text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] sm:h-12 sm:text-[15px] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
         />
       </div>
       <div

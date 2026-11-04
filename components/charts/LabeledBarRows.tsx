@@ -48,7 +48,7 @@ export function LabeledBarRows({ rows, label }: LabeledBarRowsProps) {
         {rows.map((row) => (
           <li
             key={row.key}
-            className="flex h-11 items-center justify-end text-xs font-bold text-[#1E3A5F] tabular-nums dark:text-zinc-50"
+            className="flex h-11 items-center justify-end text-xs font-bold text-[#111111] tabular-nums dark:text-zinc-50"
           >
             {row.note}
           </li>

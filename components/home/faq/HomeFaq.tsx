@@ -17,7 +17,7 @@ export function HomeFaq() {
     <section ref={rootRef} aria-label="Hỏi đáp">
       <div className="mx-auto max-w-7xl grid w-full gap-8 px-4 pb-12 sm:px-6 md:pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-8">
         <div>
-          <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+          <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
             Hỏi đáp
           </p>
           <MaskLines

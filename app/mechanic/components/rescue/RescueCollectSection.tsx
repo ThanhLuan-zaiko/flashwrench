@@ -83,9 +83,9 @@ export function RescueCollectSection({ rescue }: { rescue: RescueDetail }) {
             aria-pressed={method === option}
             disabled={collect.isPending}
             onClick={() => setMethod(option)}
-            className={`flex min-h-[44px] items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
+            className={`flex min-h-[44px] items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
               method === option
-                ? "border-[#1E3A5F] bg-[#1E3A5F] text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
                 : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             }`}
           >
@@ -116,7 +116,7 @@ export function RescueCollectSection({ rescue }: { rescue: RescueDetail }) {
         type="button"
         disabled={collect.isPending || codeMissing}
         onClick={submit}
-        className="mt-2 inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="mt-2 inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
         {collect.isPending && (
           <FiLoader

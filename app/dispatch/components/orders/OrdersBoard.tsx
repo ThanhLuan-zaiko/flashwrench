@@ -95,7 +95,7 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
           <div className="flex items-center gap-4">
             <StaffHeroArt art={STAFF_ART.package} />
             <div className="min-w-0">
-              <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+              <h2 className="text-base font-bold tracking-tight text-[#111111] dark:text-zinc-50">
                 Vận hành đơn linh kiện
               </h2>
               <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
@@ -107,7 +107,7 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
           <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
             <span
               aria-hidden="true"
-              className="h-1.5 w-1.5 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse dark:bg-zinc-100"
+              className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
             />
             Đang xem: {ORDER_TAB_LABELS[status]} ·{" "}
             {formatMonthKey(appliedMonth)}
@@ -154,7 +154,7 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
                     router.replace(firstPageHref, { scroll: false });
                   }
                 }}
-                className="mt-2 flex min-h-[44px] w-full items-center rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 sm:max-w-56 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+                className="mt-2 flex min-h-[44px] w-full items-center rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 sm:max-w-56 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               />
               <p className="mt-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
                 Đơn được nhóm theo tháng đặt hàng.
@@ -164,7 +164,7 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
               type="button"
               onClick={() => void query.refetch()}
               disabled={query.isFetching}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <FiRefreshCw
                 aria-hidden="true"

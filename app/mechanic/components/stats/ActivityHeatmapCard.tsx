@@ -7,10 +7,10 @@ import { WEEKDAY_LONG } from "./stats-format";
 
 const LEGEND_CLASSES = [
   "bg-zinc-200 dark:bg-zinc-800",
-  "bg-[#1E3A5F]/25 dark:bg-zinc-200/25",
-  "bg-[#1E3A5F]/50 dark:bg-zinc-200/50",
-  "bg-[#1E3A5F]/75 dark:bg-zinc-200/75",
-  "bg-[#1E3A5F] dark:bg-zinc-200",
+  "bg-[#111111]/25 dark:bg-zinc-200/25",
+  "bg-[#111111]/50 dark:bg-zinc-200/50",
+  "bg-[#111111]/75 dark:bg-zinc-200/75",
+  "bg-[#111111] dark:bg-zinc-200",
 ];
 
 // 12-week completion heatmap plus four day-level facts beside it.
@@ -40,7 +40,7 @@ export function ActivityHeatmapCard({
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="flex flex-col gap-2.5 lg:w-[360px]">
           <div>
-            <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+            <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
               Lịch làm việc 12 tuần
             </h3>
             <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -71,7 +71,7 @@ export function ActivityHeatmapCard({
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {fact.label}
               </p>
-              <p className="mt-0.5 text-xl font-extrabold text-[#1E3A5F] sm:text-2xl dark:text-zinc-50">
+              <p className="mt-0.5 text-xl font-extrabold text-[#111111] sm:text-2xl dark:text-zinc-50">
                 {fact.value}
               </p>
             </div>

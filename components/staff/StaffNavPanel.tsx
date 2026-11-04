@@ -48,7 +48,7 @@ export function StaffNavPanel({
           type="button"
           onClick={onCloseMobile}
           aria-label={`Đóng menu ${copy.scope}`}
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-100 transition-colors duration-200 hover:bg-white/10 md:hidden ${STAFF_ON_NAVY_FOCUS}`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white transition-colors duration-200 hover:bg-white/10 md:hidden ${STAFF_ON_NAVY_FOCUS}`}
         >
           <FiX aria-hidden="true" className="h-5 w-5" />
         </button>
@@ -81,7 +81,7 @@ export function StaffNavPanel({
                         aria-hidden="true"
                         className={`flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                           selected
-                            ? "bg-[#1E3A5F] text-white"
+                            ? "bg-[#111111] text-white"
                             : "bg-white/15 text-white"
                         }`}
                       >
@@ -91,7 +91,7 @@ export function StaffNavPanel({
                   </span>
                   <span
                     className={`mt-0.5 block text-xs leading-snug ${
-                      selected ? "text-zinc-600" : "text-zinc-300"
+                      selected ? "text-[#111111]/70" : "text-zinc-400"
                     }`}
                   >
                     {section.description}

@@ -73,7 +73,7 @@ export function AuthServiceSlideshow({
     <section
       aria-label="Dịch vụ nổi bật của FlashWrench"
       {...pauseHandlers}
-      className={`relative overflow-hidden bg-[#1E3A5F] text-white ${className}`}
+      className={`relative overflow-hidden bg-[#FACC15] text-[#111111] ${className}`}
     >
       <div className="lg:hidden">
         {services.map((service, i) => (
@@ -86,7 +86,7 @@ export function AuthServiceSlideshow({
             className={`absolute inset-0 h-full w-full object-cover motion-safe:transition-opacity motion-safe:duration-300 motion-safe:ease-out ${i === index ? "opacity-100" : "opacity-0"}`}
           />
         ))}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F1E33]/95 via-[#0F1E33]/60 to-transparent px-5 pt-20 pb-9 sm:px-8 sm:pb-3">
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#111111]/95 via-[#111111]/60 to-transparent px-5 pt-20 pb-9 sm:px-8 sm:pb-3">
           {services.map((service, i) => (
             <div
               key={service.id}
@@ -131,7 +131,7 @@ export function AuthServiceSlideshow({
                   className="aspect-[3/2] w-full rounded-md object-cover"
                 />
                 <figcaption
-                  className={`flex items-end justify-between gap-4 px-2 pt-4 pb-3 text-[#0F1E33] motion-safe:transition-opacity motion-safe:duration-300 ${isFront ? "opacity-100" : "opacity-0"}`}
+                  className={`flex items-end justify-between gap-4 px-2 pt-4 pb-3 text-[#111111] motion-safe:transition-opacity motion-safe:duration-300 ${isFront ? "opacity-100" : "opacity-0"}`}
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-[11px] font-bold tracking-[0.14em] text-zinc-600 uppercase">
@@ -143,7 +143,7 @@ export function AuthServiceSlideshow({
                   </span>
                   <span className="shrink-0 text-right text-xs text-zinc-600">
                     từ
-                    <span className="block text-base font-extrabold text-[#0F1E33] xl:text-lg">
+                    <span className="block text-base font-extrabold text-[#111111] xl:text-lg">
                       {formatVnd(service.basePrice)}
                     </span>
                   </span>

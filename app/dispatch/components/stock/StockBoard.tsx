@@ -57,7 +57,7 @@ export function StockBoard() {
             <div className="flex min-w-0 items-center gap-4">
               <StaffHeroArt art={STAFF_ART.crates} />
               <div className="min-w-0">
-                <h2 className="text-base font-bold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+                <h2 className="text-base font-bold tracking-tight text-[#111111] dark:text-zinc-50">
                   Kiểm kê và điều chỉnh tồn kho
                 </h2>
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
@@ -70,7 +70,7 @@ export function StockBoard() {
               type="button"
               onClick={() => void query.refetch()}
               disabled={query.isFetching}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <FiRefreshCw
                 aria-hidden="true"

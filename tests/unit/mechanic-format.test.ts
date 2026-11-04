@@ -67,8 +67,8 @@ describe("state labels", () => {
     expect(incomeStateLabel("refunded")).toBe("Đã hoàn");
   });
 
-  test("gives the completed pill the navy brand tone", () => {
-    expect(statusTone("completed")).toContain("bg-[#1E3A5F]");
+  test("gives the completed pill the yellow brand tone", () => {
+    expect(statusTone("completed")).toContain("bg-[#FACC15]");
     expect(statusTone("pending")).toContain("bg-zinc-100");
     expect(statusTone("cancelled")).toContain("bg-white");
   });

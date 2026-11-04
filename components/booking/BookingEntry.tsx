@@ -189,7 +189,7 @@ export function BookingEntry({
           <Link
             href="/services"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-4 py-2.5 text-sm font-bold text-[#0F1E33] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-4 py-2.5 text-sm font-bold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -211,7 +211,7 @@ export function BookingEntry({
           </p>
           <Link
             href={buildLoginHref(buildBookingHref(current.serviceIds))}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
           >
             Đăng nhập để đặt lịch
           </Link>

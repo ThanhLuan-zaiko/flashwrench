@@ -16,7 +16,7 @@ export function BookingSelectedCard({ services }: BookingSelectedMiniProps) {
   if (services.length === 0) return null;
   return (
     <section aria-label="Dịch vụ đã chọn" className="flex flex-col gap-2">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
+      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
         Dịch vụ đã chọn
       </p>
       <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
@@ -87,7 +87,7 @@ export function BookingRunningTotal({
         <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
           Tạm tính
         </span>
-        <span className="text-xl font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+        <span className="text-xl font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
           {formatVnd(subtotal)}
         </span>
       </p>

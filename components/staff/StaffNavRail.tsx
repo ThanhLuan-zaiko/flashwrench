@@ -35,10 +35,10 @@ export function StaffNavRail({
   onNavigate,
 }: StaffNavRailProps) {
   return (
-    <div className="flex w-[72px] shrink-0 flex-col items-center gap-2 bg-[#152C48] py-3">
+    <div className="flex w-[72px] shrink-0 flex-col items-center gap-2 bg-black py-3">
       <span
         aria-hidden="true"
-        className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-sm font-extrabold text-[#1E3A5F]"
+        className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FACC15] text-sm font-extrabold text-[#111111]"
       >
         FW
       </span>
@@ -63,7 +63,7 @@ export function StaffNavRail({
               title={group.label}
               className={`relative flex h-14 w-14 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl transition-colors duration-200 ${STAFF_ON_NAVY_FOCUS} ${
                 selected
-                  ? "bg-[#1E3A5F] text-white ring-1 ring-white/20"
+                  ? "bg-[#FACC15] text-[#111111]"
                   : "text-zinc-400 hover:bg-white/10 hover:text-white"
               }`}
             >
@@ -74,7 +74,7 @@ export function StaffNavRail({
               {pending > 0 && !selected && (
                 <span
                   aria-hidden="true"
-                  className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full border-2 border-[#152C48] bg-white"
+                  className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full border-2 border-black bg-[#FACC15]"
                 />
               )}
             </button>

@@ -29,9 +29,9 @@ export function DashboardRangeTabs({
             type="button"
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
-            className={`min-h-9 rounded-lg px-3 text-xs font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:focus-visible:ring-zinc-100 ${
+            className={`min-h-9 rounded-lg px-3 text-xs font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-100 ${
               selected
-                ? "bg-[#1E3A5F] text-white dark:bg-zinc-100 dark:text-zinc-900"
+                ? "bg-[#FACC15] text-[#111111] dark:bg-zinc-100 dark:text-zinc-900"
                 : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
             }`}
           >

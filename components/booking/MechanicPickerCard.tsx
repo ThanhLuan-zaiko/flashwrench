@@ -75,7 +75,7 @@ export function MechanicPickerCard({
           onClick={() => setOpen((prev) => !prev)}
           aria-expanded={open}
           aria-label={`Xem đánh giá của thợ ${item.displayName}`}
-          className="flex min-h-11 shrink-0 items-center gap-1 text-xs font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100"
+          className="flex min-h-11 shrink-0 items-center gap-1 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300"
         >
           Đánh giá
           <FiChevronDown

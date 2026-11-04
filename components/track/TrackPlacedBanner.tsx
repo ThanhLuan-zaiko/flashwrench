@@ -38,7 +38,7 @@ export function TrackPlacedBanner({ kind }: TrackPlacedBannerProps) {
       className="flex items-center justify-between gap-4 border-b border-zinc-200 py-4 sm:py-5 dark:border-zinc-800"
     >
       <div className="flex min-w-0 flex-col gap-1.5">
-        <p className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[#1E3A5F] dark:text-zinc-50">
+        <p className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
           <FiCheck aria-hidden="true" className="h-5 w-5 shrink-0" />
           {copy.title}
         </p>

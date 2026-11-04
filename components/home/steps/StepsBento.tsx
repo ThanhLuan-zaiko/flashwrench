@@ -49,7 +49,7 @@ export function StepsBento() {
   return (
     <section ref={rootRef} aria-label="Quy trình">
       <div className="mx-auto max-w-7xl w-full px-4 pb-16 sm:px-6 md:pb-16 lg:px-8">
-        <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+        <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
           Quy trình
         </p>
         <MaskLines

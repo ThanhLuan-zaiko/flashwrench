@@ -15,7 +15,7 @@ const SEGMENT_LIMIT = 8;
 export function PromoProgress({ campaigns, index }: PromoProgressProps) {
   const showSegments = campaigns.length <= SEGMENT_LIMIT;
   return (
-    <div className="flex items-center gap-3 rounded-full bg-[#0F1E33]/60 px-3 py-2">
+    <div className="flex items-center gap-3 rounded-full bg-[#111111]/60 px-3 py-2">
       {showSegments ? (
         <div aria-hidden="true" className="flex flex-1 gap-1.5">
           {campaigns.map((campaign, i) => (

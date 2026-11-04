@@ -29,7 +29,7 @@ export function PromoAccordion({
           <li key={campaign.id}>
             <div
               aria-current="true"
-              className="overflow-hidden rounded-2xl bg-[#1E3A5F] text-white"
+              className="overflow-hidden rounded-2xl bg-[#FACC15] text-[#111111]"
             >
               <div className="relative h-40 overflow-hidden">
                 <div data-promo-cover="active" className="absolute inset-0">
@@ -83,7 +83,7 @@ function ClosedRow({
       type="button"
       onClick={onOpen}
       aria-label={`Xem ưu đãi ${campaign.name}`}
-      className="flex h-[4.5rem] w-full items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-3 text-left transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-[0.99] dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
+      className="flex h-[4.5rem] w-full items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-3 text-left transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
     >
       <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-zinc-200 dark:bg-zinc-800">
         {campaign.imageUrl ? (
@@ -99,7 +99,7 @@ function ClosedRow({
       <span className="min-w-0 flex-1 truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">
         {campaign.name}
       </span>
-      <span className="shrink-0 text-sm font-extrabold text-[#1E3A5F] dark:text-zinc-100">
+      <span className="shrink-0 text-sm font-extrabold text-[#111111] dark:text-zinc-100">
         {figure.value}
       </span>
     </button>

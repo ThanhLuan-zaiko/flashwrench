@@ -79,7 +79,7 @@ export function TourCard({
                 key={position}
                 className={
                   position === currentStep
-                    ? "h-1.5 w-4 rounded-full bg-[#1E3A5F] dark:bg-zinc-100"
+                    ? "h-1.5 w-4 rounded-full bg-[#111111] dark:bg-zinc-100"
                     : "h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700"
                 }
               />
@@ -103,7 +103,7 @@ export function TourCard({
           type="button"
           onClick={nextStep}
           aria-label={isLast ? "Hoàn thành hướng dẫn" : "Tới bước tiếp theo"}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#1E3A5F] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
         >
           {isLast ? "Hoàn thành" : "Tiếp theo"}
           {!isLast && <FiArrowRight aria-hidden="true" className="h-4 w-4" />}

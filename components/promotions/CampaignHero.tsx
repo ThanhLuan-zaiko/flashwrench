@@ -23,18 +23,18 @@ export function CampaignHero({
     <section
       data-reveal
       aria-label="Tóm tắt ưu đãi"
-      className="relative left-1/2 w-screen -translate-x-1/2 -mt-6 overflow-hidden rounded-b-[2.5rem] bg-[#1E3A5F] px-4 pt-6 pb-10 text-white sm:px-6 md:pb-12 lg:pt-8"
+      className="relative left-1/2 w-screen -translate-x-1/2 -mt-6 overflow-hidden rounded-b-[2.5rem] bg-[#FACC15] px-4 pt-6 pb-10 text-[#111111] sm:px-6 md:pb-12 lg:pt-8"
     >
       <div className="mx-auto grid w-full max-w-6xl items-center gap-8 lg:grid-cols-2 lg:gap-14">
         <div className="flex min-w-0 flex-col gap-4">
           <BackLink href="/vouchers" label="Quay lại ưu đãi" onDark />
-          <p className="text-xs font-semibold tracking-[0.14em] text-zinc-200 uppercase">
+          <p className="text-xs font-semibold tracking-[0.14em] text-[#111111]/85 uppercase">
             Khuyến mãi · Voucher gắn tài khoản
           </p>
           <h1 className="text-2xl font-extrabold tracking-tight text-balance lg:text-3xl">
             {name}
           </h1>
-          <p className="max-w-xl text-base leading-relaxed text-zinc-200">
+          <p className="max-w-xl text-base leading-relaxed text-[#111111]/85">
             {terms}
           </p>
           <div className="flex flex-wrap gap-3">{action}</div>
@@ -51,16 +51,16 @@ export function CampaignHero({
           <div className="relative w-full rounded-2xl bg-white p-5 text-center text-zinc-900">
             <span
               aria-hidden="true"
-              className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#1E3A5F]"
+              className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#FACC15]"
             />
             <span
               aria-hidden="true"
-              className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#1E3A5F]"
+              className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#FACC15]"
             />
-            <p className="text-xs font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase">
+            <p className="text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase">
               Ưu đãi của bạn
             </p>
-            <p className="mt-1 text-3xl font-extrabold tracking-tight text-[#1E3A5F]">
+            <p className="mt-1 text-3xl font-extrabold tracking-tight text-[#111111]">
               {offer.value}
             </p>
             <p className="mt-1 text-sm font-semibold text-zinc-700">

@@ -8,7 +8,7 @@ import { buildRegisterHref } from "@/lib/auth/auth-redirect";
 // Secondary action on the closing chapter: a bold text link with an arrow
 // (orange stays with the booking bar).
 const CTA_CLASSES =
-  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] motion-safe:active:scale-[0.99] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 
 // Bottom-of-catalog call to action. Guests are invited to create a free
 // account (returning to /services afterwards); logged-in customers go

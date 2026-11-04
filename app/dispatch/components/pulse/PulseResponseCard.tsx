@@ -16,7 +16,7 @@ export function PulseResponseCard({ response }: { response: PulseResponse }) {
       label="Thời gian phản hồi trung bình"
       className="flex flex-col items-center"
     >
-      <h3 className="self-stretch text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+      <h3 className="self-stretch text-base font-extrabold text-[#111111] dark:text-zinc-50">
         Thời gian phản hồi TB
       </h3>
       <GaugeChart
@@ -34,7 +34,7 @@ export function PulseResponseCard({ response }: { response: PulseResponse }) {
         className={`-mt-9 text-3xl font-extrabold tabular-nums ${
           over
             ? "text-red-600 dark:text-red-400"
-            : "text-[#1E3A5F] dark:text-zinc-50"
+            : "text-[#111111] dark:text-zinc-50"
         }`}
       >
         {text}

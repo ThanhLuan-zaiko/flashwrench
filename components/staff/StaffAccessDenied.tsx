@@ -15,13 +15,13 @@ export function StaffAccessDenied({
 }: StaffAccessDeniedProps) {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-start px-4 py-16 sm:px-6">
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1E3A5F] text-white dark:bg-zinc-100 dark:text-zinc-900">
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FACC15] text-[#111111] dark:bg-zinc-100 dark:text-zinc-900">
         <Icon aria-hidden="true" className="h-6 w-6" />
       </span>
-      <p className="mt-5 text-xs font-semibold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
+      <p className="mt-5 text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
         Không có quyền truy cập
       </p>
-      <h1 className="mt-2 text-2xl leading-tight font-extrabold tracking-tight text-balance text-[#1E3A5F] sm:text-3xl dark:text-zinc-50">
+      <h1 className="mt-2 text-2xl leading-tight font-extrabold tracking-tight text-balance text-[#111111] sm:text-3xl dark:text-zinc-50">
         {title}
       </h1>
       <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">

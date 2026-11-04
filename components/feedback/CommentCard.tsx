@@ -21,7 +21,7 @@ export function CommentCard({
           {item.userName}
         </span>
         {item.staff && (
-          <span className="font-semibold text-[#1E3A5F] dark:text-zinc-300">
+          <span className="font-semibold text-[#111111] dark:text-zinc-300">
             Nhân viên
           </span>
         )}

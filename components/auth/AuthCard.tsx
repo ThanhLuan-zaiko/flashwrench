@@ -60,7 +60,7 @@ export function AuthCard({
   }
 
   return (
-    <main className="flex flex-1 bg-[#1E3A5F] sm:bg-white dark:sm:bg-zinc-950">
+    <main className="flex flex-1 bg-[#FACC15] sm:bg-white dark:sm:bg-zinc-950">
       <div
         ref={rootRef}
         className="mx-auto flex w-full max-w-6xl flex-1 flex-col sm:gap-3 sm:px-6 sm:py-6 md:gap-4 md:py-10"
@@ -81,16 +81,16 @@ export function AuthCard({
             data-reveal
             className="flex flex-col sm:col-span-2 sm:rounded-2xl sm:border sm:border-zinc-200 sm:bg-white lg:col-span-2 lg:row-span-2 dark:sm:border-zinc-800 dark:sm:bg-zinc-950"
           >
-            <div className="px-5 pt-5 pb-11 text-white sm:px-8 sm:pt-8 sm:pb-0 sm:text-zinc-900 dark:sm:text-zinc-50">
+            <div className="px-5 pt-5 pb-11 text-[#111111] sm:px-8 sm:pt-8 sm:pb-0 sm:text-zinc-900 dark:sm:text-zinc-50">
               {eyebrow && (
-                <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-zinc-300 uppercase sm:text-[#1E3A5F] dark:sm:text-zinc-400">
+                <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-[#111111]/70 uppercase sm:text-[#111111] dark:sm:text-zinc-400">
                   {eyebrow}
                 </p>
               )}
               <h1 className="text-2xl leading-[1.1] font-extrabold tracking-tight sm:font-bold">
                 {title}
               </h1>
-              <p className="mt-2 text-sm text-zinc-200 sm:text-zinc-600 dark:sm:text-zinc-400">
+              <p className="mt-2 text-sm text-[#111111]/85 sm:text-zinc-600 dark:sm:text-zinc-400">
                 {subtitle}
               </p>
             </div>

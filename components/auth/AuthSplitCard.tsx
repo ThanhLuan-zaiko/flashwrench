@@ -34,7 +34,7 @@ export function AuthSplitCard({
   services,
 }: AuthSplitCardProps) {
   return (
-    <main className="flex flex-1 flex-col bg-[#1E3A5F] sm:bg-white lg:grid lg:min-h-[calc(100svh-65px)] lg:grid-cols-2 dark:sm:bg-zinc-950">
+    <main className="flex flex-1 flex-col bg-[#FACC15] sm:bg-white lg:grid lg:min-h-[calc(100svh-65px)] lg:grid-cols-2 dark:sm:bg-zinc-950">
       <AuthServiceSlideshow
         services={services}
         className="h-64 shrink-0 sm:h-60 lg:h-auto"
@@ -45,7 +45,7 @@ export function AuthSplitCard({
       >
         <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[440px]">
           {eyebrow && (
-            <p className="text-[11px] font-bold tracking-[0.14em] text-[#1E3A5F] uppercase dark:text-zinc-400">
+            <p className="text-[11px] font-bold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
               {eyebrow}
             </p>
           )}

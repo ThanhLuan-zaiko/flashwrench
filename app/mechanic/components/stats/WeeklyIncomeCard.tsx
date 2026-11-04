@@ -21,7 +21,7 @@ export function WeeklyIncomeCard({ daily }: { daily: MechanicDaily }) {
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+          <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
             Thu nhập 7 ngày
           </h3>
           <p className="text-xs text-zinc-600 dark:text-zinc-400">

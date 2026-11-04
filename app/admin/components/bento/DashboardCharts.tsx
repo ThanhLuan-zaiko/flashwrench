@@ -36,7 +36,7 @@ export function DashboardCharts({
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-extrabold text-[#1E3A5F] dark:text-zinc-50">
+            <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
               Doanh thu
             </h3>
             <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -44,7 +44,7 @@ export function DashboardCharts({
             </p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-extrabold text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+            <p className="text-2xl font-extrabold text-[#111111] tabular-nums dark:text-zinc-50">
               {report ? formatVnd(report.collected) : "—"}
             </p>
             {peak && peak.amount > 0 && (

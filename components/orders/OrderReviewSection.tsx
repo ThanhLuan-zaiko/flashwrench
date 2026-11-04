@@ -112,7 +112,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
                         type="button"
                         onClick={() => setOpenPartId(open ? null : item.partId)}
                         aria-expanded={open}
-                        className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+                        className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
                       >
                         <FiStar aria-hidden="true" className="h-3.5 w-3.5" />
                         Đánh giá
@@ -151,7 +151,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
       <button
         type="button"
         onClick={() => setComplaintOpen(true)}
-        className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-zinc-100"
+        className="flex min-h-11 w-fit items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:outline-none motion-safe:active:scale-[0.99] dark:text-blue-300"
       >
         <FiFlag aria-hidden="true" className="h-4 w-4" />
         Gửi khiếu nại về đơn này

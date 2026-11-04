@@ -10,7 +10,7 @@ export function ServiceTypesCard() {
         <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           <FiLayers
             aria-hidden="true"
-            className="h-4 w-4 text-[#1E3A5F] dark:text-zinc-100"
+            className="h-4 w-4 text-[#111111] dark:text-zinc-100"
           />
           Loại hình sửa chữa
         </h3>

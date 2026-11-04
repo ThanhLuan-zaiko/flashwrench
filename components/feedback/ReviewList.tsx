@@ -11,7 +11,7 @@ import { Stars } from "./Stars";
 
 // Pager links: bold text with an arrow, no border or box.
 const PAGER_LINK =
-  "flex min-h-11 items-center gap-1 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 const PAGER_IDLE =
   "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-400 dark:text-zinc-600";
 
@@ -105,7 +105,7 @@ export function ReviewList({
                         action: item.hidden ? "unhide" : "hide",
                       })
                     }
-                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-[#1E3A5F] transition-colors duration-200 hover:bg-[#1E3A5F]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                   >
                     {item.hidden ? (
                       <FiEye aria-hidden="true" className="h-3.5 w-3.5" />

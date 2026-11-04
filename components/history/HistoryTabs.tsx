@@ -34,9 +34,9 @@ export function HistoryTabs() {
             href={tab.href}
             scroll={false}
             aria-current={active ? "page" : undefined}
-            className={`-mb-px flex min-h-11 shrink-0 items-center gap-1.5 border-b-2 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] ${
+            className={`-mb-px flex min-h-11 shrink-0 items-center gap-1.5 border-b-2 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] ${
               active
-                ? "border-[#1E3A5F] text-[#1E3A5F] dark:border-zinc-100 dark:text-zinc-50"
+                ? "border-[#111111] text-[#111111] dark:border-zinc-100 dark:text-zinc-50"
                 : "border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
             }`}
           >

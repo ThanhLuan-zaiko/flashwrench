@@ -111,7 +111,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
               </p>
               <Link
                 href="/products"
-                className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-[#1E3A5F] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0F1E33] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 Mua sắm ngay
               </Link>
@@ -127,7 +127,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
                     <article
                       className={`flex w-full overflow-hidden rounded-2xl border bg-white transition-colors duration-200 dark:bg-zinc-950 ${
                         selected
-                          ? "border-[#1E3A5F] dark:border-zinc-100"
+                          ? "border-[#111111] dark:border-zinc-100"
                           : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
                       }`}
                     >
@@ -135,7 +135,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
                         type="button"
                         onClick={() => setSelectedId(order.id)}
                         aria-pressed={selected}
-                        className="flex min-w-0 flex-1 flex-col gap-2 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] md:p-5 dark:focus-visible:ring-zinc-100"
+                        className="flex min-w-0 flex-1 flex-col gap-2 p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] md:p-5 dark:focus-visible:ring-zinc-100"
                       >
                         <span className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -152,7 +152,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
                         </span>
                         <span className="flex items-baseline justify-between gap-3 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
                           <span>{formatDateTime(order.createdAt)}</span>
-                          <span className="text-sm font-extrabold tracking-tight text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+                          <span className="text-sm font-extrabold tracking-tight text-[#111111] tabular-nums dark:text-zinc-50">
                             {formatVnd(order.total)}
                           </span>
                         </span>
@@ -160,7 +160,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
                       <Link
                         href={`/orders/${order.id}`}
                         aria-label={`Xem chi tiết đơn ${order.id.slice(0, 8)}`}
-                        className="flex w-12 shrink-0 items-center justify-center border-l border-zinc-200 text-zinc-500 transition-colors duration-200 hover:text-[#1E3A5F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:border-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100"
+                        className="flex w-12 shrink-0 items-center justify-center border-l border-zinc-200 text-zinc-500 transition-colors duration-200 hover:text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100"
                       >
                         <FiArrowRight aria-hidden="true" className="h-5 w-5" />
                       </Link>

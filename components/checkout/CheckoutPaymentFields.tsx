@@ -71,12 +71,12 @@ export function CheckoutPaymentFields({
                 aria-hidden="true"
                 className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
                   active
-                    ? "border-[#1E3A5F] dark:border-zinc-100"
+                    ? "border-[#111111] dark:border-zinc-100"
                     : "border-zinc-400 dark:border-zinc-600"
                 }`}
               >
                 {active && (
-                  <span className="h-2 w-2 rounded-full bg-[#1E3A5F] dark:bg-zinc-100" />
+                  <span className="h-2 w-2 rounded-full bg-[#111111] dark:bg-zinc-100" />
                 )}
               </span>
               <Icon

@@ -13,7 +13,7 @@ export function TrackMechanicCard({ name }: { name: string }) {
     >
       <span
         aria-hidden="true"
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] text-sm font-bold text-white dark:bg-zinc-100 dark:text-zinc-900"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FACC15] text-sm font-bold text-[#111111] dark:bg-zinc-100 dark:text-zinc-900"
       >
         {initial}
       </span>
@@ -29,7 +29,7 @@ export function TrackMechanicCard({ name }: { name: string }) {
         type="button"
         onClick={() => openChatPanel()}
         aria-label="Nhắn tin với cửa hàng"
-        className="flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100"
+        className="flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300"
       >
         <FiMessageCircle aria-hidden="true" className="h-4 w-4" />
         Nhắn tin

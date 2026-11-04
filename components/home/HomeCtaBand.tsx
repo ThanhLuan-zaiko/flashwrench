@@ -25,7 +25,7 @@ export function HomeCtaBand() {
           <div>
             <MaskLines
               lines={["Hỏng xe giữa đường?", "Thợ tới tận nơi."]}
-              className="text-3xl leading-tight font-bold tracking-tight text-[#1E3A5F] md:text-4xl dark:text-zinc-50"
+              className="text-3xl leading-tight font-bold tracking-tight text-[#111111] md:text-4xl dark:text-zinc-50"
             />
             <p
               data-chapter-row
@@ -56,12 +56,12 @@ export function HomeCtaBand() {
               }
               guestAriaLabel="Đặt lịch ngay không cần tài khoản"
               authedAriaLabel="Đặt lịch ngay"
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-6 py-2.5 text-sm font-semibold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
             />
             <Link
               href="/rescue"
               data-tour="rescue-cta"
-              className="inline-flex min-h-11 items-center justify-center gap-1.5 text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] dark:text-zinc-100 dark:focus-visible:ring-zinc-100"
+              className="inline-flex min-h-11 items-center justify-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100"
             >
               Cứu hộ khẩn cấp
               <FiArrowRight aria-hidden="true" className="h-4 w-4" />

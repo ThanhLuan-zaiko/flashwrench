@@ -58,7 +58,7 @@ export function UsersRoleChart() {
               className={`h-2.5 w-2.5 shrink-0 rounded-sm ${swatchClass(index)}`}
             />
             <span className="flex-1 truncate">{role.label}</span>
-            <b className="text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+            <b className="text-[#111111] tabular-nums dark:text-zinc-50">
               {role.value}
             </b>
           </li>

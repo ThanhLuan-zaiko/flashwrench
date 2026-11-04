@@ -42,7 +42,7 @@ export function MyOrdersPage() {
           </p>
           <Link
             href={me.data ? "/products" : buildLoginHref("/orders")}
-            className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             {me.data ? "Quay lại cửa hàng" : "Đăng nhập"}
           </Link>
@@ -87,7 +87,7 @@ export function MyOrdersPage() {
             </p>
             <Link
               href="/products"
-              className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#F97316] px-5 py-2.5 text-sm font-bold text-[#0F1E33] transition-colors duration-200 hover:bg-[#EA580C] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               Mua sắm ngay
             </Link>
@@ -100,7 +100,7 @@ export function MyOrdersPage() {
             <li key={order.id} data-reveal className="flex">
               <Link
                 href={`/orders/${order.id}`}
-                className="group flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] md:p-5 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
+                className="group flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] md:p-5 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
               >
                 <div className="min-w-0">
                   <p className="flex flex-wrap items-center gap-2">
@@ -126,7 +126,7 @@ export function MyOrdersPage() {
                   </p>
                 </div>
                 <p className="mt-auto flex items-center justify-between gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
-                  <span className="text-lg font-extrabold tracking-tight text-[#1E3A5F] tabular-nums dark:text-zinc-50">
+                  <span className="text-lg font-extrabold tracking-tight text-[#111111] tabular-nums dark:text-zinc-50">
                     {formatVnd(order.total)}
                   </span>
                   <FiArrowRight

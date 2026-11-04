@@ -21,7 +21,7 @@ type BookingSlotPickerProps = {
 };
 
 const PILL =
-  "flex min-h-[44px] items-center justify-center rounded-xl border font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:focus-visible:ring-zinc-100";
+  "flex min-h-[44px] items-center justify-center rounded-xl border font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:focus-visible:ring-zinc-100";
 
 // Day pills plus hourly slot buttons over the same datetime-local value
 // the form validates. Any other time stays reachable through the native
@@ -104,7 +104,7 @@ export function BookingSlotPicker({
         open={Boolean(error) || !onGrid}
         className="group border-t border-zinc-200 pt-3 dark:border-zinc-800"
       >
-        <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-bold text-[#1E3A5F] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A5F] dark:text-zinc-100">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] dark:text-blue-300">
           Chọn ngày giờ khác
         </summary>
         <div className="pt-1 pb-2">

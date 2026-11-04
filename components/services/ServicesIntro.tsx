@@ -23,7 +23,7 @@ export function ServicesIntro({ live, countText }: ServicesIntroProps) {
       aria-label="Đặt lịch dịch vụ"
       className="mx-auto max-w-7xl w-full px-4 pt-8 sm:px-6 md:pt-10 lg:px-8"
     >
-      <p className="text-xs font-semibold tracking-wide text-[#1E3A5F] uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-[#111111] uppercase dark:text-zinc-400">
         Dịch vụ
       </p>
       <MaskLines
@@ -61,7 +61,7 @@ export function ServicesIntro({ live, countText }: ServicesIntroProps) {
             aria-hidden="true"
             className={`h-2 w-2 rounded-full ${
               live
-                ? "bg-[#1E3A5F] dark:bg-white"
+                ? "bg-green-600 dark:bg-green-400"
                 : "border border-zinc-400 dark:border-zinc-500"
             }`}
           />
