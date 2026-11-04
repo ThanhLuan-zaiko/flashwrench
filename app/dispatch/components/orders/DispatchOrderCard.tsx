@@ -32,13 +32,13 @@ export function DispatchOrderCard({ order, onOpen }: DispatchOrderCardProps) {
             <span className={orderStatusBadgeClass(order.status)}>
               {ORDER_STATUS_LABELS[order.status]}
             </span>
-            <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+            <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-400">
               {order.fulfillmentType === "pickup"
                 ? "Nhận tại xưởng"
                 : "Giao tận nơi"}
             </span>
           </span>
-          <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="mt-0.5 block text-xs text-zinc-600 dark:text-zinc-400">
             {formatDateTime(order.createdAt)}
             {order.courierType === "mechanic" && order.courierName
               ? ` · Thợ: ${order.courierName}`
@@ -54,7 +54,7 @@ export function DispatchOrderCard({ order, onOpen }: DispatchOrderCardProps) {
           </span>
           <FiChevronRight
             aria-hidden="true"
-            className="h-4 w-4 text-zinc-400"
+            className="h-4 w-4 text-zinc-600 dark:text-zinc-400"
           />
         </span>
       </button>

@@ -44,7 +44,7 @@ export const EMPTY_CAMPAIGN_FORM: CampaignFormState = {
   redeemCode: "",
 };
 
-// ISO string -> "YYYY-MM-DDTHH:mm" for <input type="datetime-local">.
+// ISO string -> "YYYY-MM-DDTHH:mm" for DateTimeDropdown.
 function toLocalInput(iso: string | null): string {
   if (!iso) return "";
   const date = new Date(iso);

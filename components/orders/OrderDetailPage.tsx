@@ -39,7 +39,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
       <Link
         href="/orders"
         data-reveal
-        className="flex w-fit min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex w-fit min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
         Tất cả đơn hàng
@@ -48,7 +48,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
       {justPlaced && (
         <p
           data-reveal
-          className="flex items-center gap-2 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+          className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
           Đặt hàng thành công. Cửa hàng sẽ xác nhận đơn trong ít phút.
@@ -74,7 +74,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
           <button
             type="button"
             onClick={() => void orderQuery.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử tải lại
@@ -89,13 +89,13 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
             className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800"
           >
             <div>
-              <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+              <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
                 Đơn #{order.id.slice(0, 8)}
               </p>
               <h1 className="mt-1 text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                 {formatVnd(order.total)}
               </h1>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                 {formatDateTime(order.createdAt)} ·{" "}
                 {PAYMENT_METHOD_LABELS[order.paymentMethod] ??
                   order.paymentMethod}{" "}

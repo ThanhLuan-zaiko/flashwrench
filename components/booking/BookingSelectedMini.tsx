@@ -16,13 +16,13 @@ export function BookingSelectedCard({ services }: BookingSelectedMiniProps) {
   if (services.length === 0) return null;
   return (
     <section aria-label="Dịch vụ đã chọn" className="flex flex-col gap-2">
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
         Dịch vụ đã chọn
       </p>
       <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
         {services.map((service) => (
           <li key={service.id} className="flex items-center gap-3 py-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-900 dark:text-zinc-600">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-600">
               {service.imageUrl ? (
                 // biome-ignore lint/performance/noImgElement: catalog cover served immutable from the media store.
                 <img
@@ -39,7 +39,7 @@ export function BookingSelectedCard({ services }: BookingSelectedMiniProps) {
               <span className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">
                 {service.name}
               </span>
-              <span className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+              <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {service.categoryName} · khoảng{" "}
                 {formatDuration(
                   service.durationMin ?? BOOKING_DEFAULT_DURATION_MIN,
@@ -75,7 +75,7 @@ export function BookingRunningTotal({
       {services.map((service) => (
         <p
           key={service.id}
-          className="flex items-baseline justify-between gap-3 text-[13px] text-zinc-600 dark:text-zinc-400"
+          className="flex items-baseline justify-between gap-3 text-[13px] text-zinc-800 dark:text-zinc-400"
         >
           <span className="min-w-0 truncate">{service.name}</span>
           <span className="shrink-0 font-semibold text-zinc-900 dark:text-zinc-100">

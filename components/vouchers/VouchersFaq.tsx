@@ -29,12 +29,12 @@ export function VouchersFaq() {
               {item.question}
               <span
                 aria-hidden="true"
-                className="text-zinc-500 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                className="text-zinc-600 dark:text-zinc-400 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
               >
                 +
               </span>
             </summary>
-            <p className="pt-1 pb-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            <p className="pt-1 pb-1 text-sm leading-relaxed text-zinc-800 dark:text-zinc-400">
               {item.answer}
             </p>
           </details>

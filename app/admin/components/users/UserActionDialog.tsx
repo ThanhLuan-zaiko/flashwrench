@@ -70,7 +70,7 @@ export function UserActionDialog({
         type="button"
         aria-label="Đóng hộp thoại"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3">
@@ -82,7 +82,7 @@ export function UserActionDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -91,7 +91,7 @@ export function UserActionDialog({
         <p className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {target.fullName || "Chưa có tên"}
         </p>
-        <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-xs text-zinc-800 dark:text-zinc-300">
           {copy.detail}
         </p>
 
@@ -108,7 +108,7 @@ export function UserActionDialog({
           <button
             type="button"
             onClick={onClose}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiRotateCcw aria-hidden="true" className="h-4 w-4" />
             Hủy bỏ
@@ -117,7 +117,7 @@ export function UserActionDialog({
             type="button"
             disabled={pending}
             onClick={onConfirm}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {pending ? (
               <FiLoader

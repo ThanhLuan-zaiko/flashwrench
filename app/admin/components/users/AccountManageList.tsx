@@ -73,7 +73,7 @@ export function AccountManageList({
         <div>
           <label
             htmlFor="admin-user-search"
-            className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+            className="text-xs font-semibold text-zinc-800 dark:text-zinc-300"
           >
             Tìm kiếm
           </label>
@@ -83,7 +83,7 @@ export function AccountManageList({
             value={text}
             onChange={(e) => handleText(e.target.value)}
             placeholder="Tên, số điện thoại, email…"
-            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-400"
           />
         </div>
         <SelectDropdown
@@ -109,7 +109,7 @@ export function AccountManageList({
                 aria-hidden="true"
                 className="h-4 w-4 motion-safe:animate-spin"
               />
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs text-zinc-600 dark:text-zinc-400">
                 Đang tải tài khoản…
               </span>
             </li>
@@ -117,13 +117,13 @@ export function AccountManageList({
         </ul>
       ) : isError ? (
         <div className="py-10 text-center">
-          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+          <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
             Không tải được danh sách. Vui lòng thử lại.
           </p>
           <button
             type="button"
             onClick={onRetry}
-            className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+            className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-950"
           >
             Thử lại
           </button>

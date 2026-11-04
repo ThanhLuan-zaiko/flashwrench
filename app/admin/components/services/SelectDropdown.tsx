@@ -53,7 +53,7 @@ export function SelectDropdown({
   const triggerId = id ?? buttonId;
   const triggerClasses = invalid
     ? "border-red-500 focus-visible:ring-red-500 dark:border-red-400"
-    : "border-zinc-300 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700";
+    : "border-zinc-500 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-500";
 
   useEffect(() => {
     if (!open) return;
@@ -86,15 +86,15 @@ export function SelectDropdown({
   const optionClass = (active: boolean) =>
     `flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] ${
       active
-        ? "bg-[#FACC15] font-semibold text-[#111111] dark:bg-white dark:text-zinc-900"
-        : "font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
+        ? "bg-[#FB923C] font-semibold text-[#111111] dark:bg-[#FB923C] dark:text-[#111111]"
+        : "font-medium text-zinc-800 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
     }`;
 
   return (
     <div ref={rootRef} className={className}>
       <p
         id={labelId}
-        className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+        className="text-xs font-semibold text-zinc-800 dark:text-zinc-300"
       >
         {label}
         {required && (
@@ -117,14 +117,14 @@ export function SelectDropdown({
         {LeadingIcon && (
           <LeadingIcon
             aria-hidden="true"
-            className="h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"
+            className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
           />
         )}
         <span className="min-w-0 flex-1 truncate">
           {selected ? selected.label : (allLabel ?? placeholder)}
         </span>
         {showBadge && (
-          <span className="shrink-0 rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-semibold text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+          <span className="shrink-0 rounded-full border border-zinc-300 px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
             Đã lọc
           </span>
         )}
@@ -143,7 +143,7 @@ export function SelectDropdown({
               <div className="flex items-center gap-2 rounded-xl bg-zinc-100 px-3 dark:bg-zinc-900">
                 <FiSearch
                   aria-hidden="true"
-                  className="h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"
+                  className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
                 />
                 <label htmlFor={searchId} className="sr-only">
                   {searchPlaceholder}
@@ -153,7 +153,7 @@ export function SelectDropdown({
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   placeholder={searchPlaceholder}
-                  className="h-11 w-full bg-transparent text-sm text-zinc-800 placeholder:text-zinc-400 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="h-11 w-full bg-transparent text-sm text-zinc-800 placeholder:text-zinc-500 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-400"
                 />
               </div>
             </div>
@@ -206,13 +206,13 @@ export function SelectDropdown({
               <div className="flex items-center gap-3 px-3 py-4">
                 <FiInbox
                   aria-hidden="true"
-                  className="h-5 w-5 shrink-0 text-zinc-500 dark:text-zinc-400"
+                  className="h-5 w-5 shrink-0 text-zinc-600 dark:text-zinc-400"
                 />
                 <span>
                   <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
                     {emptyTitle}
                   </span>
-                  <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="block text-xs text-zinc-600 dark:text-zinc-400">
                     {emptyHint}
                   </span>
                 </span>
@@ -220,7 +220,7 @@ export function SelectDropdown({
             )}
           </div>
           {showFooter && (
-            <p className="border-t border-zinc-200 px-3 py-2 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            <p className="border-t border-zinc-200 px-3 py-2 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
               {keyword.trim()
                 ? `Tìm thấy ${filtered.length} trên ${options.length} ${unitName}`
                 : `${options.length} ${unitName}`}

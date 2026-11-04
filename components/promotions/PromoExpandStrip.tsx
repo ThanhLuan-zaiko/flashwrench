@@ -55,7 +55,7 @@ function OpenPanel({
   return (
     <div
       aria-current="true"
-      className="relative h-full overflow-hidden rounded-2xl bg-[#FACC15] text-[#111111]"
+      className="relative h-full overflow-hidden rounded-2xl bg-[#FB923C] text-[#111111]"
     >
       <div data-promo-cover="active" className="absolute inset-0">
         {campaign.imageUrl ? (
@@ -73,7 +73,7 @@ function OpenPanel({
           <PromoProgress campaigns={campaigns} index={index} />
         </div>
       ) : null}
-      <div className="absolute inset-x-0 bottom-0 bg-[#FACC15] p-6 xl:p-8">
+      <div className="absolute inset-x-0 bottom-0 bg-[#FB923C] p-6 xl:p-8">
         <PromoActiveCopy
           campaign={campaign}
           showControls={showControls}
@@ -112,11 +112,11 @@ function ClosedPanel({
           />
         ) : null}
       </span>
-      <span className="absolute inset-x-0 bottom-0 flex min-w-0 flex-col bg-[#FACC15] px-2.5 py-3 text-[#111111] xl:px-3.5">
+      <span className="absolute inset-x-0 bottom-0 flex min-w-0 flex-col bg-[#FB923C] px-2.5 py-3 text-[#111111] xl:px-3.5">
         <span className="truncate text-[13px] font-extrabold tracking-tight xl:text-base">
           {figure.value}
         </span>
-        <span className="mt-0.5 line-clamp-2 text-xs leading-snug text-[#111111]/70">
+        <span className="mt-0.5 line-clamp-2 text-xs leading-snug text-[#111111]/80">
           {campaign.name}
         </span>
       </span>

@@ -31,7 +31,7 @@ export function AssignMechanicPicker({
 
   return (
     <fieldset disabled={disabled} className="flex min-w-0 flex-col gap-2">
-      <legend className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <legend className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Chọn thợ trực tuyến
       </legend>
 
@@ -56,7 +56,7 @@ export function AssignMechanicPicker({
           <button
             type="button"
             onClick={() => void mechanics.refetch()}
-            className="mt-2 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-1.5 font-semibold transition-colors duration-200 hover:bg-red-100 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-2 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 py-1.5 font-semibold transition-colors duration-200 hover:bg-red-100 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
             Thử tải lại
@@ -65,7 +65,7 @@ export function AssignMechanicPicker({
       )}
 
       {mechanics.isSuccess && items.length === 0 && (
-        <p className="text-xs text-zinc-600 dark:text-zinc-300">
+        <p className="text-xs text-zinc-800 dark:text-zinc-300">
           Chưa có thợ nào đang trực tuyến. Thử lại sau hoặc giữ đơn ở trạng thái
           chờ.
         </p>
@@ -96,18 +96,18 @@ export function AssignMechanicPicker({
                     disabled={isCurrent}
                     onChange={() => onChange(item.id, item.displayName)}
                     aria-label={`Chọn thợ ${item.displayName}`}
-                    className="h-4 w-4 shrink-0 accent-[#FACC15] dark:accent-white"
+                    className="h-4 w-4 shrink-0 accent-[#FB923C] dark:accent-white"
                   />
                   <FiUser
                     aria-hidden="true"
-                    className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+                    className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-300"
                   />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {item.displayName}
                       {isCurrent ? " (đang phụ trách)" : ""}
                     </span>
-                    <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                    <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                       <span className="flex items-center gap-1">
                         <FiStar aria-hidden="true" className="h-3 w-3" />
                         {item.ratingAvg.toFixed(1)} · {item.completedJobs} đơn

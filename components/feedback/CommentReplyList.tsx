@@ -31,7 +31,7 @@ function CommentReplyListInner({
 
   if (query.isPending) {
     return (
-      <p className="px-1 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="px-1 text-xs text-zinc-600 dark:text-zinc-400">
         Đang tải phản hồi…
       </p>
     );
@@ -64,7 +64,7 @@ function CommentReplyListInner({
                         targetId,
                       })
                     }
-                    className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                    className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                   >
                     {item.hidden ? (
                       <FiEye aria-hidden="true" className="h-3.5 w-3.5" />
@@ -89,7 +89,7 @@ function CommentReplyListInner({
               onClick={scrollToPageTop}
               prefetch
               aria-label="Trang phản hồi trước"
-              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
               Trước
@@ -99,7 +99,7 @@ function CommentReplyListInner({
               type="button"
               aria-label="Trang phản hồi trước"
               disabled
-              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               <FiChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
               Trước
@@ -115,7 +115,7 @@ function CommentReplyListInner({
                 pager.recordNext(nextCursor);
               }}
               aria-label="Trang phản hồi sau"
-              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
@@ -125,7 +125,7 @@ function CommentReplyListInner({
               type="button"
               aria-label="Trang phản hồi sau"
               disabled
-              className="flex min-h-[36px] items-center gap-1 text-[11px] font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-[36px] items-center gap-1 text-xs font-bold text-[#1D4ED8] underline-offset-4 hover:underline dark:text-blue-300 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-3.5 w-3.5" />

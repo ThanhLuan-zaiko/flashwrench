@@ -33,7 +33,7 @@ export function RatingBreakdown({
         <FiStar aria-hidden="true" className="h-4 w-4" />
         Phân bố điểm sao
       </h3>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         {total > 0
           ? `${total} lượt đánh giá từ khách hàng`
           : "Chưa có đánh giá nào"}
@@ -47,7 +47,7 @@ export function RatingBreakdown({
           <span className="text-2xl font-extrabold text-[#111111] dark:text-zinc-50">
             {averageText}
           </span>
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span className="text-xs text-zinc-600 dark:text-zinc-400">
             trên 5 sao
           </span>
         </RingChart>
@@ -72,10 +72,10 @@ export function RatingBreakdown({
                   aria-hidden="true"
                   className={`h-2.5 w-2.5 rounded-sm ${swatchClass(Math.min(index, 3))}`}
                 />
-                <span className="flex-1 font-semibold text-zinc-700 dark:text-zinc-300">
+                <span className="flex-1 font-semibold text-zinc-800 dark:text-zinc-300">
                   {bucket.stars} sao
                 </span>
-                <span className="font-medium text-zinc-600 tabular-nums dark:text-zinc-400">
+                <span className="font-medium text-zinc-800 tabular-nums dark:text-zinc-400">
                   {bucket.count}
                 </span>
               </li>
@@ -84,9 +84,9 @@ export function RatingBreakdown({
         </>
       )}
       {latest?.comment && (
-        <blockquote className="mt-4 border-t border-zinc-100 pt-3 text-[13px] text-zinc-700 dark:border-zinc-900 dark:text-zinc-300">
+        <blockquote className="mt-4 border-t border-zinc-100 pt-3 text-[13px] text-zinc-800 dark:border-zinc-900 dark:text-zinc-300">
           “{latest.comment}”
-          <footer className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <footer className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             {latest.customerName || "Khách hàng"} ·{" "}
             {formatShortDate(latest.createdAt)}
           </footer>

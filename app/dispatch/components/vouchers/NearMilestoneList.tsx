@@ -29,14 +29,14 @@ function MilestoneRow({ entry }: { entry: NearMilestoneEntry }) {
         <p className="truncate text-sm font-medium text-zinc-900 dark:text-white">
           {entry.ruleName}
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           {describeNearMilestone(entry)}
         </p>
       </div>
       <button
         type="button"
         onClick={() => void copyUserId()}
-        className="flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl border border-zinc-200 px-3 font-mono text-xs text-zinc-600 motion-safe:transition-colors dark:border-zinc-700 dark:text-zinc-300"
+        className="flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl border border-zinc-200 px-3 font-mono text-xs text-zinc-800 motion-safe:transition-colors dark:border-zinc-700 dark:text-zinc-300"
         aria-label={`Sao chép ID khách ${entry.userId}`}
         title={entry.userId}
       >
@@ -63,7 +63,7 @@ export function NearMilestoneList({ progress }: { progress: VoucherProgress }) {
           <MilestoneRow key={`${entry.ruleId}:${entry.userId}`} entry={entry} />
         ))}
       </ul>
-      <p className="border-t border-zinc-100 py-2 text-xs text-zinc-400 dark:border-zinc-800 dark:text-zinc-500">
+      <p className="border-t border-zinc-100 py-2 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
         Đã quét {progress.scannedCustomers} khách
         {progress.truncated ? " — chỉ hiển thị phần đầu" : ""}
       </p>

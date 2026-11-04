@@ -53,7 +53,7 @@ export function BookingServiceGallery({ service }: BookingServiceGalleryProps) {
   }
 
   const arrowClasses =
-    "absolute top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-40 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900";
+    "absolute top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-500 bg-white text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-40 motion-safe:active:scale-95 dark:border-zinc-500 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900";
 
   return (
     <section
@@ -61,11 +61,11 @@ export function BookingServiceGallery({ service }: BookingServiceGalleryProps) {
       aria-label="Hình ảnh dịch vụ"
       className="flex flex-col gap-2"
     >
-      <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Hình ảnh dịch vụ
       </p>
       {images.length === 0 ? (
-        <div className="flex h-36 items-center justify-center rounded-lg bg-zinc-100 px-4 text-center text-xs text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
+        <div className="flex h-36 items-center justify-center rounded-lg bg-zinc-100 px-4 text-center text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
           {service
             ? "Dịch vụ này chưa có hình ảnh minh họa."
             : "Chọn dịch vụ để xem hình ảnh minh họa."}

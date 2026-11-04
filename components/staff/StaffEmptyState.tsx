@@ -23,7 +23,7 @@ export function StaffEmptyState({ art, title, hint }: StaffEmptyStateProps) {
         {title}
       </p>
       {hint && (
-        <p className="mt-1 max-w-sm text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 max-w-sm text-xs text-zinc-600 dark:text-zinc-400">
           {hint}
         </p>
       )}

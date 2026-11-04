@@ -73,7 +73,7 @@ export function AuthServiceSlideshow({
     <section
       aria-label="Dịch vụ nổi bật của FlashWrench"
       {...pauseHandlers}
-      className={`relative overflow-hidden bg-[#FACC15] text-[#111111] ${className}`}
+      className={`relative overflow-hidden bg-[#FB923C] text-[#111111] ${className}`}
     >
       <div className="lg:hidden">
         {services.map((service, i) => (
@@ -93,7 +93,7 @@ export function AuthServiceSlideshow({
               aria-hidden={i !== index}
               className={i === index ? "block" : "hidden"}
             >
-              <p className="text-[11px] font-bold tracking-[0.14em] text-zinc-200 uppercase">
+              <p className="text-xs font-bold tracking-[0.14em] text-zinc-200 uppercase">
                 {service.categoryName}
               </p>
               <p className="mt-1 text-2xl leading-tight font-extrabold tracking-tight text-balance">
@@ -134,14 +134,14 @@ export function AuthServiceSlideshow({
                   className={`flex items-end justify-between gap-4 px-2 pt-4 pb-3 text-[#111111] motion-safe:transition-opacity motion-safe:duration-300 ${isFront ? "opacity-100" : "opacity-0"}`}
                 >
                   <span className="min-w-0">
-                    <span className="block truncate text-[11px] font-bold tracking-[0.14em] text-zinc-600 uppercase">
+                    <span className="block truncate text-xs font-bold tracking-[0.14em] text-zinc-800 dark:text-zinc-300 uppercase">
                       {service.categoryName}
                     </span>
                     <span className="mt-1 block truncate text-xl leading-tight font-extrabold tracking-tight xl:text-2xl">
                       {service.name}
                     </span>
                   </span>
-                  <span className="shrink-0 text-right text-xs text-zinc-600">
+                  <span className="shrink-0 text-right text-xs text-zinc-800 dark:text-zinc-300">
                     từ
                     <span className="block text-base font-extrabold text-[#111111] xl:text-lg">
                       {formatVnd(service.basePrice)}

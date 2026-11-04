@@ -10,10 +10,10 @@ export type ChartColors = {
   line: string;
 };
 
-// Reads the live theme: zinc-900 fills on light, zinc-100 on dark.
+// Reads the live theme: [#18181B] fills on light, [#F4F4F5] on dark.
 export function resolveChartColors(): ChartColors {
   const dark = document.documentElement.classList.contains("dark");
   return dark
-    ? { ink: "#fafafa", muted: "#a1a1aa", faint: "#3f3f46", line: "#e4e4e7" }
-    : { ink: "#18181b", muted: "#71717a", faint: "#e4e4e7", line: "#27272a" };
+    ? { ink: "#FAFAFA", muted: "#A1A1AA", faint: "#3F3F46", line: "#E4E4E7" }
+    : { ink: "#18181B", muted: "#71717A", faint: "#E4E4E7", line: "#27272A" };
 }

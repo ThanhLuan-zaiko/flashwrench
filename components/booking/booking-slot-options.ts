@@ -62,19 +62,20 @@ export function bookingDayOptions(
   return options;
 }
 
-// Hourly slots for one day inside the open window, dropping any slot
-// earlier than the intake floor or later than the advance cap.
+// Slots for one day inside the open window (hourly unless a step is given),
+// dropping any slot earlier than the intake floor or later than the cap.
 export function bookingTimeSlots(
   day: string,
   min: string,
   max: string,
   window: OpenWindow | null,
+  stepMin: number = SLOT_STEP_MIN,
 ): string[] {
   if (!day) return [];
   const opens = window?.opensAtMin ?? DEFAULT_OPEN_MIN;
   const closes = window?.closesAtMin ?? DEFAULT_CLOSE_MIN;
   const slots: string[] = [];
-  for (let at = opens; at < closes; at += SLOT_STEP_MIN) {
+  for (let at = opens; at < closes; at += stepMin) {
     const time = `${pad(Math.floor(at / 60))}:${pad(at % 60)}`;
     const value = `${day}T${time}`;
     if (min && value < min) continue;
@@ -82,4 +83,37 @@ export function bookingTimeSlots(
     slots.push(time);
   }
   return slots;
+}
+
+// Why a typed time cannot be booked on a day, or null when it can. The open
+// window only applies when the shop restricts intake, matching the service
+// validation: opening time included, closing time excluded.
+export function bookingTimeError(
+  day: string,
+  time: string,
+  min: string,
+  max: string,
+  window: OpenWindow | null,
+): string | null {
+  const value = `${day}T${time}`;
+  if (min && value < min) {
+    return splitScheduled(min).day === day
+      ? `Ngày này chỉ nhận từ ${splitScheduled(min).time} trở đi.`
+      : "Ngày này chưa đủ thời gian đặt trước.";
+  }
+  if (max && value > max) {
+    return splitScheduled(max).day === day
+      ? `Ngày này chỉ nhận đến ${splitScheduled(max).time}.`
+      : "Ngày này quá xa so với giới hạn đặt lịch.";
+  }
+  if (window) {
+    const [hours = 0, minutes = 0] = time.split(":").map(Number);
+    const at = hours * 60 + minutes;
+    if (at < window.opensAtMin || at >= window.closesAtMin) {
+      const label = (minute: number) =>
+        `${pad(Math.floor(minute / 60))}:${pad(minute % 60)}`;
+      return `Shop nhận lịch từ ${label(window.opensAtMin)} đến trước ${label(window.closesAtMin)}.`;
+    }
+  }
+  return null;
 }

@@ -54,12 +54,12 @@ export function BookingCancelSection({
 
   if (cutoffPassed) {
     return (
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Lịch chỉ tự hủy được trước giờ hẹn ít nhất {cutoffHours} giờ.{" "}
         {hotline ? (
           <a
             href={`tel:${hotline.replace(/\s/g, "")}`}
-            className="font-semibold text-zinc-700 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-200"
+            className="font-semibold text-zinc-800 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-200"
           >
             Gọi hotline {hotline}
           </a>
@@ -102,7 +102,7 @@ export function BookingCancelSection({
       <button
         type="button"
         onClick={() => setConfirming(true)}
-        className="inline-flex min-h-[44px] items-center justify-center self-start rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="inline-flex min-h-[44px] items-center justify-center self-start rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         Hủy lịch hẹn
       </button>
@@ -117,12 +117,12 @@ export function BookingCancelSection({
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Hủy lịch hẹn này?
       </p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Voucher đã dùng (nếu có) sẽ được hoàn lại vào ví của bạn.
       </p>
       <label
         htmlFor={fieldId}
-        className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+        className="text-xs font-medium text-zinc-800 dark:text-zinc-300"
       >
         Lý do hủy (bắt buộc)
       </label>
@@ -137,7 +137,7 @@ export function BookingCancelSection({
           if (error) setError("");
         }}
         placeholder="Ví dụ: đổi lịch, đặt nhầm dịch vụ"
-        className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:hover:border-zinc-600 dark:focus-visible:ring-offset-zinc-950"
+        className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-500 transition-colors duration-200 hover:border-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-400 dark:hover:border-zinc-600 dark:focus-visible:ring-offset-zinc-950"
       />
       {error && (
         <p
@@ -152,7 +152,7 @@ export function BookingCancelSection({
           type="button"
           disabled={cancelBooking.isPending}
           onClick={cancel}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           {cancelBooking.isPending && (
             <FiLoader
@@ -169,7 +169,7 @@ export function BookingCancelSection({
             setConfirming(false);
             setError("");
           }}
-          className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           Giữ lịch
         </button>

@@ -75,7 +75,7 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
             onClick={() => void query.refetch()}
             disabled={query.isFetching}
             aria-label="Tải lại danh sách cứu hộ"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiRefreshCw
               aria-hidden="true"
@@ -87,7 +87,7 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
         {query.isPending && (
           <p
             aria-busy="true"
-            className="mt-4 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+            className="mt-4 flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
           >
             <FiLoader
               aria-hidden="true"
@@ -109,7 +109,7 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
             <button
               type="button"
               onClick={() => void query.refetch()}
-              className="min-h-[44px] rounded-xl border border-red-300 px-4 py-2 text-xs font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+              className="min-h-[44px] rounded-xl border border-red-600 px-4 py-2 text-xs font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
             >
               Thử tải lại
             </button>
@@ -120,14 +120,14 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
           <div className="mt-4 flex flex-col items-center py-8 text-center">
             <FiLifeBuoy
               aria-hidden="true"
-              className="h-8 w-8 text-zinc-300 dark:text-zinc-700"
+              className="h-8 w-8 text-zinc-300 dark:text-zinc-400"
             />
             <p className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               Bạn chưa gửi yêu cầu cứu hộ nào
             </p>
             <Link
               href="/rescue"
-              className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Gọi cứu hộ ngay
             </Link>
@@ -151,12 +151,12 @@ export function HistoryRescueEntry({ customerId }: HistoryRescueEntryProps) {
                       {rescueStatusLabel(rescue.status)}
                     </span>
                     {rescue.priority === "high" && (
-                      <span className="rounded-full border border-zinc-400 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-600 dark:text-zinc-300">
+                      <span className="rounded-full border border-zinc-400 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-600 dark:text-zinc-300">
                         Ưu tiên
                       </span>
                     )}
                   </span>
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400">
                     {formatDateTime(rescue.updatedAt)} ·{" "}
                     {rescue.vehiclePlate ?? "—"} ·{" "}
                     {rescue.assignedMechanicName

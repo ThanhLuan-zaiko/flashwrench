@@ -39,10 +39,10 @@ export function PulseResponseCard({ response }: { response: PulseResponse }) {
       >
         {text}
       </p>
-      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+      <p className="text-xs text-zinc-800 dark:text-zinc-400">
         phút · ngưỡng {response.thresholdMinutes} phút
       </p>
-      <p className="mt-2 text-center text-xs text-zinc-600 dark:text-zinc-400">
+      <p className="mt-2 text-center text-xs text-zinc-800 dark:text-zinc-400">
         {response.samples === 0
           ? "Chưa có đơn nào được xử lý hôm nay"
           : `${response.overThreshold}/${response.samples} đơn phản hồi chậm hơn ngưỡng`}

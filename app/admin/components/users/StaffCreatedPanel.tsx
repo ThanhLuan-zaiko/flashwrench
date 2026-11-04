@@ -29,7 +29,7 @@ export function StaffCreatedPanel({
 
   return (
     <div>
-      <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-300">
+      <p className="mt-3 text-xs text-zinc-800 dark:text-zinc-300">
         Đã tạo tài khoản cho {fullName}. Mật khẩu tạm vẫn hiển thị trong danh
         sách cho đến khi nhân viên đổi mật khẩu — hãy gửi cho nhân viên ngay.
       </p>
@@ -40,7 +40,7 @@ export function StaffCreatedPanel({
         <button
           type="button"
           onClick={() => void copyPassword()}
-          className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           {copied ? (
             <FiCheck aria-hidden="true" className="h-4 w-4" />
@@ -53,7 +53,7 @@ export function StaffCreatedPanel({
       <button
         type="button"
         onClick={onDone}
-        className="mt-4 inline-flex min-h-[44px] items-center justify-center self-start rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="mt-4 inline-flex min-h-[44px] items-center justify-center self-start rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         Hoàn tất
       </button>

@@ -39,18 +39,18 @@ export function DispatchBookingCard({
             {booking.customerName || "Khách hàng"}
           </span>
           <span
-            className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${statusTone(booking.status)}`}
+            className={`rounded-full border px-2 py-0.5 text-xs font-medium ${statusTone(booking.status)}`}
           >
             {DISPATCH_STATUS_LABELS[booking.status]}
           </span>
-          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
             {paymentStateLabel(booking.paymentState)}
           </span>
         </span>
-        <span className="mt-1 block truncate text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="mt-1 block truncate text-xs text-zinc-600 dark:text-zinc-400">
           {serviceLine} · {booking.vehiclePlate}
         </span>
-        <span className="mt-1 flex flex-col gap-1 text-xs text-zinc-500 sm:flex-row sm:gap-3 dark:text-zinc-400">
+        <span className="mt-1 flex flex-col gap-1 text-xs text-zinc-600 sm:flex-row sm:gap-3 dark:text-zinc-400">
           <span className="flex min-w-0 items-center gap-1">
             <FiMapPin aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">
@@ -76,7 +76,7 @@ export function DispatchBookingCard({
             href={`tel:${booking.customerPhone}`}
             aria-label={`Gọi cho ${booking.customerName}`}
             onClick={(event) => event.stopPropagation()}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-500 text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             <FiPhone aria-hidden="true" className="h-4 w-4" />
           </a>
@@ -86,7 +86,7 @@ export function DispatchBookingCard({
             type="button"
             onClick={onSelect}
             aria-pressed={selected}
-            className="min-h-[44px] rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200"
+            className="min-h-[44px] rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200"
           >
             Bản đồ
           </button>
@@ -94,7 +94,7 @@ export function DispatchBookingCard({
         <button
           type="button"
           onClick={onOpen}
-          className="flex min-h-[44px] items-center rounded-xl bg-[#FACC15] px-4 py-2 text-xs font-semibold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] items-center rounded-xl px-4 py-2 text-xs font-semibold motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           Chi tiết
         </button>

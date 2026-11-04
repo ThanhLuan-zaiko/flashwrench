@@ -52,10 +52,10 @@ export function OrderCollectSection({
   return (
     <section aria-label="Thanh toán">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Thanh toán
         </h3>
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           {PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod} ·{" "}
           {PAYMENT_STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus}
         </p>

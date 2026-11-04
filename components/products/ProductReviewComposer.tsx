@@ -15,7 +15,7 @@ import {
 import { buildLoginHref } from "@/lib/auth/auth-redirect";
 import { AuthApiError } from "@/services/reviews.api";
 
-const HINT_CLASSES = "text-xs text-zinc-500 dark:text-zinc-400";
+const HINT_CLASSES = "text-xs text-zinc-600 dark:text-zinc-400";
 
 function EligibleForm({
   orderId,
@@ -110,7 +110,7 @@ export function ProductReviewComposer({
       )}
 
       {state?.status === "reviewed" && (
-        <p className="flex flex-wrap items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300">
+        <p className="flex flex-wrap items-center gap-2 text-xs text-zinc-800 dark:text-zinc-300">
           <Stars rating={state.review.rating} size="h-3.5 w-3.5" />
           Cảm ơn bạn đã đánh giá sản phẩm này
           {state.review.body ? ` — ${state.review.body}` : "."}

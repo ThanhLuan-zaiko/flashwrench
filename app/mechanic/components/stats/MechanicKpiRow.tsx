@@ -44,13 +44,13 @@ export function MechanicKpiRow({ payload }: { payload: MechanicStatsPayload }) {
           key={tile.label}
           className="rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
         >
-          <p className="text-[13px] font-semibold text-zinc-600 dark:text-zinc-400">
+          <p className="text-[13px] font-semibold text-zinc-800 dark:text-zinc-400">
             {tile.label}
           </p>
           <p className="mt-1.5 text-2xl font-extrabold text-[#111111] tabular-nums sm:text-3xl dark:text-zinc-50">
             {tile.value}
           </p>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400">{tile.sub}</p>
+          <p className="text-xs text-zinc-800 dark:text-zinc-400">{tile.sub}</p>
         </div>
       ))}
     </div>

@@ -32,7 +32,7 @@ export function StaffChartCard({
             {title}
           </h2>
           {subtitle && (
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+            <p className="text-xs text-zinc-800 dark:text-zinc-400">
               {subtitle}
             </p>
           )}
@@ -46,7 +46,7 @@ export function StaffChartCard({
             className="h-40 rounded-xl bg-zinc-100 motion-safe:animate-pulse dark:bg-zinc-900"
           />
         ) : empty ? (
-          <p className="py-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="py-10 text-center text-sm text-zinc-800 dark:text-zinc-400">
             {empty}
           </p>
         ) : (
@@ -70,7 +70,7 @@ export function ChartHeadline({
       <span className="block text-2xl font-extrabold text-[#111111] tabular-nums dark:text-zinc-50">
         {value}
       </span>
-      <span className="text-xs text-zinc-600 dark:text-zinc-400">
+      <span className="text-xs text-zinc-800 dark:text-zinc-400">
         {caption}
       </span>
     </p>

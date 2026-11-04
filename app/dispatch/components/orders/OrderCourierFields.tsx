@@ -52,7 +52,7 @@ export function OrderCourierFields({
 
   return (
     <section aria-label="Đơn vị giao hàng" className="flex flex-col gap-2">
-      <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Đơn vị giao hàng
       </h3>
       <div className="grid grid-cols-2 gap-2">
@@ -81,8 +81,8 @@ export function OrderCourierFields({
               aria-pressed={active}
               className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] ${
                 active
-                  ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
-                  : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                  : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >
               <Icon aria-hidden="true" className="h-4 w-4" />
@@ -100,7 +100,7 @@ export function OrderCourierFields({
       {draft.type === "mechanic" && (
         <div>
           {mechanics.isPending ? (
-            <p className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
               <FiLoader
                 aria-hidden="true"
                 className="h-3.5 w-3.5 motion-safe:animate-spin"
@@ -138,7 +138,7 @@ export function OrderCourierFields({
             placeholder="Tên đơn vị vận chuyển (GHN, GHTK…)"
             aria-label="Tên đơn vị vận chuyển"
             disabled={disabled}
-            className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
           />
           {errors.carrierName && (
             <p role="alert" className="text-xs text-red-600 dark:text-red-400">
@@ -155,7 +155,7 @@ export function OrderCourierFields({
               placeholder="Mã vận đơn"
               aria-label="Mã vận đơn"
               disabled={disabled}
-              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+              className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
             <button
               type="button"
@@ -165,7 +165,7 @@ export function OrderCourierFields({
               }
               aria-label="Tạo lại mã vận đơn"
               title="Tạo lại mã vận đơn"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-500 text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             </button>

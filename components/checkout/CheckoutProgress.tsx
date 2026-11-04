@@ -30,8 +30,8 @@ export function CheckoutProgress() {
                 aria-hidden="true"
                 className={`flex h-8 w-8 items-center justify-center rounded-full border ${
                   done || active
-                    ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-                    : "border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400"
+                    ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                    : "border-zinc-300 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -42,7 +42,7 @@ export function CheckoutProgress() {
                     ? "font-bold text-[#111111] dark:text-zinc-50"
                     : done
                       ? "font-semibold text-zinc-900 dark:text-zinc-100"
-                      : "font-semibold text-zinc-500 dark:text-zinc-400"
+                      : "font-semibold text-zinc-600 dark:text-zinc-400"
                 }`}
               >
                 {label}

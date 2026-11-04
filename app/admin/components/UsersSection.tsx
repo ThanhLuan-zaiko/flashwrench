@@ -108,8 +108,8 @@ export function UsersSection({ tab }: { tab: UserTab }) {
                     aria-current={tab === t.id ? "page" : undefined}
                     className={`flex min-h-[44px] items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] ${
                       tab === t.id
-                        ? "bg-[#FACC15] text-[#111111] dark:bg-white dark:text-zinc-900"
-                        : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        ? "bg-[#FB923C] text-[#111111] dark:bg-[#FB923C] dark:text-[#111111]"
+                        : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
                     }`}
                   >
                     <TabIcon aria-hidden="true" className="h-4 w-4 shrink-0" />

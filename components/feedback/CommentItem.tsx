@@ -52,7 +52,7 @@ export function CommentItem({
                 type="button"
                 aria-label={`Trả lời ${item.userName}`}
                 onClick={() => setReplying((open) => !open)}
-                className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               >
                 <FiMessageSquare aria-hidden="true" className="h-3.5 w-3.5" />
                 Trả lời
@@ -63,7 +63,7 @@ export function CommentItem({
                 type="button"
                 aria-expanded={showReplies}
                 onClick={() => setShowReplies((open) => !open)}
-                className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               >
                 {showReplies
                   ? "Ẩn phản hồi"
@@ -82,7 +82,7 @@ export function CommentItem({
                     targetId,
                   })
                 }
-                className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                className="flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               >
                 {item.hidden ? (
                   <FiEye aria-hidden="true" className="h-3.5 w-3.5" />

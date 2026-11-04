@@ -67,7 +67,7 @@ export function StepsBento() {
               className="flex min-w-0 flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-950"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-zinc-500 tabular-nums dark:text-zinc-400">
+                <p className="text-sm font-semibold text-zinc-600 tabular-nums dark:text-zinc-400">
                   {stop.numeral}
                 </p>
                 <Image
@@ -81,7 +81,7 @@ export function StepsBento() {
               <h3 className="mt-auto border-t border-zinc-200 pt-4 text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:border-zinc-800 dark:text-zinc-50">
                 {stop.title}
               </h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="text-sm text-zinc-800 dark:text-zinc-400">
                 {stop.hint}
               </p>
             </li>

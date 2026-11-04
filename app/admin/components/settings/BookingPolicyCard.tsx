@@ -82,13 +82,13 @@ export function BookingPolicyCard() {
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Chính sách đặt lịch
       </h2>
-      <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
         {current?.isDefault === false
           ? "Đã tùy chỉnh — áp dụng ngay cho khách đang mở form đặt lịch."
           : "Đang dùng mặc định (đặt trước 2 ngày)."}
       </p>
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Đặt trước tối thiểu (ngày)
           <input
             type="number"
@@ -100,7 +100,7 @@ export function BookingPolicyCard() {
             className={INPUT_CLASSES}
           />
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Đặt xa tối đa (ngày)
           <input
             type="number"
@@ -112,7 +112,7 @@ export function BookingPolicyCard() {
             className={INPUT_CLASSES}
           />
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Hạn tự hủy của khách (giờ trước hẹn)
           <input
             type="number"
@@ -124,24 +124,24 @@ export function BookingPolicyCard() {
             className={INPUT_CLASSES}
           />
         </label>
-        <p className="self-end text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="self-end text-xs text-zinc-600 dark:text-zinc-400">
           Nhân lực dồi dào có thể hạ tối thiểu xuống 0–1 ngày; thiếu thợ thì
           tăng lên. Hai ô kia để 0 nghĩa là không giới hạn.
         </p>
       </div>
-      <label className="mt-3 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900">
+      <label className="mt-3 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-zinc-500 px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 hover:bg-zinc-50 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-900">
         <input
           type="checkbox"
           checked={guestEnabled}
           onChange={(e) => setGuestEnabled(e.target.checked)}
           disabled={busy}
-          className="h-4 w-4 accent-[#FACC15] dark:accent-zinc-100"
+          className="h-4 w-4 accent-[#FB923C] dark:accent-zinc-100"
         />
         <span>
           <span className="block font-semibold">
             Cho phép khách đặt lịch không cần tài khoản
           </span>
-          <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="block text-xs text-zinc-600 dark:text-zinc-400">
             Tắt thì khách phải đăng nhập trước khi gửi form đặt lịch.
           </span>
         </span>
@@ -150,7 +150,7 @@ export function BookingPolicyCard() {
         type="button"
         onClick={handleSave}
         disabled={save.isPending}
-        className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#FACC15] px-5 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl px-5 py-2 text-sm font-semibold transition-colors duration-200 disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         <FiSave aria-hidden="true" className="h-4 w-4" />
         {save.isPending ? "Đang lưu…" : "Lưu cấu hình"}

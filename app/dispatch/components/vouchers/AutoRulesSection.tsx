@@ -15,18 +15,18 @@ export function AutoRulesSection() {
         <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
           Tự động phát theo quy tắc
         </h2>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
           Hệ thống tự phát voucher khi khách đạt điều kiện — nhân viên chỉ cần
           giám sát.
         </p>
       </header>
       <AutoRuleForm />
       {rules.isPending ? (
-        <p className="py-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-600 motion-safe:animate-pulse dark:text-zinc-400">
           Đang tải quy tắc…
         </p>
       ) : rules.isError ? (
-        <p className="py-4 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-600 dark:text-zinc-400">
           Không tải được quy tắc.
         </p>
       ) : (
@@ -36,11 +36,11 @@ export function AutoRulesSection() {
         Khách sắp đạt mốc
       </h3>
       {progress.isPending ? (
-        <p className="py-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-600 motion-safe:animate-pulse dark:text-zinc-400">
           Đang tải tiến độ…
         </p>
       ) : progress.isError ? (
-        <p className="py-4 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-4 text-sm text-zinc-600 dark:text-zinc-400">
           Không tải được tiến độ khách hàng.
         </p>
       ) : (

@@ -69,7 +69,7 @@ export function IncomeTrendChart() {
               .join("; ")}
             className="h-4 w-full sm:max-w-xs"
           />
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-700 dark:text-zinc-300">
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-800 dark:text-zinc-300">
             {methods.map((method, index) => (
               <li key={method.key} className="flex items-center gap-1.5">
                 <span

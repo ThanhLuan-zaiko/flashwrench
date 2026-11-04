@@ -40,7 +40,7 @@ export function PublicCatalogFilter({
       <div className="relative">
         <FiSearch
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+          className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
         />
         <label htmlFor={searchId} className="sr-only">
           Tìm dịch vụ theo tên
@@ -51,7 +51,7 @@ export function PublicCatalogFilter({
           onChange={(event) => onQuery(event.target.value)}
           placeholder="Tìm theo tên dịch vụ"
           autoComplete="off"
-          className="h-11 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-sm text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] sm:h-12 sm:text-[15px] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="h-11 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-sm text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] sm:h-12 sm:text-[15px] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-400"
         />
       </div>
       <div

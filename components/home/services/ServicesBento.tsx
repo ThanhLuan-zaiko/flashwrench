@@ -32,7 +32,7 @@ export function ServicesBento({ services }: { services: ServiceItem[] }) {
               className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
             />
           </div>
-          <p className="max-w-sm text-base text-zinc-600 dark:text-zinc-400">
+          <p className="max-w-sm text-base text-zinc-800 dark:text-zinc-400">
             Từ bảo dưỡng định kỳ đến cứu hộ, thợ tới tận nơi và báo giá trước
             khi làm.
           </p>

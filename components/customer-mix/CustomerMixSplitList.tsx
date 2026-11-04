@@ -26,7 +26,7 @@ export function CustomerMixSplitList({
   const total = slices.reduce((sum, s) => sum + s.member + s.guest, 0);
   if (total === 0) {
     return (
-      <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
         {emptyHint}
       </p>
     );
@@ -52,7 +52,7 @@ export function CustomerMixSplitList({
                 <span className="block truncate font-medium text-zinc-800 dark:text-zinc-200">
                   {view.label}
                 </span>
-                <span className="text-zinc-500 dark:text-zinc-400">
+                <span className="text-zinc-600 dark:text-zinc-400">
                   {view.counts}
                 </span>
               </span>

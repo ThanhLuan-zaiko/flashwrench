@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { BRAND_CHIP_ACTIVE, BRAND_CHIP_IDLE } from "@/components/ui/brand";
-import { BookingDateTimeInput } from "./BookingFormFields";
+import { DateTimeDropdown } from "@/components/ui/DateTimeDropdown";
 import {
   bookingDayOptions,
+  bookingTimeError,
   bookingTimeSlots,
   parseHoursLabel,
   splitScheduled,
@@ -23,9 +24,11 @@ type BookingSlotPickerProps = {
 const PILL =
   "flex min-h-[44px] items-center justify-center rounded-xl border font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:focus-visible:ring-zinc-100";
 
+const FINE_SLOT_STEP_MIN = 15;
+
 // Day pills plus hourly slot buttons over the same datetime-local value
-// the form validates. Any other time stays reachable through the native
-// picker, which opens by itself when the value is off-grid or flagged.
+// the form validates. Later days and quarter-hour times stay reachable
+// through the date and time dropdown below them.
 export function BookingSlotPicker({
   value,
   min,
@@ -46,6 +49,17 @@ export function BookingSlotPicker({
     [current.day, min, max, openWindow],
   );
   const onGrid = slots.includes(current.time);
+  const fineTimes = useCallback(
+    (day: string) =>
+      bookingTimeSlots(day, min, max, openWindow, FINE_SLOT_STEP_MIN),
+    [min, max, openWindow],
+  );
+
+  const typedTimeError = useCallback(
+    (day: string, time: string) =>
+      bookingTimeError(day, time, min, max, openWindow),
+    [min, max, openWindow],
+  );
 
   const pickDay = (day: string) => {
     const daySlots = bookingTimeSlots(day, min, max, openWindow);
@@ -74,7 +88,7 @@ export function BookingSlotPicker({
               onClick={() => pickDay(day.value)}
               className={`${PILL} w-[calc((100vw-3.5rem)/4)] shrink-0 flex-col gap-0.5 py-2 sm:w-auto ${active ? BRAND_CHIP_ACTIVE : BRAND_CHIP_IDLE}`}
             >
-              <span className="text-[11px] font-semibold">{day.weekday}</span>
+              <span className="text-xs font-semibold">{day.weekday}</span>
               <span className="text-lg leading-none">{day.day}</span>
             </button>
           );
@@ -100,25 +114,22 @@ export function BookingSlotPicker({
           })}
         </fieldset>
       )}
-      <details
-        open={Boolean(error) || !onGrid}
-        className="group border-t border-zinc-200 pt-3 dark:border-zinc-800"
-      >
-        <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] dark:text-blue-300">
-          Chọn ngày giờ khác
-        </summary>
-        <div className="pt-1 pb-2">
-          <BookingDateTimeInput
-            id="scheduledAt"
-            value={value}
-            min={min}
-            max={max}
-            onChange={onChange}
-            error={error}
-            disabled={disabled}
-          />
-        </div>
-      </details>
+      <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">
+        <p className="mb-1.5 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+          Hoặc chọn ngày giờ khác
+        </p>
+        <DateTimeDropdown
+          id="scheduledAt"
+          value={value}
+          min={min}
+          max={max}
+          timesFor={fineTimes}
+          validateTime={typedTimeError}
+          onChange={onChange}
+          error={Boolean(error)}
+          disabled={disabled}
+        />
+      </div>
     </div>
   );
 }

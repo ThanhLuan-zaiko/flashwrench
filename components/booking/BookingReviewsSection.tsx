@@ -27,7 +27,7 @@ export function BookingReviewsSection({
         <h2 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           Đánh giá từ khách hàng
         </h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Xem khách hàng nhận xét thế nào về dịch vụ và thợ trước khi xác nhận
           đặt lịch.
         </p>

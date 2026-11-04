@@ -129,7 +129,7 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
               mapClassName="h-44 w-full sm:h-56 lg:h-[28rem]"
             />
             {km !== null && (
-              <span className="absolute bottom-2 left-6 z-10 lg:left-2 rounded-lg bg-white px-2 py-1 text-[11px] font-semibold text-zinc-800 sm:left-5 dark:bg-zinc-950 dark:text-zinc-100">
+              <span className="absolute bottom-2 left-6 z-10 lg:left-2 rounded-lg bg-white px-2 py-1 text-xs font-semibold text-zinc-800 sm:left-5 dark:bg-zinc-950 dark:text-zinc-100">
                 Cách bạn {formatKm(km)}
               </span>
             )}
@@ -147,13 +147,13 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
         <TrackProgressCard stage={stage} details={details} />
         {tracking.paymentConfirmCode && (
           <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               Mã xác nhận thanh toán tiền mặt
             </p>
             <p className="mt-1 font-mono text-lg font-semibold tracking-[0.3em] text-zinc-900 dark:text-zinc-50">
               {tracking.paymentConfirmCode}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
               Đọc mã này cho thợ khi thanh toán — mã biến mất sau khi đơn được
               thanh toán.
             </p>
@@ -162,7 +162,7 @@ export function BookingTracker({ bookingId }: { bookingId: string }) {
         {tracking.updatedAt && (
           <p
             aria-live="polite"
-            className="text-xs text-zinc-500 dark:text-zinc-400"
+            className="text-xs text-zinc-600 dark:text-zinc-400"
           >
             Cập nhật {formatDateTime(tracking.updatedAt)} · tự làm mới mỗi 15
             giây

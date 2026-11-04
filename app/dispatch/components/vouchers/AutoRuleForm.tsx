@@ -13,7 +13,7 @@ import {
 const inputClass =
   "min-h-[44px] rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white";
 const labelClass =
-  "flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300";
+  "flex flex-col gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300";
 
 export function AutoRuleForm() {
   const create = useCreateAutoRule();
@@ -63,7 +63,7 @@ export function AutoRuleForm() {
       <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
         Tạo quy tắc tự động
       </h2>
-      <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
         Hệ thống tự phát voucher khi khách chạm điều kiện — không cần nhân viên
         thao tác.
       </p>
@@ -128,7 +128,7 @@ export function AutoRuleForm() {
       {message && (
         <p
           aria-live="polite"
-          className="mt-2 text-xs text-zinc-600 dark:text-zinc-300"
+          className="mt-2 text-xs text-zinc-800 dark:text-zinc-300"
         >
           {message}
         </p>
@@ -144,7 +144,7 @@ export function AutoRuleForm() {
       <button
         type="submit"
         disabled={create.isPending || !name.trim() || !campaignId}
-        className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl bg-green-700 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+        className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl px-4 text-sm font-semibold disabled:opacity-50 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         {create.isPending ? "Đang tạo…" : "Tạo quy tắc"}
       </button>

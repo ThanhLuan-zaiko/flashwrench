@@ -59,7 +59,7 @@ export function WalletBento({
           ) : null}
           {remainingOffers > 0 ? (
             <div className="flex items-baseline justify-between gap-4 py-4">
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 {remainingOffers} ưu đãi bạn chưa có
               </p>
               <a href="#vouchers-con-lai" className={TEXT_LINK}>

@@ -43,7 +43,7 @@ export function PageIntro({
           {subtitle ? (
             <p
               data-chapter-row
-              className="max-w-xl text-sm leading-relaxed text-zinc-600 md:text-base dark:text-zinc-400"
+              className="max-w-xl text-sm leading-relaxed text-zinc-800 md:text-base dark:text-zinc-400"
             >
               {subtitle}
             </p>
@@ -62,7 +62,7 @@ export function PageIntro({
         <div className="flex justify-end py-3">
           <p
             aria-live="polite"
-            className="text-xs text-zinc-500 dark:text-zinc-400"
+            className="text-xs text-zinc-600 dark:text-zinc-400"
           >
             {meta}
           </p>

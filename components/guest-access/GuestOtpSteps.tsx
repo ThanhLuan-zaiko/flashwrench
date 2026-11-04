@@ -43,7 +43,7 @@ export function OtpRequestStep({
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
           Tra cứu dịch vụ đã dùng
         </h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Nhập đúng email bạn đã dùng khi đặt lịch, gọi cứu hộ hoặc mua linh
           kiện. Chúng tôi sẽ gửi mã xác minh 6 chữ số.
         </p>
@@ -67,7 +67,7 @@ export function OtpRequestStep({
       <button
         type="submit"
         disabled={!ready || pending}
-        className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         {pending ? (
           <FiLoader
@@ -127,9 +127,9 @@ export function OtpCodeStep({
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
           Nhập mã xác minh
         </h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Mã 6 chữ số đã gửi tới{" "}
-          <strong className="font-semibold text-zinc-700 dark:text-zinc-200">
+          <strong className="font-semibold text-zinc-800 dark:text-zinc-200">
             {sent.maskedEmail}
           </strong>
           . Mã hết hạn sau {Math.round(sent.expiresInSeconds / 60)} phút.
@@ -148,7 +148,7 @@ export function OtpCodeStep({
         <div className="mt-1.5 flex items-center gap-2">
           <FiKey
             aria-hidden="true"
-            className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500"
+            className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
           />
           <input
             id="guest-lookup-code"
@@ -181,7 +181,7 @@ export function OtpCodeStep({
             {codeError}
           </p>
         ) : (
-          <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400">
             Nhập đủ 6 chữ số trong email chúng tôi vừa gửi.
           </p>
         )}
@@ -190,7 +190,7 @@ export function OtpCodeStep({
       <button
         type="submit"
         disabled={!ready || pending}
-        className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         {pending && (
           <FiLoader
@@ -215,7 +215,7 @@ export function OtpCodeStep({
           type="button"
           onClick={onResend}
           disabled={resendPending || resendAfterSeconds > 0}
-          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 underline-offset-4 transition-colors duration-200 hover:text-zinc-900 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:text-zinc-50"
+          className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-zinc-800 underline-offset-4 transition-colors duration-200 hover:text-zinc-900 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:text-zinc-50"
         >
           {resendPending && (
             <FiLoader

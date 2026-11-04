@@ -31,7 +31,7 @@ export default async function TrackBookingPage({
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
             Theo dõi đặt lịch
           </h1>
-          <p className="mt-1 font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
+          <p className="mt-1 font-mono text-xs text-zinc-600 dark:text-zinc-400">
             Phiếu #{bookingTicketCode(bookingId)}
           </p>
         </div>
@@ -41,7 +41,7 @@ export default async function TrackBookingPage({
         <BookingTracker bookingId={bookingId} />
         {/* This link is the whole capability model, so the one moment a
             guest realises they lost it belongs right here. */}
-        <p className="mx-4 mt-4 mb-28 border-t border-zinc-200 pt-3 text-xs text-zinc-500 sm:mx-0 sm:mb-0 lg:mt-8 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="mx-4 mt-4 mb-28 border-t border-zinc-200 pt-3 text-xs text-zinc-600 sm:mx-0 sm:mb-0 lg:mt-8 dark:border-zinc-800 dark:text-zinc-400">
           Mất đường dẫn này?{" "}
           <Link
             href="/lookup"

@@ -32,7 +32,7 @@ export function CopyCodeButton({ code }: { code: string }) {
       onClick={() => void handleCopy()}
       aria-live="polite"
       aria-label={state === "copied" ? "Đã sao chép mã" : "Sao chép mã ưu đãi"}
-      className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-3 py-2 text-center text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+      className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-3 py-2 text-center text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
     >
       {state === "copied" ? (
         <FiCheck aria-hidden="true" className="h-4 w-4 shrink-0" />

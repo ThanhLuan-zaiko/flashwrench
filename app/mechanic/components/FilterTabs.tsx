@@ -74,8 +74,8 @@ export function FilterTabs({
             aria-current={selected ? "page" : undefined}
             className={`flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-95 ${
               selected
-                ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
-                : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+                ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                : "border-zinc-500 bg-white text-zinc-800 hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-500 dark:bg-zinc-950 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
             }`}
           >
             <Icon aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
@@ -85,7 +85,7 @@ export function FilterTabs({
                 className={`rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
                   selected
                     ? "bg-[#111111]/20 text-[#111111] dark:bg-zinc-900/10 dark:text-zinc-900"
-                    : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                    : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
                 }`}
               >
                 {count}

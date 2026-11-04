@@ -39,7 +39,7 @@ export function DashboardCharts({
             <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
               Doanh thu
             </h3>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+            <p className="text-xs text-zinc-800 dark:text-zinc-400">
               {report?.label ?? "Đang tải kỳ báo cáo"}
             </p>
           </div>
@@ -48,7 +48,7 @@ export function DashboardCharts({
               {report ? formatVnd(report.collected) : "—"}
             </p>
             {peak && peak.amount > 0 && (
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+              <p className="text-xs text-zinc-800 dark:text-zinc-400">
                 Cao nhất {peak.label} · {formatVnd(peak.amount)}
               </p>
             )}
@@ -66,7 +66,7 @@ export function DashboardCharts({
               className="h-56 w-full"
             />
           ) : (
-            <p className="py-16 text-center text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="py-16 text-center text-sm text-zinc-600 dark:text-zinc-400">
               {isError
                 ? "Không tải được doanh thu. Vui lòng thử lại sau."
                 : "Chưa có giao dịch trong kỳ này."}

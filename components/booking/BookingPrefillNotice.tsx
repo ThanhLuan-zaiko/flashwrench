@@ -9,7 +9,7 @@ type BookingPrefillNoticeProps = {
 export function BookingPrefillNotice({ onReset }: BookingPrefillNoticeProps) {
   return (
     <div className="flex flex-col gap-2 border-b border-zinc-200 pb-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
-      <p className="text-xs text-zinc-600 dark:text-zinc-300">
+      <p className="text-xs text-zinc-800 dark:text-zinc-300">
         Đã điền sẵn thông tin từ lần đặt trước — sửa lại nếu có thay đổi.
       </p>
       <button

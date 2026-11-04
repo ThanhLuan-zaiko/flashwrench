@@ -41,7 +41,7 @@ export function DashboardTopMechanics({
       <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
         Top thợ
       </h3>
-      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+      <p className="text-xs text-zinc-800 dark:text-zinc-400">
         Theo doanh thu thu được · {rangeLabel}
       </p>
       {rows.length === 0 ? (
@@ -57,7 +57,7 @@ export function DashboardTopMechanics({
                 key={row.key}
                 className="flex h-11 items-center gap-2 text-[13px]"
               >
-                <span className="w-4 font-extrabold text-zinc-500">
+                <span className="w-4 font-extrabold text-zinc-600 dark:text-zinc-400">
                   {index + 1}
                 </span>
                 <span className="truncate font-semibold text-zinc-800 dark:text-zinc-200">
@@ -77,7 +77,7 @@ export function DashboardTopMechanics({
             {rows.map((row) => (
               <li
                 key={row.key}
-                className="flex h-11 flex-col justify-center text-xs text-zinc-600 tabular-nums dark:text-zinc-400"
+                className="flex h-11 flex-col justify-center text-xs text-zinc-800 tabular-nums dark:text-zinc-400"
               >
                 <span className="font-bold text-[#111111] dark:text-zinc-50">
                   {formatVnd(row.amount)}

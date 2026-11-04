@@ -67,17 +67,17 @@ export function ScheduleStatCards({
             label={stat.label}
             tour={stat.id === "pending" ? "mech-schedule-stats" : undefined}
           >
-            <p className="flex items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+            <p className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-300">
               <Icon
                 aria-hidden="true"
-                className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
+                className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-400"
               />
               {stat.label}
             </p>
             <p className="mt-3 text-3xl font-bold tracking-tight text-[#111111] dark:text-zinc-50">
               {loading ? "…" : stat.value}
             </p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
               {stat.hint}
             </p>
           </BentoCard>

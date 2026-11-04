@@ -7,7 +7,7 @@ export function SiteLogo({ onNavy = false }: { onNavy?: boolean }) {
   return (
     <Link
       href="/"
-      className={`group flex shrink-0 items-center gap-2.5 rounded-lg focus:outline-none ${onNavy ? "focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15]" : "focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"}`}
+      className={`group flex shrink-0 items-center gap-2.5 rounded-lg focus:outline-none ${onNavy ? "focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FB923C]" : "focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"}`}
       aria-label={`${SITE_NAME} - Trang chủ`}
     >
       <Image
@@ -23,7 +23,7 @@ export function SiteLogo({ onNavy = false }: { onNavy?: boolean }) {
           {SITE_NAME}
         </span>
         <span
-          className={`hidden text-xs font-medium sm:block ${onNavy ? "text-[#111111]/70" : "text-zinc-500 dark:text-zinc-400"}`}
+          className={`hidden text-xs font-medium sm:block ${onNavy ? "text-[#111111]/80" : "text-zinc-600 dark:text-zinc-400"}`}
         >
           {SITE_TAGLINE}
         </span>

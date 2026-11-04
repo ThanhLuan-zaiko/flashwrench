@@ -43,7 +43,7 @@ export function LoginForm({ next }: LoginFormProps) {
     return (
       <output
         aria-label="Bạn đã đăng nhập, đang chuyển hướng"
-        className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-500 dark:text-zinc-400"
+        className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-600 dark:text-zinc-400"
       >
         <FiLoader
           aria-hidden="true"
@@ -146,7 +146,7 @@ export function LoginForm({ next }: LoginFormProps) {
         {pending ? "Đang đăng nhập…" : "Đăng nhập"}
       </button>
 
-      <p className="hidden items-center justify-center gap-1.5 text-xs text-zinc-500 sm:flex dark:text-zinc-400">
+      <p className="hidden items-center justify-center gap-1.5 text-xs text-zinc-600 sm:flex dark:text-zinc-400">
         <FiLock aria-hidden="true" className="h-3.5 w-3.5" />
         Thông tin của bạn được bảo mật an toàn.
       </p>

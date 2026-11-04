@@ -43,7 +43,7 @@ export function BookingGuestSignup({
             <FiUserPlus aria-hidden="true" className="h-3.5 w-3.5" />
             Tạo tài khoản luôn — chỉ cần thêm mật khẩu
           </span>
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span className="text-xs text-zinc-600 dark:text-zinc-400">
             Đơn này và các đơn sau sẽ lưu vào lịch sử tài khoản của bạn.
           </span>
         </span>

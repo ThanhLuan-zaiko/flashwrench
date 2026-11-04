@@ -14,7 +14,7 @@ export function DialogHeader({ title, hint, onClose }: DialogHeaderProps) {
         <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
           {title}
         </h2>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
           {hint}
         </p>
       </div>
@@ -22,7 +22,7 @@ export function DialogHeader({ title, hint, onClose }: DialogHeaderProps) {
         type="button"
         onClick={onClose}
         aria-label="Đóng hộp thoại"
-        className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-600 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
       >
         <FiX aria-hidden="true" className="h-5 w-5" />
       </button>

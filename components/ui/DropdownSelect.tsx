@@ -24,7 +24,7 @@ type DropdownSelectProps = {
 const BUTTON_BASE =
   "flex min-h-[44px] w-full items-center justify-between gap-2 rounded-xl border bg-white px-3 py-2.5 text-left text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 disabled:opacity-60 dark:bg-zinc-950 dark:text-zinc-50";
 const BUTTON_OK =
-  "border-zinc-200 focus-visible:ring-zinc-500 dark:border-zinc-800";
+  "border-zinc-500 focus-visible:ring-zinc-500 dark:border-zinc-500";
 const BUTTON_ERROR =
   "border-red-500 focus-visible:ring-red-500 dark:border-red-400";
 
@@ -79,13 +79,13 @@ export function DropdownSelect({
         className={`${BUTTON_BASE} ${error ? BUTTON_ERROR : BUTTON_OK}`}
       >
         <span
-          className={`min-w-0 truncate ${active ? "" : "text-zinc-400 dark:text-zinc-500"}`}
+          className={`min-w-0 truncate ${active ? "" : "text-zinc-600 dark:text-zinc-400"}`}
         >
           {active ? active.label : placeholder}
         </span>
         <FiChevronDown
           aria-hidden="true"
-          className={`h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200 dark:text-zinc-400 ${open ? "motion-safe:rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-zinc-600 transition-transform duration-200 dark:text-zinc-400 ${open ? "motion-safe:rotate-180" : ""}`}
         />
       </button>
 
@@ -116,7 +116,7 @@ export function DropdownSelect({
                     {option.label}
                   </span>
                   {option.hint && (
-                    <span className="block truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+                    <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
                       {option.hint}
                     </span>
                   )}
@@ -124,7 +124,7 @@ export function DropdownSelect({
                 {selected && (
                   <FiCheck
                     aria-hidden="true"
-                    className="h-4 w-4 shrink-0 text-zinc-700 dark:text-zinc-200"
+                    className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-200"
                   />
                 )}
               </button>

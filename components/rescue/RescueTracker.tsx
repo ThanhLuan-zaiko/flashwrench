@@ -37,7 +37,7 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
 
   if (query.isPending) {
     return (
-      <p className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
         <FiLoader
           aria-hidden="true"
           className="h-4 w-4 motion-safe:animate-spin"
@@ -49,7 +49,7 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
 
   if (query.isError || !tracking) {
     return (
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Không tải được tiến trình. Trang sẽ tự thử lại — hoặc gọi hotline để
         được hỗ trợ.
       </p>
@@ -61,9 +61,9 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
       <div className="flex items-start gap-2 rounded-xl border border-zinc-300 bg-white p-3 text-sm dark:border-zinc-700 dark:bg-zinc-950">
         <FiXCircle
           aria-hidden="true"
-          className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"
+          className="mt-0.5 h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
         />
-        <p className="text-zinc-700 dark:text-zinc-300">
+        <p className="text-zinc-800 dark:text-zinc-300">
           Yêu cầu cứu hộ đã được hủy. Nếu bạn vẫn cần hỗ trợ, hãy gọi hotline
           hoặc gửi yêu cầu mới.
         </p>
@@ -83,7 +83,7 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
                 aria-hidden="true"
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                   done
-                    ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                    ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
                     : active
                       ? "border-[#111111] dark:border-white"
                       : "border-zinc-300 dark:border-zinc-700"
@@ -100,8 +100,8 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
                   active
                     ? "font-semibold text-zinc-900 dark:text-zinc-50"
                     : done
-                      ? "text-zinc-700 dark:text-zinc-300"
-                      : "text-zinc-400 dark:text-zinc-600"
+                      ? "text-zinc-800 dark:text-zinc-300"
+                      : "text-zinc-600 dark:text-zinc-400"
                 }`}
               >
                 {id === "finding" && tracking.status === "accepted"
@@ -121,7 +121,7 @@ export function RescueTracker({ requestId }: RescueTrackerProps) {
       {tracking.updatedAt && (
         <p
           aria-live="polite"
-          className="text-[11px] text-zinc-400 dark:text-zinc-500"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           Cập nhật {formatDateTime(tracking.updatedAt)} · tự làm mới mỗi 15 giây
         </p>

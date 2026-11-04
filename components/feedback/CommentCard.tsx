@@ -16,7 +16,7 @@ export function CommentCard({
 }) {
   return (
     <div className={`py-2 ${item.hidden ? "opacity-60" : ""}`}>
-      <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]">
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
         <span className="font-semibold text-zinc-900 dark:text-zinc-50">
           {item.userName}
         </span>
@@ -26,7 +26,7 @@ export function CommentCard({
           </span>
         )}
         {item.mine && (
-          <span className="text-zinc-400 dark:text-zinc-500">(Bạn)</span>
+          <span className="text-zinc-600 dark:text-zinc-400">(Bạn)</span>
         )}
         {item.hidden && (
           <span className="font-medium text-red-600 dark:text-red-400">
@@ -34,12 +34,12 @@ export function CommentCard({
           </span>
         )}
         {item.createdAt && (
-          <time className="text-zinc-400 dark:text-zinc-500">
+          <time className="text-zinc-600 dark:text-zinc-400">
             {formatDateTime(item.createdAt)}
           </time>
         )}
       </p>
-      <p className="mt-1 text-sm whitespace-pre-line text-zinc-700 dark:text-zinc-300">
+      <p className="mt-1 text-sm whitespace-pre-line text-zinc-800 dark:text-zinc-300">
         {item.body}
       </p>
       {actions && (

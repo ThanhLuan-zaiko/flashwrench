@@ -80,7 +80,7 @@ export function ImageCropDialog({
       aria-label={title}
       className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-4"
     >
-      <div aria-hidden="true" className="fixed inset-0 bg-zinc-950/50" />
+      <div aria-hidden="true" className="fixed inset-0 bg-[#111111]/50" />
       <div className="relative flex max-h-[90dvh] w-full max-w-lg flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl md:p-5 dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
@@ -90,13 +90,13 @@ export function ImageCropDialog({
             type="button"
             onClick={onCancel}
             aria-label="Đóng trình sửa ảnh"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="relative h-64 w-full overflow-hidden rounded-xl bg-zinc-950 sm:h-72">
+        <div className="relative h-64 w-full overflow-hidden rounded-xl bg-[#111111] sm:h-72">
           <Cropper
             image={imageSrc}
             crop={crop}
@@ -111,7 +111,7 @@ export function ImageCropDialog({
         </div>
 
         <fieldset className="flex flex-wrap items-center gap-1.5">
-          <legend className="mb-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <legend className="mb-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Tỉ lệ khung hình
           </legend>
           {ASPECT_PRESETS.map((preset) => (
@@ -134,7 +134,7 @@ export function ImageCropDialog({
         <div className="flex items-center gap-2">
           <FiZoomIn
             aria-hidden="true"
-            className="h-4 w-4 shrink-0 text-zinc-500"
+            className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
           />
           <input
             type="range"
@@ -169,7 +169,7 @@ export function ImageCropDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+            className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
           >
             Hủy
           </button>
@@ -177,7 +177,7 @@ export function ImageCropDialog({
             type="button"
             onClick={() => void handleConfirm()}
             disabled={!pixels || working}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {working ? (
               <FiLoader

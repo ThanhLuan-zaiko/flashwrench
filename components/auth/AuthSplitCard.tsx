@@ -34,7 +34,7 @@ export function AuthSplitCard({
   services,
 }: AuthSplitCardProps) {
   return (
-    <main className="flex flex-1 flex-col bg-[#FACC15] sm:bg-white lg:grid lg:min-h-[calc(100svh-65px)] lg:grid-cols-2 dark:sm:bg-zinc-950">
+    <main className="flex flex-1 flex-col bg-[#FB923C] sm:bg-white lg:grid lg:min-h-[calc(100svh-65px)] lg:grid-cols-2 dark:sm:bg-zinc-950">
       <AuthServiceSlideshow
         services={services}
         className="h-64 shrink-0 sm:h-60 lg:h-auto"
@@ -45,19 +45,19 @@ export function AuthSplitCard({
       >
         <div className="mx-auto flex w-full max-w-md flex-col lg:max-w-[440px]">
           {eyebrow && (
-            <p className="text-[11px] font-bold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
+            <p className="text-xs font-bold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
               {eyebrow}
             </p>
           )}
           <h1 className="mt-1.5 text-[22px] leading-[1.12] font-extrabold tracking-tight text-zinc-900 sm:text-2xl lg:text-3xl dark:text-zinc-50">
             {title}
           </h1>
-          <p className="mt-2 text-sm text-zinc-600 sm:text-[15px] dark:text-zinc-400">
+          <p className="mt-2 text-sm text-zinc-800 sm:text-[15px] dark:text-zinc-400">
             {subtitle}
           </p>
           <div className="mt-5 lg:mt-7">{children}</div>
           <div className="mt-5 flex flex-col gap-2 border-t border-zinc-200 pt-5 text-center lg:mt-6 lg:gap-2.5 dark:border-zinc-800">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="text-sm text-zinc-800 dark:text-zinc-400">
               {footerText}
             </p>
             <Link href={footerLinkHref} className={BRAND_OUTLINE_BUTTON}>
@@ -65,7 +65,7 @@ export function AuthSplitCard({
             </Link>
           </div>
           {perks && perks.length > 0 && (
-            <ul className="mt-5 hidden justify-center gap-5 text-xs text-zinc-600 lg:flex dark:text-zinc-400">
+            <ul className="mt-5 hidden justify-center gap-5 text-xs text-zinc-800 lg:flex dark:text-zinc-400">
               {perks.map((perk) => (
                 <li key={perk} className="flex items-center gap-1.5">
                   <FiCheck aria-hidden="true" className="h-3 w-3" />

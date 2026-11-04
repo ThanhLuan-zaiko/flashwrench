@@ -130,7 +130,7 @@ export function CampaignDialog({ dialog, onClose }: CampaignDialogProps) {
         type="button"
         aria-label="Đóng hộp thoại"
         onClick={guard.requestClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <DialogPanel wide>
         <DialogHeader

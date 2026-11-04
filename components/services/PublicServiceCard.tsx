@@ -16,12 +16,12 @@ type PublicServiceCardProps = {
 };
 
 const ADD_BUTTON =
-  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#111111] bg-[#FACC15] px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EAB308] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white";
+  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#111111] bg-[#FB923C] px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#F97316] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white";
 const REMOVE_BUTTON =
-  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#111111] bg-white px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#FACC15]/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900";
+  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-xl border border-[#111111] bg-white px-4 text-sm font-bold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#FB923C]/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900";
 // Bare eye icon: a 44px touch target with no box around the glyph.
 const PREVIEW_BUTTON =
-  "flex min-h-11 min-w-11 shrink-0 items-center justify-center text-zinc-500 motion-safe:transition-colors motion-safe:duration-200 hover:text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-400 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100";
+  "flex min-h-11 min-w-11 shrink-0 items-center justify-center text-zinc-600 motion-safe:transition-colors motion-safe:duration-200 hover:text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-zinc-400 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100";
 
 // One bookable service as a card: photo on top, then the category, name,
 // duration and options, the voucher badge, the starting price, and the add
@@ -66,7 +66,7 @@ export function PublicServiceCard({
             className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]"
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-zinc-400 dark:text-zinc-600">
+          <span className="flex h-full w-full items-center justify-center text-zinc-600 dark:text-zinc-400">
             <FiTool aria-hidden="true" className="h-6 w-6" />
           </span>
         )}
@@ -80,7 +80,7 @@ export function PublicServiceCard({
           <h3 className="mt-1 line-clamp-2 text-base leading-snug font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
             {service.name}
           </h3>
-          <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
             {attributes}
           </p>
         </div>
@@ -93,11 +93,11 @@ export function PublicServiceCard({
 
         <div className="mt-auto flex flex-col gap-4">
           <p className="flex flex-wrap items-baseline gap-x-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">từ</span>
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">từ</span>
             <span className="text-xl font-extrabold tracking-tight text-[#111111] tabular-nums dark:text-zinc-50">
               {formatVnd(service.basePrice)}
             </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">
               {PRICE_UNIT_LABELS[service.priceUnit]}
             </span>
           </p>
@@ -129,7 +129,7 @@ export function PublicServiceCard({
               </button>
             </div>
             {!selected && disabledReason && (
-              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              <p className="text-sm leading-relaxed text-zinc-800 dark:text-zinc-400">
                 {disabledReason}
               </p>
             )}

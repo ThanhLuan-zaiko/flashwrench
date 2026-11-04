@@ -23,7 +23,7 @@ export function FraudFlagsCard({ flags }: { flags: FraudFlag[] }) {
         Dấu hiệu bất thường
       </p>
       {flags.length === 0 ? (
-        <p className="mt-4 py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-4 py-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Không có dấu hiệu nào trong kỳ này.
         </p>
       ) : (
@@ -38,7 +38,7 @@ export function FraudFlagsCard({ flags }: { flags: FraudFlag[] }) {
                   className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
                     flag.severity === "critical"
                       ? "border-red-300 text-red-700 dark:border-red-800 dark:text-red-300"
-                      : "border-zinc-300 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300"
+                      : "border-zinc-300 text-zinc-800 dark:border-zinc-700 dark:text-zinc-300"
                   }`}
                 >
                   {flag.severity === "critical" ? "Nghiêm trọng" : "Cảnh báo"}
@@ -47,7 +47,7 @@ export function FraudFlagsCard({ flags }: { flags: FraudFlag[] }) {
                   {FLAG_LABELS[flag.kind]}
                 </span>
               </p>
-              <p className="mt-1 text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-zinc-600 dark:text-zinc-400">
                 {flag.detail}
               </p>
             </li>

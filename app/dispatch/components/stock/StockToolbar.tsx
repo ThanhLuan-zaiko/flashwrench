@@ -40,14 +40,14 @@ export function StockToolbar({
       <div className="flex-1">
         <label
           htmlFor={searchId}
-          className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+          className="text-xs font-semibold text-zinc-800 dark:text-zinc-300"
         >
           Tìm kiếm
         </label>
         <div className="relative mt-1.5">
           <FiSearch
             aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
           />
           <input
             id={searchId}
@@ -55,7 +55,7 @@ export function StockToolbar({
             value={filter.query}
             onChange={(e) => onChange({ ...filter, query: e.target.value })}
             placeholder="Tìm theo tên, SKU hoặc hãng…"
-            className="h-11 w-full rounded-xl border border-zinc-300 bg-white pl-9 pr-3 text-sm font-medium text-zinc-800 placeholder:text-zinc-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            className="h-11 w-full rounded-xl border border-zinc-300 bg-white pl-9 pr-3 text-sm font-medium text-zinc-800 placeholder:text-zinc-500 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-400"
           />
         </div>
       </div>
@@ -88,7 +88,7 @@ export function StockToolbar({
           <button
             type="button"
             onClick={onReset}
-            className="flex min-h-[44px] shrink-0 items-center justify-center gap-1 rounded-xl border border-zinc-300 px-3 text-xs font-semibold text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] shrink-0 items-center justify-center gap-1 rounded-xl border border-zinc-600 px-3 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-4 w-4" />
             Xóa lọc

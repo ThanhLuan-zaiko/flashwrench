@@ -17,7 +17,7 @@ function formatDate(iso: string | null): string {
 function TermRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 py-2">
-      <dt className="text-xs text-zinc-500 dark:text-zinc-400">{label}</dt>
+      <dt className="text-xs text-zinc-600 dark:text-zinc-400">{label}</dt>
       <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
         {value}
       </dd>

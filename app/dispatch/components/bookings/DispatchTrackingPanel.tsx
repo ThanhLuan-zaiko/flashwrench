@@ -54,15 +54,18 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Bản đồ di chuyển của thợ
         </h2>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           Chọn một đơn để xem vị trí hiện tại và lộ trình đã ghi nhận.
         </p>
       </div>
 
       {!booking && (
         <div className="flex min-h-72 flex-col items-center justify-center gap-2 p-5 text-center">
-          <FiMapPin aria-hidden="true" className="h-5 w-5 text-zinc-500" />
-          <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <FiMapPin
+            aria-hidden="true"
+            className="h-5 w-5 text-zinc-600 dark:text-zinc-400"
+          />
+          <p className="text-sm font-medium text-zinc-800 dark:text-zinc-300">
             Chọn một đơn để xem bản đồ
           </p>
         </div>
@@ -74,7 +77,7 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
             <p className="truncate text-xs font-semibold text-zinc-800 dark:text-zinc-200">
               {booking.serviceNames.join(", ") || "Đơn sửa xe"}
             </p>
-            <span className="shrink-0 text-[11px] text-zinc-500 dark:text-zinc-400">
+            <span className="shrink-0 text-xs text-zinc-600 dark:text-zinc-400">
               {DISPATCH_STATUS_LABELS[booking.status]}
             </span>
           </div>
@@ -82,7 +85,7 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
           {trackQuery.isPending && (
             <p
               aria-busy="true"
-              className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+              className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
             >
               <FiLoader
                 aria-hidden="true"
@@ -110,7 +113,7 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
           )}
 
           {trackQuery.isSuccess && points.length === 0 && map.hasMap && (
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               {booking.status === "en_route"
                 ? liveMechanic
                   ? "Đang hiển thị vị trí mới nhất; lộ trình thực tế sẽ hiện khi có thêm điểm GPS."
@@ -124,7 +127,7 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
           {trackQuery.isSuccess && points.length > 0 && latest && (
             <p
               aria-live="polite"
-              className="text-[11px] text-zinc-500 dark:text-zinc-400"
+              className="text-xs text-zinc-600 dark:text-zinc-400"
             >
               {points.length > 1
                 ? `${points.length} điểm lộ trình · Cập nhật ${new Date(latest.recordedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}`
@@ -133,7 +136,7 @@ export function DispatchTrackingPanel({ booking }: DispatchTrackingPanelProps) {
           )}
 
           {trackQuery.isSuccess && !map.hasMap && (
-            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-600 dark:text-zinc-300">
+            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-800 dark:text-zinc-300">
               Đơn này chưa có tọa độ để hiển thị trên bản đồ.
             </p>
           )}

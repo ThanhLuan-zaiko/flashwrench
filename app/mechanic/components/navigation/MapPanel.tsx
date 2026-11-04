@@ -57,14 +57,14 @@ export function MapPanel({ origin, target }: MapPanelProps) {
         mapClassName="h-72 w-full sm:h-80"
       />
       <div className="flex items-center justify-between gap-2">
-        <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
           {target.addressText}
         </p>
         <a
           href={openUrl}
           target="_blank"
           rel="noreferrer"
-          className="shrink-0 text-xs font-semibold text-zinc-700 underline-offset-2 hover:underline dark:text-zinc-200"
+          className="shrink-0 text-xs font-semibold text-zinc-800 underline-offset-2 hover:underline dark:text-zinc-200"
         >
           Mở bản đồ lớn
         </a>

@@ -12,7 +12,7 @@ const MAX_BODY_LENGTH = 2000;
 const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
 
 const ATTACH_BUTTON_CLASSES =
-  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-zinc-200 text-zinc-600 transition-transform duration-150 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-safe:transition-transform dark:border-zinc-700 dark:text-zinc-300";
+  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-zinc-200 text-zinc-800 transition-transform duration-150 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-safe:transition-transform dark:border-zinc-700 dark:text-zinc-300";
 
 export function ChatComposer({ threadId }: { threadId: string }) {
   const [body, setBody] = useState("");
@@ -86,13 +86,13 @@ export function ChatComposer({ threadId }: { threadId: string }) {
           maxLength={MAX_BODY_LENGTH}
           placeholder="Nhập tin nhắn..."
           aria-label="Nội dung tin nhắn"
-          className="max-h-28 min-h-10 flex-1 resize-none rounded-2xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-500"
+          className="max-h-28 min-h-10 flex-1 resize-none rounded-2xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-500 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-500"
         />
         <button
           type="submit"
           disabled={!body.trim() || busy}
           aria-label="Gửi tin nhắn"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-700 text-white transition-transform duration-150 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-safe:transition-transform dark:bg-green-500 dark:text-zinc-950"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-700 text-white transition-transform duration-150 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-40 motion-safe:transition-transform dark:bg-green-500 dark:text-[#111111]"
         >
           <FiSend className="h-4 w-4" aria-hidden />
         </button>

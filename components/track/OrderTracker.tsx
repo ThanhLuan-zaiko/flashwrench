@@ -97,7 +97,7 @@ export function OrderTracker({ orderId }: { orderId: string }) {
     <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
       <div className="flex flex-col gap-4">
         {tracking.paymentStatus && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Thanh toán:{" "}
             <span className="font-medium text-zinc-900 dark:text-zinc-50">
               {PAYMENT_LABELS[tracking.paymentStatus] ?? tracking.paymentStatus}
@@ -115,7 +115,7 @@ export function OrderTracker({ orderId }: { orderId: string }) {
         />
 
         {tracking.status === "return_requested" && (
-          <p className="border-t border-zinc-200 pt-3 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+          <p className="border-t border-zinc-200 pt-3 text-xs text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
             Yêu cầu trả hàng của bạn đang được xử lý — shop sẽ liên hệ theo
             thông tin bạn đã để lại.
           </p>
@@ -123,13 +123,13 @@ export function OrderTracker({ orderId }: { orderId: string }) {
 
         {tracking.paymentConfirmCode && (
           <div className="border-t border-zinc-200 pt-3 dark:border-zinc-800">
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               Mã xác nhận thanh toán tiền mặt
             </p>
             <p className="mt-1 font-mono text-lg font-semibold tracking-[0.3em] text-zinc-900 dark:text-zinc-50">
               {tracking.paymentConfirmCode}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
               Đọc mã này cho người giao hàng khi thanh toán — mã biến mất sau
               khi đơn được thanh toán.
             </p>

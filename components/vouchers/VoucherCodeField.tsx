@@ -19,11 +19,11 @@ type VoucherCodeFieldProps = {
 };
 
 const ACTION_CLASS =
-  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200";
+  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]";
 
 // Applying a typed code claims it, which creates a wallet entry: green.
 const CLAIM_CLASS =
-  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400";
+  "flex min-h-[44px] shrink-0 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]";
 
 // Typed redeem-code input shared by /booking and /checkout. Guests see a
 // login link instead of the apply button — the code only works for
@@ -111,7 +111,7 @@ export function VoucherCodeField({
           aria-busy={applying || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className={`h-11 min-w-0 flex-1 rounded-xl border bg-white px-3 font-mono text-sm uppercase text-zinc-900 placeholder:normal-case placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500 ${
+          className={`h-11 min-w-0 flex-1 rounded-xl border bg-white px-3 font-mono text-sm uppercase text-zinc-900 placeholder:normal-case placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-400 ${
             error
               ? "border-red-500 dark:border-red-400"
               : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-600"
@@ -145,13 +145,13 @@ export function VoucherCodeField({
         <p
           role="status"
           aria-live="polite"
-          className="flex items-center gap-1 text-xs font-medium text-zinc-600 dark:text-zinc-300"
+          className="flex items-center gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300"
         >
           <FiCheckCircle aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           {notice}
         </p>
       )}
-      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         {guest
           ? "Voucher gắn với tài khoản. Đăng nhập xong bạn quay lại đúng trang này, thông tin đã nhập vẫn được giữ."
           : "Mã hợp lệ được thêm vào ví và trừ ngay vào tạm tính."}

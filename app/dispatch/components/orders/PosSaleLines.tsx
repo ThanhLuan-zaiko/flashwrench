@@ -72,7 +72,7 @@ export function PosSaleLines({
           onClick={onAdd}
           disabled={!partId || disabled}
           aria-label="Thêm vào đơn"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-500 text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-50 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
         >
           <FiPlus aria-hidden="true" className="h-4 w-4" />
         </button>
@@ -92,7 +92,7 @@ export function PosSaleLines({
                 key={line.key}
                 className="flex items-center justify-between gap-2 px-3 py-2"
               >
-                <span className="min-w-0 truncate text-xs text-zinc-700 dark:text-zinc-300">
+                <span className="min-w-0 truncate text-xs text-zinc-800 dark:text-zinc-300">
                   {part?.name ?? "Sản phẩm"} × {line.quantity}
                 </span>
                 <span className="flex shrink-0 items-center gap-2">
@@ -103,7 +103,7 @@ export function PosSaleLines({
                     type="button"
                     onClick={() => onRemove(line.key)}
                     aria-label="Xóa dòng"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                   >
                     <FiTrash2 aria-hidden="true" className="h-4 w-4" />
                   </button>

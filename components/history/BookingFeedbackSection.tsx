@@ -26,7 +26,7 @@ function SubmittedRating({
   body: string;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+    <div className="flex flex-col gap-1 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
       <p className="flex flex-wrap items-center gap-2">
         <span className="font-semibold text-zinc-900 dark:text-zinc-50">
           {label}
@@ -106,7 +106,7 @@ export function BookingFeedbackSection({
       <button
         type="button"
         onClick={() => setComplaintOpen(true)}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         <FiFlag aria-hidden="true" className="h-4 w-4" />
         Gửi khiếu nại về đơn này

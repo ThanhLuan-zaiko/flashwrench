@@ -1,6 +1,6 @@
 // Approved chart palette for staff dashboards (AGENTS.md Section 6):
 // black, sky, teal, violet in that order. Black disappears on the dark
-// surface, so dark mode swaps the first series for zinc-200. Only canvas
+// surface, so dark mode swaps the first series for [#E4E4E7]. Only canvas
 // charts and their legend swatches may use these hues.
 
 export const CHART_SERIES_LIGHT = [
@@ -50,7 +50,7 @@ export function chartTheme(dark: boolean): ChartTheme {
         series: CHART_SERIES_LIGHT,
         alert: CHART_ALERT.light,
         ink: "#18181B",
-        muted: "#71717A",
+        muted: "#52525B",
         grid: "#F4F4F5",
         track: "#E4E4E7",
         surface: "#FFFFFF",

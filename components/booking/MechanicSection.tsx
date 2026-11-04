@@ -71,7 +71,7 @@ export function MechanicSection({
             Chọn thợ mình thích
           </span>
           {pickedName && (
-            <span className="block truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+            <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
               Đã chọn: {pickedName}
             </span>
           )}
@@ -126,7 +126,7 @@ export function MechanicSection({
             ))}
 
           {mechanics.isSuccess && items.length === 0 && (
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               Hiện chưa có thợ trực tuyến. Cứ giữ “tự điều thợ”, đơn của bạn sẽ
               được điều phối ngay khi có thợ rảnh.
             </p>
@@ -137,7 +137,7 @@ export function MechanicSection({
       {error && (
         <p
           role="alert"
-          className="text-[11px] font-medium text-red-600 dark:text-red-400"
+          className="text-xs font-medium text-red-600 dark:text-red-400"
         >
           {error}
         </p>

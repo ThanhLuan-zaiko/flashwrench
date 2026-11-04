@@ -23,7 +23,7 @@ export function BookingServiceMedia({
       <BookingServiceGallery key={service.id} service={service} />
       <BookingServiceSummary service={service} />
       {multiple && (
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Bấm biểu tượng ảnh ở từng dịch vụ để xem ảnh và đánh giá tương ứng.
         </p>
       )}

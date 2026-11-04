@@ -127,7 +127,7 @@ export function NavigationSection() {
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                   {selected.customerName || "Khách hàng"}
                 </p>
-                <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">
                   {selected.addressText}
                 </p>
               </div>
@@ -135,7 +135,7 @@ export function NavigationSection() {
                 href={googleDirectionsUrl(origin, selected)}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
               >
                 <FiNavigation aria-hidden="true" className="h-4 w-4" />
                 Chỉ đường
@@ -150,7 +150,7 @@ export function NavigationSection() {
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Đơn đang mở
           </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Sắp xếp theo quãng đường gần nhất
           </p>
           <NavigationList
@@ -163,7 +163,7 @@ export function NavigationSection() {
           />
         </BentoCard>
       </div>
-      <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-center text-xs text-zinc-600 dark:text-zinc-400">
         Khoảng cách là ước tính. Lộ trình chỉ được lưu khi thợ bật chia sẻ trong
         lúc “Đang di chuyển” và được giữ tối đa một năm.
       </p>

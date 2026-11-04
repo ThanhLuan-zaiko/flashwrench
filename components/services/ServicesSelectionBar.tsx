@@ -42,11 +42,11 @@ export function ServicesSelectionBar({
     >
       <div className="flex items-center justify-between gap-3">
         <div aria-live="polite" className="min-w-0">
-          <h2 className="text-[11px] text-zinc-500 sm:text-sm sm:font-bold sm:text-zinc-900 dark:text-zinc-400 sm:dark:text-zinc-50">
+          <h2 className="text-xs text-zinc-600 sm:text-sm sm:font-bold sm:text-zinc-900 dark:text-zinc-400 sm:dark:text-zinc-50">
             {serviceIds.length} dịch vụ đã chọn
           </h2>
           {ready ? (
-            <p className="flex flex-wrap items-baseline gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="flex flex-wrap items-baseline gap-x-2 text-xs text-zinc-600 dark:text-zinc-400">
               <span className="text-base font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
                 {formatVnd(selection.subtotal)}
               </span>
@@ -55,7 +55,7 @@ export function ServicesSelectionBar({
               </span>
             </p>
           ) : (
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               Đang kiểm tra danh sách đã chọn…
             </p>
           )}
@@ -81,7 +81,7 @@ export function ServicesSelectionBar({
       {ready && selection.issue && <FormAlert message={selection.issue} />}
       <div className="hidden items-start gap-2 border-t border-zinc-200 sm:flex dark:border-zinc-800">
         <details className="group min-w-0 flex-1">
-          <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 rounded-lg text-xs font-semibold text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-200">
+          <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 rounded-lg text-xs font-semibold text-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-200">
             Xem và chỉnh danh sách
             <FiChevronDown
               aria-hidden="true"
@@ -101,7 +101,7 @@ export function ServicesSelectionBar({
         <button
           type="button"
           onClick={onClear}
-          className="min-h-[44px] shrink-0 rounded-lg px-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
+          className="min-h-[44px] shrink-0 rounded-lg px-2 text-xs font-semibold text-zinc-600 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
         >
           Bỏ chọn tất cả
         </button>

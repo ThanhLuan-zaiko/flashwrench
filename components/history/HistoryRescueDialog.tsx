@@ -53,7 +53,7 @@ export function HistoryRescueDialog({
         type="button"
         aria-label="Đóng chi tiết cứu hộ"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div
         className={`relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
@@ -73,14 +73,14 @@ export function HistoryRescueDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
 
         {detail.isPending ? (
-          <p className="flex items-center justify-center gap-2 py-8 text-sm text-zinc-500">
+          <p className="flex items-center justify-center gap-2 py-8 text-sm text-zinc-600 dark:text-zinc-400">
             <FiLoader
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
@@ -88,27 +88,31 @@ export function HistoryRescueDialog({
             Đang tải…
           </p>
         ) : !rescue ? (
-          <p className="py-8 text-center text-sm text-zinc-500">
+          <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
             Không tải được. Vui lòng thử lại.
           </p>
         ) : (
           <div className="mt-4 flex flex-col gap-4">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-2 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
               <div>
-                <dt className="text-[11px] text-zinc-500">Biển số</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Biển số
+                </dt>
                 <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
                   {rescue.vehiclePlate ?? "—"}
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] text-zinc-500">Thợ phụ trách</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Thợ phụ trách
+                </dt>
                 <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
                   {rescue.assignedMechanicName ?? "Đang tìm thợ…"}
                 </dd>
               </div>
               {rescue.status === "en_route" && rescue.etaMin !== null && (
                 <div>
-                  <dt className="text-[11px] text-zinc-500">
+                  <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                     Thời gian tới dự kiến
                   </dt>
                   <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
@@ -117,13 +121,17 @@ export function HistoryRescueDialog({
                 </div>
               )}
               <div className="sm:col-span-2">
-                <dt className="text-[11px] text-zinc-500">Vị trí xe</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Vị trí xe
+                </dt>
                 <dd className="font-medium text-zinc-900 dark:text-zinc-50">
                   {rescue.address ?? "—"}
                 </dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-[11px] text-zinc-500">Cập nhật</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Cập nhật
+                </dt>
                 <dd className="font-medium text-zinc-900 dark:text-zinc-50">
                   {formatDateTime(rescue.updatedAt)}
                 </dd>
@@ -136,7 +144,7 @@ export function HistoryRescueDialog({
 
             {rescue.paymentStatus !== "paid" && rescue.finalPrice !== null && (
               <p className="flex items-center justify-between rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-800">
-                <span className="text-zinc-600 dark:text-zinc-300">
+                <span className="text-zinc-800 dark:text-zinc-300">
                   Số tiền cần thanh toán
                 </span>
                 <span className="font-semibold text-zinc-900 dark:text-zinc-50">
@@ -147,7 +155,7 @@ export function HistoryRescueDialog({
 
             <a
               href={`tel:${RESCUE_HOTLINE.replace(/\s/g, "")}`}
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               <FiPhone aria-hidden="true" className="h-4 w-4" />
               Gọi hotline {RESCUE_HOTLINE}
@@ -165,7 +173,7 @@ export function HistoryRescueDialog({
                 {detail.data.timeline.slice(0, 8).map((item) => (
                   <li
                     key={`${item.changedAt}-${item.newStatus}`}
-                    className="text-[11px] text-zinc-500 dark:text-zinc-400"
+                    className="text-xs text-zinc-600 dark:text-zinc-400"
                   >
                     {formatDateTime(item.changedAt)} ·{" "}
                     {item.oldStatus

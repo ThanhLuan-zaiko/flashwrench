@@ -17,7 +17,7 @@ export function ThemeToggle({ onNavy = false }: { onNavy?: boolean }) {
       className={
         onNavy
           ? "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-100 transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white motion-safe:active:scale-95"
-          : "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          : "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-800 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
       }
     >
       {isDark ? (

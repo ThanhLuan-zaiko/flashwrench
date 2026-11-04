@@ -60,7 +60,7 @@ export function ProductTrustStrip({ brand }: { brand: string }) {
               <h3 className="text-base font-bold text-[#111111] dark:text-zinc-50">
                 {item.title}
               </h3>
-              <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                 {item.hint}
               </p>
             </div>

@@ -58,7 +58,7 @@ export function DashboardActivityCard({
       {isPending && (
         <p
           aria-busy="true"
-          className="flex items-center justify-center gap-2 py-10 text-sm text-zinc-500 dark:text-zinc-400"
+          className="flex items-center justify-center gap-2 py-10 text-sm text-zinc-600 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -68,7 +68,7 @@ export function DashboardActivityCard({
         </p>
       )}
       {isError && (
-        <p className="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Không tải được hoạt động. Vui lòng thử lại.
         </p>
       )}
@@ -96,10 +96,10 @@ export function DashboardActivityCard({
                 >
                   {ACTION_TAGS[event.action ?? ""] ?? "Khác"}
                 </span>
-                <span className="min-w-0 flex-1 truncate text-[13px] text-zinc-700 dark:text-zinc-300">
+                <span className="min-w-0 flex-1 truncate text-[13px] text-zinc-800 dark:text-zinc-300">
                   {describe(event)}
                 </span>
-                <span className="shrink-0 text-xs text-zinc-500 tabular-nums dark:text-zinc-400">
+                <span className="shrink-0 text-xs text-zinc-600 tabular-nums dark:text-zinc-400">
                   {event.at
                     ? formatDateTime(event.at, { withZoneSuffix: false })
                     : "—"}

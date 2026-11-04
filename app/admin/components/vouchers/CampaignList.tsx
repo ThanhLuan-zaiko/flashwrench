@@ -27,7 +27,7 @@ type CampaignListProps = {
 
 function StatusPill({ item }: { item: VoucherCampaign }) {
   return (
-    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
       {item.isDeleted
         ? "Trong thùng rác"
         : item.isActive
@@ -39,7 +39,7 @@ function StatusPill({ item }: { item: VoucherCampaign }) {
 
 function GrantPill({ item }: { item: VoucherCampaign }) {
   return (
-    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
       {item.allowDispatcherGrant
         ? item.dispatcherMaxValue > 0
           ? `Điều phối phát ≤ ${item.dispatcherMaxValue.toLocaleString("vi-VN")}đ`
@@ -86,7 +86,7 @@ export function CampaignList({
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
             />
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">
               Đang tải chiến dịch…
             </span>
           </li>
@@ -97,13 +97,13 @@ export function CampaignList({
   if (isError) {
     return (
       <div className="py-10 text-center">
-        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Không tải được chiến dịch.
         </p>
         <button
           type="button"
           onClick={onRetry}
-          className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+          className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-950"
         >
           Thử lại
         </button>
@@ -115,13 +115,13 @@ export function CampaignList({
       <div className="flex items-center gap-3 py-6">
         <FiInbox
           aria-hidden="true"
-          className="h-5 w-5 shrink-0 text-zinc-500 dark:text-zinc-400"
+          className="h-5 w-5 shrink-0 text-zinc-600 dark:text-zinc-400"
         />
         <span>
           <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200">
             {trashMode ? "Thùng rác trống" : "Chưa có chiến dịch nào"}
           </span>
-          <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="block text-xs text-zinc-600 dark:text-zinc-400">
             {trashMode
               ? "Các chiến dịch đã xóa sẽ hiện ở đây"
               : "Nhấn Thêm chiến dịch để tạo mới"}
@@ -157,13 +157,13 @@ export function CampaignList({
                   <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                     {item.name}
                   </span>
-                  <span className="block truncate font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="block truncate font-mono text-xs text-zinc-600 dark:text-zinc-400">
                     {campaignSpecLine(item)}
                   </span>
                   <span className="mt-1.5 flex flex-wrap gap-1.5">
                     <StatusPill item={item} />
                     <GrantPill item={item} />
-                    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                       {scopeLabel(item.scope)}
                     </span>
                   </span>

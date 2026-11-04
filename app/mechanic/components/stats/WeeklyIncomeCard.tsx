@@ -24,11 +24,11 @@ export function WeeklyIncomeCard({ daily }: { daily: MechanicDaily }) {
           <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
             Thu nhập 7 ngày
           </h3>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400">
+          <p className="text-xs text-zinc-800 dark:text-zinc-400">
             Nét đứt là mức trung bình mỗi ngày của tuần trước
           </p>
         </div>
-        <p className="text-[13px] text-zinc-700 dark:text-zinc-300">
+        <p className="text-[13px] text-zinc-800 dark:text-zinc-300">
           {weekChange(daily.weekRevenue, daily.previousWeekRevenue)}
         </p>
       </div>

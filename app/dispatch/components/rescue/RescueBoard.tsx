@@ -93,7 +93,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
 
       <div data-tour="disp-rescue-list">
         {board.isPending ? (
-          <p className="py-6 text-center text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+          <p className="py-6 text-center text-sm text-zinc-600 motion-safe:animate-pulse dark:text-zinc-400">
             Đang tải cứu hộ…
           </p>
         ) : board.isError ? (
@@ -104,7 +104,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
             <button
               type="button"
               onClick={() => void board.refetch()}
-              className="mx-auto mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 dark:border-zinc-700 dark:text-zinc-200"
+              className="mx-auto mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 dark:border-zinc-700 dark:text-zinc-200"
             >
               <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
               Thử lại
@@ -132,11 +132,11 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                     {issueLabel(rescue.issueType)}
                     {rescue.priority === "high" ? " · Ưu tiên" : ""}
                   </p>
-                  <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+                  <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">
                     {rescue.address ?? "Chưa rõ vị trí"} ·{" "}
                     {rescue.vehiclePlate ?? ""}
                   </p>
-                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                     {rescue.customerName} · {rescue.customerPhone}
                     {rescue.assignedMechanicName
                       ? ` · Thợ: ${rescue.assignedMechanicName}`
@@ -148,7 +148,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                     type="button"
                     onClick={() => setSelectedId(rescue.requestId)}
                     aria-label={`Xem chi tiết cứu hộ của ${rescue.customerName ?? "khách"}`}
-                    className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] sm:max-w-44 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                    className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] sm:max-w-44 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
                   >
                     <FiEye aria-hidden="true" className="h-4 w-4" />
                     Xem chi tiết
@@ -156,7 +156,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                   <a
                     href={`tel:${(rescue.customerPhone ?? "").replace(/\s/g, "")}`}
                     aria-label={`Gọi ${rescue.customerName ?? "khách"}`}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-300 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-500 text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
                     <FiPhone aria-hidden="true" className="h-4 w-4" />
                   </a>
@@ -185,7 +185,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
               scroll={false}
               onClick={scrollToPageTop}
               aria-label="Trang trước"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
@@ -195,7 +195,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
               type="button"
               disabled
               aria-label="Trang trước"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
             >
               <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
               Trước
@@ -210,7 +210,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
                 if (nextCursor) recordNext(nextCursor);
               }}
               aria-label="Trang sau"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               Sau
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />
@@ -220,7 +220,7 @@ export function RescueBoard({ status }: { status: RescueBoardTab }) {
               type="button"
               disabled
               aria-label="Trang sau"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
             >
               {board.isFetching ? "Đang tải…" : "Sau"}
               <FiChevronRight aria-hidden="true" className="h-4 w-4" />

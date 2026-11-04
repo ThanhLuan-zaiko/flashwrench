@@ -29,8 +29,8 @@ export function StockPager({
   const buttons = pageButtons(page, totalPages);
   const base =
     "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98]";
-  const idle = `${base} border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800`;
-  const active = `${base} border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900`;
+  const idle = `${base} border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800`;
+  const active = `${base} border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]`;
   const nav = `${idle} gap-1 disabled:cursor-not-allowed disabled:opacity-40`;
 
   return (
@@ -40,7 +40,7 @@ export function StockPager({
     >
       <p
         aria-live="polite"
-        className="text-xs text-zinc-500 dark:text-zinc-400"
+        className="text-xs text-zinc-600 dark:text-zinc-400"
       >
         Trang {page}/{totalPages} · Hiển thị {from}–{to} / {total} mục
       </p>
@@ -73,7 +73,7 @@ export function StockPager({
             <span
               key={`ellipsis-${buttons[index + 1]}`}
               aria-hidden="true"
-              className="px-1 text-xs text-zinc-400 dark:text-zinc-500"
+              className="px-1 text-xs text-zinc-600 dark:text-zinc-400"
             >
               …
             </span>

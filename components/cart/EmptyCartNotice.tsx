@@ -31,7 +31,7 @@ export function EmptyCartNotice() {
         <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Giỏ hàng đang trống
         </p>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           Thêm ắc quy, dầu nhớt hay bóng đèn vào giỏ để đặt hàng.
         </p>
         <Link

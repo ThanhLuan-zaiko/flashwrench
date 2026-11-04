@@ -31,7 +31,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
               className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]"
             />
           ) : (
-            <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-700">
+            <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-400">
               <FiImage aria-hidden="true" className="h-8 w-8" />
             </span>
           )}
@@ -40,11 +40,11 @@ export function CategoryCard({ category }: CategoryCardProps) {
           <span className="text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
             {category.name}
           </span>
-          <span className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <span className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
             {category.serviceCount} dịch vụ
           </span>
           {category.description ? (
-            <span className="line-clamp-3 text-sm text-zinc-600 dark:text-zinc-400">
+            <span className="line-clamp-3 text-sm text-zinc-800 dark:text-zinc-400">
               {category.description}
             </span>
           ) : null}

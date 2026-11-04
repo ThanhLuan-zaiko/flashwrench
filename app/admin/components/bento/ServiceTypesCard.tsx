@@ -14,7 +14,7 @@ export function ServiceTypesCard() {
           />
           Loại hình sửa chữa
         </h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Bật hoặc tắt từng loại hình cung cấp
         </p>
       </div>
@@ -28,21 +28,21 @@ export function ServiceTypesCard() {
             >
               <Icon
                 aria-hidden="true"
-                className="h-5 w-5 shrink-0 text-zinc-600 dark:text-zinc-300"
+                className="h-5 w-5 shrink-0 text-zinc-800 dark:text-zinc-300"
               />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                   {group.title}
                 </span>
-                <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
                   {group.hint}
                 </span>
               </span>
               <span className="flex shrink-0 flex-col items-end gap-1">
-                <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                   Đang áp dụng
                 </span>
-                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                <span className="text-xs text-zinc-600 dark:text-zinc-400">
                   {group.priceHint}
                 </span>
               </span>

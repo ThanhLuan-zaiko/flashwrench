@@ -2,6 +2,13 @@
 
 // Right half of the campaign dialog: scope, issuance limits, the optional
 // active window and the dispatcher grant cap.
+import { useCallback } from "react";
+import { DateTimeDropdown } from "@/components/ui/DateTimeDropdown";
+import {
+  quarterHourTimes,
+  splitDateTime,
+  withExtraTimes,
+} from "@/components/ui/date-time-dropdown.utils";
 import { fieldError } from "../services/catalog-errors";
 import { SelectDropdown } from "../services/SelectDropdown";
 import type { CampaignFieldsProps } from "./CampaignIdentityFields";
@@ -12,11 +19,24 @@ import {
 } from "./campaign-fields";
 import { SCOPE_OPTIONS } from "./voucher-format";
 
+const ALL_DAY_TIMES = quarterHourTimes();
+
 export function CampaignRuleFields({
   form,
   error,
   onSet,
 }: CampaignFieldsProps) {
+  // Times saved off the quarter-hour grid stay selectable.
+  const startClock = splitDateTime(form.startAt).time;
+  const endClock = splitDateTime(form.endAt).time;
+  const startTimes = useCallback(
+    () => withExtraTimes(ALL_DAY_TIMES, startClock),
+    [startClock],
+  );
+  const endTimes = useCallback(
+    () => withExtraTimes(ALL_DAY_TIMES, "23:59", endClock),
+    [endClock],
+  );
   return (
     <>
       <SelectDropdown
@@ -68,7 +88,7 @@ export function CampaignRuleFields({
           maxLength={24}
           className={`${CAMPAIGN_INPUT} font-mono uppercase`}
         />
-        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
           Khách đã đăng nhập gõ mã này ở bước đặt lịch hoặc thanh toán để nhận
           voucher và dùng ngay. Để trống nếu chỉ phát tự động hoặc phát tay.
         </span>
@@ -78,12 +98,16 @@ export function CampaignRuleFields({
         label="Bắt đầu"
         error={fieldError(error, "startAt")}
       >
-        <input
+        <DateTimeDropdown
           id="campaign-start"
-          type="datetime-local"
           value={form.startAt}
-          onChange={(e) => onSet("startAt", e.target.value)}
-          className={CAMPAIGN_INPUT}
+          timesFor={startTimes}
+          defaultTime="00:00"
+          clearable
+          stacked
+          placeholder="Không giới hạn"
+          error={Boolean(fieldError(error, "startAt"))}
+          onChange={(v) => onSet("startAt", v)}
         />
       </CampaignField>
       <CampaignField
@@ -91,12 +115,16 @@ export function CampaignRuleFields({
         label="Kết thúc"
         error={fieldError(error, "endAt")}
       >
-        <input
+        <DateTimeDropdown
           id="campaign-end"
-          type="datetime-local"
           value={form.endAt}
-          onChange={(e) => onSet("endAt", e.target.value)}
-          className={CAMPAIGN_INPUT}
+          timesFor={endTimes}
+          defaultTime="23:59"
+          clearable
+          stacked
+          placeholder="Không giới hạn"
+          error={Boolean(fieldError(error, "endAt"))}
+          onChange={(v) => onSet("endAt", v)}
         />
       </CampaignField>
       <div className={`${CAMPAIGN_LABEL} sm:col-span-2`}>
@@ -109,7 +137,7 @@ export function CampaignRuleFields({
             type="checkbox"
             checked={form.allowDispatcherGrant}
             onChange={(e) => onSet("allowDispatcherGrant", e.target.checked)}
-            className="h-4 w-4 accent-[#FACC15] dark:accent-white"
+            className="h-4 w-4 accent-[#FB923C] dark:accent-white"
           />
           Cho điều phối phát voucher của chiến dịch này
         </label>

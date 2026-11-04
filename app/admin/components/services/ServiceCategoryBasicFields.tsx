@@ -33,7 +33,7 @@ export function ServiceCategoryBasicFields({
   void slugTouched;
   return (
     <>
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Tên loại hình
         <input
           value={name}
@@ -50,7 +50,7 @@ export function ServiceCategoryBasicFields({
           </span>
         )}
       </label>
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Mã định danh
         <span className="flex gap-2">
           <input
@@ -65,7 +65,7 @@ export function ServiceCategoryBasicFields({
           <button
             type="button"
             onClick={onRegenSlug}
-            className="flex h-11 shrink-0 items-center rounded-xl border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex h-11 shrink-0 items-center rounded-xl border border-zinc-600 px-3 text-xs font-semibold text-[#111111] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Tạo từ tên
           </button>
@@ -76,7 +76,7 @@ export function ServiceCategoryBasicFields({
           </span>
         )}
       </label>
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Icon (tùy chọn)
         <input
           value={icon}

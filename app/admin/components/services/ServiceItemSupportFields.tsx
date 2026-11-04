@@ -22,13 +22,13 @@ export function ServiceItemSupportFields({
           type="checkbox"
           checked={isHomeSupported}
           onChange={(e) => onHomeSupported(e.target.checked)}
-          className="h-5 w-5 shrink-0 accent-[#FACC15] dark:accent-white"
+          className="h-5 w-5 shrink-0 accent-[#FB923C] dark:accent-white"
         />
         <span className="min-w-0">
-          <span className="block text-xs font-semibold text-zinc-700 dark:text-zinc-200">
+          <span className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
             Hỗ trợ tại nhà
           </span>
-          <span className="block text-[11px] font-normal text-zinc-500 dark:text-zinc-400">
+          <span className="block text-xs font-normal text-zinc-600 dark:text-zinc-400">
             Thợ đến tận nơi sửa chữa
           </span>
         </span>
@@ -38,13 +38,13 @@ export function ServiceItemSupportFields({
           type="checkbox"
           checked={isEmergencySupported}
           onChange={(e) => onEmergencySupported(e.target.checked)}
-          className="h-5 w-5 shrink-0 accent-[#FACC15] dark:accent-white"
+          className="h-5 w-5 shrink-0 accent-[#FB923C] dark:accent-white"
         />
         <span className="min-w-0">
-          <span className="block text-xs font-semibold text-zinc-700 dark:text-zinc-200">
+          <span className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
             Hỗ trợ cứu hộ
           </span>
-          <span className="block text-[11px] font-normal text-zinc-500 dark:text-zinc-400">
+          <span className="block text-xs font-normal text-zinc-600 dark:text-zinc-400">
             Nhận ca khẩn cấp ngoài giờ
           </span>
         </span>

@@ -20,10 +20,10 @@ export function RescueRow() {
           24/7
         </p>
         <div className="min-w-0">
-          <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
             Cứu hộ khẩn cấp
           </p>
-          <p className="mt-2 max-w-md text-base text-zinc-700 dark:text-zinc-300">
+          <p className="mt-2 max-w-md text-base text-zinc-800 dark:text-zinc-300">
             Hết bình, thủng lốp, chết máy giữa đường? Thợ trực nhận yêu cầu cả
             ngày lẫn đêm. Giá mở cửa, phí theo km và phụ phí ban đêm hiển thị
             trước khi bạn xác nhận.

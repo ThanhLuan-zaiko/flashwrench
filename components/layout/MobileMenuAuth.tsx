@@ -20,7 +20,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
 
   if (me.isPending) {
     return (
-      <p className="flex items-center justify-center gap-2 rounded-lg border border-zinc-200 px-4 py-3 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+      <p className="flex items-center justify-center gap-2 rounded-lg border border-zinc-200 px-4 py-3 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
         <FiLoader
           aria-hidden="true"
           className="h-4 w-4 motion-safe:animate-spin"
@@ -35,7 +35,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
       <Link
         href={LOGIN_HREF}
         onClick={onNavigate}
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-3 text-center text-base font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+        className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-center text-base font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         <FiLogIn aria-hidden="true" className="h-5 w-5 shrink-0" />
         {LOGIN_LABEL}
@@ -64,7 +64,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
             {user.fullName}
           </span>
           {contact && (
-            <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
               {contact}
             </span>
           )}
@@ -73,7 +73,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
       <Link
         href="/account"
         onClick={onNavigate}
-        className="flex items-center justify-center gap-2 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+        className="flex items-center justify-center gap-2 rounded-lg border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         <FiUser aria-hidden="true" className="h-4 w-4 shrink-0" />
         Thông tin tài khoản
@@ -82,7 +82,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
         <Link
           href={roleLink.href}
           onClick={onNavigate}
-          className="flex items-center justify-center gap-2 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          className="flex items-center justify-center gap-2 rounded-lg border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           <RoleIcon aria-hidden="true" className="h-4 w-4 shrink-0" />
           {roleLink.label}
@@ -92,7 +92,7 @@ export function MobileMenuAuth({ onNavigate }: MobileMenuAuthProps) {
         type="button"
         disabled={logout.isPending}
         onClick={handleLogout}
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors duration-200 disabled:opacity-60 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         {logout.isPending ? (
           <FiLoader

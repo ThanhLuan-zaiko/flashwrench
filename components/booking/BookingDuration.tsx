@@ -8,7 +8,7 @@ export function BookingDuration({
 }) {
   if (!durationMin || durationMin <= 0) return null;
   return (
-    <p className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+    <p className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
       <FiClock aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
       Thời lượng dự kiến: {formatDuration(durationMin)}
     </p>

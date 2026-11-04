@@ -33,7 +33,7 @@ function paymentHint(
 }
 
 const ROW = "flex items-baseline justify-between gap-3 text-[13px]";
-const ROW_LABEL = "text-zinc-500 dark:text-zinc-400";
+const ROW_LABEL = "text-zinc-600 dark:text-zinc-400";
 const ROW_VALUE = "font-semibold text-zinc-900 dark:text-zinc-100";
 
 // Order totals plus the submit button. The fee mirrors the server-side
@@ -93,7 +93,7 @@ export function CheckoutSummary({
           {formatVnd(payable)}
         </span>
       </div>
-      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         {paymentHint(fulfillment, paymentMethod)}
       </p>
       <div
@@ -103,7 +103,7 @@ export function CheckoutSummary({
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex min-h-12 w-full items-center justify-center gap-1.5 md:w-auto md:self-start rounded-xl bg-[#111111] px-4 py-2.5 text-[15px] font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-1.5 md:w-auto md:self-start rounded-xl px-4 py-2.5 text-[15px] font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           {submitting && (
             <FiLoader
@@ -116,7 +116,7 @@ export function CheckoutSummary({
       </div>
       <Link
         href="/cart"
-        className="hidden items-center justify-center gap-1.5 text-xs font-semibold text-zinc-600 transition-colors duration-200 hover:text-zinc-900 md:flex dark:text-zinc-400 dark:hover:text-zinc-100"
+        className="hidden items-center justify-center gap-1.5 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:text-zinc-900 md:flex dark:text-zinc-400 dark:hover:text-zinc-100"
       >
         <FiArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
         Quay lại giỏ hàng

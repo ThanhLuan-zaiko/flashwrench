@@ -43,7 +43,7 @@ export function ActivityHeatmapCard({
             <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
               Lịch làm việc 12 tuần
             </h3>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+            <p className="text-xs text-zinc-800 dark:text-zinc-400">
               Mỗi ô một ngày · càng đậm càng nhiều đơn
             </p>
           </div>
@@ -53,7 +53,7 @@ export function ActivityHeatmapCard({
             label={`${total} đơn hoàn thành trong 12 tuần gần nhất`}
             className="h-36 w-full max-w-[360px]"
           />
-          <div className="flex items-center gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400">
+          <div className="flex items-center gap-1.5 text-xs text-zinc-800 dark:text-zinc-400">
             Ít
             {LEGEND_CLASSES.map((className) => (
               <span
@@ -68,7 +68,7 @@ export function ActivityHeatmapCard({
         <div className="grid flex-1 grid-cols-2 content-center gap-x-6 gap-y-4">
           {facts.map((fact) => (
             <div key={fact.label}>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+              <p className="text-xs text-zinc-800 dark:text-zinc-400">
                 {fact.label}
               </p>
               <p className="mt-0.5 text-xl font-extrabold text-[#111111] sm:text-2xl dark:text-zinc-50">

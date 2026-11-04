@@ -90,14 +90,14 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
             {issueLabel(rescue.issueType)}
             {rescue.priority === "high" ? " · Ưu tiên" : ""}
           </p>
-          <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">
             {rescue.address ?? "Chưa rõ vị trí"} · {rescue.vehiclePlate ?? ""}
           </p>
         </div>
         {offering && secondsLeft !== null && (
           <p
             aria-live="polite"
-            className="flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-bold text-zinc-700 tabular-nums dark:border-zinc-700 dark:text-zinc-200"
+            className="flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-bold text-zinc-800 tabular-nums dark:border-zinc-700 dark:text-zinc-200"
           >
             <span
               aria-hidden="true"
@@ -107,7 +107,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
           </p>
         )}
         {rescue.status === "en_route" && rescue.etaMin !== null && (
-          <p className="shrink-0 rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-bold text-zinc-700 tabular-nums dark:border-zinc-700 dark:text-zinc-200">
+          <p className="shrink-0 rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-bold text-zinc-800 tabular-nums dark:border-zinc-700 dark:text-zinc-200">
             ~{rescue.etaMin} phút
           </p>
         )}
@@ -116,7 +116,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <a
           href={`tel:${(rescue.customerPhone ?? "").replace(/\s/g, "")}`}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
           <FiPhone aria-hidden="true" className="h-4 w-4" />
           {rescue.customerPhone ?? "Gọi khách"}
@@ -129,7 +129,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
               onClick={() =>
                 action.mutate({ requestId: rescue.requestId, action: "accept" })
               }
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               <FiCheck aria-hidden="true" className="h-4 w-4" />
               Nhận cứu hộ
@@ -143,7 +143,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
                   action: "decline",
                 })
               }
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white"
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white"
             >
               <FiX aria-hidden="true" className="h-4 w-4" />
               Từ chối
@@ -160,7 +160,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
                 action: step.action,
               })
             }
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {(() => {
               const StepIcon =
@@ -174,7 +174,7 @@ export function RescueInboxCard({ rescue }: { rescue: RescueDetail }) {
         )}
       </div>
       {step && (
-        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
           {step.hint}
         </p>
       )}

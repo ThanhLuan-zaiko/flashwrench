@@ -27,7 +27,7 @@ export function DispatchPulse() {
 
   if (pulse.isError || !pulse.data) {
     return (
-      <p className="rounded-2xl border border-zinc-200 px-4 py-3 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+      <p className="rounded-2xl border border-zinc-200 px-4 py-3 text-sm text-zinc-800 dark:border-zinc-800 dark:text-zinc-400">
         Không tải được nhịp vận hành. Danh sách đơn bên dưới vẫn dùng được.
       </p>
     );
@@ -54,7 +54,7 @@ export function DispatchPulse() {
         <PulseRescueList rescues={data.openRescues} total={openTotal} />
       </div>
       {data.truncated && (
-        <p className="text-xs text-zinc-600 dark:text-zinc-400">
+        <p className="text-xs text-zinc-800 dark:text-zinc-400">
           Số liệu đang hiển thị một phần vì lượng đơn trong tháng rất lớn.
         </p>
       )}

@@ -11,7 +11,7 @@ type CartItemRowProps = {
 };
 
 const STEP_BUTTON_CLASSES =
-  "flex h-8 w-8 items-center justify-center text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-40 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  "flex h-8 w-8 items-center justify-center text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-40 dark:text-zinc-200 dark:hover:bg-zinc-800";
 
 // One cart line: thumbnail, name, an inline qty stepper clamped to stock,
 // remove, and the line total. Unavailable lines (deleted or hidden parts)
@@ -36,7 +36,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
         href={`/products/${encodeURIComponent(item.partSlug)}`}
         aria-hidden="true"
         tabIndex={-1}
-        className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-900 dark:text-zinc-600"
+        className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-600"
       >
         {item.partImage ? (
           // biome-ignore lint/performance/noImgElement: cart thumbnails served immutable from the media store.
@@ -60,7 +60,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
             {item.partName}
           </p>
           {(!item.available || item.stockQty < item.qty) && (
-            <p className="mt-0.5 text-[11px] text-red-600 dark:text-red-400">
+            <p className="mt-0.5 text-xs text-red-600 dark:text-red-400">
               {!item.available ? "Không còn bán" : `Chỉ còn ${item.stockQty}`}
             </p>
           )}

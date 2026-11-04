@@ -89,7 +89,7 @@ export function OrdersQueueCard({
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Đơn linh kiện
           </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             {items.length} đơn trên trang này · {formatMonthKey(appliedMonth)}
           </p>
         </div>
@@ -110,7 +110,7 @@ export function OrdersQueueCard({
         >
           <FiLoader
             aria-hidden="true"
-            className="h-8 w-8 text-zinc-400 motion-safe:animate-spin dark:text-zinc-500"
+            className="h-8 w-8 text-zinc-600 motion-safe:animate-spin dark:text-zinc-400"
           />
           <span className="sr-only">Đang tải danh sách đơn</span>
         </div>
@@ -119,7 +119,7 @@ export function OrdersQueueCard({
         <div className="mt-4 flex flex-col items-center py-8 text-center">
           <FiAlertCircle
             aria-hidden="true"
-            className="h-10 w-10 text-zinc-400"
+            className="h-10 w-10 text-zinc-600 dark:text-zinc-400"
           />
           <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
             Không tải được danh sách đơn
@@ -127,7 +127,7 @@ export function OrdersQueueCard({
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="mt-4 flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="mt-4 flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Tải lại
           </button>

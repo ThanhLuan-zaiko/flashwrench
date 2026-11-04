@@ -51,7 +51,7 @@ export function ProductDetail({ slug }: { slug: string }) {
           <button
             type="button"
             onClick={() => void partQuery.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử tải lại

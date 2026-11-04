@@ -49,7 +49,7 @@ export function GuestInvoicePanel({
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
             {KIND_TITLES[invoice.kind]}
           </h2>
-          <p className="mt-0.5 font-mono text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 font-mono text-xs text-zinc-600 dark:text-zinc-400">
             {KIND_LABELS[invoice.kind]} · Mã {invoice.reference}
           </p>
         </div>
@@ -98,7 +98,7 @@ export function GuestInvoicePanel({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[420px] border-collapse text-sm">
           <thead>
-            <tr className="border-b border-zinc-200 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            <tr className="border-b border-zinc-200 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
               <th scope="col" className="py-2 pr-3">
                 Hạng mục
               </th>
@@ -119,10 +119,10 @@ export function GuestInvoicePanel({
                 <td className="py-2 pr-3 text-zinc-800 dark:text-zinc-200">
                   {line.name}
                 </td>
-                <td className="py-2 px-3 text-right text-zinc-600 dark:text-zinc-400">
+                <td className="py-2 px-3 text-right text-zinc-800 dark:text-zinc-400">
                   {line.quantity}
                 </td>
-                <td className="py-2 px-3 text-right text-zinc-600 dark:text-zinc-400">
+                <td className="py-2 px-3 text-right text-zinc-800 dark:text-zinc-400">
                   {formatVnd(line.unitPrice)}
                 </td>
                 <td className="py-2 pl-3 text-right font-medium text-zinc-900 dark:text-zinc-50">
@@ -155,7 +155,7 @@ export function GuestInvoicePanel({
 
       {invoice.payments.length > 0 && (
         <div className="flex flex-col gap-2 border-t border-zinc-200 pt-3 dark:border-zinc-800">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
             Lịch sử thanh toán
           </h3>
           <ul className="flex flex-col gap-1 text-sm">
@@ -164,7 +164,7 @@ export function GuestInvoicePanel({
                 key={payment.id}
                 className="flex flex-wrap items-baseline justify-between gap-2"
               >
-                <span className="text-zinc-700 dark:text-zinc-300">
+                <span className="text-zinc-800 dark:text-zinc-300">
                   {paymentMethodLabel(payment.method)}
                   {payment.paidAt ? ` · ${payment.paidAt}` : ""}
                 </span>
@@ -178,7 +178,7 @@ export function GuestInvoicePanel({
       )}
 
       {invoice.notes && (
-        <p className="border-t border-zinc-200 pt-3 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="border-t border-zinc-200 pt-3 text-sm text-zinc-800 dark:border-zinc-800 dark:text-zinc-400">
           Ghi chú: {invoice.notes}
         </p>
       )}
@@ -189,7 +189,7 @@ export function GuestInvoicePanel({
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-xs text-zinc-500 dark:text-zinc-400">{label}</dt>
+      <dt className="text-xs text-zinc-600 dark:text-zinc-400">{label}</dt>
       <dd className="truncate font-medium text-zinc-900 dark:text-zinc-50">
         {value}
       </dd>
@@ -212,7 +212,7 @@ function Row({
         className={
           strong
             ? "font-semibold text-zinc-900 dark:text-zinc-50"
-            : "text-zinc-600 dark:text-zinc-400"
+            : "text-zinc-800 dark:text-zinc-400"
         }
       >
         {label}
@@ -221,7 +221,7 @@ function Row({
         className={
           strong
             ? "font-semibold text-zinc-900 dark:text-zinc-50"
-            : "text-zinc-700 dark:text-zinc-300"
+            : "text-zinc-800 dark:text-zinc-300"
         }
       >
         {value}

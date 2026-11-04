@@ -44,18 +44,18 @@ export function ProductQuickViewDialog({
         type="button"
         aria-label="Đóng chi tiết sản phẩm"
         onClick={onClose}
-        className="absolute inset-0 bg-zinc-950/50"
+        className="absolute inset-0 bg-[#111111]/50"
       />
       <div className="relative flex max-h-[92dvh] w-full max-w-lg flex-col overflow-clip rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+            <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
               {part.categoryName} · {part.brand}
             </p>
             <h2 className="mt-0.5 break-words text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               {part.name}
             </h2>
-            <p className="mt-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
               SKU {part.sku}
               {part.soldCount > 0 && ` · Đã bán ${part.soldCount}`}
             </p>
@@ -64,7 +64,7 @@ export function ProductQuickViewDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -86,16 +86,16 @@ export function ProductQuickViewDialog({
                 </span>
                 {discount > 0 && part.comparePrice !== null && (
                   <>
-                    <span className="text-sm text-zinc-400 line-through dark:text-zinc-500">
+                    <span className="text-sm text-zinc-600 line-through dark:text-zinc-400">
                       {formatVnd(part.comparePrice)}
                     </span>
-                    <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-semibold text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+                    <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
                       -{discount}%
                     </span>
                   </>
                 )}
               </p>
-              <p className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+              <p className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                 <span className="flex items-center gap-1 rounded-full border border-zinc-200 px-2 py-1 dark:border-zinc-800">
                   <FiPackage aria-hidden="true" className="h-3 w-3" />
                   {stockLabel(part)}
@@ -113,10 +113,10 @@ export function ProductQuickViewDialog({
               aria-label="Mô tả sản phẩm"
               className="flex flex-col gap-1.5"
             >
-              <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+              <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
                 Mô tả
               </p>
-              <p className="text-sm leading-relaxed whitespace-pre-line text-zinc-600 dark:text-zinc-300">
+              <p className="text-sm leading-relaxed whitespace-pre-line text-zinc-800 dark:text-zinc-300">
                 {part.description || "Sản phẩm này chưa có mô tả chi tiết."}
               </p>
             </section>
@@ -126,7 +126,7 @@ export function ProductQuickViewDialog({
                 aria-label="Thông số kỹ thuật"
                 className="flex flex-col gap-1.5"
               >
-                <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
                   Thông số kỹ thuật
                 </p>
                 <dl className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -135,7 +135,7 @@ export function ProductQuickViewDialog({
                       key={key}
                       className="flex items-baseline justify-between gap-3 py-1.5"
                     >
-                      <dt className="text-xs text-zinc-500 dark:text-zinc-400">
+                      <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                         {key}
                       </dt>
                       <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -152,14 +152,14 @@ export function ProductQuickViewDialog({
                 aria-label="Xe tương thích"
                 className="flex flex-col gap-1.5"
               >
-                <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
                   Xe tương thích
                 </p>
                 <ul className="flex flex-wrap gap-1.5">
                   {part.carModels.map((model) => (
                     <li
                       key={model}
-                      className="rounded-full border border-zinc-200 px-2.5 py-1 text-[11px] font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300"
+                      className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300"
                     >
                       {model}
                     </li>
@@ -178,7 +178,7 @@ export function ProductQuickViewDialog({
           <Link
             href={detailHref}
             aria-label={`Xem trang chi tiết ${part.name}`}
-            className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Xem trang chi tiết
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

@@ -34,7 +34,7 @@ export function ServiceItemPricingFields({
   return (
     <>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Giá (VND)
           <input
             value={basePrice}
@@ -60,7 +60,7 @@ export function ServiceItemPricingFields({
             unitName="đơn vị tính"
           />
         </div>
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Thời lượng (phút)
           <input
             value={durationMin}
@@ -75,7 +75,7 @@ export function ServiceItemPricingFields({
           )}
         </label>
       </div>
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Mô tả
         <textarea
           value={description}

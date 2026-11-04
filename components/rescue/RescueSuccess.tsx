@@ -30,7 +30,7 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
             <FiCheckCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
             Đã gửi yêu cầu cứu hộ
           </p>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-zinc-800 dark:text-zinc-400">
             Giữ trang này mở để theo dõi thợ tới nơi. Thợ trực cũng sẽ gọi lại
             số {created.customerPhone} để xác nhận vị trí và báo giá.
           </p>
@@ -47,7 +47,7 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
       <RescueTracker requestId={created.requestId} />
       <dl className="grid grid-cols-1 gap-x-4 gap-y-2 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
         <div>
-          <dt className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+          <dt className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
             Sự cố
           </dt>
           <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
@@ -55,7 +55,7 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
           </dd>
         </div>
         <div>
-          <dt className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+          <dt className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
             Biển số
           </dt>
           <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
@@ -63,7 +63,7 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
           </dd>
         </div>
         <div className="sm:col-span-2">
-          <dt className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+          <dt className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
             Vị trí xe
           </dt>
           <dd className="font-medium text-zinc-900 dark:text-zinc-50">
@@ -74,7 +74,7 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
       <div className="flex flex-col gap-2 sm:flex-row">
         <a
           href={`tel:${RESCUE_HOTLINE.replace(/\s/g, "")}`}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-4 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           <FiPhone aria-hidden="true" className="h-4 w-4" />
           Gọi hotline {RESCUE_HOTLINE}
@@ -82,7 +82,7 @@ export function RescueSuccess({ created, onNewRequest }: RescueSuccessProps) {
         <button
           type="button"
           onClick={onNewRequest}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
           <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
           Gửi yêu cầu khác

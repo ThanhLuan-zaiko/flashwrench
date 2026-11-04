@@ -53,7 +53,7 @@ export function BookingPriceSummary({
         <h2 className="text-base font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
           Tóm tắt lịch hẹn
         </h2>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
           {ready
             ? `${count} dịch vụ · Khoảng ${formatDuration(selection.durationMin)}`
             : count === 0
@@ -97,7 +97,7 @@ export function BookingPriceSummary({
           />
         ))}
       {ready && (
-        <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
           Phụ tùng phát sinh và phí di chuyển được xác nhận riêng cho cả lịch
           hẹn.
           {unitPricing &&

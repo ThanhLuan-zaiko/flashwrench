@@ -43,7 +43,7 @@ export function AuditFeedCard({
       {isPending && (
         <p
           aria-busy="true"
-          className="flex items-center justify-center gap-2 py-8 text-sm text-zinc-500 dark:text-zinc-400"
+          className="flex items-center justify-center gap-2 py-8 text-sm text-zinc-600 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -53,12 +53,12 @@ export function AuditFeedCard({
         </p>
       )}
       {isError && (
-        <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Không tải được nhật ký. Vui lòng thử lại.
         </p>
       )}
       {events && events.length === 0 && (
-        <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Chưa có sự kiện nào trong kỳ này.
         </p>
       )}
@@ -70,14 +70,14 @@ export function AuditFeedCard({
                 <span className="font-semibold">
                   {ACTION_LABELS[event.action ?? ""] ?? event.action ?? "—"}
                 </span>
-                <span className="text-zinc-500 dark:text-zinc-400">
+                <span className="text-zinc-600 dark:text-zinc-400">
                   {event.at
                     ? formatDateTime(event.at, { withZoneSuffix: false })
                     : "—"}
                   {formatVnd(event.amount)}
                 </span>
               </p>
-              <p className="mt-0.5 text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 text-zinc-600 dark:text-zinc-400">
                 {event.refType ?? ""} {event.refId ?? ""}
                 {event.actorId ? ` · bởi ${event.actorId}` : ""}
                 {event.detail ? ` · ${event.detail}` : ""}

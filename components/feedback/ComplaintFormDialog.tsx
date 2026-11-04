@@ -42,7 +42,7 @@ export function ComplaintFormDialog({
         type="button"
         aria-label="Đóng"
         onClick={onClose}
-        className="absolute inset-0 bg-zinc-950/50"
+        className="absolute inset-0 bg-[#111111]/50"
       />
       <div className="relative flex max-h-[90dvh] w-full max-w-md flex-col overflow-clip rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
@@ -53,7 +53,7 @@ export function ComplaintFormDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -113,7 +113,7 @@ function ComplaintFields({
     errors[name] ? (
       <p
         role="alert"
-        className="text-[11px] font-medium text-red-600 dark:text-red-400"
+        className="text-xs font-medium text-red-600 dark:text-red-400"
       >
         {errors[name]}
       </p>
@@ -128,13 +128,13 @@ function ComplaintFields({
       }}
     >
       {target?.refLabel && (
-        <p className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+        <p className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           Liên quan đến: {target.refLabel}
         </p>
       )}
 
       <label className="flex flex-col gap-1">
-        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+        <span className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
           Tiêu đề
         </span>
         <input
@@ -143,13 +143,13 @@ function ComplaintFields({
           onChange={(event) => setSubject(event.target.value)}
           maxLength={120}
           placeholder="Tóm tắt vấn đề"
-          className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
       </label>
       {field("subject")}
 
       <label className="flex flex-col gap-1">
-        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+        <span className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
           Nội dung chi tiết
         </span>
         <textarea
@@ -158,7 +158,7 @@ function ComplaintFields({
           maxLength={2000}
           rows={5}
           placeholder="Mô tả rõ sự việc để đội ngũ xử lý nhanh hơn"
-          className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
       </label>
       {field("body")}
@@ -168,7 +168,7 @@ function ComplaintFields({
       <button
         type="submit"
         disabled={create.isPending}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         {create.isPending && (
           <FiLoader

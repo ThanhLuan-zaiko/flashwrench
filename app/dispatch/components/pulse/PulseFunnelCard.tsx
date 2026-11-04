@@ -15,7 +15,7 @@ export function PulseFunnelCard({ pulse }: { pulse: DispatchPulse }) {
       <h3 className="text-base font-extrabold text-[#111111] dark:text-zinc-50">
         Phễu trạng thái
       </h3>
-      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+      <p className="text-xs text-zinc-800 dark:text-zinc-400">
         Đơn hẹn trong ngày · {pulse.cancelledToday} huỷ hoặc vắng mặt
       </p>
       <div className="mt-4 flex gap-3">
@@ -23,7 +23,7 @@ export function PulseFunnelCard({ pulse }: { pulse: DispatchPulse }) {
           {pulse.funnel.map((step) => (
             <li
               key={step.stage}
-              className="flex h-12 items-center text-[13px] font-semibold text-zinc-700 dark:text-zinc-300"
+              className="flex h-12 items-center text-[13px] font-semibold text-zinc-800 dark:text-zinc-300"
             >
               {FUNNEL_LABELS[step.stage]}
             </li>
@@ -45,7 +45,7 @@ export function PulseFunnelCard({ pulse }: { pulse: DispatchPulse }) {
           ))}
         </ul>
       </div>
-      <p className="mt-auto pt-3 text-xs text-zinc-600 dark:text-zinc-400">
+      <p className="mt-auto pt-3 text-xs text-zinc-800 dark:text-zinc-400">
         Tỉ lệ hoàn tất:{" "}
         <b className="text-[#111111] dark:text-zinc-50">
           {formatRate(pulse.completionRate)}

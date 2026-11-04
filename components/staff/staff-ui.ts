@@ -1,19 +1,19 @@
-// Shared class strings for the yellow staff sidebar. The sidebar is a yellow
-// surface in both themes, so its controls use black text, a black active
-// state and a black focus ring.
+// Shared class strings for the orange staff sidebar. The sidebar is a orange
+// surface in both themes, so its controls use ink text, an ink active
+// state and an ink focus ring.
 
-export const STAFF_ON_YELLOW_FOCUS =
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15]";
+export const STAFF_ON_ORANGE_FOCUS =
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FB923C]";
 
 // Group rows: a full-width row with an icon and label. The selected row is a
-// black pill with white text; the others are bare on the yellow surface.
+// ink pill with white text; the others are bare on the orange surface.
 export const STAFF_NAV_ROW_BASE =
   "flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition-colors duration-200 motion-safe:active:scale-[0.99]";
 export const STAFF_NAV_ROW_IDLE = "text-[#111111] hover:bg-[#111111]/10";
 export const STAFF_NAV_ROW_ACTIVE = "bg-[#111111] text-white";
 
 // Section sub-links under the selected group. The current page gets a white
-// fill and a black outline, as the selected option chips do elsewhere.
+// fill and an ink outline, as the selected option chips do elsewhere.
 export const STAFF_SUB_LINK_BASE =
   "flex min-h-10 w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 motion-safe:active:scale-[0.99]";
 export const STAFF_SUB_LINK_IDLE = "border-transparent hover:bg-[#111111]/10";
@@ -36,7 +36,7 @@ export function staffTreeClass(collapsed: boolean): string {
 }
 
 // Bare square icon button in the sidebar header.
-export const STAFF_ICON_BUTTON = `flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 ${STAFF_ON_YELLOW_FOCUS}`;
+export const STAFF_ICON_BUTTON = `flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 ${STAFF_ON_ORANGE_FOCUS}`;
 
 // Content-side icon and avatar in the sticky top bar. The icon is bare
 // (no rounded tile), per the visual style rules.

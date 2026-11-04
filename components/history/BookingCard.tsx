@@ -43,7 +43,7 @@ export function BookingCard({
             <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">
               {booking.serviceNames.join(", ") || "Đơn sửa xe"}
             </p>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               {formatDateTime(booking.scheduledAt, {
                 timeZone: booking.timezone,
                 withZoneSuffix: false,
@@ -51,13 +51,13 @@ export function BookingCard({
             </p>
           </div>
           <span
-            className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${statusChipTone(booking.status)}`}
+            className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ${statusChipTone(booking.status)}`}
           >
             {STATUS_LABELS[booking.status]}
           </span>
         </div>
 
-        <div className="flex flex-col gap-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <div className="flex flex-col gap-0.5 text-xs text-zinc-600 dark:text-zinc-400">
           <p className="truncate">
             Thợ: {booking.mechanicName || "Đang tìm thợ"}
           </p>
@@ -67,7 +67,7 @@ export function BookingCard({
       </button>
 
       <div className="flex items-center justify-between gap-3 pb-3">
-        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="text-xs text-zinc-600 dark:text-zinc-400">
           {paymentStateLabel(booking.paymentState)}
         </span>
         <div className="flex items-center gap-3">

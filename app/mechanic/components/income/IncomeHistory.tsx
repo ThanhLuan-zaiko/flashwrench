@@ -51,7 +51,7 @@ export function IncomeHistory({
       >
         <FiLoader
           aria-hidden="true"
-          className="h-8 w-8 text-zinc-400 motion-safe:animate-spin dark:text-zinc-500"
+          className="h-8 w-8 text-zinc-600 motion-safe:animate-spin dark:text-zinc-400"
         />
         <span className="sr-only">Đang tải lịch sử giao dịch</span>
       </div>
@@ -60,14 +60,17 @@ export function IncomeHistory({
   if (isError) {
     return (
       <div className="mt-4 flex flex-col items-center py-8 text-center">
-        <FiAlertCircle aria-hidden="true" className="h-10 w-10 text-zinc-400" />
+        <FiAlertCircle
+          aria-hidden="true"
+          className="h-10 w-10 text-zinc-600 dark:text-zinc-400"
+        />
         <p className="mt-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Không tải được thu nhập
         </p>
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="mt-4 flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           Tải lại
         </button>
@@ -101,11 +104,11 @@ export function IncomeHistory({
                 <span className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                   {entry.customerName || "Khách hàng"} · {entry.vehiclePlate}
                 </span>
-                <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+                <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
                   {incomeStateLabel(entry.state)}
                 </span>
               </span>
-              <span className="mt-1 block text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="mt-1 block text-xs text-zinc-600 dark:text-zinc-400">
                 {entry.method ? `${entry.method} · ` : ""}
                 {formatShortDate(entry.stamp)}
               </span>
@@ -118,7 +121,7 @@ export function IncomeHistory({
                     : formatVnd(entry.total)}
                 </span>
                 {entry.state === "pending" && entry.received > 0 && (
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400">
                     Đã thu {formatVnd(entry.received)} /{" "}
                     {formatVnd(entry.total)}
                   </span>
@@ -128,7 +131,7 @@ export function IncomeHistory({
                 <button
                   type="button"
                   onClick={() => onCollect(entry)}
-                  className="flex min-h-[44px] items-center rounded-xl bg-[#FACC15] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                  className="flex min-h-[44px] items-center rounded-xl px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
                 >
                   Thu tiền
                 </button>
@@ -142,7 +145,7 @@ export function IncomeHistory({
           aria-label="Phân trang giao dịch"
           className="flex flex-wrap items-center justify-between gap-2 pt-3"
         >
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Hiển thị {range.start}–{range.end} trên {total} giao dịch
           </p>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -155,7 +158,7 @@ export function IncomeHistory({
                     disabled
                     aria-label={`Trang ${index + 1}`}
                     aria-current="page"
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#111111] bg-[#FACC15] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-white dark:bg-white dark:text-zinc-900"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#111111] bg-[#FB923C] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
                   >
                     {index + 1}
                   </button>
@@ -167,7 +170,7 @@ export function IncomeHistory({
                     onClick={scrollToPageTop}
                     prefetch
                     aria-label={`Trang ${index + 1}`}
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-600 px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
                   >
                     {index + 1}
                   </Link>
@@ -177,7 +180,7 @@ export function IncomeHistory({
         </nav>
       )}
       {truncated && (
-        <p className="pt-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="pt-2 text-xs text-zinc-600 dark:text-zinc-400">
           Chỉ hiển thị các giao dịch gần nhất; đơn cũ hơn vẫn được tính trong
           tổng đã thu.
         </p>

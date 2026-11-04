@@ -65,7 +65,7 @@ export function HomePromoList({
           />
         </div>
         {showAll ? (
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             {shown.length} ưu đãi đang chạy
           </p>
         ) : (

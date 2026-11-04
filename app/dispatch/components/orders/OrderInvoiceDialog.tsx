@@ -13,6 +13,8 @@ import { useDispatchOrderInvoice } from "@/hooks/dispatch-orders";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { formatDateTime } from "@/lib/datetime/format";
 
+const ROW_LABEL = "text-zinc-600 dark:text-zinc-400";
+
 type OrderInvoiceDialogProps = {
   orderId: string;
   onClose: () => void;
@@ -45,7 +47,7 @@ export function OrderInvoiceDialog({
         type="button"
         aria-label="Đóng hóa đơn"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div
         className={`relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
@@ -60,7 +62,7 @@ export function OrderInvoiceDialog({
               <h2 className="text-base font-bold tracking-tight text-[#111111] dark:text-zinc-50">
                 Hóa đơn bán linh kiện
               </h2>
-              <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                 FlashWrench · Xưởng sửa xe lưu động
               </p>
             </div>
@@ -69,14 +71,14 @@ export function OrderInvoiceDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng hóa đơn"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
 
         {query.isPending && (
-          <div className="mt-6 flex items-center gap-2 text-sm text-zinc-500">
+          <div className="mt-6 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
             <FiLoader
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
@@ -88,7 +90,7 @@ export function OrderInvoiceDialog({
           <div className="mt-6 flex flex-col items-center py-6 text-center">
             <FiAlertCircle
               aria-hidden="true"
-              className="h-8 w-8 text-zinc-400"
+              className="h-8 w-8 text-zinc-600 dark:text-zinc-400"
             />
             <p className="mt-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
               Không tải được hóa đơn
@@ -96,7 +98,7 @@ export function OrderInvoiceDialog({
             <button
               type="button"
               onClick={() => void query.refetch()}
-              className="mt-3 flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="mt-3 flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               Tải lại
             </button>
@@ -117,19 +119,19 @@ export function OrderInvoiceDialog({
                   {ORDER_STATUS_LABELS[order.status] ?? order.status}
                 </span>
               </div>
-              <p className="mt-1 text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-zinc-600 dark:text-zinc-400">
                 Ngày lập: {formatDateTime(order.createdAt)}
               </p>
             </section>
 
             <section aria-label="Khách hàng" className="text-xs">
-              <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">
+              <h3 className="font-semibold text-zinc-800 dark:text-zinc-300">
                 Khách hàng
               </h3>
               <p className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {order.customerName} · {order.customerPhone}
               </p>
-              <p className="mt-0.5 text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 text-zinc-600 dark:text-zinc-400">
                 {order.fulfillmentType === "pickup"
                   ? "Nhận tại xưởng"
                   : `Giao tận nơi · ${order.address?.fullText || "—"}`}
@@ -147,7 +149,7 @@ export function OrderInvoiceDialog({
                       <span className="block truncate text-xs font-semibold text-zinc-800 dark:text-zinc-200">
                         {item.partName} × {item.quantity}
                       </span>
-                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                      <span className="text-xs text-zinc-600 dark:text-zinc-400">
                         {item.sku} · {formatVnd(item.unitPrice)}/cái
                       </span>
                     </span>
@@ -159,15 +161,13 @@ export function OrderInvoiceDialog({
               </ul>
               <dl className="mt-2 space-y-1 text-xs">
                 <div className="flex justify-between">
-                  <dt className="text-zinc-500 dark:text-zinc-400">Tạm tính</dt>
+                  <dt className={ROW_LABEL}>Tạm tính</dt>
                   <dd className="font-medium text-zinc-800 dark:text-zinc-200">
                     {formatVnd(order.subtotal)}
                   </dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-zinc-500 dark:text-zinc-400">
-                    Phí giao hàng
-                  </dt>
+                  <dt className={ROW_LABEL}>Phí giao hàng</dt>
                   <dd className="font-medium text-zinc-800 dark:text-zinc-200">
                     {order.shippingFee > 0
                       ? formatVnd(order.shippingFee)
@@ -176,9 +176,7 @@ export function OrderInvoiceDialog({
                 </div>
                 {order.discount > 0 && (
                   <div className="flex justify-between">
-                    <dt className="text-zinc-500 dark:text-zinc-400">
-                      Giảm giá
-                    </dt>
+                    <dt className={ROW_LABEL}>Giảm giá</dt>
                     <dd className="font-medium text-zinc-800 dark:text-zinc-200">
                       −{formatVnd(order.discount)}
                     </dd>
@@ -199,14 +197,12 @@ export function OrderInvoiceDialog({
               aria-label="Thanh toán"
               className="border-t border-zinc-200 pt-3 text-xs dark:border-zinc-800"
             >
-              <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">
+              <h3 className="font-semibold text-zinc-800 dark:text-zinc-300">
                 Thanh toán
               </h3>
               <dl className="mt-1.5 space-y-1">
                 <div className="flex justify-between gap-3">
-                  <dt className="text-zinc-500 dark:text-zinc-400">
-                    Phương thức
-                  </dt>
+                  <dt className={ROW_LABEL}>Phương thức</dt>
                   <dd className="font-medium text-zinc-800 dark:text-zinc-200">
                     {PAYMENT_METHOD_LABELS[payment?.method ?? ""] ??
                       PAYMENT_METHOD_LABELS[order.paymentMethod] ??
@@ -214,9 +210,7 @@ export function OrderInvoiceDialog({
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="text-zinc-500 dark:text-zinc-400">
-                    Trạng thái
-                  </dt>
+                  <dt className={ROW_LABEL}>Trạng thái</dt>
                   <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
                     {PAYMENT_STATUS_LABELS[payment?.status ?? ""] ??
                       PAYMENT_STATUS_LABELS[order.paymentStatus] ??
@@ -224,17 +218,13 @@ export function OrderInvoiceDialog({
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="text-zinc-500 dark:text-zinc-400">
-                    Mã giao dịch
-                  </dt>
+                  <dt className={ROW_LABEL}>Mã giao dịch</dt>
                   <dd className="font-medium text-zinc-800 dark:text-zinc-200">
                     {payment?.providerRef ?? "—"}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="text-zinc-500 dark:text-zinc-400">
-                    Thời gian thanh toán
-                  </dt>
+                  <dt className={ROW_LABEL}>Thời gian thanh toán</dt>
                   <dd className="font-medium text-zinc-800 dark:text-zinc-200">
                     {formatDateTime(payment?.paidAt ?? null)}
                   </dd>

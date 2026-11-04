@@ -12,9 +12,9 @@ type DialogFooterProps = {
 
 const SUBMIT_TONE = {
   create:
-    "bg-green-700 text-white hover:bg-green-800 dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400",
+    "bg-green-700 text-white hover:bg-green-800 dark:bg-green-500 dark:text-[#111111] dark:hover:bg-green-400",
   update:
-    "bg-[#FACC15] text-[#111111] hover:bg-[#EAB308] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200",
+    "bg-[#FB923C] text-[#111111] hover:bg-[#F97316] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200",
 } as const;
 
 // Shared sticky action bar for tall dialogs. The panel is the only scroll
@@ -33,7 +33,7 @@ export function DialogFooter({
       <button
         type="button"
         onClick={onClose}
-        className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         Hủy bỏ
       </button>

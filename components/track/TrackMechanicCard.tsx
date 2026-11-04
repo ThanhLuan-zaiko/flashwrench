@@ -13,7 +13,7 @@ export function TrackMechanicCard({ name }: { name: string }) {
     >
       <span
         aria-hidden="true"
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FACC15] text-sm font-bold text-[#111111] dark:bg-zinc-100 dark:text-zinc-900"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FB923C] text-sm font-bold text-[#111111] dark:bg-[#FB923C] dark:text-[#111111]"
       >
         {initial}
       </span>
@@ -21,7 +21,7 @@ export function TrackMechanicCard({ name }: { name: string }) {
         <span className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">
           {name}
         </span>
-        <span className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+        <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
           Thợ phụ trách lịch hẹn của bạn
         </span>
       </span>

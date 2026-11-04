@@ -39,7 +39,7 @@ export function CatalogCoverField({
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         {label ??
           `Ảnh bìa (tối đa ${covers.max}${covers.max > 1 ? ", ảnh đầu là bìa chính" : ""})`}
       </span>
@@ -64,7 +64,7 @@ export function CatalogCoverField({
           onFiles={onFiles}
         />
       </div>
-      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+      <span className="text-xs text-zinc-600 dark:text-zinc-400">
         {hint ??
           "Ảnh chỉ tải lên khi bấm lưu. Gắn sao để chọn bìa, bấm cắt để sửa từng ảnh chờ."}
       </span>

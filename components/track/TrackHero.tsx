@@ -15,9 +15,9 @@ export function TrackHero({ stage, etaMin, detail }: TrackHeroProps) {
   return (
     <section
       aria-label="Trạng thái hiện tại"
-      className="bg-[#FACC15] px-4 pt-3 pb-16 text-[#111111] sm:rounded-3xl sm:px-6 sm:pt-6 lg:px-8 lg:pt-8 lg:pb-8"
+      className="bg-[#FB923C] px-4 pt-3 pb-16 text-[#111111] sm:rounded-3xl sm:px-6 sm:pt-6 lg:px-8 lg:pt-8 lg:pb-8"
     >
-      <p className="text-[11px] font-semibold tracking-[0.14em] text-[#111111]/70 uppercase">
+      <p className="text-xs font-semibold tracking-[0.14em] text-[#111111]/80 uppercase">
         {etaMin !== null ? label : "Trạng thái"}
       </p>
       {etaMin !== null ? (
@@ -34,7 +34,7 @@ export function TrackHero({ stage, etaMin, detail }: TrackHeroProps) {
           {label}
         </p>
       )}
-      {detail && <p className="mt-2 text-xs text-[#111111]/70">{detail}</p>}
+      {detail && <p className="mt-2 text-xs text-[#111111]/80">{detail}</p>}
     </section>
   );
 }

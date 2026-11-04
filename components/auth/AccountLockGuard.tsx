@@ -121,22 +121,22 @@ export function AccountLockGuard() {
       aria-label={notice.title}
       className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-4"
     >
-      <div aria-hidden="true" className="fixed inset-0 bg-zinc-950/50" />
+      <div aria-hidden="true" className="fixed inset-0 bg-[#111111]/50" />
       <div className="relative w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 text-center shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <FiLock
           aria-hidden="true"
-          className="mx-auto h-6 w-6 text-zinc-700 dark:text-zinc-200"
+          className="mx-auto h-6 w-6 text-zinc-800 dark:text-zinc-200"
         />
         <p className="mt-4 text-base font-bold text-zinc-900 dark:text-zinc-50">
           {notice.title}
         </p>
-        <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-300">
+        <p className="mt-1.5 text-sm text-zinc-800 dark:text-zinc-300">
           {notice.description}
         </p>
         <button
           type="button"
           onClick={() => router.push(accountLockedLoginHref())}
-          className="mt-5 inline-flex min-h-[44px] items-center justify-center self-start rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-5 inline-flex min-h-[44px] items-center justify-center self-start rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           Về trang đăng nhập
         </button>

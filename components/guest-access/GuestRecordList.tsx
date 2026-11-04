@@ -44,21 +44,21 @@ export function GuestRecordList({
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Dịch vụ của {maskedEmail}
           </h2>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
             {records.length} bản ghi. Chọn một mục để xem hóa đơn.
           </p>
         </div>
         <button
           type="button"
           onClick={onReset}
-          className="min-h-[44px] rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 underline-offset-4 transition-colors duration-200 hover:text-zinc-900 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:text-zinc-300 dark:hover:text-zinc-50"
+          className="min-h-[44px] rounded-lg px-3 py-2 text-sm font-medium text-zinc-800 underline-offset-4 transition-colors duration-200 hover:text-zinc-900 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:text-zinc-300 dark:hover:text-zinc-50"
         >
           Tra cứu email khác
         </button>
       </div>
 
       {records.length === 0 ? (
-        <p className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Chưa thấy dịch vụ nào với email này. Hãy kiểm tra lại địa chỉ đã dùng
           khi đặt lịch, hoặc liên hệ hotline để được hỗ trợ.
         </p>
@@ -85,13 +85,13 @@ export function GuestRecordList({
                 >
                   <Icon
                     aria-hidden="true"
-                    className="h-4 w-4 shrink-0 text-zinc-400"
+                    className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
                   />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
                       {record.title}
                     </span>
-                    <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
                       {recordStatusLabel(record.status)}
                       {recordSubtitle(record)
                         ? ` · ${recordSubtitle(record)}`
@@ -110,7 +110,7 @@ export function GuestRecordList({
                     scroll={false}
                     prefetch={false}
                     aria-label={`Theo dõi trên bản đồ: ${record.title}`}
-                    className="flex w-12 items-center justify-center border-l border-zinc-200 text-zinc-500 transition-colors duration-200 hover:bg-zinc-50 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
+                    className="flex w-12 items-center justify-center border-l border-zinc-500 text-zinc-600 transition-colors duration-200 hover:bg-zinc-50 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:border-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
                   >
                     <FiMapPin aria-hidden="true" className="h-4 w-4" />
                   </Link>
@@ -121,7 +121,7 @@ export function GuestRecordList({
         </ul>
       )}
 
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Quyền xem chỉ dành cho email đã xác minh, có hiệu lực 7 ngày. Bạn không
         cần tạo tài khoản.
       </p>

@@ -42,12 +42,12 @@ export function AuthHighlights() {
           >
             <Icon
               aria-hidden="true"
-              className="h-5 w-5 text-zinc-700 dark:text-zinc-300"
+              className="h-5 w-5 text-zinc-800 dark:text-zinc-300"
             />
             <p className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               {item.title}
             </p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
               {item.hint}
             </p>
           </div>

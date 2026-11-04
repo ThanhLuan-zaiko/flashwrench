@@ -28,7 +28,7 @@ export function BigTypeHeader({
     <div data-reveal className="flex items-center justify-between gap-8">
       <div className="w-full max-w-3xl">
         {eyebrow && (
-          <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-[#111111] uppercase sm:mb-3 sm:text-xs dark:text-zinc-400">
+          <p className="mb-2 text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase sm:mb-3 sm:text-xs dark:text-zinc-400">
             {eyebrow}
           </p>
         )}
@@ -36,7 +36,7 @@ export function BigTypeHeader({
           {title}
         </TitleTag>
         {subtitle && (
-          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-pretty text-zinc-600 sm:mt-4 sm:text-base dark:text-zinc-400">
+          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-pretty text-zinc-800 sm:mt-4 sm:text-base dark:text-zinc-400">
             {subtitle}
           </p>
         )}

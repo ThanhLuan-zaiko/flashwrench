@@ -34,13 +34,13 @@ export function PulseRescueList({ rescues, total }: PulseRescueListProps) {
         </h3>
         <Link
           href="/dispatch/rescue/open"
-          className="text-xs font-semibold text-zinc-700 underline-offset-2 hover:underline dark:text-zinc-300"
+          className="text-xs font-semibold text-zinc-800 underline-offset-2 hover:underline dark:text-zinc-300"
         >
           {total > rescues.length ? `Xem tất cả ${total} ca` : "Mở bảng cứu hộ"}
         </Link>
       </div>
       {rescues.length === 0 ? (
-        <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-6 text-center text-sm text-zinc-800 dark:text-zinc-400">
           Không có yêu cầu cứu hộ nào đang mở.
         </p>
       ) : (
@@ -56,11 +56,11 @@ export function PulseRescueList({ rescues, total }: PulseRescueListProps) {
                 <span className="font-mono text-[13px] font-bold text-[#111111] dark:text-zinc-100">
                   {rescueCode(rescue.requestId)}
                 </span>
-                <span className="truncate text-[13px] text-zinc-700 dark:text-zinc-300">
+                <span className="truncate text-[13px] text-zinc-800 dark:text-zinc-300">
                   {ISSUE_LABELS.get(rescue.issueType ?? "") ?? "Sự cố khác"}
                   {rescue.priority === "high" ? " · ưu tiên" : ""}
                 </span>
-                <span className="col-start-2 row-start-2 text-xs text-zinc-600 sm:col-start-auto sm:row-start-auto dark:text-zinc-400">
+                <span className="col-start-2 row-start-2 text-xs text-zinc-800 sm:col-start-auto sm:row-start-auto dark:text-zinc-400">
                   {RESCUE_STATUS_LABELS[rescue.status] ?? rescue.status}
                 </span>
                 <span

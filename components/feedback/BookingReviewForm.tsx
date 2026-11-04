@@ -20,7 +20,7 @@ function FieldError({ message }: { message?: string }) {
   return (
     <p
       role="alert"
-      className="text-[11px] font-medium text-red-600 dark:text-red-400"
+      className="text-xs font-medium text-red-600 dark:text-red-400"
     >
       {message}
     </p>
@@ -52,7 +52,7 @@ function RatingBlock({
         <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {title}
         </p>
-        <p className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
           {subject}
         </p>
       </div>
@@ -63,7 +63,7 @@ function RatingBlock({
       />
       <FieldError message={ratingError} />
       <label className="flex flex-col gap-1">
-        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+        <span className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
           Chia sẻ thêm (không bắt buộc)
         </span>
         <textarea
@@ -72,7 +72,7 @@ function RatingBlock({
           maxLength={1000}
           rows={2}
           placeholder="Trải nghiệm của bạn như thế nào?"
-          className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
       </label>
       <FieldError message={bodyError} />
@@ -139,7 +139,7 @@ export function BookingReviewForm({
       <button
         type="submit"
         disabled={pending || serviceRating === 0 || rating === 0}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+        className="flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         {pending && (
           <FiLoader

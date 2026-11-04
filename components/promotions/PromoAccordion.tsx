@@ -29,7 +29,7 @@ export function PromoAccordion({
           <li key={campaign.id}>
             <div
               aria-current="true"
-              className="overflow-hidden rounded-2xl bg-[#FACC15] text-[#111111]"
+              className="overflow-hidden rounded-2xl bg-[#FB923C] text-[#111111]"
             >
               <div className="relative h-40 overflow-hidden">
                 <div data-promo-cover="active" className="absolute inset-0">

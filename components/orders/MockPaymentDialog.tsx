@@ -86,7 +86,7 @@ export function MockPaymentDialog({
         aria-label="Đóng thanh toán"
         onClick={onClose}
         disabled={busy}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-5 sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-2">
@@ -94,7 +94,7 @@ export function MockPaymentDialog({
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               Thanh toán online
             </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Cổng thanh toán giả lập — không phát sinh giao dịch thật.
             </p>
           </div>
@@ -103,7 +103,7 @@ export function MockPaymentDialog({
             onClick={onClose}
             disabled={busy}
             aria-label="Đóng thanh toán"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -113,20 +113,20 @@ export function MockPaymentDialog({
           <div className="flex h-36 w-36 items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-950">
             <FaQrcode
               aria-hidden="true"
-              className="h-20 w-20 text-zinc-400 dark:text-zinc-600"
+              className="h-20 w-20 text-zinc-600 dark:text-zinc-400"
             />
           </div>
         </div>
 
         <dl className="mt-4 space-y-2 rounded-xl border border-zinc-200 bg-white p-3.5 text-xs dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex justify-between gap-3">
-            <dt className="text-zinc-500 dark:text-zinc-400">Đơn hàng</dt>
+            <dt className="text-zinc-600 dark:text-zinc-400">Đơn hàng</dt>
             <dd className="font-semibold text-zinc-800 dark:text-zinc-200">
               #{orderId.slice(0, 8)}
             </dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-zinc-500 dark:text-zinc-400">
+            <dt className="text-zinc-600 dark:text-zinc-400">
               Nội dung chuyển khoản
             </dt>
             <dd className="font-semibold text-zinc-800 dark:text-zinc-200">
@@ -134,7 +134,7 @@ export function MockPaymentDialog({
             </dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-zinc-500 dark:text-zinc-400">
+            <dt className="text-zinc-600 dark:text-zinc-400">
               Số tiền thanh toán
             </dt>
             <dd className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
@@ -157,7 +157,7 @@ export function MockPaymentDialog({
             type="button"
             onClick={confirm}
             disabled={busy}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {busy && (
               <FiLoader
@@ -171,7 +171,7 @@ export function MockPaymentDialog({
             type="button"
             onClick={onClose}
             disabled={busy}
-            className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Để sau
           </button>

@@ -57,7 +57,7 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Lộ trình giao hàng
         </h2>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           Chọn một đơn giao tận nơi để xem vị trí người giao và đường đi đã ghi
           nhận.
         </p>
@@ -65,8 +65,11 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
 
       {!order && (
         <div className="flex min-h-72 flex-col items-center justify-center gap-2 p-5 text-center">
-          <FiMapPin aria-hidden="true" className="h-5 w-5 text-zinc-500" />
-          <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <FiMapPin
+            aria-hidden="true"
+            className="h-5 w-5 text-zinc-600 dark:text-zinc-400"
+          />
+          <p className="text-sm font-medium text-zinc-800 dark:text-zinc-300">
             Chọn một đơn để xem lộ trình
           </p>
         </div>
@@ -87,14 +90,14 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
           </div>
 
           {order.fulfillmentType === "pickup" && (
-            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-600 dark:text-zinc-300 dark:text-zinc-300">
+            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-800 dark:text-zinc-300 dark:text-zinc-300">
               Đơn nhận tại xưởng — không có lộ trình giao hàng.
             </p>
           )}
 
           {order.fulfillmentType === "delivery" &&
             order.courierType === "third_party" && (
-              <div className="flex items-start gap-2 p-3 text-xs text-zinc-700 dark:text-zinc-300">
+              <div className="flex items-start gap-2 p-3 text-xs text-zinc-800 dark:text-zinc-300">
                 <FiTruck
                   aria-hidden="true"
                   className="mt-0.5 h-4 w-4 shrink-0"
@@ -124,7 +127,7 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
                 {query.isPending && (
                   <p
                     aria-busy="true"
-                    className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+                    className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
                   >
                     <FiLoader
                       aria-hidden="true"
@@ -148,7 +151,7 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
                     <button
                       type="button"
                       onClick={() => void query.refetch()}
-                      className="min-h-[44px] rounded-xl border border-red-300 px-4 py-2 text-xs font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+                      className="min-h-[44px] rounded-xl border border-red-600 px-4 py-2 text-xs font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
                     >
                       Thử tải lại
                     </button>
@@ -162,7 +165,7 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
                   />
                 )}
                 {query.isSuccess && !map.hasMap && (
-                  <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-600 dark:text-zinc-300 dark:text-zinc-300">
+                  <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-800 dark:text-zinc-300 dark:text-zinc-300">
                     Đơn này chưa có tọa độ giao hàng để hiển thị trên bản đồ.
                   </p>
                 )}
@@ -173,7 +176,7 @@ export function HistoryOrderTrackPanel({ order }: HistoryOrderTrackPanelProps) {
                   !track.courier && (
                     <p
                       aria-live="polite"
-                      className="text-xs text-zinc-500 dark:text-zinc-400"
+                      className="text-xs text-zinc-600 dark:text-zinc-400"
                     >
                       {order.status === "shipping"
                         ? "Chưa có điểm GPS của người giao. Bản đồ đang hiển thị điểm nhận hàng."

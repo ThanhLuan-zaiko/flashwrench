@@ -75,12 +75,12 @@ export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
               className="h-full w-full object-contain p-4 transition-transform duration-300 motion-safe:group-hover:scale-[1.04]"
             />
           ) : (
-            <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-700">
+            <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-400">
               <FiPackage aria-hidden="true" className="h-8 w-8" />
             </span>
           )}
           {discount > 0 && (
-            <span className="absolute top-2 left-2 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50">
+            <span className="absolute top-2 left-2 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-xs font-semibold text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50">
               -{discount}%
             </span>
           )}
@@ -92,7 +92,7 @@ export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
             {formatVnd(part.price)}
           </span>
           {discount > 0 && part.comparePrice !== null && (
-            <span className="text-xs text-zinc-500 line-through dark:text-zinc-400">
+            <span className="text-xs text-zinc-600 line-through dark:text-zinc-400">
               {formatVnd(part.comparePrice)}
             </span>
           )}
@@ -102,10 +102,10 @@ export function ProductCard({ part, layout, onPreview }: ProductCardProps) {
             {part.name}
           </Link>
         </h3>
-        <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+        <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
           {part.categoryName} · {part.brand}
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           {stockLabel(part)} · SKU {part.sku}
         </p>
         <div className="mt-auto flex flex-col gap-1 pt-2">

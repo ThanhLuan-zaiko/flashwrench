@@ -75,7 +75,7 @@ export function PublicCatalogResults({
           <button
             type="button"
             onClick={onRetry}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử tải lại
@@ -87,7 +87,7 @@ export function PublicCatalogResults({
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Chưa có dịch vụ phù hợp
           </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             Hãy thử từ khóa khác hoặc chọn loại hình khác.
           </p>
         </div>

@@ -71,7 +71,7 @@ export function CampaignDetail({ slug }: { slug: string }) {
             <button
               type="button"
               onClick={() => void campaignQuery.refetch()}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
             >
               <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
               Thử tải lại
@@ -79,7 +79,7 @@ export function CampaignDetail({ slug }: { slug: string }) {
             <Link
               href="/vouchers"
               scroll={false}
-              className="flex min-h-[44px] items-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] items-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Xem ưu đãi đang chạy
             </Link>
@@ -112,7 +112,7 @@ export function CampaignDetail({ slug }: { slug: string }) {
               <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Về chương trình này
               </h2>
-              <p className="mt-1 text-sm whitespace-pre-line text-zinc-600 dark:text-zinc-400">
+              <p className="mt-1 text-sm whitespace-pre-line text-zinc-800 dark:text-zinc-400">
                 {campaign.description}
               </p>
             </section>

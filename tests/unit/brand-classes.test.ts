@@ -7,27 +7,27 @@ const all: Array<[string, string]> = Object.entries(brand).map(
 );
 
 describe("brand class strings", () => {
-  test("the primary action is black in light and white in dark", () => {
-    expect(brand.BRAND_PRIMARY_BUTTON).toContain("bg-[#111111]");
+  test("the primary action is blue in both themes", () => {
+    expect(brand.BRAND_PRIMARY_BUTTON).toContain("bg-[#1D4ED8]");
     expect(brand.BRAND_PRIMARY_BUTTON).toContain("text-white");
-    expect(brand.BRAND_PRIMARY_BUTTON).toContain("dark:bg-zinc-100");
-    expect(brand.BRAND_PRIMARY_BUTTON).toContain("dark:text-zinc-900");
+    expect(brand.BRAND_PRIMARY_BUTTON).toContain("dark:bg-[#60A5FA]");
+    expect(brand.BRAND_PRIMARY_BUTTON).toContain("dark:text-[#111111]");
   });
 
-  test("yellow never carries the primary action", () => {
-    expect(brand.BRAND_PRIMARY_BUTTON).not.toContain("#FACC15");
+  test("the brand fill never carries the primary action in light", () => {
+    expect(brand.BRAND_PRIMARY_BUTTON).not.toMatch(/(^|\s)bg-\[#FB923C\]/);
   });
 
-  test("yellow carries solid buttons and active chips, black carries text", () => {
-    expect(brand.BRAND_SOLID_BUTTON).toContain("bg-[#FACC15]");
-    expect(brand.BRAND_SOLID_BUTTON).toContain("text-[#111111]");
-    expect(brand.BRAND_CHIP_ACTIVE).toContain("bg-[#FACC15]");
+  test("blue carries solid buttons, orange carries active chips", () => {
+    expect(brand.BRAND_SOLID_BUTTON).toContain("bg-[#1D4ED8]");
+    expect(brand.BRAND_SOLID_BUTTON).toContain("text-white");
+    expect(brand.BRAND_CHIP_ACTIVE).toContain("bg-[#FB923C]");
     expect(brand.BRAND_EYEBROW).toContain("text-[#111111]");
   });
 
-  test("yellow is never used as text on the white surface", () => {
+  test("orange is never used as text on the white surface", () => {
     for (const [, value] of all) {
-      expect(value).not.toMatch(/(^|\s)text-\[#FACC15\]/);
+      expect(value).not.toMatch(/(^|\s)text-\[#FB923C\]/);
     }
   });
 

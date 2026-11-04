@@ -4,7 +4,7 @@ type Vec3 = [number, number, number];
 type Point = { x: number; y: number };
 
 export const INK = "#111111";
-export const YELLOW = "#FACC15";
+export const ORANGE = "#FB923C";
 export const SKY = "#BFDBFE";
 export const BLUE = "#2563EB";
 export const BLUE_LIGHT = "#93C5FD";

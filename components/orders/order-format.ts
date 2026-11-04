@@ -28,14 +28,14 @@ export const PAYMENT_METHOD_LABELS: Record<string, string> = {
 // states stay neutral.
 export function orderStatusBadgeClass(status: OrderStatus): string {
   const base =
-    "inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold";
+    "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold";
   if (status === "cancelled" || status === "refunded") {
-    return `${base} border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400`;
+    return `${base} border-zinc-300 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400`;
   }
   if (status === "delivered") {
-    return `${base} border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900`;
+    return `${base} border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]`;
   }
-  return `${base} border-zinc-400 text-zinc-700 dark:border-zinc-600 dark:text-zinc-300`;
+  return `${base} border-zinc-400 text-zinc-800 dark:border-zinc-600 dark:text-zinc-300`;
 }
 
 // Customers may cancel only while the order is still pending.

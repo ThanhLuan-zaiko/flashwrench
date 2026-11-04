@@ -12,11 +12,11 @@ import {
   BLUE_LIGHT,
   GRAPHITE,
   KRAFT,
+  ORANGE,
   PAPER,
   Scene,
   SKY,
   WHITE,
-  YELLOW,
   ZINC,
 } from "./isometric/scene";
 
@@ -31,13 +31,13 @@ function gift(s: Scene): void {
   s.disc([17, 12, 24.6], 3.2, WHITE);
   s.cylinder([14, 12, 24.6], 1.4, 1.2, BLUE_LIGHT);
   s.box([31, 16, 0], [24, 14, 1.6], BLUE_LIGHT);
-  s.box([47, 16, 1.6], [1, 14, 0.2], YELLOW);
+  s.box([47, 16, 1.6], [1, 14, 0.2], ORANGE);
 }
 
 // Step 1: a membership card for the customer account.
 function idCard(s: Scene): void {
   s.shadowBox([1, 1, 0], [36, 22]);
-  s.box([0, 0, 0], [36, 22, 2], YELLOW);
+  s.box([0, 0, 0], [36, 22, 2], ORANGE);
   s.box([4, 4, 2], [11, 11, 0.8], PAPER);
   s.cylinder([9.5, 8.5, 2.8], 2.2, 2.2, SKY);
   s.box([18, 5, 2], [14, 2, 0.8], SKY);
@@ -50,7 +50,7 @@ function idCard(s: Scene): void {
 function calendar(s: Scene): void {
   s.shadowBox([-1, -1, 0], [32, 28]);
   s.box([0, 0, 0], [30, 26, 3], PAPER);
-  s.box([0, 0, 3], [30, 7, 1.2], YELLOW);
+  s.box([0, 0, 3], [30, 7, 1.2], ORANGE);
   s.cylinder([7, 2, 4.2], 1.4, 4, GRAPHITE);
   s.cylinder([23, 2, 4.2], 1.4, 4, GRAPHITE);
   for (let col = 0; col < 3; col++) {
@@ -64,7 +64,7 @@ function calendar(s: Scene): void {
 // Step 3: a phone whose wallet shows a voucher.
 function walletPhone(s: Scene): void {
   s.shadowBox([0, 3, 0], [15, 6]);
-  s.box([0, 4, 0], [14, 4, 30], YELLOW);
+  s.box([0, 4, 0], [14, 4, 30], ORANGE);
   s.box([1.5, 8, 2.5], [11, 0.4, 25], PAPER);
   s.box([3, 8.4, 11], [8, 0.5, 11], BLUE);
   s.box([6, 8.4, 27], [2, 0.5, 0.8], GRAPHITE);
@@ -83,7 +83,7 @@ function van(s: Scene): void {
   s.shadowBox([-1, -2, 0], [42, 20]);
   s.cylinder([7, -1, 0], 4.5, 4, GRAPHITE);
   s.cylinder([30, -1, 0], 4.5, 4, GRAPHITE);
-  s.box([0, 0, 4], [26, 16, 16], YELLOW);
+  s.box([0, 0, 4], [26, 16, 16], ORANGE);
   s.box([0, 16, 10], [26, 0.5, 2], BLUE);
   s.box([26, 0, 4], [10, 16, 11], BLUE);
   s.box([29, 16, 9], [5, 0.5, 4], SKY);
@@ -95,21 +95,21 @@ function van(s: Scene): void {
 // Checkout empty cart: a basket holding a battery and an oil bottle.
 function basket(s: Scene): void {
   s.shadowBox([-1, -1, 0], [34, 26]);
-  s.box([0, 0, 0], [32, 24, 8], YELLOW);
+  s.box([0, 0, 0], [32, 24, 8], ORANGE);
   s.box([0, 24, 3], [32, 0.5, 2], BLUE);
   s.box([-1, -1, 8], [34, 26, 1.2], SKY);
   s.box([3, 3, 9.2], [14, 11, 13], GRAPHITE);
   s.box([5, 5, 22.2], [3, 3, 2], BLUE);
   s.box([12, 5, 22.2], [3, 3, 2], SKY);
   s.cylinder([24, 17, 9.2], 4.5, 15, BLUE);
-  s.cylinder([24, 17, 24.2], 2, 4, YELLOW);
+  s.cylinder([24, 17, 24.2], 2, 4, ORANGE);
 }
 
 // Checkout payment: a bank card with a stack of coins beside it.
 function paymentCard(s: Scene): void {
   s.shadowBox([1, 1, 0], [36, 22]);
   s.shadowDisc([46, 10, 0], 7);
-  s.box([0, 0, 0], [36, 22, 2], YELLOW);
+  s.box([0, 0, 0], [36, 22, 2], ORANGE);
   s.box([0, 4, 2], [36, 4, 0.6], GRAPHITE);
   s.box([4, 12, 2], [8, 6, 0.8], BLUE_LIGHT);
   s.box([16, 14, 2], [16, 2, 0.8], SKY);
@@ -122,7 +122,7 @@ function paymentCard(s: Scene): void {
 // Booking confirmation: a clipboard with a ticked checklist.
 function clipboard(s: Scene): void {
   s.shadowBox([-1, 3, 0], [24, 7]);
-  s.box([0, 4, 0], [22, 3, 30], YELLOW);
+  s.box([0, 4, 0], [22, 3, 30], ORANGE);
   s.box([2, 7, 2.5], [18, 0.4, 25], PAPER);
   s.box([5, 7.4, 20], [4, 0.4, 3], BLUE);
   s.box([11, 7.4, 20.5], [7, 0.4, 2], ZINC);
@@ -138,7 +138,7 @@ function towTruck(s: Scene): void {
   s.shadowBox([-1, -2, 0], [48, 21]);
   s.cylinder([7, -1, 0], 4.5, 4, GRAPHITE);
   s.cylinder([34, -1, 0], 4.5, 4, GRAPHITE);
-  s.box([0, 0, 4], [30, 16, 2], YELLOW);
+  s.box([0, 0, 4], [30, 16, 2], ORANGE);
   s.box([30, 0, 4], [12, 16, 12], BLUE);
   s.box([42, 3, 9], [0.5, 10, 4], SKY);
   s.box([34, 5, 16], [4, 6, 1.5], BLUE_LIGHT);
@@ -157,11 +157,11 @@ function coins(s: Scene): void {
   for (let i = 0; i < 4; i++) {
     s.cylinder([0, 0, i * 2], 7, 2, i % 2 === 0 ? BLUE_LIGHT : BLUE);
   }
-  s.disc([0, 0, 8.05], 3.5, YELLOW);
+  s.disc([0, 0, 8.05], 3.5, ORANGE);
   for (let i = 0; i < 3; i++) {
     s.cylinder([15, 13, i * 2], 7, 2, i % 2 === 0 ? BLUE_LIGHT : BLUE);
   }
-  s.disc([15, 13, 6.05], 3.5, YELLOW);
+  s.disc([15, 13, 6.05], 3.5, ORANGE);
 }
 
 // Staff stock: stacked storage crates with labels.

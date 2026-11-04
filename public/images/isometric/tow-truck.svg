@@ -42,9 +42,9 @@
   <polygon points="35.22,17.94 34.77,18.37 34.77,14.37 35.22,13.94" fill="#313136" stroke="#313136" stroke-width="0.3" stroke-linejoin="round"/>
   <polygon points="34.77,18.37 34.21,18.75 34.21,14.75 34.77,14.37" fill="#313136" stroke="#313136" stroke-width="0.3" stroke-linejoin="round"/>
   <polygon points="34.21,14.75 33.55,15.07 32.81,15.34 32.01,15.53 31.17,15.64 30.31,15.68 29.45,15.64 28.61,15.53 27.81,15.34 27.07,15.07 26.41,14.75 25.85,14.37 25.4,13.94 25.07,13.48 24.87,13 24.8,12.5 24.87,12 25.07,11.52 25.4,11.06 25.85,10.63 26.41,10.25 27.07,9.93 27.81,9.66 28.61,9.47 29.45,9.36 30.31,9.32 31.17,9.36 32.01,9.47 32.81,9.66 33.55,9.93 34.21,10.25 34.77,10.63 35.22,11.06 35.55,11.52 35.75,12 35.82,12.5 35.75,13 35.55,13.48 35.22,13.94 34.77,14.37" fill="#3F3F46" stroke="#3F3F46" stroke-width="0.3" stroke-linejoin="round"/>
-  <polygon points="-13.86,4 12.12,19 12.12,17 -13.86,2" fill="#d9b214" stroke="#d9b214" stroke-width="0.3" stroke-linejoin="round"/>
-  <polygon points="25.98,11 12.12,19 12.12,17 25.98,9" fill="#b49414" stroke="#b49414" stroke-width="0.3" stroke-linejoin="round"/>
-  <polygon points="0,-6 25.98,9 12.12,17 -13.86,2" fill="#FACC15" stroke="#FACC15" stroke-width="0.3" stroke-linejoin="round"/>
+  <polygon points="-13.86,4 12.12,19 12.12,17 -13.86,2" fill="#da8036" stroke="#da8036" stroke-width="0.3" stroke-linejoin="round"/>
+  <polygon points="25.98,11 12.12,19 12.12,17 25.98,9" fill="#b56b2f" stroke="#b56b2f" stroke-width="0.3" stroke-linejoin="round"/>
+  <polygon points="0,-6 25.98,9 12.12,17 -13.86,2" fill="#FB923C" stroke="#FB923C" stroke-width="0.3" stroke-linejoin="round"/>
   <polygon points="12.12,19 22.52,25 22.52,13 12.12,7" fill="#2258cc" stroke="#2258cc" stroke-width="0.3" stroke-linejoin="round"/>
   <polygon points="36.37,17 22.52,25 22.52,13 36.37,5" fill="#1f4aaa" stroke="#1f4aaa" stroke-width="0.3" stroke-linejoin="round"/>
   <polygon points="25.98,-1 36.37,5 22.52,13 12.12,7" fill="#2563EB" stroke="#2563EB" stroke-width="0.3" stroke-linejoin="round"/>

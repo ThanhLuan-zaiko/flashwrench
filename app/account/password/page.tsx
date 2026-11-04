@@ -32,7 +32,7 @@ export default function ChangePasswordPage() {
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-3 px-4 py-6 sm:px-6 md:gap-4 md:py-10">
         <Link
           href="/account"
-          className="inline-flex min-h-[44px] items-center gap-1.5 self-start text-sm font-medium text-zinc-600 transition-colors duration-200 hover:text-zinc-900 motion-safe:active:scale-[0.98] dark:text-zinc-400 dark:hover:text-zinc-100"
+          className="inline-flex min-h-[44px] items-center gap-1.5 self-start text-sm font-medium text-zinc-800 transition-colors duration-200 hover:text-zinc-900 motion-safe:active:scale-[0.98] dark:text-zinc-400 dark:hover:text-zinc-100"
         >
           <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
           Về tài khoản
@@ -63,7 +63,7 @@ export default function ChangePasswordPage() {
             <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               Đổi mật khẩu
             </h1>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 text-sm text-zinc-800 dark:text-zinc-400">
               Sau khi đổi, mọi thiết bị khác sẽ bị đăng xuất ngay lập tức.
             </p>
             <div className="mt-6">
@@ -81,13 +81,13 @@ export default function ChangePasswordPage() {
                 <p className="flex items-center gap-2.5">
                   <Icon
                     aria-hidden="true"
-                    className="h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-300"
+                    className="h-5 w-5 shrink-0 text-zinc-800 dark:text-zinc-300"
                   />
                   <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                     {tip.title}
                   </span>
                 </p>
-                <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
                   {tip.hint}
                 </p>
               </div>

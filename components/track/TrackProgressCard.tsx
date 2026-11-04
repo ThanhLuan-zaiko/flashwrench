@@ -15,7 +15,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
       className="border-t border-zinc-200 pt-5 dark:border-zinc-800"
     >
       <div className="flex items-baseline justify-between">
-        <p className="text-[11px] font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
+        <p className="text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase dark:text-zinc-400">
           Tiến độ
         </p>
         <p className="text-xs font-bold text-zinc-900 dark:text-zinc-50">
@@ -47,7 +47,7 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                 aria-hidden="true"
                 className={`relative mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
                   done
-                    ? "border-[#111111] bg-[#FACC15] dark:border-zinc-100 dark:bg-zinc-100"
+                    ? "border-[#111111] bg-[#FB923C] dark:border-[#FB923C] dark:bg-[#FB923C]"
                     : active
                       ? "border-[#111111] bg-white dark:border-zinc-100 dark:bg-zinc-950"
                       : "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-950"
@@ -60,13 +60,13 @@ export function TrackProgressCard({ stage, details }: TrackProgressCardProps) {
                       ? "font-bold text-[#111111] dark:text-zinc-50"
                       : done
                         ? "font-semibold text-zinc-900 dark:text-zinc-100"
-                        : "font-semibold text-zinc-500 dark:text-zinc-500"
+                        : "font-semibold text-zinc-600 dark:text-zinc-400"
                   }`}
                 >
                   {label}
                 </span>
                 {details[index] && (
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400">
                     {details[index]}
                   </span>
                 )}

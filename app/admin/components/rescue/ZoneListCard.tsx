@@ -32,14 +32,14 @@ export function ZoneListCard() {
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Vùng phục vụ ({items.length})
           </h2>
-          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
             Điểm ghim rơi vào vùng nào thì ca thuộc vùng đó.
           </p>
         </div>
         <button
           type="button"
           onClick={() => setDialog({ mode: "create" })}
-          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+          className="flex min-h-[44px] items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           <FiPlus aria-hidden="true" className="h-4 w-4" />
           Thêm
@@ -47,9 +47,11 @@ export function ZoneListCard() {
       </div>
 
       {zones.isPending ? (
-        <p className="py-6 text-center text-sm text-zinc-500">Đang tải…</p>
+        <p className="py-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
+          Đang tải…
+        </p>
       ) : zones.isError ? (
-        <p className="py-6 text-center text-sm text-zinc-500">
+        <p className="py-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Không tải được. Vui lòng thử lại.
         </p>
       ) : items.length === 0 ? (
@@ -78,12 +80,12 @@ export function ZoneListCard() {
                   <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                     {zone.name}
                     {!zone.isActive && (
-                      <span className="ml-2 rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                      <span className="ml-2 rounded-full border border-zinc-300 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
                         Tắt
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">
                     {zone.city ?? "—"} · Bán kính {zone.radiusKm ?? "—"} km
                   </p>
                 </div>
@@ -91,7 +93,7 @@ export function ZoneListCard() {
                   type="button"
                   onClick={() => setDialog({ mode: "edit", item: zone })}
                   aria-label={`Sửa ${zone.name}`}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-800 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 >
                   <FiEdit2 aria-hidden="true" className="h-4 w-4" />
                 </button>

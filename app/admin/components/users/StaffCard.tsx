@@ -44,15 +44,15 @@ function getInitials(fullName: string): string {
 
 // Update actions (edit, reset password, restore): navy outline.
 const BUTTON_CLASS =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
 // Soft delete: red outline.
 const DELETE_BUTTON_CLASS =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-400 dark:text-red-300 dark:hover:bg-red-950/40";
 
 // Hard delete: red solid.
 const HARD_DELETE_BUTTON_CLASS =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-400 dark:text-[#111111] dark:hover:bg-red-300";
 
 // One staff row: identity plus role/status pills plus CRUD actions.
 // Live rows offer edit + soft delete; trash rows offer restore + hard
@@ -101,7 +101,7 @@ export function StaffCard({
       ) : (
         <span
           aria-hidden="true"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-sm font-bold text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
         >
           {getInitials(user.fullName)}
         </span>
@@ -111,16 +111,16 @@ export function StaffCard({
           {user.fullName || "Chưa có tên"}
         </span>
         {contact && (
-          <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
             {contact}
             {user.email && user.phone ? ` · ${user.email}` : ""}
           </span>
         )}
         <span className="mt-1.5 flex flex-wrap gap-1.5">
-          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
             {ROLE_LABELS[user.role]}
           </span>
-          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
             {STATUS_LABELS[user.status]}
           </span>
         </span>
@@ -130,7 +130,7 @@ export function StaffCard({
         {variant === "live" && !tempPassword && resetError && (
           <span
             role="alert"
-            className="mt-2 block rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-[11px] font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+            className="mt-2 block rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
           >
             {resetError}
           </span>

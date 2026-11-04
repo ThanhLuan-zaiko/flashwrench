@@ -105,13 +105,13 @@ export function BookingMapSection({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="hidden text-xs font-semibold text-zinc-700 sm:block dark:text-zinc-300">
+      <p className="hidden text-xs font-semibold text-zinc-800 sm:block dark:text-zinc-300">
         {text.title}
       </p>
       <div className="relative">
         <FiSearch
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400"
+          className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
         />
         <input
           type="search"
@@ -128,7 +128,7 @@ export function BookingMapSection({
           placeholder={text.searchPlaceholder}
           aria-label={text.searchPlaceholder}
           autoComplete="off"
-          className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+          className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-400"
         />
         {open && search.trim().length >= 3 && (
           <ul
@@ -136,7 +136,7 @@ export function BookingMapSection({
             className="absolute top-full right-0 left-0 z-20 mt-1 max-h-56 overflow-auto rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
           >
             {results.isPending && (
-              <li className="flex items-center gap-2 px-3 py-3 text-xs text-zinc-500 dark:text-zinc-400">
+              <li className="flex items-center gap-2 px-3 py-3 text-xs text-zinc-600 dark:text-zinc-400">
                 <FiLoader
                   aria-hidden="true"
                   className="h-4 w-4 motion-safe:animate-spin"
@@ -150,7 +150,7 @@ export function BookingMapSection({
                   <button
                     type="button"
                     onMouseDown={() => handleSelect(item)}
-                    className="flex w-full items-start gap-2 px-3 py-2.5 text-left text-xs text-zinc-700 transition-colors duration-150 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    className="flex w-full items-start gap-2 px-3 py-2.5 text-left text-xs text-zinc-800 transition-colors duration-150 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   >
                     <FiMapPin
                       aria-hidden="true"
@@ -161,7 +161,7 @@ export function BookingMapSection({
                 </li>
               ))}
             {results.isSuccess && suggestions.length === 0 && (
-              <li className="px-3 py-3 text-xs text-zinc-500 dark:text-zinc-400">
+              <li className="px-3 py-3 text-xs text-zinc-600 dark:text-zinc-400">
                 Không tìm thấy địa chỉ. Hãy chạm trực tiếp lên bản đồ.
               </li>
             )}
@@ -180,7 +180,7 @@ export function BookingMapSection({
           type="button"
           onClick={() => locate(false, false)}
           disabled={locating}
-          className="absolute right-3 bottom-7 z-10 flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          className="absolute right-3 bottom-7 z-10 flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-600 bg-white px-3 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 motion-safe:active:scale-95 dark:border-zinc-400 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
           {locating ? (
             <FiLoader
@@ -196,7 +196,7 @@ export function BookingMapSection({
 
       <p
         aria-live="polite"
-        className="text-[11px] text-zinc-500 dark:text-zinc-400"
+        className="text-xs text-zinc-600 dark:text-zinc-400"
       >
         {reverse.isPending
           ? "Đang tra địa chỉ cho điểm vừa ghim…"
@@ -207,7 +207,7 @@ export function BookingMapSection({
       {error && (
         <p
           role="alert"
-          className="text-[11px] font-medium text-red-600 dark:text-red-400"
+          className="text-xs font-medium text-red-600 dark:text-red-400"
         >
           {error}
         </p>

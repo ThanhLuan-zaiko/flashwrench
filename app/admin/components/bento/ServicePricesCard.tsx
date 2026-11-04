@@ -30,13 +30,13 @@ export function ServicePricesCard() {
             <li key={row.title} className="flex items-center gap-3 py-3">
               <Icon
                 aria-hidden="true"
-                className="h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"
+                className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
               />
               <span className="min-w-0">
                 <span className="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-200">
                   {row.title}
                 </span>
-                <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
                   {row.hint}
                 </span>
               </span>
@@ -44,7 +44,7 @@ export function ServicePricesCard() {
           );
         })}
       </ul>
-      <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400">
         Giá theo từng loại hình sẽ cập nhật tại đây khi có dữ liệu.
       </p>
     </BentoCard>

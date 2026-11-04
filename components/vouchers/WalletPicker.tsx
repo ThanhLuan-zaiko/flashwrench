@@ -66,7 +66,7 @@ export function WalletPicker({
   if (wallets.isPending) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-xs text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 motion-safe:animate-pulse dark:text-zinc-400">
           Đang tải voucher…
         </p>
         {codeSlot}
@@ -93,7 +93,7 @@ export function WalletPicker({
   const restCount = restUsable.length + restNear.length + restCodes.length;
 
   const emptyCopy = (
-    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+    <p className="text-xs text-zinc-600 dark:text-zinc-400">
       Chưa có voucher nào dùng được cho đơn này.{" "}
       <a
         href="/vouchers"
@@ -140,7 +140,7 @@ export function WalletPicker({
           aria-expanded={expanded}
           aria-controls={expanded ? sectionsId : undefined}
           onClick={() => setExpanded((open) => !open)}
-          className="flex min-h-[44px] items-center gap-1.5 text-xs font-semibold text-zinc-600 transition-colors duration-200 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
+          className="flex min-h-[44px] items-center gap-1.5 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
         >
           <FiChevronDown
             aria-hidden="true"

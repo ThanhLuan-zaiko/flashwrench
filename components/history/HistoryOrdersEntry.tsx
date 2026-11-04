@@ -56,7 +56,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
               onClick={() => void query.refetch()}
               disabled={query.isFetching}
               aria-label="Tải lại danh sách đơn"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-60 dark:text-zinc-400 dark:hover:bg-zinc-800"
             >
               <FiRefreshCw
                 aria-hidden="true"
@@ -68,7 +68,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
           {query.isPending && (
             <p
               aria-busy="true"
-              className="mt-4 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+              className="mt-4 flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
             >
               <FiLoader
                 aria-hidden="true"
@@ -93,7 +93,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
               <button
                 type="button"
                 onClick={() => void query.refetch()}
-                className="min-h-[44px] rounded-xl border border-red-300 px-4 py-2 text-xs font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+                className="min-h-[44px] rounded-xl border border-red-600 px-4 py-2 text-xs font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
               >
                 Thử tải lại
               </button>
@@ -104,14 +104,14 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
             <div className="mt-4 flex flex-col items-center py-8 text-center">
               <FiPackage
                 aria-hidden="true"
-                className="h-8 w-8 text-zinc-300 dark:text-zinc-700"
+                className="h-8 w-8 text-zinc-300 dark:text-zinc-400"
               />
               <p className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Bạn chưa có đơn mua nào
               </p>
               <Link
                 href="/products"
-                className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="mt-4 flex min-h-[44px] items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
               >
                 Mua sắm ngay
               </Link>
@@ -144,13 +144,13 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
                           <span className={orderStatusBadgeClass(order.status)}>
                             {ORDER_STATUS_LABELS[order.status]}
                           </span>
-                          <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+                          <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-400">
                             {order.fulfillmentType === "pickup"
                               ? "Nhận tại xưởng"
                               : "Giao tận nơi"}
                           </span>
                         </span>
-                        <span className="flex items-baseline justify-between gap-3 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                        <span className="flex items-baseline justify-between gap-3 border-t border-zinc-200 pt-3 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
                           <span>{formatDateTime(order.createdAt)}</span>
                           <span className="text-sm font-extrabold tracking-tight text-[#111111] tabular-nums dark:text-zinc-50">
                             {formatVnd(order.total)}
@@ -160,7 +160,7 @@ export function HistoryOrdersEntry({ customerId }: HistoryOrdersEntryProps) {
                       <Link
                         href={`/orders/${order.id}`}
                         aria-label={`Xem chi tiết đơn ${order.id.slice(0, 8)}`}
-                        className="flex w-12 shrink-0 items-center justify-center border-l border-zinc-200 text-zinc-500 transition-colors duration-200 hover:text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100"
+                        className="flex w-12 shrink-0 items-center justify-center border-l border-zinc-200 text-zinc-600 dark:text-zinc-400 transition-colors duration-200 hover:text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-100"
                       >
                         <FiArrowRight aria-hidden="true" className="h-5 w-5" />
                       </Link>

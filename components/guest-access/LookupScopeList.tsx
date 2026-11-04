@@ -27,13 +27,13 @@ export function LookupScopeList() {
             <dt className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               {item.title}
             </dt>
-            <dd className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            <dd className="mt-1 text-sm text-zinc-800 dark:text-zinc-400">
               {item.detail}
             </dd>
           </div>
         ))}
       </dl>
-      <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
         Không cần tạo tài khoản. Mã xác minh được gửi tới email bạn đã dùng khi
         đặt.
       </p>

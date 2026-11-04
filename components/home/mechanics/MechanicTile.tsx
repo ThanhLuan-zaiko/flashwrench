@@ -34,7 +34,7 @@ export function MechanicTile({ item, className = "" }: MechanicTileProps) {
           ) : (
             <span
               aria-hidden="true"
-              className="flex h-full w-full items-center justify-center text-5xl font-bold text-zinc-400 dark:text-zinc-600"
+              className="flex h-full w-full items-center justify-center text-5xl font-bold text-zinc-600 dark:text-zinc-400"
             >
               {initialsOf(item.displayName)}
             </span>
@@ -44,7 +44,7 @@ export function MechanicTile({ item, className = "" }: MechanicTileProps) {
           <p className="truncate text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             {item.displayName}
           </p>
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-800 dark:text-zinc-400">
             <Stars
               rating={item.ratingAvg}
               size="h-3.5 w-3.5"
@@ -60,11 +60,11 @@ export function MechanicTile({ item, className = "" }: MechanicTileProps) {
                 : "Chưa có đánh giá"}
             </span>
           </p>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-zinc-800 dark:text-zinc-400">
             {item.completedJobs} đơn hoàn thành · Đã xác thực
           </p>
           {skills ? (
-            <p className="mt-auto border-t border-zinc-200 pt-3 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            <p className="mt-auto border-t border-zinc-200 pt-3 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
               {skills}
               {extraSkills > 0 ? ` · +${extraSkills}` : ""}
             </p>

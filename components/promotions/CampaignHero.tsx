@@ -23,7 +23,7 @@ export function CampaignHero({
     <section
       data-reveal
       aria-label="Tóm tắt ưu đãi"
-      className="relative left-1/2 w-screen -translate-x-1/2 -mt-6 overflow-hidden rounded-b-[2.5rem] bg-[#FACC15] px-4 pt-6 pb-10 text-[#111111] sm:px-6 md:pb-12 lg:pt-8"
+      className="relative left-1/2 w-screen -translate-x-1/2 -mt-6 overflow-hidden rounded-b-[2.5rem] bg-[#FB923C] px-4 pt-6 pb-10 text-[#111111] sm:px-6 md:pb-12 lg:pt-8"
     >
       <div className="mx-auto grid w-full max-w-6xl items-center gap-8 lg:grid-cols-2 lg:gap-14">
         <div className="flex min-w-0 flex-col gap-4">
@@ -51,11 +51,11 @@ export function CampaignHero({
           <div className="relative w-full rounded-2xl bg-white p-5 text-center text-zinc-900">
             <span
               aria-hidden="true"
-              className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#FACC15]"
+              className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#FB923C]"
             />
             <span
               aria-hidden="true"
-              className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#FACC15]"
+              className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-[#FB923C]"
             />
             <p className="text-xs font-semibold tracking-[0.14em] text-[#111111] uppercase">
               Ưu đãi của bạn
@@ -63,12 +63,12 @@ export function CampaignHero({
             <p className="mt-1 text-3xl font-extrabold tracking-tight text-[#111111]">
               {offer.value}
             </p>
-            <p className="mt-1 text-sm font-semibold text-zinc-700">
+            <p className="mt-1 text-sm font-semibold text-zinc-800 dark:text-zinc-300">
               {offer.unit}
             </p>
             <div
               aria-hidden="true"
-              className="mt-4 border-t border-dashed border-zinc-300 pt-3 text-xs text-zinc-500"
+              className="mt-4 border-t border-dashed border-zinc-300 pt-3 text-xs text-zinc-600 dark:text-zinc-400"
             >
               FlashWrench · Voucher của bạn
             </div>

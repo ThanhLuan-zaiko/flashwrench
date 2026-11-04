@@ -29,7 +29,7 @@ export function HomeCtaBand() {
             />
             <p
               data-chapter-row
-              className="mt-4 max-w-xl text-base text-zinc-600 dark:text-zinc-400"
+              className="mt-4 max-w-xl text-base text-zinc-800 dark:text-zinc-400"
             >
               Đặt thợ trong một phút, hoặc gọi cứu hộ khẩn cấp bất kể ngày đêm.
               Giá chốt trước khi thợ xuất phát.
@@ -56,7 +56,7 @@ export function HomeCtaBand() {
               }
               guestAriaLabel="Đặt lịch ngay không cần tài khoản"
               authedAriaLabel="Đặt lịch ngay"
-              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl px-6 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             />
             <Link
               href="/rescue"

@@ -11,7 +11,7 @@ type ProductGalleryProps = {
 };
 
 const STEP_BUTTON_CLASSES =
-  "flex h-11 w-11 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  "flex h-11 w-11 items-center justify-center rounded-full border border-zinc-500 bg-white text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-500 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-800";
 const HIDE_SCROLLBAR = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
 // Interactive image gallery for /products/[slug]: snap-aligned slides that
@@ -95,7 +95,7 @@ function GalleryViewer({ gallery, name }: { gallery: string[]; name: string }) {
             >
               <FiChevronRight aria-hidden="true" className="h-5 w-5" />
             </button>
-            <p className="absolute right-3 bottom-3 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+            <p className="absolute right-3 bottom-3 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
               {index + 1}/{total}
             </p>
           </>

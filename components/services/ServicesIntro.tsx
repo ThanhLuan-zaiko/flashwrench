@@ -34,7 +34,7 @@ export function ServicesIntro({ live, countText }: ServicesIntroProps) {
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <p
           data-chapter-row
-          className="max-w-xl text-sm leading-relaxed text-zinc-600 md:text-base dark:text-zinc-400"
+          className="max-w-xl text-sm leading-relaxed text-zinc-800 md:text-base dark:text-zinc-400"
         >
           Giá trọn gói báo trước. Chọn một hoặc nhiều dịch vụ rồi đặt lịch một
           lần.
@@ -55,7 +55,7 @@ export function ServicesIntro({ live, countText }: ServicesIntroProps) {
       <div className="flex flex-wrap items-center justify-between gap-2 py-3">
         <output
           aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}
-          className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400"
         >
           <span
             aria-hidden="true"
@@ -69,7 +69,7 @@ export function ServicesIntro({ live, countText }: ServicesIntroProps) {
         </output>
         <p
           aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           {countText}
         </p>

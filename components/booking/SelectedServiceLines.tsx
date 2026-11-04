@@ -44,7 +44,7 @@ export function SelectedServiceLines({
                 {name}
               </p>
               {service && (
-                <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-zinc-600 dark:text-zinc-400">
                   <span>
                     {formatVnd(service.basePrice)} ·{" "}
                     {PRICE_UNIT_LABELS[service.priceUnit]}
@@ -67,8 +67,8 @@ export function SelectedServiceLines({
                 aria-label={`Xem hình ảnh và đánh giá ${name}`}
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 ${
                   inspecting
-                    ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-                    : "border-zinc-200 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                    ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                    : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-900"
                 }`}
               >
                 <FiImage aria-hidden="true" className="h-4 w-4" />
@@ -79,7 +79,7 @@ export function SelectedServiceLines({
               disabled={disabled}
               onClick={() => onRemove(id)}
               aria-label={`Bỏ chọn ${name}`}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 text-zinc-600 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:opacity-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-500 text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:opacity-50 dark:border-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-900"
             >
               <FiX aria-hidden="true" className="h-4 w-4" />
             </button>

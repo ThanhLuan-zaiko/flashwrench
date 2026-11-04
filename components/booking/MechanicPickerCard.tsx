@@ -52,7 +52,7 @@ export function MechanicPickerCard({
           >
             {item.displayName}
           </span>
-          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-600 dark:text-zinc-400">
             <span>
               {item.ratingCount > 0
                 ? `${item.ratingAvg.toFixed(1)} (${item.ratingCount} đánh giá)`
@@ -65,7 +65,7 @@ export function MechanicPickerCard({
             <span>Đang trực tuyến</span>
           </span>
           {item.skills.length > 0 && (
-            <span className="mt-1 block truncate text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="mt-1 block truncate text-xs text-zinc-600 dark:text-zinc-400">
               {item.skills.join(" · ")}
             </span>
           )}

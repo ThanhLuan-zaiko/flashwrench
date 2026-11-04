@@ -28,17 +28,17 @@ export function BookingTimeline({ timeline }: BookingTimelineProps) {
           )}
           <FiCircle
             aria-hidden="true"
-            className="mt-1 h-3 w-3 shrink-0 fill-zinc-400 text-zinc-400 dark:fill-zinc-500 dark:text-zinc-500"
+            className="mt-1 h-3 w-3 shrink-0 fill-zinc-400 text-zinc-600 dark:fill-zinc-500 dark:text-zinc-400"
           />
           <div className="min-w-0">
             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
               {STATUS_LABELS[entry.to]}
             </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               {formatDateTime(entry.at, { withZoneSuffix: false })}
             </p>
             {entry.note && (
-              <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                 {entry.note}
               </p>
             )}

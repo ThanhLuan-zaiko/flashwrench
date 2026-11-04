@@ -40,13 +40,13 @@ export function MyComplaintsPanel() {
   return (
     <section aria-label="Khiếu nại của tôi" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Theo dõi các khiếu nại bạn đã gửi và trao đổi với đội ngũ.
         </p>
         <button
           type="button"
           onClick={() => setComposeOpen(true)}
-          className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+          className="flex min-h-[44px] items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           <FiFlag aria-hidden="true" className="h-4 w-4" />
           Gửi khiếu nại mới
@@ -56,7 +56,7 @@ export function MyComplaintsPanel() {
       {query.isPending && (
         <p
           aria-busy="true"
-          className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -74,7 +74,7 @@ export function MyComplaintsPanel() {
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử lại
@@ -83,7 +83,7 @@ export function MyComplaintsPanel() {
       )}
 
       {query.isSuccess && items.length === 0 && (
-        <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Bạn chưa gửi khiếu nại nào.
         </p>
       )}
@@ -101,20 +101,20 @@ export function MyComplaintsPanel() {
                   <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                     {item.subject}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                     {REF_LABELS[item.refType] ?? "Khác"} ·{" "}
                     {item.createdAt ? formatDateTime(item.createdAt) : ""}
                   </p>
                 </div>
-                <span className="shrink-0 rounded-full border border-zinc-300 px-2.5 py-1 text-[11px] font-semibold text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
+                <span className="shrink-0 rounded-full border border-zinc-300 px-2.5 py-1 text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                   {STATUS_LABELS[item.status] ?? item.status}
                 </span>
               </div>
-              <p className="mt-2 text-xs whitespace-pre-line text-zinc-600 dark:text-zinc-300">
+              <p className="mt-2 text-xs whitespace-pre-line text-zinc-800 dark:text-zinc-300">
                 {item.body}
               </p>
               {item.resolutionNote && (
-                <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-xs text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-xs text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                   Kết quả: {item.resolutionNote}
                 </p>
               )}

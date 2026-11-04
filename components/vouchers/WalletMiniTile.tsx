@@ -25,7 +25,7 @@ export function WalletMiniTile({ wallet }: { wallet: VoucherWallet }) {
         <span className="block text-sm font-bold text-zinc-900 dark:text-zinc-50">
           {miniDiscountLabel(wallet)}
         </span>
-        <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
           {wallet.campaignName}
         </span>
       </span>

@@ -61,7 +61,7 @@ export function RescueDetailDialog({
         type="button"
         aria-label="Đóng chi tiết cứu hộ"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div
         className={`relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
@@ -71,7 +71,7 @@ export function RescueDetailDialog({
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               {rescue ? issueLabel(rescue.issueType) : "Chi tiết cứu hộ"}
             </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Mã {requestId.slice(0, 8)}… · Trạng thái:{" "}
               {rescue ? rescueStatusLabel(rescue.status) : "…"}
             </p>
@@ -80,14 +80,14 @@ export function RescueDetailDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
 
         {detail.isPending ? (
-          <p className="flex items-center justify-center gap-2 py-8 text-sm text-zinc-500">
+          <p className="flex items-center justify-center gap-2 py-8 text-sm text-zinc-600 dark:text-zinc-400">
             <FiLoader
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
@@ -95,39 +95,47 @@ export function RescueDetailDialog({
             Đang tải…
           </p>
         ) : !rescue ? (
-          <p className="py-8 text-center text-sm text-zinc-500">
+          <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
             Không tải được. Vui lòng thử lại.
           </p>
         ) : (
           <div className="mt-4 flex flex-col gap-4">
             <dl className="grid grid-cols-1 gap-2 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
               <div>
-                <dt className="text-[11px] text-zinc-500">Khách</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Khách
+                </dt>
                 <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
                   {rescue.customerName} · {rescue.customerPhone}
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] text-zinc-500">Biển số</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Biển số
+                </dt>
                 <dd className="font-semibold text-zinc-900 dark:text-zinc-50">
                   {rescue.vehiclePlate ?? "—"}
                 </dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-[11px] text-zinc-500">Vị trí</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Vị trí
+                </dt>
                 <dd className="font-medium text-zinc-900 dark:text-zinc-50">
                   {rescue.address ?? "—"}
                 </dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-[11px] text-zinc-500">Thợ đang giao</dt>
+                <dt className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Thợ đang giao
+                </dt>
                 <dd className="font-medium text-zinc-900 dark:text-zinc-50">
                   {rescue.assignedMechanicName ?? "Chưa có"}
                 </dd>
               </div>
               {rescue.status === "en_route" && rescue.etaMin !== null && (
                 <div className="sm:col-span-2">
-                  <dt className="text-[11px] text-zinc-500">
+                  <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                     Thời gian tới dự kiến
                   </dt>
                   <dd className="font-medium text-zinc-900 dark:text-zinc-50">
@@ -158,7 +166,7 @@ export function RescueDetailDialog({
                 {detail.data.timeline.slice(0, 6).map((item) => (
                   <li
                     key={`${item.changedAt}-${item.newStatus}`}
-                    className="text-[11px] text-zinc-500 dark:text-zinc-400"
+                    className="text-xs text-zinc-600 dark:text-zinc-400"
                   >
                     {item.oldStatus ? rescueStatusLabel(item.oldStatus) : "—"} →{" "}
                     {rescueStatusLabel(item.newStatus)}

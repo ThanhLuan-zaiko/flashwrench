@@ -94,7 +94,7 @@ export function CollectPaymentDialog({
         type="button"
         aria-label="Đóng hộp thoại"
         onClick={close}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3">
@@ -102,7 +102,7 @@ export function CollectPaymentDialog({
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               Xác nhận thu tiền
             </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               {entry.customerName || "Khách hàng"} · {entry.vehiclePlate}
             </p>
           </div>
@@ -110,26 +110,26 @@ export function CollectPaymentDialog({
             type="button"
             onClick={close}
             aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
 
         <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 border-y border-zinc-200 py-2.5 text-xs dark:border-zinc-800">
-          <dt className="text-zinc-500 dark:text-zinc-400">Tổng đơn</dt>
+          <dt className="text-zinc-600 dark:text-zinc-400">Tổng đơn</dt>
           <dd className="text-right font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">
             {formatVnd(entry.total)}
           </dd>
           {entry.received > 0 && (
             <>
-              <dt className="text-zinc-500 dark:text-zinc-400">Đã thu</dt>
+              <dt className="text-zinc-600 dark:text-zinc-400">Đã thu</dt>
               <dd className="text-right font-medium tabular-nums text-zinc-800 dark:text-zinc-200">
                 {formatVnd(entry.received)}
               </dd>
             </>
           )}
-          <dt className="text-zinc-500 dark:text-zinc-400">Còn phải thu</dt>
+          <dt className="text-zinc-600 dark:text-zinc-400">Còn phải thu</dt>
           <dd className="text-right font-semibold tabular-nums text-zinc-900 dark:text-zinc-50">
             {formatVnd(outstanding)}
           </dd>
@@ -137,7 +137,7 @@ export function CollectPaymentDialog({
 
         <label
           htmlFor={`${uid}-amount`}
-          className="mt-3 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
+          className="mt-3 block text-xs font-medium text-zinc-800 dark:text-zinc-300"
         >
           Số tiền thu lần này — để trống thu đủ {formatVnd(outstanding)}
         </label>
@@ -160,14 +160,14 @@ export function CollectPaymentDialog({
           </p>
         )}
         {!invalidAmount && parsed !== null && parsed < outstanding && (
-          <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400">
             Thu một phần — còn lại {formatVnd(outstanding - parsed)} sau lần
             này.
           </p>
         )}
 
         <fieldset className="mt-3">
-          <legend className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <legend className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
             Phương thức thanh toán
           </legend>
           <div className="mt-1.5 grid grid-cols-2 gap-2">
@@ -180,8 +180,8 @@ export function CollectPaymentDialog({
                 onClick={() => setMethod(option)}
                 className={`flex min-h-[44px] items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
                   method === option
-                    ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
-                    : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                    : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
                 }`}
               >
                 {COLLECT_METHOD_LABELS[option]}
@@ -214,7 +214,7 @@ export function CollectPaymentDialog({
           <button
             type="button"
             onClick={close}
-            className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Hủy bỏ
           </button>
@@ -222,7 +222,7 @@ export function CollectPaymentDialog({
             type="button"
             onClick={confirm}
             disabled={pending || invalidAmount || codeMissing}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {pending && (
               <FiLoader

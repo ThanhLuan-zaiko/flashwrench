@@ -28,7 +28,7 @@ function roundPoint(point: MapPoint): MapPoint {
 function pinIcon(): L.DivIcon {
   return L.divIcon({
     className: "",
-    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#111111] bg-[#FACC15]"><span class="h-2.5 w-2.5 rounded-full bg-[#111111]"></span></span>',
+    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#111111] bg-[#FB923C]"><span class="h-2.5 w-2.5 rounded-full bg-[#111111]"></span></span>',
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });

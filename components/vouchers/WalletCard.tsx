@@ -29,7 +29,7 @@ export function WalletCard({ wallet }: { wallet: VoucherWallet }) {
             className="object-cover"
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-zinc-400">
+          <span className="flex h-full w-full items-center justify-center text-zinc-600 dark:text-zinc-400">
             <FiGift aria-hidden="true" className="h-8 w-8" />
           </span>
         )}
@@ -43,11 +43,11 @@ export function WalletCard({ wallet }: { wallet: VoucherWallet }) {
         </p>
         <p
           aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           {walletStatusLabel(wallet)}
         </p>
-        <p className="mt-auto pt-3 text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800">
+        <p className="mt-auto pt-3 text-xs text-zinc-600 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800">
           Mã gắn tài khoản, không chia sẻ được
         </p>
         <Link

@@ -38,7 +38,7 @@ export function DashboardSection() {
         <div className="flex items-center gap-4">
           <StaffHeroArt art={STAFF_ART.gear} />
           <div>
-            <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
+            <p className="text-xs font-bold tracking-[0.14em] text-zinc-800 uppercase dark:text-zinc-400">
               Quản trị · Toàn hệ thống
             </p>
             <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
@@ -67,7 +67,7 @@ export function DashboardSection() {
         />
       </div>
       {dashboard.isError && (
-        <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-center text-xs text-zinc-600 dark:text-zinc-400">
           Không tải được số liệu tổng quan. Vui lòng thử lại sau.
         </p>
       )}

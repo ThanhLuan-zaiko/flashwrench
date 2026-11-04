@@ -32,11 +32,11 @@ export function ServicesCategoryHeader({
           {category.name}
         </h2>
         {category.description ? (
-          <p className="mt-2 text-sm text-zinc-600 md:text-base dark:text-zinc-400">
+          <p className="mt-2 text-sm text-zinc-800 md:text-base dark:text-zinc-400">
             {category.description}
           </p>
         ) : null}
-        <p className="mt-3 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+        <p className="mt-3 text-xs font-medium text-zinc-600 dark:text-zinc-400">
           {serviceCount} dịch vụ trong loại hình này
         </p>
       </div>

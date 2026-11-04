@@ -46,7 +46,7 @@ export function CheckoutFulfillmentFields({
               className={`flex min-h-[52px] flex-col items-start justify-center rounded-xl px-3 py-2 text-left ${checkoutOptionClasses(active)}`}
             >
               <span className="text-[13px] font-bold">{option.label}</span>
-              <span className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <span className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                 {option.hint}
               </span>
             </button>

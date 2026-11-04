@@ -17,7 +17,7 @@ import { CommentItem } from "./CommentItem";
 const PAGER_LINK =
   "flex min-h-11 items-center gap-1 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 const PAGER_IDLE =
-  "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-600 dark:text-zinc-400";
 
 // One comment thread per entity. The composer appears only for signed-in
 // users; private threads are enforced server-side per target type.
@@ -65,7 +65,7 @@ function CommentSectionInner({
       {query.isPending && targetId && (
         <p
           aria-busy="true"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           Đang tải bình luận…
         </p>
@@ -77,7 +77,7 @@ function CommentSectionInner({
       )}
 
       {items.length === 0 && !query.isPending ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Chưa có bình luận nào.
         </p>
       ) : (
@@ -159,7 +159,7 @@ function CommentSectionInner({
           }
         />
       ) : (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Đăng nhập để tham gia bình luận.
         </p>
       )}

@@ -37,22 +37,22 @@ export function VoucherOfferTicket({
       <div className="flex items-start gap-2.5">
         <FiTag
           aria-hidden="true"
-          className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700 dark:text-zinc-200"
+          className="mt-0.5 h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-200"
         />
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {title}
             {badge && (
-              <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[10px] font-semibold text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+              <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                 {badge}
               </span>
             )}
           </p>
-          <p className="mt-0.5 truncate text-xs text-zinc-700 dark:text-zinc-300">
+          <p className="mt-0.5 truncate text-xs text-zinc-800 dark:text-zinc-300">
             {name}
           </p>
           {meta.length > 0 && (
-            <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               {meta.join(" · ")}
             </p>
           )}
@@ -60,7 +60,7 @@ export function VoucherOfferTicket({
         {action}
       </div>
       {footer && (
-        <p className="mt-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
           {footer}
         </p>
       )}

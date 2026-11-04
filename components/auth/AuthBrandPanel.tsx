@@ -45,7 +45,7 @@ export function AuthBrandPanel({
   return (
     <div
       data-reveal
-      className={`flex flex-col justify-between gap-6 rounded-2xl bg-[#FACC15] p-6 text-[#111111] sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 ${className}`}
+      className={`flex flex-col justify-between gap-6 rounded-2xl bg-[#FB923C] p-6 text-[#111111] sm:col-span-2 sm:p-8 lg:col-span-2 lg:row-span-2 ${className}`}
     >
       <div>
         <p>
@@ -76,7 +76,7 @@ export function AuthBrandPanel({
                 <span className="block truncate text-sm font-semibold text-[#111111]">
                   {item.title}
                 </span>
-                <span className="block truncate text-xs text-[#111111]/70">
+                <span className="block truncate text-xs text-[#111111]/80">
                   {item.hint}
                 </span>
               </span>

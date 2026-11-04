@@ -6,6 +6,7 @@ import { FiRefreshCw } from "react-icons/fi";
 import { PageBounce } from "@/components/pagination/PageBounce";
 import { useToast } from "@/components/toast/useToast";
 import { ListSearchField } from "@/components/ui/ListSearchField";
+import { MonthDropdown } from "@/components/ui/MonthDropdown";
 import { useDispatchBookings } from "@/hooks/dispatch";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useCursorRoutePage } from "@/hooks/useCursorRoutePage";
@@ -152,24 +153,22 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
             <div className="min-w-0 flex-1">
               <label
                 htmlFor="dispatch-month"
-                className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                className="text-xs font-semibold text-zinc-800 dark:text-zinc-300"
               >
                 Tháng đặt lịch
               </label>
-              <input
+              <MonthDropdown
                 id="dispatch-month"
-                type="month"
+                className="mt-2"
                 value={month}
-                onChange={(event) => {
-                  const next = event.target.value;
+                onChange={(next) => {
                   if (isMonthKey(next)) {
                     setMonth(next);
                     router.replace(firstPageHref, { scroll: false });
                   }
                 }}
-                className="mt-2 flex min-h-[44px] w-full items-center rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 sm:max-w-56 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               />
-              <p className="mt-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                 Đơn được nhóm theo tháng hẹn sửa.
               </p>
             </div>
@@ -177,7 +176,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
               type="button"
               onClick={() => void query.refetch()}
               disabled={query.isFetching}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               <FiRefreshCw
                 aria-hidden="true"
@@ -198,7 +197,7 @@ export function DispatchBoard({ status }: { status: DispatchTab }) {
               <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Hàng đợi điều phối
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {items.length} đơn trên trang này ·{" "}
                 {formatMonthKey(appliedMonth)}
               </p>

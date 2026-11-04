@@ -13,7 +13,7 @@ import { Stars } from "./Stars";
 const PAGER_LINK =
   "flex min-h-11 items-center gap-1 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 const PAGER_IDLE =
-  "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+  "flex min-h-11 items-center gap-1 text-sm font-bold text-zinc-600 dark:text-zinc-400";
 
 // Public review feed: rating summary plus a newest-first list with
 // Trước/Sau cursor paging. Used on product pages, mechanic profiles and
@@ -62,13 +62,13 @@ export function ReviewList({
         <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {ratingCount > 0 ? ratingAvg.toFixed(1) : "—"}
         </span>
-        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="text-xs text-zinc-600 dark:text-zinc-400">
           {ratingCount > 0 ? `${ratingCount} đánh giá` : "Chưa có đánh giá"}
         </span>
       </div>
 
       {items.length === 0 ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">{emptyLabel}</p>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">{emptyLabel}</p>
       ) : (
         <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {items.map((item) => (
@@ -84,12 +84,12 @@ export function ReviewList({
                   {item.customerName}
                 </span>
                 {item.hidden && (
-                  <span className="text-[11px] font-medium text-red-600 dark:text-red-400">
+                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
                     Đã ẩn
                   </span>
                 )}
                 {item.createdAt && (
-                  <time className="text-[11px] text-zinc-400 dark:text-zinc-500">
+                  <time className="text-xs text-zinc-600 dark:text-zinc-400">
                     {formatDateTime(item.createdAt)}
                   </time>
                 )}
@@ -105,7 +105,7 @@ export function ReviewList({
                         action: item.hidden ? "unhide" : "hide",
                       })
                     }
-                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-[11px] font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                    className="ml-auto flex min-h-[32px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                   >
                     {item.hidden ? (
                       <FiEye aria-hidden="true" className="h-3.5 w-3.5" />
@@ -117,7 +117,7 @@ export function ReviewList({
                 )}
               </div>
               {item.body && (
-                <p className="text-sm whitespace-pre-line text-zinc-600 dark:text-zinc-300">
+                <p className="text-sm whitespace-pre-line text-zinc-800 dark:text-zinc-300">
                   {item.body}
                 </p>
               )}

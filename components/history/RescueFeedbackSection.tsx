@@ -37,7 +37,7 @@ export function RescueFeedbackSection({ rescue }: { rescue: RescueDetail }) {
   return (
     <section aria-label="Đánh giá và phản hồi" className="flex flex-col gap-3">
       {existing ? (
-        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           <FiStar aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           Bạn đã đánh giá {existing.rating}/5
           {existing.body ? ` — ${existing.body}` : ""}
@@ -66,7 +66,7 @@ export function RescueFeedbackSection({ rescue }: { rescue: RescueDetail }) {
       <button
         type="button"
         onClick={() => setComplaintOpen(true)}
-        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         <FiFlag aria-hidden="true" className="h-4 w-4" />
         Gửi khiếu nại về cứu hộ này

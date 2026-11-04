@@ -31,7 +31,7 @@ export function ProductsCartCta({ isCustomer }: { isCustomer: boolean }) {
             lines={["Đã chọn được linh kiện ưng ý?"]}
             className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
-          <p className="mt-4 max-w-xl text-base text-zinc-600 dark:text-zinc-400">
+          <p className="mt-4 max-w-xl text-base text-zinc-800 dark:text-zinc-400">
             {isCustomer
               ? "Kiểm tra giỏ hàng, áp voucher rồi đặt hàng. Giao tận nơi hoặc nhận tại gara."
               : "Đăng nhập để thêm linh kiện vào giỏ và theo dõi đơn hàng của bạn."}
@@ -40,7 +40,7 @@ export function ProductsCartCta({ isCustomer }: { isCustomer: boolean }) {
         <div data-chapter-row>
           <Link
             href={isCustomer ? "/cart" : "/login?next=%2Fcart"}
-            className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-6 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+            className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-6 py-2.5 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {isCustomer ? "Xem giỏ hàng" : "Đăng nhập để mua hàng"}
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />

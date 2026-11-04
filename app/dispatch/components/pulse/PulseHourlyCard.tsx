@@ -20,11 +20,11 @@ export function PulseHourlyCard({ pulse }: { pulse: DispatchPulse }) {
           <p className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111] tabular-nums dark:text-zinc-50">
             {pulse.todayTotal} đơn
           </p>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400">
+          <p className="text-xs text-zinc-800 dark:text-zinc-400">
             {formatChange(change)} · {pulse.currentHour}h có {nowCount} đơn
           </p>
         </div>
-        <div className="flex gap-4 text-xs text-zinc-700 dark:text-zinc-300">
+        <div className="flex gap-4 text-xs text-zinc-800 dark:text-zinc-300">
           <span className="flex items-center gap-1.5">
             <span
               aria-hidden="true"

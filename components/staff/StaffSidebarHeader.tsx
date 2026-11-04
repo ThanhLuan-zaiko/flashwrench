@@ -29,12 +29,12 @@ export function StaffSidebarHeader({
     >
       <span
         aria-hidden="true"
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#111111] text-sm font-extrabold text-[#FACC15]"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#111111] text-sm font-extrabold text-[#FB923C]"
       >
         FW
       </span>
       <span className={`min-w-0 flex-1 ${staffLabelClass(collapsed)}`}>
-        <span className="block truncate text-[11px] font-bold tracking-[0.14em] text-[#111111]/70 uppercase">
+        <span className="block truncate text-xs font-bold tracking-[0.14em] text-[#111111]/80 uppercase">
           {copy.areaName}
         </span>
         <span className="block truncate text-base font-extrabold tracking-tight text-[#111111]">

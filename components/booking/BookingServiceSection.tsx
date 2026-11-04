@@ -109,7 +109,7 @@ export function BookingServiceSection({
           <Link
             href="/services"
             scroll={false}
-            className="flex min-h-[44px] self-start items-center rounded-lg text-xs font-semibold text-zinc-600 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-400"
+            className="flex min-h-[44px] self-start items-center rounded-lg text-xs font-semibold text-zinc-800 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-400"
           >
             Xem tất cả dịch vụ
           </Link>

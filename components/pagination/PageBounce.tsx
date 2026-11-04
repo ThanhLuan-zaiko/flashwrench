@@ -14,7 +14,7 @@ export function PageBounce() {
     >
       <FiLoader
         aria-hidden="true"
-        className="h-8 w-8 text-zinc-400 motion-safe:animate-spin dark:text-zinc-500"
+        className="h-8 w-8 text-zinc-600 motion-safe:animate-spin dark:text-zinc-400"
       />
       <span className="sr-only">Đang chuyển về trang đầu…</span>
     </div>

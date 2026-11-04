@@ -55,7 +55,7 @@ export function CampaignLivePreview({
   };
   return (
     <div className="sm:col-span-2">
-      <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
         Xem trước cho khách
       </p>
       <div inert className="mt-2">

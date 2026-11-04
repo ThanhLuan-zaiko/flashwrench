@@ -14,8 +14,8 @@ type BookingScheduleSectionProps = {
   onChange: (value: string) => void;
 };
 
-// Schedule step: day pills and hourly slots (native datetime input as the
-// fallback) bounded by the admin-tuned intake
+// Schedule step: day pills and hourly slots (date and time dropdown for
+// anything else) bounded by the admin-tuned intake
 // window (lead floor + advance cap + working hours). The slot is a wish
 // staff confirm later — matching the service validation.
 export function BookingScheduleSection({

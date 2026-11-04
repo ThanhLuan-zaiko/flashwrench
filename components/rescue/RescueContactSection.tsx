@@ -60,19 +60,19 @@ export function RescueContactSection({
     <div className="flex flex-col gap-4">
       {hasAccountContact && (
         <div className="flex flex-col gap-1.5">
-          <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Thông tin liên hệ
           </p>
           <div className="flex items-center gap-3 border-y border-zinc-200 py-2.5 dark:border-zinc-800">
             <FiUserCheck
               aria-hidden="true"
-              className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+              className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-300"
             />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {contact.accountName || contact.accountPhone}
               </p>
-              <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {[contact.accountPhone, contact.accountEmail]
                   .filter(Boolean)
                   .join(" · ")}{" "}
@@ -83,7 +83,7 @@ export function RescueContactSection({
           {hiddenFieldError && (
             <p
               role="alert"
-              className="text-[11px] font-medium text-red-600 dark:text-red-400"
+              className="text-xs font-medium text-red-600 dark:text-red-400"
             >
               {hiddenFieldError}
             </p>

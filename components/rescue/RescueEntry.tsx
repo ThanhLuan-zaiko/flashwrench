@@ -97,13 +97,13 @@ export function RescueEntry() {
             key={step.title}
             className="border-t border-zinc-200 pt-4 dark:border-zinc-800"
           >
-            <p className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-sm font-bold text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+            <p className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-sm font-bold text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
               {index + 1}
             </p>
             <h2 className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               {step.title}
             </h2>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
               {step.body}
             </p>
           </article>
@@ -125,12 +125,12 @@ export function RescueEntry() {
             >
               <Icon
                 aria-hidden="true"
-                className="h-5 w-5 text-zinc-700 dark:text-zinc-300"
+                className="h-5 w-5 text-zinc-800 dark:text-zinc-300"
               />
               <h2 className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {note.title}
               </h2>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                 {note.body}
               </p>
             </article>

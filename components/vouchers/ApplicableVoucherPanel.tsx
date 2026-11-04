@@ -51,7 +51,7 @@ export function ApplicableVoucherPanel({
           <FiGift aria-hidden="true" className="h-4 w-4" />
           Món này có thể được giảm giá
         </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Đăng nhập để xem phiếu ưu đãi gắn với tài khoản của bạn. Voucher tự
           trừ ở bước thanh toán.
         </p>
@@ -87,7 +87,7 @@ export function ApplicableVoucherPanel({
           <FiTag aria-hidden="true" className="h-4 w-4" />
           Chưa có phiếu nào dùng được cho món này
         </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Đặt hàng, đặt lịch và gửi đánh giá để hệ thống tự phát voucher vào ví
           của bạn.
         </p>
@@ -106,19 +106,19 @@ export function ApplicableVoucherPanel({
 
   return (
     <section aria-label="Phiếu ưu đãi áp được" className={SECTION_CLASSES}>
-      <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
         Phiếu gắn với tài khoản của bạn
       </p>
       <p className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
         {ticketDiscountText(pick.wallet, pick.discount)}
       </p>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
         {pick.wallet.campaignName}
         {pick.wallet.minOrder > 0 &&
           ` · Đơn từ ${new Intl.NumberFormat("vi-VN").format(pick.wallet.minOrder)}đ`}
         {pick.count > 1 && ` · Còn ${pick.count - 1} phiếu khác trong ví`}
       </p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Hệ thống tự áp phiếu tiết kiệm nhất khi bạn đặt lịch hoặc thanh toán.
       </p>
       <div className="mt-2">

@@ -138,38 +138,38 @@ export function MechanicPresenceCard({
             />
             Sẵn sàng nhận việc
           </span>
-          <span className="mt-1 block text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="mt-1 block text-xs text-zinc-600 dark:text-zinc-400">
             {statusText}
           </span>
         </span>
         {open ? (
           <FiChevronUp
             aria-hidden="true"
-            className="h-4 w-4 shrink-0 text-zinc-500"
+            className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
           />
         ) : (
           <FiChevronDown
             aria-hidden="true"
-            className="h-4 w-4 shrink-0 text-zinc-500"
+            className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
           />
         )}
       </button>
 
       {open && (
         <div className="mt-3 flex flex-col gap-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
-          <label className="flex items-center justify-between gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <label className="flex items-center justify-between gap-2 text-xs font-medium text-zinc-800 dark:text-zinc-300">
             Trực tuyến
             <input
               type="checkbox"
               checked={online}
               onChange={(event) => setOnline(event.target.checked)}
-              className="h-4 w-4 accent-[#FACC15] dark:accent-zinc-100"
+              className="h-4 w-4 accent-[#FB923C] dark:accent-zinc-100"
               aria-label="Bật trực tuyến"
             />
           </label>
 
           <fieldset>
-            <legend className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+            <legend className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
               Kỹ năng
             </legend>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -183,8 +183,8 @@ export function MechanicPresenceCard({
                     aria-pressed={active}
                     className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-95 ${
                       active
-                        ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-                        : "border-zinc-300 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                        ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                        : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-900"
                     }`}
                   >
                     {skill.label}
@@ -195,11 +195,11 @@ export function MechanicPresenceCard({
           </fieldset>
 
           <div>
-            <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+            <p className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
               Điểm xuất phát
             </p>
             <div className="mt-1.5 flex items-center gap-2">
-              <span className="min-w-0 flex-1 truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="min-w-0 flex-1 truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {hasBase
                   ? `${baseLat?.toFixed(5)}, ${baseLng?.toFixed(5)}`
                   : "Chưa có tọa độ"}
@@ -209,7 +209,7 @@ export function MechanicPresenceCard({
                 onClick={locateBase}
                 disabled={locating}
                 aria-label="Lấy vị trí hiện tại làm điểm xuất phát"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-300 text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-50 motion-safe:active:scale-95 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-500 text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-50 motion-safe:active:scale-95 dark:border-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-900"
               >
                 <FiCrosshair
                   aria-hidden="true"
@@ -228,7 +228,7 @@ export function MechanicPresenceCard({
             type="button"
             onClick={save}
             disabled={saver.isPending || needsBase || presence.isLoading}
-            className="inline-flex min-h-[40px] items-center justify-center self-start rounded-xl bg-[#FACC15] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            className="inline-flex min-h-[40px] items-center justify-center self-start rounded-xl px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:hover:bg-zinc-300 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {saver.isPending ? "Đang lưu…" : "Lưu trạng thái"}
           </button>

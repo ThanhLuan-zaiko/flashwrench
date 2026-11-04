@@ -16,24 +16,24 @@ export function OrderOpsDetail({
   return (
     <>
       <section aria-label="Khách hàng">
-        <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Giao cho
         </h3>
         <p className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {order.customerName} · {order.customerPhone}
         </p>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
           {order.address?.fullText || "—"}
         </p>
         {order.note && (
-          <p className="mt-2 text-[11px] text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-xs text-zinc-800 dark:text-zinc-400">
             Ghi chú khách: {order.note}
           </p>
         )}
       </section>
 
       <section aria-label="Sản phẩm">
-        <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Sản phẩm
         </h3>
         <ul className="mt-1.5 divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -42,7 +42,7 @@ export function OrderOpsDetail({
               key={item.partId}
               className="flex items-baseline justify-between gap-3 py-1.5"
             >
-              <span className="min-w-0 truncate text-xs text-zinc-700 dark:text-zinc-300">
+              <span className="min-w-0 truncate text-xs text-zinc-800 dark:text-zinc-300">
                 {item.partName} × {item.quantity}
               </span>
               <span className="shrink-0 text-xs font-semibold text-zinc-900 dark:text-zinc-50">
@@ -55,14 +55,14 @@ export function OrderOpsDetail({
 
       {order.returnRequest && (
         <section aria-label="Yêu cầu đổi trả">
-          <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Yêu cầu đổi trả
           </h3>
           <div className="mt-1.5">
             <p className="text-xs font-medium text-zinc-800 dark:text-zinc-200">
               {order.returnRequest.reason}
             </p>
-            <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Gửi lúc {formatDateTime(order.returnRequest.requestedAt)}
               {order.returnRequest.decision &&
                 ` · Đã ${
@@ -100,16 +100,16 @@ export function OrderOpsDetail({
       )}
 
       <section aria-label="Tiến trình">
-        <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Tiến trình
         </h3>
         <ol className="mt-1.5 space-y-1.5">
           {order.history.map((entry) => (
             <li
               key={`${entry.changedAt ?? "init"}-${entry.newStatus}-${entry.note ?? ""}`}
-              className="text-[11px] text-zinc-500 dark:text-zinc-400"
+              className="text-xs text-zinc-600 dark:text-zinc-400"
             >
-              <span className="font-semibold text-zinc-700 dark:text-zinc-300">
+              <span className="font-semibold text-zinc-800 dark:text-zinc-300">
                 {ORDER_STATUS_LABELS[entry.newStatus as OrderStatus] ??
                   entry.newStatus}
               </span>
@@ -125,7 +125,7 @@ export function OrderOpsDetail({
         <button
           type="button"
           onClick={onViewInvoice}
-          className="inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           <FiFileText aria-hidden="true" className="h-4 w-4" />
           Xem hóa đơn chi tiết

@@ -29,7 +29,7 @@ export function ConfirmCodeField({
       <div className="flex items-center justify-between gap-2">
         <label
           htmlFor={id}
-          className="block text-xs font-medium text-zinc-700 dark:text-zinc-300"
+          className="block text-xs font-medium text-zinc-800 dark:text-zinc-300"
         >
           Mã xác nhận của khách — 6 chữ số
         </label>
@@ -37,7 +37,7 @@ export function ConfirmCodeField({
           type="button"
           onClick={onIssue}
           disabled={disabled || issuePending}
-          className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-300 px-2.5 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="flex min-h-[36px] items-center gap-1 rounded-lg border border-zinc-600 px-2.5 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           {issuePending ? (
             <FiLoader
@@ -53,7 +53,7 @@ export function ConfirmCodeField({
       <div className="mt-1 flex items-center gap-2">
         <FiKey
           aria-hidden="true"
-          className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500"
+          className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
         />
         <input
           id={id}
@@ -68,7 +68,7 @@ export function ConfirmCodeField({
           className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-center font-mono text-lg font-semibold tracking-[0.3em] text-zinc-900 outline-none transition-colors focus:border-zinc-500 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-400"
         />
       </div>
-      <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+      <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
         Khách đọc mã trên màn hình của họ — nhập lại để xác nhận đã nhận tiền
         mặt.
       </p>

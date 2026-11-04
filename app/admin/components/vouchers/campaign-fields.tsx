@@ -7,7 +7,7 @@
 export const CAMPAIGN_INPUT =
   "h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
 export const CAMPAIGN_LABEL =
-  "flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300";
+  "flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300";
 
 export function CampaignField({
   id,

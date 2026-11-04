@@ -29,7 +29,7 @@ export function PromoGridFeatured({
   onNext,
 }: PromoGridFeaturedProps) {
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-[#FACC15] text-[#111111] lg:grid lg:grid-cols-2">
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-[#FB923C] text-[#111111] lg:grid lg:grid-cols-2">
       <div className="relative h-52 shrink-0 overflow-hidden lg:h-auto">
         <div data-promo-cover="active" className="absolute inset-0">
           <CoverImage
@@ -80,11 +80,11 @@ export function PromoGridCompact({
           <p className="text-xl leading-tight font-extrabold text-[#111111] lg:text-2xl dark:text-zinc-100">
             {figure.value}
           </p>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400">
+          <p className="text-xs text-zinc-800 dark:text-zinc-400">
             {promoTermsLabel(campaign)}
           </p>
           {campaign.description ? (
-            <p className="text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
+            <p className="text-xs leading-relaxed text-zinc-800 dark:text-zinc-300">
               {campaign.description}
             </p>
           ) : null}

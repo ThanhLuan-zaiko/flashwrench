@@ -25,7 +25,7 @@ function ServiceReviewsCardInner({ service }: { service: ServiceItem | null }) {
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Đánh giá dịch vụ
         </h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           {service
             ? service.name
             : "Chọn dịch vụ để xem đánh giá từ khách hàng."}
@@ -35,7 +35,7 @@ function ServiceReviewsCardInner({ service }: { service: ServiceItem | null }) {
       {service && query.isPending && (
         <p
           aria-busy="true"
-          className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -54,7 +54,7 @@ function ServiceReviewsCardInner({ service }: { service: ServiceItem | null }) {
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
             Thử lại

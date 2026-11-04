@@ -1,6 +1,7 @@
 "use client";
 
 import { FiChevronLeft, FiChevronRight, FiDownload } from "react-icons/fi";
+import { DateDropdown } from "@/components/ui/DateDropdown";
 import type { RevenueRange } from "@/lib/revenue/revenue-period";
 import { shiftAnchor, todayAnchor } from "./revenue-format";
 
@@ -15,7 +16,7 @@ type RevenueToolbarProps = {
 };
 
 const BUTTON_CLASSES =
-  "flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-xl border border-zinc-300 px-3 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-xl border border-zinc-600 px-3 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] disabled:opacity-40 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
 // Period navigation + CSV export. Anchors are day keys (YYYY-MM-DD) — the
 // server normalizes them into whichever range is active.
@@ -37,14 +38,12 @@ export function RevenueToolbar({
       >
         <FiChevronLeft aria-hidden="true" className="h-4 w-4" />
       </button>
-      <input
-        type="date"
-        aria-label="Chọn ngày trong kỳ"
+      <DateDropdown
+        id="revenue-anchor"
+        className="w-48"
+        panelLabel="Chọn ngày trong kỳ"
         value={anchor}
-        onChange={(event) => {
-          if (event.target.value) onAnchorChange(event.target.value);
-        }}
-        className="min-h-[44px] rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+        onChange={onAnchorChange}
       />
       <button
         type="button"

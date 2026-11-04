@@ -38,7 +38,7 @@ export function PromoActiveCopy({
       >
         <p
           data-promo-anim
-          className="text-[11px] font-bold tracking-[0.12em] text-[#111111]/70 uppercase"
+          className="text-xs font-bold tracking-[0.12em] text-[#111111]/80 uppercase"
         >
           {promoScopeLabel(campaign.scope)}
         </p>
@@ -52,11 +52,11 @@ export function PromoActiveCopy({
           <span className="text-[2.75rem] leading-none font-extrabold tracking-[-0.03em] lg:text-[3.25rem]">
             {figure.value}
           </span>
-          <span className="text-xs font-bold tracking-[0.08em] text-[#111111]/70 uppercase">
+          <span className="text-xs font-bold tracking-[0.08em] text-[#111111]/80 uppercase">
             {figure.unit}
           </span>
         </p>
-        <p data-promo-anim className="text-sm text-[#111111]/70">
+        <p data-promo-anim className="text-sm text-[#111111]/80">
           {promoTermsLabel(campaign)}
         </p>
         {campaign.description ? (
@@ -74,7 +74,7 @@ export function PromoActiveCopy({
           scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
-          className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-[#111111] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15] motion-safe:active:scale-[0.99] lg:flex-none"
+          className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-[#111111] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FB923C] motion-safe:active:scale-[0.99] lg:flex-none"
         >
           Xem chi tiết
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />

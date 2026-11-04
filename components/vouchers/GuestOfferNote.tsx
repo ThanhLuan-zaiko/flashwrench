@@ -12,7 +12,7 @@ export function GuestOfferNote({ next }: { next: string }) {
   if (!me.isSuccess || me.data !== null) return null;
 
   return (
-    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-800 dark:text-zinc-400">
       Thành viên thấy voucher áp được cho từng món ngay trên danh sách.
       <Link
         href={`/login?next=${encodeURIComponent(next)}`}

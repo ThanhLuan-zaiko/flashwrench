@@ -87,7 +87,7 @@ export function CheckoutPaymentFields({
                 <span className="text-[13px] font-semibold sm:text-sm">
                   {label}
                 </span>
-                <span className="mt-0.5 hidden text-xs text-zinc-500 sm:block dark:text-zinc-400">
+                <span className="mt-0.5 hidden text-xs text-zinc-600 sm:block dark:text-zinc-400">
                   {hint}
                 </span>
               </span>

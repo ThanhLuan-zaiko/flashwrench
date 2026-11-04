@@ -44,7 +44,7 @@ export function WalletHeroTicket({ wallet }: { wallet: VoucherWallet }) {
       aria-label={`Voucher ${wallet.campaignName}`}
       className="flex min-w-0 flex-col gap-2"
     >
-      <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
         Voucher của bạn
       </p>
       <p className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50">
@@ -53,7 +53,7 @@ export function WalletHeroTicket({ wallet }: { wallet: VoucherWallet }) {
       <p className="text-base font-bold text-zinc-900 dark:text-zinc-50">
         {wallet.campaignName}
       </p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{meta}</p>
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">{meta}</p>
       <Link
         href={walletDetailHref(wallet.id)}
         scroll={false}

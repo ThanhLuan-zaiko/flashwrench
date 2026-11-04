@@ -56,7 +56,7 @@ export function MobileMenu({
                     className={
                       isActive
                         ? "flex items-center gap-3 rounded-lg bg-zinc-100 px-3 py-3 text-base font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-white"
-                        : "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white"
+                        : "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white"
                     }
                   >
                     <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />
@@ -74,7 +74,7 @@ export function MobileMenu({
             }`}
           >
             <div className="mb-2 flex items-center justify-between sm:hidden">
-              <span className="px-3 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+              <span className="px-3 text-sm font-medium text-zinc-800 dark:text-zinc-400">
                 Giao diện sáng / tối
               </span>
               <ThemeToggle />

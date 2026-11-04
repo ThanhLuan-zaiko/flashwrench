@@ -33,10 +33,10 @@ export function HomeFaq() {
                   {item.question}
                   <FiPlus
                     aria-hidden="true"
-                    className="h-5 w-5 shrink-0 text-zinc-500 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none dark:text-zinc-400"
+                    className="h-5 w-5 shrink-0 text-zinc-600 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none dark:text-zinc-400"
                   />
                 </summary>
-                <p className="mt-3 border-t border-zinc-200 pt-3 text-base text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+                <p className="mt-3 border-t border-zinc-200 pt-3 text-base text-zinc-800 dark:border-zinc-800 dark:text-zinc-400">
                   {item.answer}
                 </p>
               </details>

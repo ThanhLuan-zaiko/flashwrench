@@ -26,7 +26,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
       <div className="mx-auto max-w-7xl w-full px-4 pb-12 sm:px-6 md:pb-12 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+            <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
               Thợ uy tín
             </p>
             <MaskLines
@@ -37,7 +37,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
           <dl className="flex gap-8 text-zinc-900 dark:text-zinc-50">
             {avg > 0 ? (
               <div>
-                <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                <dt className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   Điểm trung bình
                 </dt>
                 <dd className="text-2xl font-bold tracking-tight">
@@ -46,7 +46,7 @@ export function MechanicsBento({ items }: { items: ShowcaseMechanic[] }) {
               </div>
             ) : null}
             <div>
-              <dt className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <dt className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
                 Đơn hoàn thành
               </dt>
               <dd className="text-2xl font-bold tracking-tight">{jobs}</dd>

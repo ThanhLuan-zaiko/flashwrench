@@ -49,7 +49,7 @@ export function BookingAddressSection({
         )}
         className="group"
       >
-        <summary className="flex min-h-9 cursor-pointer list-none items-center text-xs font-semibold text-zinc-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-300">
+        <summary className="flex min-h-9 cursor-pointer list-none items-center text-xs font-semibold text-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 dark:text-zinc-300">
           Chi tiết địa chỉ (không bắt buộc)
         </summary>
         <div className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2">

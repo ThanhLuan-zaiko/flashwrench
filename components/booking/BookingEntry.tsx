@@ -114,13 +114,13 @@ export function BookingEntry({
         <div className="flex items-start gap-3">
           <FiUser
             aria-hidden="true"
-            className="mt-0.5 h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200"
+            className="mt-0.5 h-5 w-5 shrink-0 text-zinc-800 dark:text-zinc-200"
           />
           <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               {guest ? "Đặt lịch với tư cách khách" : userName}
             </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               {guest
                 ? "Sau khi đặt bạn sẽ nhận được link theo dõi tiến trình."
                 : (userContact ?? "")}
@@ -136,14 +136,14 @@ export function BookingEntry({
           {guest ? (
             <Link
               href={buildLoginHref(buildBookingHref(current.serviceIds))}
-              className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+              className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
             >
               Đăng nhập
             </Link>
           ) : (
             <Link
               href="/account"
-              className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+              className="flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
             >
               Quản lý tài khoản
             </Link>
@@ -168,7 +168,7 @@ export function BookingEntry({
           <button
             type="button"
             onClick={() => void catalog.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử tải lại
@@ -182,14 +182,14 @@ export function BookingEntry({
               ? "Danh sách dịch vụ không hợp lệ"
               : "Có dịch vụ không còn khả dụng"}
           </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             {message ??
               "Cửa hàng vừa thay đổi bảng giá. Hãy bỏ các dịch vụ không còn khả dụng bên dưới hoặc chọn lại."}
           </p>
           <Link
             href="/services"
             scroll={false}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-4 py-2.5 text-sm font-bold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             Xem tất cả dịch vụ
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -205,13 +205,13 @@ export function BookingEntry({
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Cửa hàng đang yêu cầu đăng nhập để đặt lịch
           </p>
-          <p className="mx-auto mt-1 max-w-md text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mx-auto mt-1 max-w-md text-xs text-zinc-600 dark:text-zinc-400">
             Đăng nhập để tiếp tục — dịch vụ bạn đã chọn được giữ nguyên. Nếu cần
             gấp, hãy gọi hotline để được hỗ trợ.
           </p>
           <Link
             href={buildLoginHref(buildBookingHref(current.serviceIds))}
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             Đăng nhập để đặt lịch
           </Link>

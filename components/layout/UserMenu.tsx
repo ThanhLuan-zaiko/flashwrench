@@ -48,7 +48,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
     return (
       <output
         aria-label="Đang tải thông tin tài khoản"
-        className="flex h-10 w-10 items-center justify-center rounded-lg text-[#111111]/70"
+        className="flex h-10 w-10 items-center justify-center rounded-lg text-[#111111]/80"
       >
         <FiLoader
           aria-hidden="true"
@@ -66,7 +66,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
           className={
             onNavy
               ? "hidden items-center gap-1.5 rounded-lg border border-[#111111]/40 px-4 py-2 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.98] sm:flex"
-              : "hidden items-center gap-1.5 rounded-lg bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-offset-zinc-950"
+              : "hidden items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 motion-safe:active:scale-[0.98] sm:flex dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           }
         >
           <FiLogIn aria-hidden="true" className="h-4 w-4 shrink-0" />
@@ -78,7 +78,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
           className={
             onNavy
               ? "flex h-10 w-10 items-center justify-center rounded-lg text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 sm:hidden"
-              : "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 sm:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
+              : "flex h-10 w-10 items-center justify-center rounded-lg text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 sm:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
           }
         >
           <FiUser aria-hidden="true" className="h-5 w-5" />
@@ -106,7 +106,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
         className={
           onNavy
             ? "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[#111111]/40 bg-[#111111]/10 text-sm font-bold text-[#111111] transition-all duration-200 hover:bg-[#111111]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95"
-            : "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-zinc-300 bg-zinc-100 text-sm font-bold text-zinc-800 transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+            : "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-zinc-600 bg-zinc-100 text-sm font-bold text-[#111111] transition-all duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:border-zinc-400 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
         }
       >
         {user.avatarUrl ? (
@@ -132,7 +132,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
               {user.fullName}
             </p>
             {contact && (
-              <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {contact}
               </p>
             )}
@@ -143,7 +143,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
                 href={roleLink.href}
                 role="menuitem"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
               >
                 <RoleIcon aria-hidden="true" className="h-4 w-4 shrink-0" />
                 {roleLink.label}
@@ -153,7 +153,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
               href="/account"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <FiUser aria-hidden="true" className="h-4 w-4 shrink-0" />
               Thông tin tài khoản
@@ -163,7 +163,7 @@ export function UserMenu({ onNavy = false }: { onNavy?: boolean }) {
               role="menuitem"
               disabled={logout.isPending}
               onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               {logout.isPending ? (
                 <FiLoader

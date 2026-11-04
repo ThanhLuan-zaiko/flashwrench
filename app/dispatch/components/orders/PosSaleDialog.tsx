@@ -112,7 +112,7 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
         type="button"
         aria-label="Đóng bán hàng tại quầy"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div
         className={`relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
@@ -122,7 +122,7 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               Bán hàng tại quầy
             </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Khách mua trực tiếp tại xưởng — đơn ghi nhận đã giao và đã thu
               tiền.
             </p>
@@ -131,7 +131,7 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
             type="button"
             onClick={onClose}
             aria-label="Đóng bán hàng tại quầy"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -162,7 +162,7 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
               onChange={(event) => setCustomerName(event.target.value)}
               placeholder="Tên khách (không bắt buộc)"
               aria-label="Tên khách"
-              className="h-11 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+              className="h-11 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
             <input
               id={`${fieldId}-phone`}
@@ -171,7 +171,7 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
               placeholder="Số điện thoại (không bắt buộc)"
               aria-label="Số điện thoại khách"
               inputMode="tel"
-              className="h-11 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+              className="h-11 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
           </div>
           <input
@@ -179,11 +179,11 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
             onChange={(event) => setNote(event.target.value)}
             placeholder="Ghi chú (không bắt buộc)"
             aria-label="Ghi chú đơn bán"
-            className="h-11 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            className="h-11 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
           />
 
           <div className="flex items-center justify-between border-t border-zinc-200 pt-3 dark:border-zinc-800">
-            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            <span className="text-sm font-medium text-zinc-800 dark:text-zinc-400">
               Tổng thu
             </span>
             <span className="text-lg font-bold tracking-tight text-[#111111] dark:text-zinc-50">
@@ -195,7 +195,7 @@ export function PosSaleDialog({ onClose, onToast }: PosSaleDialogProps) {
             type="button"
             onClick={submit}
             disabled={sale.isPending || lines.length === 0}
-            className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-green-400 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+            className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-green-400 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {sale.isPending && (
               <FiLoader

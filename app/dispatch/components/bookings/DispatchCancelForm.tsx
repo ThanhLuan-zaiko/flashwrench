@@ -32,7 +32,7 @@ export function DispatchCancelForm({
     >
       <label
         htmlFor={`dispatch-cancel-${bookingId}`}
-        className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+        className="text-xs font-semibold text-zinc-800 dark:text-zinc-300"
       >
         Lý do hủy đơn (bắt buộc)
       </label>
@@ -44,21 +44,21 @@ export function DispatchCancelForm({
         maxLength={300}
         required
         placeholder="Ví dụ: khách đổi lịch, không liên lạc được…"
-        className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+        className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-400"
       />
       <div className="mt-2 flex gap-2">
         <button
           type="button"
           disabled={running}
           onClick={onBack}
-          className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           Quay lại
         </button>
         <button
           type="submit"
           disabled={running || trimmed.length === 0}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 disabled:opacity-60 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           {running && (
             <FiLoader

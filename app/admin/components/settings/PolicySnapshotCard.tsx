@@ -119,7 +119,7 @@ export function PolicySnapshotCard() {
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Chính sách hiện hành
         </h2>
-        <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+        <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
           {customized ? "Đã tùy chỉnh" : "Mặc định"}
         </span>
       </div>
@@ -128,10 +128,10 @@ export function PolicySnapshotCard() {
           <div key={stat.label} className="flex items-center gap-3 py-2">
             <stat.icon
               aria-hidden="true"
-              className="h-5 w-5 shrink-0 text-zinc-500 dark:text-zinc-400"
+              className="h-5 w-5 shrink-0 text-zinc-600 dark:text-zinc-400"
             />
             <div className="min-w-0">
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {stat.label}
               </p>
               <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -141,7 +141,7 @@ export function PolicySnapshotCard() {
           </div>
         ))}
       </div>
-      <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">{preview}</p>
+      <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400">{preview}</p>
     </section>
   );
 }

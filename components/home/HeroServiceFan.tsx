@@ -89,7 +89,7 @@ export function HeroServiceFan({ services }: { services: ServiceItem[] }) {
                 <span className="block truncate text-base font-extrabold tracking-tight xl:text-lg">
                   {service.name}
                 </span>
-                <span className="mt-1 block text-xs text-zinc-600 sm:text-sm">
+                <span className="mt-1 block text-xs text-zinc-800 dark:text-zinc-300 sm:text-sm">
                   từ{" "}
                   <span className="font-bold text-[#111111]">
                     {formatVnd(service.basePrice)}

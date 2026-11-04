@@ -70,7 +70,7 @@ export function ChatFab() {
           <FiMessageCircle className="h-6 w-6" aria-hidden />
         )}
         {!open && unreadThreads > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[11px] font-semibold leading-none text-white dark:border-zinc-950">
+          <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-xs font-semibold leading-none text-white dark:border-zinc-950">
             {unreadThreads > 99 ? "99+" : unreadThreads}
           </span>
         ) : null}

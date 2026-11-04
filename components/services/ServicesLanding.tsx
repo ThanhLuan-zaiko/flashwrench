@@ -168,7 +168,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Loại hình này không còn được áp dụng
           </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             Cửa hàng vừa thay đổi danh mục. Hãy xem toàn bộ dịch vụ đang có.
           </p>
           <Link

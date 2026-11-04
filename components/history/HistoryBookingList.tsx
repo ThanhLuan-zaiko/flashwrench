@@ -41,7 +41,7 @@ function BookingSection({
   if (bookings.length === 0) return null;
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         {title}
       </h3>
       <ul className="flex flex-col gap-3">
@@ -86,7 +86,7 @@ export function HistoryBookingList({
       <div className="relative">
         <FiSearch
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400"
+          className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
         />
         <input
           type="search"
@@ -95,7 +95,7 @@ export function HistoryBookingList({
           onChange={(event) => onSearch(event.target.value)}
           placeholder="Tìm theo mã đơn, dịch vụ, thợ hoặc biển số…"
           aria-label="Tìm trong lịch sử đặt lịch"
-          className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+          className="min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-400"
         />
       </div>
 
@@ -119,7 +119,7 @@ export function HistoryBookingList({
           <button
             type="button"
             onClick={onRetry}
-            className="mt-2 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-2 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:border-red-800 dark:hover:bg-red-950"
           >
             Thử tải lại
           </button>
@@ -127,7 +127,7 @@ export function HistoryBookingList({
       )}
 
       {!loading && !error && bookings.length === 0 && (
-        <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-zinc-600 dark:text-zinc-300">
+        <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-zinc-800 dark:text-zinc-300">
           <p>
             {search
               ? "Không tìm thấy đơn phù hợp. Hãy thử mã đơn, dịch vụ, thợ hoặc biển số khác."
@@ -136,7 +136,7 @@ export function HistoryBookingList({
           {!search && (
             <Link
               href="/services"
-              className="flex min-h-11 items-center rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+              className="flex min-h-11 items-center rounded-xl px-5 py-2.5 text-sm font-bold transition-colors duration-200 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Xem dịch vụ
             </Link>
@@ -165,7 +165,7 @@ export function HistoryBookingList({
           <div className="flex flex-col gap-2 border-t border-zinc-200 pt-3 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
             <p
               aria-live="polite"
-              className="text-xs text-zinc-500 dark:text-zinc-400"
+              className="text-xs text-zinc-600 dark:text-zinc-400"
             >
               Trang {pageNumber} · {bookings.length} đơn
             </p>

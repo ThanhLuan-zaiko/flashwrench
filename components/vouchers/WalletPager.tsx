@@ -41,7 +41,7 @@ export function WalletPager({
     >
       <p
         aria-live="polite"
-        className="text-xs text-zinc-500 dark:text-zinc-400"
+        className="text-xs text-zinc-600 dark:text-zinc-400"
       >
         Trang {page} · Hiển thị {count} voucher
         {canNext ? " · còn voucher tiếp theo" : ""}

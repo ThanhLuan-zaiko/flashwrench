@@ -31,7 +31,7 @@ export function NavigationHeader({
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {loading ? "Đang tải bản đồ…" : `${jobCount} điểm cần tới`}
         </h3>
-        <p className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-400">
           <FiMapPin aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           {originLabel ?? "Chưa có vị trí xuất phát"}
         </p>
@@ -41,7 +41,7 @@ export function NavigationHeader({
         onClick={onShare}
         disabled={locating}
         aria-pressed={sharingRoute || canShareRoute ? sharingRoute : undefined}
-        className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-xs font-semibold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         {locating ? (
           <FiLoader

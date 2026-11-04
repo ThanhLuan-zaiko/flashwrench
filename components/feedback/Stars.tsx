@@ -27,7 +27,7 @@ export function Stars({
           className={`${size} ${
             star <= filled
               ? "fill-zinc-900 dark:fill-zinc-50"
-              : "text-zinc-300 dark:text-zinc-600"
+              : "text-zinc-300 dark:text-zinc-400"
           }`}
         />
       ))}

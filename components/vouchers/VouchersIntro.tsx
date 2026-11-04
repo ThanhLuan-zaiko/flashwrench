@@ -34,7 +34,7 @@ export function VouchersIntro({ countText }: VouchersIntroProps) {
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <p
           data-chapter-row
-          className="max-w-xl text-sm leading-relaxed text-zinc-600 md:text-base dark:text-zinc-400"
+          className="max-w-xl text-sm leading-relaxed text-zinc-800 md:text-base dark:text-zinc-400"
         >
           Mỗi voucher chỉ dùng được trên tài khoản này, tự cập nhật khi có
           voucher mới.
@@ -55,7 +55,7 @@ export function VouchersIntro({ countText }: VouchersIntroProps) {
       <div className="flex justify-end py-3">
         <p
           aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           {countText}
         </p>

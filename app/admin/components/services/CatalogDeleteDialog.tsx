@@ -61,7 +61,7 @@ export function CatalogDeleteDialog({
         type="button"
         aria-label="Đóng hộp thoại"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-3">
@@ -77,7 +77,7 @@ export function CatalogDeleteDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng hộp thoại"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -87,7 +87,7 @@ export function CatalogDeleteDialog({
           {target.name}
         </p>
         {target.detail && (
-          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
             {target.detail}
           </p>
         )}
@@ -98,7 +98,7 @@ export function CatalogDeleteDialog({
               Hành động không thể hoàn tác. Mọi dữ liệu của {kindLabel} này sẽ
               mất vĩnh viễn.
             </p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
               Nhập đúng mã{" "}
               <span className="font-mono font-semibold">{target.slug}</span> để
               xác nhận.
@@ -108,11 +108,11 @@ export function CatalogDeleteDialog({
               onChange={(e) => onConfirmText(e.target.value)}
               placeholder={target.slug}
               aria-label="Nhập mã để xác nhận xóa vĩnh viễn"
-              className="mt-2 h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+              className="mt-2 h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
             />
           </div>
         ) : (
-          <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-300">
+          <p className="mt-3 text-xs text-zinc-800 dark:text-zinc-300">
             Mục này sẽ chuyển vào Thùng rác và ẩn khỏi khách hàng. Bạn có thể
             khôi phục bất cứ lúc nào.
           </p>
@@ -131,7 +131,7 @@ export function CatalogDeleteDialog({
           <button
             type="button"
             onClick={onClose}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiRotateCcw aria-hidden="true" className="h-4 w-4" />
             Hủy bỏ
@@ -140,7 +140,7 @@ export function CatalogDeleteDialog({
             type="button"
             disabled={!canConfirm}
             onClick={onConfirm}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-red-400 dark:text-[#111111] dark:hover:bg-red-300"
           >
             {pending ? (
               <FiLoader

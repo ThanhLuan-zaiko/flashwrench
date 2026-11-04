@@ -15,7 +15,7 @@ export function PulseHeader({ updatedAt, isFetching }: PulseHeaderProps) {
       <div className="flex items-center gap-4">
         <StaffHeroArt art={STAFF_ART.van} />
         <div>
-          <p className="text-xs font-bold tracking-[0.14em] text-zinc-600 uppercase dark:text-zinc-400">
+          <p className="text-xs font-bold tracking-[0.14em] text-zinc-800 uppercase dark:text-zinc-400">
             Điều phối · Hôm nay
           </p>
           <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
@@ -25,7 +25,7 @@ export function PulseHeader({ updatedAt, isFetching }: PulseHeaderProps) {
       </div>
       <div className="flex items-center gap-2.5">
         {updatedAt > 0 && (
-          <span className="text-xs text-zinc-600 tabular-nums dark:text-zinc-400">
+          <span className="text-xs text-zinc-800 tabular-nums dark:text-zinc-400">
             Cập nhật {formatClock(updatedAt)}
           </span>
         )}

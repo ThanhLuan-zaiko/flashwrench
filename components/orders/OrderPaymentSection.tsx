@@ -47,7 +47,7 @@ export function OrderPaymentSection({
       </p>
 
       {order.paymentStatus === "paid" && (
-        <p className="mt-2 flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-zinc-800 dark:text-zinc-400">
           <FiCheckCircle aria-hidden="true" className="h-3.5 w-3.5" />
           {paidRef
             ? `Đã thanh toán · Mã GD ${paidRef}`
@@ -56,7 +56,7 @@ export function OrderPaymentSection({
       )}
 
       {order.paymentStatus === "refunded" && (
-        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
           Khoản thanh toán (giả lập) đã được hoàn lại.
         </p>
       )}
@@ -64,7 +64,7 @@ export function OrderPaymentSection({
       {order.paymentStatus === "unpaid" &&
         order.paymentMethod === "counter" &&
         order.status !== "cancelled" && (
-          <p className="mt-2 flex items-start gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-2 flex items-start gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
             <FiHome
               aria-hidden="true"
               className="mt-0.5 h-3.5 w-3.5 shrink-0"
@@ -78,7 +78,7 @@ export function OrderPaymentSection({
       {order.paymentStatus === "unpaid" &&
         order.paymentMethod === "cod" &&
         order.status !== "cancelled" && (
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
             Bạn sẽ thanh toán khi nhận hàng.
           </p>
         )}
@@ -93,7 +93,7 @@ export function OrderPaymentSection({
 
       {mockPayable && (
         <div className="mt-3 flex flex-col gap-2">
-          <p className="flex items-start gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="flex items-start gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
             <FiCreditCard
               aria-hidden="true"
               className="mt-0.5 h-3.5 w-3.5 shrink-0"
@@ -103,7 +103,7 @@ export function OrderPaymentSection({
           <button
             type="button"
             onClick={() => setPaying(true)}
-            className="inline-flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="inline-flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             Thanh toán ngay
           </button>

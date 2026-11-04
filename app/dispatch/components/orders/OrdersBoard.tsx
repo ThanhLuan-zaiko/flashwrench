@@ -8,6 +8,7 @@ import { StaffHeroArt } from "@/components/staff/StaffHeroArt";
 import { STAFF_ART } from "@/components/staff/staff-art";
 import { useToast } from "@/components/toast/useToast";
 import { ListSearchField } from "@/components/ui/ListSearchField";
+import { MonthDropdown } from "@/components/ui/MonthDropdown";
 import {
   useDispatchOrders,
   useDispatchOrdersRealtime,
@@ -98,13 +99,13 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
               <h2 className="text-base font-bold tracking-tight text-[#111111] dark:text-zinc-50">
                 Vận hành đơn linh kiện
               </h2>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                 Xác nhận, đóng gói và giao đơn linh kiện. Hủy đơn sẽ hoàn số
                 lượng về kho.
               </p>
             </div>
           </div>
-          <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
+          <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-300">
             <span
               aria-hidden="true"
               className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400"
@@ -115,7 +116,7 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
           <button
             type="button"
             onClick={() => setPosOpen(true)}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-green-400 motion-safe:active:scale-[0.98] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-green-400 motion-safe:active:scale-[0.98] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             <FiShoppingBag aria-hidden="true" className="h-4 w-4" />
             Bán tại quầy
@@ -139,24 +140,22 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
             <div className="min-w-0 flex-1">
               <label
                 htmlFor="orders-month"
-                className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                className="text-xs font-semibold text-zinc-800 dark:text-zinc-300"
               >
                 Tháng đặt hàng
               </label>
-              <input
+              <MonthDropdown
                 id="orders-month"
-                type="month"
+                className="mt-2"
                 value={month}
-                onChange={(event) => {
-                  const next = event.target.value;
+                onChange={(next) => {
                   if (isMonthKey(next)) {
                     setMonth(next);
                     router.replace(firstPageHref, { scroll: false });
                   }
                 }}
-                className="mt-2 flex min-h-[44px] w-full items-center rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 sm:max-w-56 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
               />
-              <p className="mt-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                 Đơn được nhóm theo tháng đặt hàng.
               </p>
             </div>
@@ -164,7 +163,7 @@ export function DispatchOrdersBoard({ status }: { status: DispatchOrderTab }) {
               type="button"
               onClick={() => void query.refetch()}
               disabled={query.isFetching}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               <FiRefreshCw
                 aria-hidden="true"

@@ -62,7 +62,7 @@ export function DashboardKpiRow({ report, dashboard }: DashboardKpiRowProps) {
           className="flex flex-col justify-between gap-2 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
         >
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-zinc-600 dark:text-zinc-400">
+            <p className="text-[13px] font-semibold text-zinc-800 dark:text-zinc-400">
               {tile.label}
             </p>
             <p className="mt-1.5 truncate text-xl font-extrabold text-[#111111] tabular-nums sm:text-2xl dark:text-zinc-50">

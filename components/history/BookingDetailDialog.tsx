@@ -62,7 +62,7 @@ export function BookingDetailDialog({
         type="button"
         aria-label="Đóng chi tiết đơn"
         onClick={onClose}
-        className="absolute inset-0 bg-zinc-950/50"
+        className="absolute inset-0 bg-[#111111]/50"
       />
       <div
         className={`relative flex max-h-[90dvh] w-full max-w-lg flex-col overflow-clip rounded-t-2xl border border-zinc-200 bg-white sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950`}
@@ -74,7 +74,7 @@ export function BookingDetailDialog({
             </h2>
             {booking && (
               <span
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${statusChipTone(booking.status)}`}
+                className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ${statusChipTone(booking.status)}`}
               >
                 {STATUS_LABELS[booking.status]}
               </span>
@@ -84,7 +84,7 @@ export function BookingDetailDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -96,7 +96,7 @@ export function BookingDetailDialog({
           {query.isPending && (
             <div
               aria-busy="true"
-              className="flex items-center justify-center gap-2 py-10 text-sm text-zinc-500 dark:text-zinc-400"
+              className="flex items-center justify-center gap-2 py-10 text-sm text-zinc-600 dark:text-zinc-400"
             >
               <FiLoader aria-hidden="true" className="h-4 w-4 animate-spin" />
               Đang tải chi tiết đơn…
@@ -122,21 +122,21 @@ export function BookingDetailDialog({
                 <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                   {booking.serviceNames.join(", ") || "Đơn sửa xe"}
                 </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
                   {formatDateTime(booking.scheduledAt, {
                     timeZone: booking.timezone,
                     withZoneSuffix: false,
                   })}
                 </p>
                 <BookingDuration durationMin={booking.durationMin} />
-                <p className="flex items-start gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="flex items-start gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                   <FiMapPin
                     aria-hidden="true"
                     className="mt-0.5 h-3.5 w-3.5 shrink-0"
                   />
                   {booking.addressText}
                 </p>
-                <p className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                   <FiUser aria-hidden="true" className="h-3.5 w-3.5" />
                   {booking.mechanicName || "Đang tìm thợ phù hợp"}
                 </p>
@@ -168,7 +168,7 @@ export function BookingDetailDialog({
                         : null
                     }
                   />
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
                     Cập nhật{" "}
                     {formatDateTime(booking.location.updatedAt, {
                       withZoneSuffix: false,
@@ -190,7 +190,7 @@ export function BookingDetailDialog({
                       key={item.serviceId}
                       className="flex items-center justify-between gap-3 text-sm"
                     >
-                      <span className="text-zinc-600 dark:text-zinc-300">
+                      <span className="text-zinc-800 dark:text-zinc-300">
                         {item.serviceName}
                         {item.quantity > 1 ? ` ×${item.quantity}` : ""}
                       </span>
@@ -206,7 +206,7 @@ export function BookingDetailDialog({
                   travelFee={booking.travelFee}
                   total={booking.total}
                 />
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
                   {paymentStateLabel(booking.paymentState)}
                 </p>
               </section>
@@ -216,7 +216,7 @@ export function BookingDetailDialog({
               )}
 
               {booking.cancelReason && (
-                <p className="rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+                <p className="rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
                   Lý do hủy: {booking.cancelReason}
                 </p>
               )}

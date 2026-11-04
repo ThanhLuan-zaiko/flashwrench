@@ -83,7 +83,7 @@ export function RevenueBoard({
       {isPending && (
         <p
           aria-busy="true"
-          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white py-16 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400"
+          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white py-16 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"

@@ -18,7 +18,7 @@ const VARIANT_STYLES: Record<ToastVariant, { icon: string; edge: string }> = {
     edge: "border-l-red-500",
   },
   info: {
-    icon: "h-5 w-5 shrink-0 text-zinc-700 dark:text-zinc-200",
+    icon: "h-5 w-5 shrink-0 text-zinc-800 dark:text-zinc-200",
     edge: "border-l-zinc-300 dark:border-l-zinc-600",
   },
 };
@@ -65,7 +65,7 @@ function ToastCard({
           {toast.title}
         </p>
         {toast.description && (
-          <p className="mt-0.5 line-clamp-2 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 line-clamp-2 text-xs text-zinc-600 dark:text-zinc-400">
             {toast.description}
           </p>
         )}
@@ -74,7 +74,7 @@ function ToastCard({
         type="button"
         onClick={() => onDismiss(toast.id)}
         aria-label="Đóng thông báo"
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:bg-zinc-800"
       >
         <FiX aria-hidden="true" className="h-4 w-4" />
       </button>

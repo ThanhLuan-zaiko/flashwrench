@@ -29,7 +29,7 @@ export function ServicesClosingCta() {
             lines={["Đã chọn được dịch vụ ưng ý?"]}
             className="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
-          <p className="mt-4 max-w-xl text-base text-zinc-600 dark:text-zinc-400">
+          <p className="mt-4 max-w-xl text-base text-zinc-800 dark:text-zinc-400">
             Đặt nhanh một dịch vụ hoặc thêm nhiều dịch vụ vào cùng lịch hẹn. Tạo
             tài khoản nếu bạn muốn lưu lịch sử và dùng voucher.
           </p>

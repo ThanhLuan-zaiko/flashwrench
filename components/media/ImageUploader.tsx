@@ -138,7 +138,7 @@ export function ImageUploader({
         type="button"
         disabled={busy}
         onClick={() => inputRef.current?.click()}
-        className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-green-700 px-4 py-2.5 text-sm font-semibold text-green-800 transition-colors duration-200 hover:bg-green-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-green-500 dark:text-green-400 dark:hover:bg-zinc-900"
+        className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#1D4ED8] px-4 py-2.5 text-sm font-semibold text-[#1D4ED8] transition-colors duration-200 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-[#60A5FA] dark:text-[#60A5FA] dark:hover:bg-blue-950/40"
       >
         {busy ? (
           <FiLoader
@@ -150,7 +150,7 @@ export function ImageUploader({
         )}
         {busy ? "Đang tải ảnh…" : label}
       </button>
-      <p className="flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+      <p className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-400">
         <FiImage aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
         {hint ??
           `JPEG, PNG hoặc WebP, tối đa ${maxMbLabel()}. Cắt giữ nguyên phân giải gốc.`}
@@ -158,7 +158,7 @@ export function ImageUploader({
       {error && (
         <p
           role="alert"
-          className="text-[11px] font-medium text-red-600 dark:text-red-400"
+          className="text-xs font-medium text-red-600 dark:text-red-400"
         >
           {error}
         </p>

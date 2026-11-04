@@ -17,15 +17,15 @@ type PartRowActionsProps<
 
 // Update actions (edit, toggle, restore): navy outline.
 const ROW_BUTTON =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
 // Soft delete: red outline.
 const DELETE_ROW_BUTTON =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-400 dark:text-red-300 dark:hover:bg-red-950/40";
 
 // Hard delete: red solid.
 const DANGER_BUTTON =
-  "flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400";
+  "flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-400 dark:text-[#111111] dark:hover:bg-red-300";
 
 // Row action buttons shared by part categories and parts: toggle/edit/
 // soft delete live, restore/hard delete in trash mode.

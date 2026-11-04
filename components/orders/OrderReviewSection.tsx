@@ -63,7 +63,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
       </h2>
 
       {orderReview ? (
-        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+        <p className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
           <FiStar aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           Đánh giá đơn hàng: {orderReview.rating}/5
           {orderReview.body ? ` — ${orderReview.body}` : ""}
@@ -86,7 +86,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
 
       {delivered && order.items.length > 0 && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+          <p className="text-xs font-medium text-zinc-800 dark:text-zinc-300">
             Đánh giá từng sản phẩm
           </p>
           <ul className="flex flex-col gap-2">
@@ -103,7 +103,7 @@ export function OrderReviewSection({ order }: { order: OrderDetail }) {
                       {item.partName}
                     </span>
                     {reviewed ? (
-                      <span className="flex shrink-0 items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                      <span className="flex shrink-0 items-center gap-1 text-xs text-zinc-600 dark:text-zinc-400">
                         <Stars rating={reviewed.rating} size="h-3 w-3" />
                         Đã đánh giá
                       </span>

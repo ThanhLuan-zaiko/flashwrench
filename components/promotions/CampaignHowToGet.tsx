@@ -54,7 +54,7 @@ export function CampaignHowToGet() {
             <div className="flex items-start justify-between gap-3">
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FACC15] text-sm font-bold text-[#111111]"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FB923C] text-sm font-bold text-[#111111]"
               >
                 {step.numeral}
               </span>
@@ -70,7 +70,7 @@ export function CampaignHowToGet() {
               <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
                 {step.title}
               </h3>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
                 {step.hint}
               </p>
             </div>

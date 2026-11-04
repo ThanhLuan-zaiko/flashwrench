@@ -34,13 +34,13 @@ type ServiceCategoryListProps = {
 function StatusPill({ item }: { item: ServiceCategoryItem }) {
   if (item.isDeleted) {
     return (
-      <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+      <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
         Trong thùng rác
       </span>
     );
   }
   return (
-    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
       {item.isActive ? "Đang áp dụng" : "Tạm tắt"}
     </span>
   );
@@ -82,7 +82,7 @@ export function ServiceCategoryList({
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
             />
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">
               Đang tải loại hình…
             </span>
           </li>
@@ -93,13 +93,13 @@ export function ServiceCategoryList({
   if (isError) {
     return (
       <div className="py-10 text-center">
-        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Không tải được loại hình.
         </p>
         <button
           type="button"
           onClick={onRetry}
-          className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+          className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-950"
         >
           Thử lại
         </button>
@@ -145,7 +145,7 @@ export function ServiceCategoryList({
                   <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                     {item.name}
                   </span>
-                  <span className="block truncate font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="block truncate font-mono text-xs text-zinc-600 dark:text-zinc-400">
                     {item.slug} · {item.serviceCount} mục giá
                   </span>
                   <span className="mt-1.5 flex flex-wrap gap-1.5">
@@ -161,7 +161,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onRestore(item)}
                       aria-label={`Khôi phục ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <FiRotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
                       Khôi phục
@@ -171,7 +171,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onHardDelete(item)}
                       aria-label={`Xóa vĩnh viễn ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-500 dark:text-zinc-950 dark:hover:bg-red-400"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:bg-red-400 dark:text-[#111111] dark:hover:bg-red-300"
                     >
                       <FiTrash2 aria-hidden="true" className="h-3.5 w-3.5" />
                       Xóa cứng
@@ -188,7 +188,7 @@ export function ServiceCategoryList({
                           ? `Tạm tắt ${item.name}`
                           : `Bật lại ${item.name}`
                       }
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <FiPower aria-hidden="true" className="h-3.5 w-3.5" />
                       {item.isActive ? "Tạm tắt" : "Bật lại"}
@@ -198,7 +198,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onEdit(item)}
                       aria-label={`Sửa ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FACC15]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#111111] px-3 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#FB923C]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <FiEdit2 aria-hidden="true" className="h-3.5 w-3.5" />
                       Sửa
@@ -208,7 +208,7 @@ export function ServiceCategoryList({
                       disabled={busy}
                       onClick={() => onSoftDelete(item)}
                       aria-label={`Xóa mềm ${item.name}`}
-                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40"
+                      className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 py-2 text-xs font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 dark:focus-visible:ring-red-400 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:border-red-400 dark:text-red-300 dark:hover:bg-red-950/40"
                     >
                       <FiTrash2 aria-hidden="true" className="h-3.5 w-3.5" />
                       Xóa mềm

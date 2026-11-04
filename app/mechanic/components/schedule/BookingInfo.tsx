@@ -26,18 +26,18 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
       <div>
         <p className="flex flex-wrap items-center gap-1.5">
           <span
-            className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${statusTone(booking.status)}`}
+            className={`rounded-full border px-2 py-0.5 text-xs font-medium ${statusTone(booking.status)}`}
           >
             {STATUS_LABELS[booking.status]}
           </span>
-          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
             {paymentStateLabel(booking.paymentState)}
           </span>
         </p>
         <p className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {booking.customerName || "Khách hàng"}
         </p>
-        <div className="mt-1.5 flex flex-col gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <div className="mt-1.5 flex flex-col gap-1 text-xs text-zinc-600 dark:text-zinc-400">
           <span className="flex items-center gap-1.5">
             <FiUser aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
             {booking.vehicleBrand} {booking.vehicleModel} ·{" "}
@@ -56,7 +56,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
           </span>
           <BookingDuration durationMin={booking.durationMin} />
           {booking.notes && (
-            <span className="text-zinc-700 dark:text-zinc-300">
+            <span className="text-zinc-800 dark:text-zinc-300">
               Ghi chú: {booking.notes}
             </span>
           )}
@@ -64,7 +64,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
         {booking.customerPhone && (
           <a
             href={`tel:${booking.customerPhone}`}
-            className="mt-3 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="mt-3 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiPhone aria-hidden="true" className="h-4 w-4" />
             Gọi {booking.customerPhone}
@@ -78,7 +78,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+        <h3 className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
           Dịch vụ ({booking.items.length})
         </h3>
         <ul className="mt-2 divide-y divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
@@ -91,7 +91,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
                 <span className="block truncate text-sm font-medium text-zinc-800 dark:text-zinc-200">
                   {item.serviceName}
                 </span>
-                <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="block text-xs text-zinc-600 dark:text-zinc-400">
                   {formatVnd(item.unitPrice)} × {item.quantity}
                 </span>
               </span>
@@ -108,18 +108,18 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
           total={booking.total}
         />
         {booking.items.length > 1 && (
-          <p className="mt-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+          <p className="mt-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
             Chỉ nhận lịch hẹn khi bạn có thể thực hiện toàn bộ hạng mục đã chọn.
           </p>
         )}
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+        <h3 className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
           Lịch sử trạng thái
         </h3>
         {booking.timeline.length === 0 ? (
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
             Chưa có lịch sử thay đổi trạng thái.
           </p>
         ) : (
@@ -137,7 +137,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
                   <span className="font-semibold text-zinc-800 dark:text-zinc-200">
                     {STATUS_LABELS[entry.to]}
                   </span>
-                  <span className="block text-zinc-500 dark:text-zinc-400">
+                  <span className="block text-zinc-600 dark:text-zinc-400">
                     {formatShortDate(entry.at)}
                     {entry.note ? ` · ${entry.note}` : ""}
                   </span>
@@ -146,7 +146,7 @@ export function BookingInfo({ booking }: { booking: MechanicBookingDetail }) {
             ))}
           </ol>
         )}
-        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
           {serviceLine}
         </p>
       </div>

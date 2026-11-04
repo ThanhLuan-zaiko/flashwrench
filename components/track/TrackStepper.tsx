@@ -46,7 +46,7 @@ export function TrackStepper({
                 aria-hidden="true"
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                   done
-                    ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
+                    ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
                     : active
                       ? "border-zinc-900 dark:border-white"
                       : "border-zinc-300 dark:border-zinc-700"
@@ -63,8 +63,8 @@ export function TrackStepper({
                   active
                     ? "font-semibold text-zinc-900 dark:text-zinc-50"
                     : done
-                      ? "text-zinc-700 dark:text-zinc-300"
-                      : "text-zinc-500 dark:text-zinc-500"
+                      ? "text-zinc-800 dark:text-zinc-300"
+                      : "text-zinc-600 dark:text-zinc-400"
                 }`}
               >
                 {step.label}
@@ -79,7 +79,7 @@ export function TrackStepper({
       {updatedAt && (
         <p
           aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           Cập nhật {formatDateTime(updatedAt)} · tự làm mới mỗi 15 giây
         </p>

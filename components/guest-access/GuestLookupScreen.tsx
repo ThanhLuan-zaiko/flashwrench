@@ -95,7 +95,7 @@ function messageOf(error: unknown, fallback: string): string {
 
 function Loading({ label }: { label: string }) {
   return (
-    <p className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+    <p className="py-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
       {label}
     </p>
   );

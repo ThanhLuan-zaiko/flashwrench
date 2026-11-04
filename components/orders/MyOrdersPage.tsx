@@ -42,7 +42,7 @@ export function MyOrdersPage() {
           </p>
           <Link
             href={me.data ? "/products" : buildLoginHref("/orders")}
-            className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold transition-colors duration-200 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {me.data ? "Quay lại cửa hàng" : "Đăng nhập"}
           </Link>
@@ -59,7 +59,7 @@ export function MyOrdersPage() {
           <button
             type="button"
             onClick={() => void orders.refetch()}
-            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
             Thử tải lại
@@ -80,14 +80,14 @@ export function MyOrdersPage() {
           <div data-reveal className="py-8 text-center">
             <FiPackage
               aria-hidden="true"
-              className="mx-auto h-8 w-8 text-zinc-300 dark:text-zinc-700"
+              className="mx-auto h-8 w-8 text-zinc-300 dark:text-zinc-400"
             />
             <p className="mt-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               Bạn chưa có đơn hàng nào
             </p>
             <Link
               href="/products"
-              className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="mx-auto mt-4 flex min-h-11 w-fit items-center justify-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold transition-colors duration-200 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Mua sắm ngay
             </Link>
@@ -110,18 +110,18 @@ export function MyOrdersPage() {
                     <span className={orderStatusBadgeClass(order.status)}>
                       {ORDER_STATUS_LABELS[order.status]}
                     </span>
-                    <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+                    <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-400">
                       {order.fulfillmentType === "pickup"
                         ? "Nhận tại xưởng"
                         : "Giao tận nơi"}
                     </span>
                     {canMockPayOnline(order) && (
-                      <span className="rounded-full border border-zinc-900 px-2 py-0.5 text-[11px] font-semibold text-zinc-900 dark:border-zinc-300 dark:text-zinc-200">
+                      <span className="rounded-full border border-zinc-900 px-2 py-0.5 text-xs font-semibold text-zinc-900 dark:border-zinc-300 dark:text-zinc-200">
                         Chờ thanh toán
                       </span>
                     )}
                   </p>
-                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                     {formatDateTime(order.createdAt)}
                   </p>
                 </div>
@@ -131,7 +131,7 @@ export function MyOrdersPage() {
                   </span>
                   <FiArrowRight
                     aria-hidden="true"
-                    className="h-4 w-4 text-zinc-400"
+                    className="h-4 w-4 text-zinc-600 dark:text-zinc-400"
                   />
                 </p>
               </Link>

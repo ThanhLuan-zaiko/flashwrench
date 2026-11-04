@@ -48,7 +48,7 @@ export function CartPage() {
           </p>
           <Link
             href="/products"
-            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-4 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+            className="mx-auto mt-4 flex min-h-[44px] w-fit items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             Quay lại cửa hàng
           </Link>
@@ -67,7 +67,7 @@ export function CartPage() {
             <button
               type="button"
               onClick={() => void cart.refetch()}
-              className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+              className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
             >
               <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
               Thử tải lại
@@ -105,13 +105,13 @@ export function CartPage() {
               className="flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"
             >
               <div>
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   Tạm tính ({cartView.itemCount} sản phẩm)
                 </p>
                 <p className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111] dark:text-zinc-50">
                   {formatVnd(cartView.subtotal)}
                 </p>
-                <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                   Phí giao hàng sẽ được xác nhận sau khi đặt.
                 </p>
               </div>
@@ -120,7 +120,7 @@ export function CartPage() {
                   type="button"
                   disabled={clearCart.isPending}
                   onClick={() => clearCart.mutate(undefined)}
-                  className="flex min-h-[44px] items-center rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 disabled:pointer-events-none disabled:opacity-50 dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950/40"
+                  className="flex min-h-[44px] items-center rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold text-red-700 transition-colors duration-200 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 disabled:pointer-events-none disabled:opacity-50 dark:border-red-400 dark:text-red-300 dark:hover:bg-red-950/40"
                 >
                   Xóa giỏ hàng
                 </button>
@@ -141,7 +141,7 @@ export function CartPage() {
 
             <Link
               href="/products"
-              className="flex w-fit items-center gap-1.5 text-sm font-semibold text-zinc-600 transition-colors duration-200 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
+              className="flex w-fit items-center gap-1.5 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
             >
               <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
               Tiếp tục mua sắm

@@ -26,7 +26,7 @@ export function AvatarSection() {
     return (
       <output
         aria-label="Đang tải ảnh đại diện"
-        className="flex items-center gap-2 py-4 text-sm text-zinc-500 dark:text-zinc-400"
+        className="flex items-center gap-2 py-4 text-sm text-zinc-600 dark:text-zinc-400"
       >
         <FiLoader
           aria-hidden="true"
@@ -78,7 +78,7 @@ export function AvatarSection() {
       ) : (
         <span
           aria-hidden="true"
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-lg font-bold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-lg font-bold text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
         >
           {initialsOf(user.fullName)}
         </span>
@@ -87,7 +87,7 @@ export function AvatarSection() {
         <h2 className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           {user.fullName}
         </h2>
-        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
           <FiUser aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           Ảnh vuông hiển thị đẹp nhất ở mọi nơi.
         </p>

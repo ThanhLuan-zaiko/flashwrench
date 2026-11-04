@@ -38,7 +38,7 @@ export function ProductSpecsChapter({
                 data-chapter-row
                 className="flex items-baseline justify-between gap-4 border-b border-zinc-200 py-3 dark:border-zinc-800"
               >
-                <dt className="text-sm text-zinc-500 dark:text-zinc-400">
+                <dt className="text-sm text-zinc-600 dark:text-zinc-400">
                   {key}
                 </dt>
                 <dd className="text-right text-base font-bold text-zinc-900 dark:text-zinc-50">
@@ -52,7 +52,7 @@ export function ProductSpecsChapter({
       {carModels.length > 0 && (
         <div className="flex flex-col gap-4">
           <ProductChapterHead title="Xe tương thích" />
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Kiểm tra dòng xe trước khi đặt mua.
           </p>
           <ul className="flex flex-wrap gap-x-6 gap-y-3">

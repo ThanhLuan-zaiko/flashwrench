@@ -42,11 +42,11 @@ export function CatalogPager({
   let gapSeen = 0;
 
   const navClass =
-    "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-300 px-3 py-2 text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800";
+    "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-zinc-500 px-3 py-2 text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:scale-[0.98] dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800";
   const numClass =
     "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border px-3 py-2 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98]";
-  const numIdle = `${numClass} border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800`;
-  const numActive = `${numClass} border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900`;
+  const numIdle = `${numClass} border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800`;
+  const numActive = `${numClass} border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]`;
 
   const submitJump = (event: FormEvent) => {
     event.preventDefault();
@@ -63,7 +63,7 @@ export function CatalogPager({
     >
       <p
         aria-live="polite"
-        className="text-xs text-zinc-500 dark:text-zinc-400"
+        className="text-xs text-zinc-600 dark:text-zinc-400"
       >
         Hiển thị {start}–{end} trên {total} mục
       </p>
@@ -97,7 +97,7 @@ export function CatalogPager({
               <span
                 key={key}
                 aria-hidden="true"
-                className="px-1 text-xs text-zinc-400 dark:text-zinc-500"
+                className="px-1 text-xs text-zinc-600 dark:text-zinc-400"
               >
                 …
               </span>
@@ -153,7 +153,7 @@ export function CatalogPager({
           </Link>
         )}
       </div>
-      <span className="w-full px-1 text-xs font-semibold text-zinc-700 sm:w-auto dark:text-zinc-300">
+      <span className="w-full px-1 text-xs font-semibold text-zinc-800 sm:w-auto dark:text-zinc-300">
         Trang {current + 1} / {safeCount}
       </span>
       {safeCount > 7 && (
@@ -171,12 +171,12 @@ export function CatalogPager({
             onChange={(e) => setJump(e.target.value)}
             inputMode="numeric"
             placeholder={`1–${safeCount}`}
-            className="h-11 w-20 rounded-xl border border-zinc-300 bg-white px-3 text-center text-sm font-medium text-zinc-800 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            className="h-11 w-20 rounded-xl border border-zinc-300 bg-white px-3 text-center text-sm font-medium text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-400"
           />
           <button
             type="submit"
             aria-label="Đi tới trang đã nhập"
-            className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Đi
           </button>

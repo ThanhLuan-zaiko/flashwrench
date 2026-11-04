@@ -15,8 +15,8 @@ function formatTime(iso: string): string {
 
 function timeClass(mine: boolean): string {
   return mine
-    ? "text-[#111111]/70 dark:text-zinc-500"
-    : "text-zinc-400 dark:text-zinc-500";
+    ? "text-[#111111]/80 dark:text-zinc-400"
+    : "text-zinc-600 dark:text-zinc-400";
 }
 
 function BubbleShell({
@@ -31,7 +31,7 @@ function BubbleShell({
       <div
         className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
           mine
-            ? "rounded-br-md bg-[#FACC15] text-[#111111] dark:bg-zinc-100 dark:text-zinc-900"
+            ? "rounded-br-md bg-[#FB923C] text-[#111111] dark:bg-[#FB923C] dark:text-[#111111]"
             : "rounded-bl-md bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
         }`}
       >
@@ -45,7 +45,7 @@ function TextBody({ message }: { message: ChatMessage }) {
   return (
     <BubbleShell mine={message.mine}>
       <p className="whitespace-pre-wrap break-words">{message.body}</p>
-      <p className={`mt-1 text-right text-[10px] ${timeClass(message.mine)}`}>
+      <p className={`mt-1 text-right text-xs ${timeClass(message.mine)}`}>
         {formatTime(message.createdAt)}
       </p>
     </BubbleShell>
@@ -69,7 +69,7 @@ function ImageBody({ message }: { message: ChatMessage }) {
           className="max-h-64 w-full rounded-xl object-cover"
         />
       </a>
-      <p className={`mt-1 text-right text-[10px] ${timeClass(message.mine)}`}>
+      <p className={`mt-1 text-right text-xs ${timeClass(message.mine)}`}>
         {formatTime(message.createdAt)}
       </p>
     </BubbleShell>
@@ -100,7 +100,7 @@ function LocationBody({ message }: { message: ChatMessage }) {
           Mở bản đồ
         </a>
       ) : null}
-      <p className={`mt-1 text-right text-[10px] ${timeClass(message.mine)}`}>
+      <p className={`mt-1 text-right text-xs ${timeClass(message.mine)}`}>
         {formatTime(message.createdAt)}
       </p>
     </BubbleShell>

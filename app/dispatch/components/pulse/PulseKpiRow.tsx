@@ -72,7 +72,7 @@ export function PulseKpiRow({ pulse }: { pulse: DispatchPulse }) {
           key={kpi.label}
           className="flex flex-col gap-1.5 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800"
         >
-          <p className="text-[13px] font-semibold text-zinc-600 dark:text-zinc-400">
+          <p className="text-[13px] font-semibold text-zinc-800 dark:text-zinc-400">
             {kpi.label}
           </p>
           <p className="flex flex-wrap items-baseline gap-2">

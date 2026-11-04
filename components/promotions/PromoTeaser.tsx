@@ -40,7 +40,7 @@ export function PromoTeaser({ audience }: PromoTeaserProps) {
   const cta = guest ? "Tạo tài khoản để nhận" : "Xem ví của tôi";
 
   return (
-    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-800 dark:text-zinc-400">
       <FiGift aria-hidden="true" className="h-4 w-4 shrink-0" />
       <Link
         href={campaignDetailHref(top.slug)}

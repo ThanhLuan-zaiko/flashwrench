@@ -49,7 +49,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
         scroll={false}
         prefetch
         data-reveal
-        className="flex w-fit min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="flex w-fit min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
       >
         <FiArrowLeft aria-hidden="true" className="h-4 w-4" />
         Quay lại ví voucher
@@ -79,7 +79,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
             <button
               type="button"
               onClick={() => void detail.refetch()}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
             >
               <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
               Thử tải lại
@@ -87,7 +87,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
             <Link
               href="/vouchers"
               scroll={false}
-              className="flex min-h-[44px] items-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] items-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Về ví voucher
             </Link>
@@ -102,7 +102,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
               {gallery.length > 0 ? (
                 <ProductGallery images={gallery} name={wallet.campaignName} />
               ) : (
-                <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-zinc-200 text-zinc-300 md:h-80 dark:border-zinc-800 dark:text-zinc-700">
+                <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-zinc-200 text-zinc-300 md:h-80 dark:border-zinc-800 dark:text-zinc-400">
                   <FiGift aria-hidden="true" className="h-16 w-16" />
                 </div>
               )}
@@ -112,7 +112,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
               className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
             >
               <div>
-                <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+                <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
                   Voucher gắn tài khoản · Không chia sẻ được
                 </p>
                 <h1 className="mt-1 text-2xl font-bold tracking-tight text-balance text-zinc-900 dark:text-zinc-50">
@@ -120,7 +120,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                 </h1>
                 <p
                   aria-live="polite"
-                  className="mt-2 inline-flex rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300"
+                  className="mt-2 inline-flex rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300"
                 >
                   {walletStatusLabel(wallet)}
                 </p>
@@ -130,7 +130,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
               </p>
               <dl className="divide-y divide-zinc-100 dark:divide-zinc-800">
                 <div className="flex items-baseline justify-between gap-3 py-2">
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">
+                  <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                     Áp dụng cho
                   </dt>
                   <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -138,7 +138,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 py-2">
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">
+                  <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                     Đơn tối thiểu
                   </dt>
                   <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -148,7 +148,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 py-2">
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">
+                  <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                     Ngày nhận
                   </dt>
                   <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -156,7 +156,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 py-2">
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">
+                  <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                     Hạn dùng
                   </dt>
                   <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -165,7 +165,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                 </div>
                 {wallet.usedAt && (
                   <div className="flex items-baseline justify-between gap-3 py-2">
-                    <dt className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <dt className="text-xs text-zinc-600 dark:text-zinc-400">
                       Đã dùng lúc
                     </dt>
                     <dd className="text-right text-xs font-semibold text-zinc-800 dark:text-zinc-200">
@@ -181,7 +181,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                       href="/booking"
                       scroll={false}
                       prefetch
-                      className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                      className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
                     >
                       Đặt lịch để dùng
                     </Link>
@@ -191,7 +191,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                       href="/products"
                       scroll={false}
                       prefetch
-                      className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                      className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
                     >
                       Mua linh kiện để dùng
                     </Link>
@@ -209,7 +209,7 @@ export function WalletDetail({ walletId }: { walletId: string }) {
               <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Về chương trình này
               </h2>
-              <p className="mt-1 text-sm whitespace-pre-line text-zinc-600 dark:text-zinc-400">
+              <p className="mt-1 text-sm whitespace-pre-line text-zinc-800 dark:text-zinc-400">
                 {campaign.description}
               </p>
             </section>

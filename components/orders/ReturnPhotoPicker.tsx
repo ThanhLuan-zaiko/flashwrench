@@ -27,7 +27,7 @@ export function ReturnPhotoPicker({
 
   return (
     <div>
-      <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Ảnh hiện trạng sản phẩm (bắt buộc, tối đa {RETURN_IMAGE_MAX})
       </p>
       <div className="mt-1.5 flex flex-wrap gap-2">
@@ -45,7 +45,7 @@ export function ReturnPhotoPicker({
               onClick={() => onRemove(index)}
               disabled={disabled}
               aria-label={`Gỡ ảnh ${index + 1}`}
-              className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+              className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-500 bg-white text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:bg-zinc-900 dark:text-zinc-300"
             >
               <FiX aria-hidden="true" className="h-3.5 w-3.5" />
             </button>
@@ -56,7 +56,7 @@ export function ReturnPhotoPicker({
             type="button"
             onClick={() => pickerRef.current?.click()}
             disabled={disabled}
-            className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-zinc-300 text-[10px] font-semibold text-zinc-500 transition-colors duration-200 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900"
+            className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-zinc-600 text-xs font-semibold text-zinc-600 transition-colors duration-200 hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-400 dark:text-zinc-400 dark:hover:bg-zinc-900"
           >
             <FiImage aria-hidden="true" className="h-5 w-5" />
             Thêm ảnh

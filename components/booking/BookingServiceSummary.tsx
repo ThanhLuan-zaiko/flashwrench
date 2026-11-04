@@ -13,18 +13,18 @@ type BookingServiceSummaryProps = {
 export function BookingServiceSummary({ service }: BookingServiceSummaryProps) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
-      <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+      <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
         {service.categoryName}
       </p>
       <h3 className="break-words text-sm font-bold text-zinc-900 dark:text-zinc-50">
         {service.name}
       </h3>
       {service.description && (
-        <p className="line-clamp-3 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="line-clamp-3 text-xs text-zinc-600 dark:text-zinc-400">
           {service.description}
         </p>
       )}
-      <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+      <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
         <span className="flex items-center gap-1 rounded-full border border-zinc-200 px-2 py-1 dark:border-zinc-800">
           <FiClock aria-hidden="true" className="h-3 w-3" />
           {formatDuration(

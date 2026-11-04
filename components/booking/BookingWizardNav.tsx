@@ -31,7 +31,7 @@ export function BookingWizardProgress({
       </div>
       <p
         aria-live="polite"
-        className="text-sm text-zinc-600 dark:text-zinc-400"
+        className="text-sm text-zinc-800 dark:text-zinc-400"
       >
         <span className="font-bold text-[#111111] dark:text-zinc-100">
           Bước {step + 1}/{labels.length}

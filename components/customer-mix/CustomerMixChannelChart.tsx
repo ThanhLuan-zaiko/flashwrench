@@ -32,7 +32,7 @@ export function CustomerMixChannelChart({
   const guest = points.reduce((sum, p) => sum + p.guest, 0);
   if (member + guest === 0) {
     return (
-      <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="py-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
         {emptyHint}
       </p>
     );
@@ -54,7 +54,7 @@ export function CustomerMixChannelChart({
           </li>
         ))}
       </ul>
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-300">
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-800 dark:text-zinc-300">
         <span className="flex items-center gap-1.5">
           <span
             aria-hidden="true"

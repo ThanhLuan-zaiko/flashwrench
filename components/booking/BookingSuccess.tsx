@@ -32,7 +32,7 @@ export function BookingSuccess({
             <FiCheck aria-hidden="true" className="h-5 w-5 shrink-0" />
             Đặt lịch thành công
           </h1>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Lịch hẹn đã được ghi nhận. Dưới đây là thông tin bạn vừa đặt.
           </p>
         </div>
@@ -46,7 +46,7 @@ export function BookingSuccess({
       </div>
       <dl className="grid grid-cols-1 gap-x-4 gap-y-3 border-y border-zinc-200 py-3 text-xs sm:grid-cols-2 dark:border-zinc-800">
         <div>
-          <dt className="font-medium text-zinc-500 dark:text-zinc-400">
+          <dt className="font-medium text-zinc-600 dark:text-zinc-400">
             Dịch vụ
           </dt>
           <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
@@ -72,7 +72,7 @@ export function BookingSuccess({
           </dd>
         </div>
         <div>
-          <dt className="font-medium text-zinc-500 dark:text-zinc-400">
+          <dt className="font-medium text-zinc-600 dark:text-zinc-400">
             Khung giờ
           </dt>
           <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
@@ -82,7 +82,7 @@ export function BookingSuccess({
           </dd>
         </div>
         <div>
-          <dt className="font-medium text-zinc-500 dark:text-zinc-400">
+          <dt className="font-medium text-zinc-600 dark:text-zinc-400">
             Biển số xe
           </dt>
           <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
@@ -91,7 +91,7 @@ export function BookingSuccess({
         </div>
         {booking.mechanicName && (
           <div className="sm:col-span-2">
-            <dt className="font-medium text-zinc-500 dark:text-zinc-400">
+            <dt className="font-medium text-zinc-600 dark:text-zinc-400">
               Thợ phụ trách
             </dt>
             <dd className="mt-0.5 font-semibold text-zinc-900 dark:text-zinc-50">
@@ -107,7 +107,7 @@ export function BookingSuccess({
         travelFee={booking.travelFee ?? 0}
         total={booking.total}
       />
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Mã đặt lịch: {booking.bookingId}. Thợ sẽ xác nhận qua thông tin liên hệ
         của bạn trong vài phút.
       </p>
@@ -115,14 +115,14 @@ export function BookingSuccess({
         <Link
           href="/services"
           scroll={false}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-4 py-2.5 text-sm font-bold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           Đặt thêm dịch vụ
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>
         <Link
           href={guest ? `/track/booking/${booking.bookingId}` : "/account"}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] motion-safe:transition-colors motion-safe:duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
           {guest ? "Theo dõi lịch hẹn" : "Xem tài khoản của tôi"}
         </Link>

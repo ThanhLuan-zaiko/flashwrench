@@ -19,7 +19,7 @@ function MechanicReviewsPanelInner({ mechanicId }: { mechanicId: string }) {
       {reviews.isPending && (
         <p
           aria-busy="true"
-          className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"

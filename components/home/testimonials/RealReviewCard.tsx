@@ -23,13 +23,13 @@ export function RealReviewCard({
           size="h-4 w-4"
           label={`${review.rating} trên 5 sao`}
         />
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
           {reviewTargetLabel(review.targetKind, review.targetName)}
         </p>
         <blockquote className="flex-1 text-base font-medium tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
           “{review.quote}”
         </blockquote>
-        <p className="border-t border-zinc-200 pt-3 text-sm font-semibold text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
+        <p className="border-t border-zinc-200 pt-3 text-sm font-semibold text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
           {review.customerName}
         </p>
       </article>

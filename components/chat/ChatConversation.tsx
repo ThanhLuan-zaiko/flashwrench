@@ -67,25 +67,25 @@ export function ChatConversation({ threadId }: ChatConversationProps) {
               type="button"
               onClick={() => void messages.fetchNextPage()}
               disabled={messages.isFetchingNextPage}
-              className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              className="rounded-full border border-zinc-500 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
             >
               {messages.isFetchingNextPage ? "Đang tải..." : "Tải tin cũ hơn"}
             </button>
           </div>
         ) : null}
         {messages.isPending ? (
-          <div className="flex h-full items-center justify-center text-zinc-500">
+          <div className="flex h-full items-center justify-center text-zinc-600 dark:text-zinc-400">
             <FiLoader className="h-5 w-5 animate-spin" aria-hidden />
           </div>
         ) : messages.isError ? (
           <div className="flex h-full items-center justify-center px-6 text-center">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
               {messages.error.message}
             </p>
           </div>
         ) : items.length === 0 ? (
           <div className="flex h-full items-center justify-center px-6 text-center">
-            <p className="text-sm text-zinc-400 dark:text-zinc-500">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
               Chưa có tin nhắn. Gửi lời chào đầu tiên nhé!
             </p>
           </div>
@@ -94,7 +94,7 @@ export function ChatConversation({ threadId }: ChatConversationProps) {
             <div key={message.id}>
               <ChatMessageBubble message={message} />
               {message.id === lastSeenMineId ? (
-                <p className="mt-1 pr-1 text-right text-[10px] text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 pr-1 text-right text-xs text-zinc-600 dark:text-zinc-400">
                   Đã xem
                 </p>
               ) : null}

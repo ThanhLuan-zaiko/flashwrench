@@ -16,9 +16,9 @@ import { AuthApiError } from "@/services/auth.api";
 const INPUT =
   "min-h-[44px] w-full rounded-xl border border-zinc-200 bg-white px-3 font-mono text-sm uppercase text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50";
 const PRIMARY_BUTTON =
-  "flex min-h-[44px] items-center justify-center rounded-xl bg-[#FACC15] px-4 text-sm font-semibold text-[#111111] disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900";
+  "flex min-h-[44px] items-center justify-center rounded-xl bg-[#FB923C] px-4 text-sm font-semibold text-[#111111] disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-[#FB923C] dark:text-[#111111]";
 const GHOST_BUTTON =
-  "flex min-h-[44px] items-center justify-center rounded-xl border border-[#111111] px-4 text-sm font-semibold text-[#111111] transition-colors duration-150 hover:bg-[#FACC15]/20 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
+  "flex min-h-[44px] items-center justify-center rounded-xl border border-[#111111] px-4 text-sm font-semibold text-[#111111] transition-colors duration-150 hover:bg-[#FB923C]/20 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:border-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800";
 
 function readError(error: unknown): string {
   if (error instanceof AuthApiError) {
@@ -71,12 +71,12 @@ export function CampaignCodeSection() {
         <FiKey aria-hidden="true" className="h-4 w-4" />
         Mã nhập tay
       </h2>
-      <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
         Khách đã đăng nhập gõ mã này ở bước đặt lịch hoặc thanh toán để nhận
         voucher vào ví và dùng ngay. Điều phối chỉ đổi được mã, không sửa được
         nội dung chiến dịch.
       </p>
-      <div className="mt-3 flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+      <div className="mt-3 flex flex-col gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300">
         <span id="code-campaign-label">Chiến dịch</span>
         <DropdownSelect
           id="code-campaign"
@@ -93,7 +93,7 @@ export function CampaignCodeSection() {
       </div>
       {selected && (
         <div className="mt-3 flex flex-col gap-2">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Mã hiện tại:{" "}
             {current ? (
               <span className="inline-block rounded-md border border-zinc-200 px-1.5 py-0.5 font-mono text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100">
@@ -103,7 +103,7 @@ export function CampaignCodeSection() {
               "Chưa có mã"
             )}
           </p>
-          <label className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <label className="flex flex-col gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300">
             Mã mới (4–20 chữ cái không dấu hoặc chữ số)
             <input
               value={code}
@@ -127,7 +127,7 @@ export function CampaignCodeSection() {
           {success && (
             <p
               aria-live="polite"
-              className="text-xs text-zinc-600 dark:text-zinc-300"
+              className="text-xs text-zinc-800 dark:text-zinc-300"
             >
               {success}
             </p>

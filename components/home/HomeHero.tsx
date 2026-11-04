@@ -26,7 +26,7 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
     <section
       ref={rootRef}
       aria-label="Giới thiệu FlashWrench"
-      className="rounded-b-[2.5rem] bg-[#FACC15] px-4 pt-8 pb-10 text-[#111111] sm:px-6 md:pt-10 md:pb-12 lg:px-0"
+      className="rounded-b-[2.5rem] bg-[#FB923C] px-4 pt-8 pb-10 text-[#111111] sm:px-6 md:pt-10 md:pb-12 lg:px-0"
     >
       <div
         className={`mx-auto grid w-full max-w-7xl items-center gap-10 lg:gap-14 lg:px-8 ${hasTiles ? "lg:grid-cols-2" : ""}`}
@@ -60,12 +60,12 @@ export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
                 authedLabel="Đặt lịch ngay"
                 guestAriaLabel="Đặt lịch ngay không cần tài khoản"
                 authedAriaLabel="Đặt lịch ngay"
-                className="flex min-h-[44px] items-center justify-center rounded-xl bg-[#111111] px-6 py-3 text-sm font-bold whitespace-nowrap text-white transition-colors duration-200 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15] motion-safe:active:scale-[0.99]"
+                className="flex min-h-[44px] items-center justify-center rounded-xl bg-[#111111] px-6 py-3 text-sm font-bold whitespace-nowrap text-white transition-colors duration-200 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FB923C] motion-safe:active:scale-[0.99]"
               />
             </span>
             <a
               href="#dich-vu"
-              className="flex min-h-[44px] items-center justify-center rounded-xl border border-[#111111]/40 px-6 py-3 text-sm font-semibold whitespace-nowrap text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FACC15] motion-safe:active:scale-[0.99]"
+              className="flex min-h-[44px] items-center justify-center rounded-xl border border-[#111111]/40 px-6 py-3 text-sm font-semibold whitespace-nowrap text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FB923C] motion-safe:active:scale-[0.99]"
             >
               Xem dịch vụ
             </a>

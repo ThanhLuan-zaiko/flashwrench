@@ -12,7 +12,7 @@ export function RealtimeStatusBadge() {
   return (
     <output
       aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}
-      className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
+      className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400"
     >
       <span
         aria-hidden="true"

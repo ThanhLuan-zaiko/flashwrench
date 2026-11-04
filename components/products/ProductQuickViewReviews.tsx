@@ -25,13 +25,13 @@ function ProductQuickViewReviewsInner({ part }: { part: PartItem }) {
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Đánh giá sản phẩm
         </h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">{part.name}</p>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">{part.name}</p>
       </div>
 
       {query.isPending && (
         <p
           aria-busy="true"
-          className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -50,7 +50,7 @@ function ProductQuickViewReviewsInner({ part }: { part: PartItem }) {
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+            className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 font-semibold hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
             Thử lại

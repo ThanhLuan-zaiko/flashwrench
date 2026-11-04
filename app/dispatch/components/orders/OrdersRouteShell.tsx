@@ -25,7 +25,7 @@ export function OrdersRouteShell() {
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Trạng thái đơn này không tồn tại
           </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             Hãy chọn một trạng thái bên dưới để xem danh sách đơn.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-1.5">
@@ -37,7 +37,7 @@ export function OrdersRouteShell() {
                   href={entry.href}
                   scroll={false}
                   prefetch
-                  className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
                 >
                   <EntryIcon aria-hidden="true" className="h-4 w-4 shrink-0" />
                   {entry.label}
@@ -50,7 +50,7 @@ export function OrdersRouteShell() {
               href={`/dispatch/orders/${DEFAULT_ORDER_TAB}`}
               scroll={false}
               prefetch
-              className="text-xs font-semibold text-zinc-700 underline-offset-2 hover:underline dark:text-zinc-200"
+              className="text-xs font-semibold text-zinc-800 underline-offset-2 hover:underline dark:text-zinc-200"
             >
               Về danh sách đơn chờ xác nhận
             </Link>

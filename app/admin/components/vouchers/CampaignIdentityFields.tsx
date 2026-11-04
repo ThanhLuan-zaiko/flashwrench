@@ -77,14 +77,14 @@ export function CampaignIdentityFields({
             <button
               type="button"
               onClick={() => onSet("slug", slugifyName(form.name))}
-              className="flex h-11 shrink-0 items-center rounded-xl border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex h-11 shrink-0 items-center rounded-xl border border-zinc-600 px-3 text-xs font-semibold text-[#111111] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               Tạo từ tên
             </button>
           )}
         </span>
         {codePreview && (
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
             Mã nội bộ:{" "}
             <span className="font-mono text-zinc-900 dark:text-zinc-100">
               {codePreview}

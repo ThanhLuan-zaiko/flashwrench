@@ -16,7 +16,7 @@ export type ZoneDialogState =
   | { mode: "edit"; item: ZoneItem };
 
 const INPUT_CLASSES =
-  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
+  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
 
 // Zone create/edit dialog: name, city, center pin and radius. No delete:
 // retiring uses the active toggle so history references stay valid.
@@ -89,7 +89,7 @@ export function ZoneDialog({
         type="button"
         aria-label="Đóng"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div
         className={`relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-4 sm:rounded-2xl sm:p-5 dark:border-zinc-800 dark:bg-zinc-950 ${SCROLLBAR_CLASSES}`}
@@ -102,13 +102,13 @@ export function ZoneDialog({
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
         </div>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 sm:col-span-2 dark:text-zinc-300">
+          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 sm:col-span-2 dark:text-zinc-300">
             Tên khu vực *
             <input
               type="text"
@@ -118,7 +118,7 @@ export function ZoneDialog({
               className={INPUT_CLASSES}
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 sm:col-span-2 dark:text-zinc-300">
+          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 sm:col-span-2 dark:text-zinc-300">
             Thành phố
             <input
               type="text"
@@ -128,7 +128,7 @@ export function ZoneDialog({
               className={INPUT_CLASSES}
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Vĩ độ tâm *
             <input
               type="number"
@@ -138,7 +138,7 @@ export function ZoneDialog({
               className={INPUT_CLASSES}
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Kinh độ tâm *
             <input
               type="number"
@@ -148,7 +148,7 @@ export function ZoneDialog({
               className={INPUT_CLASSES}
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Bán kính (km) *
             <input
               type="number"
@@ -160,12 +160,12 @@ export function ZoneDialog({
               className={INPUT_CLASSES}
             />
           </label>
-          <label className="flex items-center gap-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <label className="flex items-center gap-2 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             <input
               type="checkbox"
               checked={active}
               onChange={(e) => setActive(e.target.checked)}
-              className="h-5 w-5 rounded accent-[#FACC15] dark:accent-white"
+              className="h-5 w-5 rounded accent-[#FB923C] dark:accent-white"
             />
             Đang hoạt động
           </label>
@@ -176,8 +176,8 @@ export function ZoneDialog({
           disabled={save.isPending || !name.trim()}
           className={`mt-4 inline-flex min-h-[44px] items-center justify-center self-start gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-[#111111] disabled:opacity-40 motion-safe:active:scale-[0.99] ${
             editing
-              ? "bg-[#FACC15] dark:bg-white dark:text-zinc-900"
-              : "bg-green-700 dark:bg-green-500 dark:text-zinc-950"
+              ? "bg-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+              : "bg-green-700 dark:bg-green-500 dark:text-[#111111]"
           }`}
         >
           {save.isPending ? (

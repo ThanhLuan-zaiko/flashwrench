@@ -49,14 +49,14 @@ export function ChatBookingCard({ threadId }: { threadId: string }) {
   if (bookings.isError) {
     return (
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800">
-        <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
           Không tải được đơn liên quan.
         </p>
         <button
           type="button"
           onClick={() => void bookings.refetch()}
           aria-label="Tải lại đơn liên quan"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-800 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
         >
           <FiRefreshCw className="h-4 w-4" aria-hidden />
         </button>
@@ -68,7 +68,7 @@ export function ChatBookingCard({ threadId }: { threadId: string }) {
 
   return (
     <div className="shrink-0 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800">
-      <p className="px-1 pb-1.5 text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <p className="px-1 pb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
         Đơn liên quan ({items.length})
       </p>
       <ul className="space-y-1.5">
@@ -78,7 +78,7 @@ export function ChatBookingCard({ threadId }: { threadId: string }) {
             className="flex items-center gap-2.5 rounded-xl border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950"
           >
             <FiClipboard
-              className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+              className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-300"
               aria-hidden
             />
             <span className="min-w-0 flex-1">
@@ -86,15 +86,15 @@ export function ChatBookingCard({ threadId }: { threadId: string }) {
                 <span className="truncate text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                   {booking.vehiclePlate || "Chưa có biển số"}
                 </span>
-                <span className="shrink-0 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+                <span className="shrink-0 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   {statusLabel(booking.status)}
                 </span>
               </span>
               <span className="mt-0.5 flex items-baseline justify-between gap-2">
-                <span className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+                <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                   {formatSchedule(booking.scheduledAt)}
                 </span>
-                <span className="shrink-0 text-[11px] font-medium text-zinc-700 dark:text-zinc-300">
+                <span className="shrink-0 text-xs font-medium text-zinc-800 dark:text-zinc-300">
                   {formatTotal(booking.total)}
                 </span>
               </span>

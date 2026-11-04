@@ -3,7 +3,7 @@ import { FiHome, FiLogOut } from "react-icons/fi";
 import {
   STAFF_NAV_ROW_BASE,
   STAFF_NAV_ROW_IDLE,
-  STAFF_ON_YELLOW_FOCUS,
+  STAFF_ON_ORANGE_FOCUS,
   staffLabelClass,
 } from "./staff-ui";
 
@@ -20,7 +20,7 @@ export function StaffSidebarFooter({
   onLogout,
   onNavigate,
 }: StaffSidebarFooterProps) {
-  const rowClass = `${STAFF_NAV_ROW_BASE} ${STAFF_NAV_ROW_IDLE} ${STAFF_ON_YELLOW_FOCUS} ${
+  const rowClass = `${STAFF_NAV_ROW_BASE} ${STAFF_NAV_ROW_IDLE} ${STAFF_ON_ORANGE_FOCUS} ${
     collapsed ? "md:justify-center md:px-0" : ""
   }`;
   const labelClass = staffLabelClass(collapsed);

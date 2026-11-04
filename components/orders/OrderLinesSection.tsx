@@ -30,7 +30,7 @@ export function OrderLinesSection({ order }: { order: OrderDetail }) {
               <p className="truncate text-xs font-semibold text-zinc-800 dark:text-zinc-200">
                 {item.partName}
               </p>
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {formatVnd(item.unitPrice)} × {item.quantity}
               </p>
             </div>
@@ -42,20 +42,20 @@ export function OrderLinesSection({ order }: { order: OrderDetail }) {
       </ul>
       <dl className="mt-3 space-y-1.5 border-t border-zinc-200 pt-3 text-xs dark:border-zinc-800">
         <div className="flex justify-between">
-          <dt className="text-zinc-500 dark:text-zinc-400">Tạm tính</dt>
+          <dt className="text-zinc-600 dark:text-zinc-400">Tạm tính</dt>
           <dd className="font-semibold text-zinc-800 dark:text-zinc-200">
             {formatVnd(order.subtotal)}
           </dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-zinc-500 dark:text-zinc-400">Phí giao hàng</dt>
+          <dt className="text-zinc-600 dark:text-zinc-400">Phí giao hàng</dt>
           <dd className="font-semibold text-zinc-800 dark:text-zinc-200">
             {formatVnd(order.shippingFee)}
           </dd>
         </div>
         {order.discount > 0 && (
           <div className="flex justify-between">
-            <dt className="text-zinc-500 dark:text-zinc-400">Giảm giá</dt>
+            <dt className="text-zinc-600 dark:text-zinc-400">Giảm giá</dt>
             <dd className="font-semibold text-zinc-800 dark:text-zinc-200">
               -{formatVnd(order.discount)}
             </dd>

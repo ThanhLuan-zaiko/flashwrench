@@ -104,22 +104,22 @@ export function BookingCollectSection({
       className="border-t border-zinc-200 pt-4 dark:border-zinc-800"
     >
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <h3 className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Thu tiền
         </h3>
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           {paymentStateLabel(booking.paymentState)}
         </p>
       </div>
       {booking.paymentReceived > 0 && (
-        <p className="mt-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400">
           Đã thu {formatVnd(booking.paymentReceived)} /{" "}
           {formatVnd(booking.total)}
         </p>
       )}
       <label
         htmlFor={`${uid}-amount`}
-        className="mt-2 block text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
+        className="mt-2 block text-xs font-medium text-zinc-600 dark:text-zinc-400"
       >
         Số tiền lần này — để trống thu đủ {formatVnd(outstanding)}
       </label>
@@ -143,8 +143,8 @@ export function BookingCollectSection({
             onClick={() => setMethod(option)}
             className={`flex min-h-[44px] items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] ${
               method === option
-                ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
-                : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
             }`}
           >
             {COLLECT_METHOD_LABELS[option]}

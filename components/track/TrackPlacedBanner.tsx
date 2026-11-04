@@ -42,7 +42,7 @@ export function TrackPlacedBanner({ kind }: TrackPlacedBannerProps) {
           <FiCheck aria-hidden="true" className="h-5 w-5 shrink-0" />
           {copy.title}
         </p>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">{copy.body}</p>
+        <p className="text-sm text-zinc-800 dark:text-zinc-400">{copy.body}</p>
       </div>
       <Image
         src={copy.illustration}

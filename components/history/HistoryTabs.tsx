@@ -37,7 +37,7 @@ export function HistoryTabs() {
             className={`-mb-px flex min-h-11 shrink-0 items-center gap-1.5 border-b-2 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] ${
               active
                 ? "border-[#111111] text-[#111111] dark:border-zinc-100 dark:text-zinc-50"
-                : "border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                : "border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
             }`}
           >
             <Icon aria-hidden="true" className="h-4 w-4" />

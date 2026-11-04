@@ -25,7 +25,7 @@ export function StaffPendingPassword({
 
   return (
     <span className="mt-2 block rounded-xl border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-zinc-950">
-      <span className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600 dark:text-zinc-300">
+      <span className="flex items-center gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         <FiKey aria-hidden="true" className="h-3.5 w-3.5" />
         Mật khẩu tạm — chưa đổi
       </span>
@@ -37,7 +37,7 @@ export function StaffPendingPassword({
           type="button"
           onClick={() => void copyPassword()}
           aria-label={copied ? "Đã sao chép mật khẩu" : "Sao chép mật khẩu"}
-          className="flex min-h-[36px] items-center gap-1.5 rounded-lg border border-zinc-300 px-2.5 py-1.5 text-[11px] font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+          className="flex min-h-[36px] items-center gap-1.5 rounded-lg border border-zinc-600 px-2.5 py-1.5 text-xs font-semibold text-[#111111] transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-950"
         >
           {copied ? (
             <FiCheck aria-hidden="true" className="h-3.5 w-3.5" />

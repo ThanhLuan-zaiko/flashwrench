@@ -133,17 +133,17 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
               label={stat.label}
               tour={stat.id === "today" ? "mech-income-summary" : undefined}
             >
-              <p className="flex items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+              <p className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-300">
                 <Icon
                   aria-hidden="true"
-                  className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
+                  className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-400"
                 />
                 {stat.label}
               </p>
               <p className="mt-3 text-3xl font-bold tracking-tight text-[#111111] dark:text-zinc-50">
                 {stat.value}
               </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                 {stat.hint}
               </p>
             </BentoCard>
@@ -159,7 +159,7 @@ export function IncomeSection({ state }: { state: IncomeTab }) {
               <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Lịch sử giao dịch
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {summary
                   ? `Tổng đã thu mọi thời gian ${formatVnd(summary.lifetime)} · ${summary.paidCount} giao dịch`
                   : "Đang tải lịch sử…"}

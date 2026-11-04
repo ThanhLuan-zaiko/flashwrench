@@ -49,10 +49,10 @@ export function RescueAssignSection({
     <div className="flex items-end gap-2">
       {mechanics.isPending ? (
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
             Gán thợ tay (gần nhất trước)
           </p>
-          <p className="mt-1.5 flex min-h-[44px] items-center gap-2 rounded-xl border border-zinc-300 px-3 text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+          <p className="mt-1.5 flex min-h-[44px] items-center gap-2 rounded-xl border border-zinc-300 px-3 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
             <FiLoader
               aria-hidden="true"
               className="h-3.5 w-3.5 motion-safe:animate-spin"
@@ -98,7 +98,7 @@ export function RescueAssignSection({
             },
           )
         }
-        className="flex min-h-[44px] shrink-0 items-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] disabled:opacity-40 dark:bg-white dark:text-zinc-900"
+        className="flex min-h-[44px] shrink-0 items-center rounded-xl bg-[#FB923C] px-4 py-2 text-sm font-semibold text-[#111111] disabled:opacity-40 dark:bg-[#FB923C] dark:text-[#111111]"
       >
         Giao
       </button>

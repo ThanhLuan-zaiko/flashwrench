@@ -29,7 +29,7 @@ export function StaffAvatarField({
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Ảnh thợ (tùy chọn, ảnh vuông hiển thị đẹp nhất)
       </span>
       <div className="flex flex-col gap-3">
@@ -42,10 +42,10 @@ export function StaffAvatarField({
               className="h-16 w-16 shrink-0 rounded-xl object-cover sm:h-20 sm:w-20"
             />
             <span className="flex min-w-0 flex-1 flex-col gap-1">
-              <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
+              <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
                 Ảnh hiện tại
               </span>
-              <span className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {avatar.staged
                   ? "Ảnh mới sẽ thay ảnh này khi bấm lưu."
                   : "Giữ nguyên khi bấm lưu."}
@@ -72,10 +72,10 @@ export function StaffAvatarField({
               className="h-16 w-16 shrink-0 rounded-xl object-cover sm:h-20 sm:w-20"
             />
             <span className="flex min-w-0 flex-1 flex-col gap-1">
-              <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
+              <span className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
                 Chờ lưu
               </span>
-              <span className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {avatar.staged.name}
               </span>
             </span>
@@ -85,7 +85,7 @@ export function StaffAvatarField({
                 disabled={disabled}
                 onClick={() => setCropping(true)}
                 aria-label="Cắt ảnh thợ chờ lưu"
-                className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-zinc-200 dark:hover:bg-zinc-800"
+                className="flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.98] dark:text-zinc-200 dark:hover:bg-zinc-800"
               >
                 <FiCrop aria-hidden="true" className="h-4 w-4 shrink-0" />
                 <span className="hidden sm:inline">Cắt</span>
@@ -107,11 +107,11 @@ export function StaffAvatarField({
           <div className="flex items-center gap-3">
             <span
               aria-hidden="true"
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 sm:h-20 sm:w-20 dark:bg-zinc-900 dark:text-zinc-400"
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-600 sm:h-20 sm:w-20 dark:bg-zinc-900 dark:text-zinc-400"
             >
               <FiUser aria-hidden="true" className="h-6 w-6" />
             </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">
               Chưa có ảnh. Thêm một ảnh vuông để khách dễ nhận diện thợ.
             </span>
           </div>
@@ -166,7 +166,7 @@ export function StaffAvatarField({
               ? "Thả ảnh để thêm"
               : "Kéo thả ảnh vào đây hoặc bấm để chọn"}
           </span>
-          <span className="flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-400">
             <FiImage aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
             {avatar.canAddMore
               ? `JPEG/PNG/WebP, tối đa ${maxUploadMbLabel()}/ảnh.`
@@ -174,7 +174,7 @@ export function StaffAvatarField({
           </span>
         </button>
       </div>
-      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+      <span className="text-xs text-zinc-600 dark:text-zinc-400">
         Ảnh chỉ tải lên khi bấm lưu. Bấm cắt để sửa ảnh chờ thành vuông.
       </span>
       {error && (

@@ -79,7 +79,7 @@ export function PromoCampaignGrid({
           ))}
         </ul>
       ) : campaigns.isError ? (
-        <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+        <p className="rounded-2xl border border-zinc-200 p-4 text-sm text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
           Không tải được danh sách ưu đãi. Vui lòng thử lại sau.
         </p>
       ) : (

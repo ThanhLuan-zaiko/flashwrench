@@ -23,13 +23,13 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
         <p className="mt-2 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
           {order.customerName} · {order.customerPhone}
         </p>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           {order.fulfillmentType === "pickup"
             ? "Nhận trực tiếp tại xưởng"
             : order.address?.fullText || "—"}
         </p>
         {order.courierName && (
-          <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-[11px] text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+          <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-xs text-zinc-800 dark:border-zinc-800 dark:text-zinc-400">
             {order.courierType === "mechanic"
               ? `Thợ giao hàng: ${order.courierName}`
               : `Đơn vị vận chuyển: ${order.courierName}`}
@@ -37,7 +37,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
           </p>
         )}
         {order.note && (
-          <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-[11px] text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+          <p className="mt-2 border-l-2 border-zinc-200 pl-3 text-xs text-zinc-800 dark:border-zinc-800 dark:text-zinc-400">
             Ghi chú: {order.note}
           </p>
         )}
@@ -70,7 +70,7 @@ export function OrderProgressSection({ order }: { order: OrderDetail }) {
                   {ORDER_STATUS_LABELS[entry.newStatus as OrderStatus] ??
                     entry.newStatus}
                 </p>
-                <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
                   {formatDateTime(entry.changedAt)}
                   {entry.note && ` · ${entry.note}`}
                 </p>
@@ -118,7 +118,7 @@ export function OrderCancelSection({
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Hủy đơn hàng này?
           </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Đơn đang chờ xác nhận — hủy ngay sẽ hoàn trả toàn bộ số lượng về
             kho.
           </p>
@@ -127,7 +127,7 @@ export function OrderCancelSection({
               type="button"
               disabled={cancelOrder.isPending}
               onClick={cancel}
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               {cancelOrder.isPending && (
                 <FiLoader

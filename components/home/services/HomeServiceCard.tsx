@@ -27,14 +27,14 @@ export function HomeServiceCard({ service }: { service: ServiceItem }) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-700">
+          <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-400">
             <FiImage aria-hidden="true" className="h-8 w-8" />
           </span>
         )}
       </span>
       <div className="flex flex-1 flex-col gap-3 p-4 md:p-5">
         <div className="min-w-0">
-          <p className="truncate text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <p className="truncate text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
             {service.categoryName}
           </p>
           <h3 className="mt-1 line-clamp-2 text-base font-bold tracking-tight text-zinc-900 md:text-lg dark:text-zinc-50">
@@ -42,15 +42,15 @@ export function HomeServiceCard({ service }: { service: ServiceItem }) {
           </h3>
         </div>
         <p className="flex flex-wrap items-baseline gap-1.5">
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">từ</span>
+          <span className="text-xs text-zinc-600 dark:text-zinc-400">từ</span>
           <span className="text-lg font-bold tracking-tight text-[#111111] dark:text-zinc-50">
             {formatVnd(service.basePrice)}
           </span>
-          <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
             {PRICE_UNIT_LABELS[service.priceUnit]}
           </span>
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Thời gian làm: {formatDuration(service.durationMin)}
         </p>
         <Link

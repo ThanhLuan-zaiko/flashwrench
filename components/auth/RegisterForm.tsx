@@ -106,7 +106,7 @@ export function RegisterForm({ next }: RegisterFormProps) {
     return (
       <output
         aria-label="Bạn đã đăng nhập, đang chuyển hướng"
-        className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-500 dark:text-zinc-400"
+        className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-600 dark:text-zinc-400"
       >
         <FiLoader
           aria-hidden="true"
@@ -197,7 +197,7 @@ export function RegisterForm({ next }: RegisterFormProps) {
         />
       </div>
 
-      <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
         Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ cái và chữ số. Bằng cách
         đăng ký, bạn đồng ý với điều khoản sử dụng của FlashWrench.
       </p>

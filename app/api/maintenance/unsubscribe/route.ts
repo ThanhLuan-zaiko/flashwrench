@@ -6,9 +6,9 @@ import { optOutOfMaintenanceReminders } from "@/lib/vehicles/maintenance-unsubsc
 function page(title: string, message: string): string {
   return `<!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head>
-<body style="margin:0;padding:48px 16px;font-family:system-ui,sans-serif;background:#fff;color:#18181b;text-align:center;">
+<body style="margin:0;padding:48px 16px;font-family:system-ui,sans-serif;background:#fff;color:#18181B;text-align:center;">
 <h1 style="font-size:20px;margin:0 0 12px;">${title}</h1>
-<p style="font-size:15px;line-height:1.6;color:#3f3f46;margin:0;">${message}</p>
+<p style="font-size:15px;line-height:1.6;color:#3F3F46;margin:0;">${message}</p>
 </body></html>`;
 }
 

@@ -29,20 +29,20 @@ export function VoucherTotals({
       className={`flex flex-col gap-1.5 text-xs ${styles.box}`}
     >
       <div className="flex items-center justify-between gap-3">
-        <dt className="text-zinc-500 dark:text-zinc-400">Giá dịch vụ</dt>
+        <dt className="text-zinc-600 dark:text-zinc-400">Giá dịch vụ</dt>
         <dd className="font-medium text-zinc-800 dark:text-zinc-200">
           {formatVnd(subtotal)}
         </dd>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <dt className="text-zinc-500 dark:text-zinc-400">Giảm voucher</dt>
+        <dt className="text-zinc-600 dark:text-zinc-400">Giảm voucher</dt>
         <dd className="font-medium text-zinc-800 dark:text-zinc-200">
           {discount > 0 ? `−${formatVnd(discount)}` : "Chưa áp dụng"}
         </dd>
       </div>
       {travelFee > 0 && (
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-zinc-500 dark:text-zinc-400">Phí di chuyển</dt>
+          <dt className="text-zinc-600 dark:text-zinc-400">Phí di chuyển</dt>
           <dd className="font-medium text-zinc-800 dark:text-zinc-200">
             {formatVnd(travelFee)}
           </dd>

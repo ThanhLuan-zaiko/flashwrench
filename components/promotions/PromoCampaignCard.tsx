@@ -62,7 +62,7 @@ export function PromoCampaignCard({
             className="object-cover"
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-zinc-400">
+          <span className="flex h-full w-full items-center justify-center text-zinc-600 dark:text-zinc-400">
             <FiGift aria-hidden="true" className="h-8 w-8" />
           </span>
         )}
@@ -71,13 +71,13 @@ export function PromoCampaignCard({
         <p className="text-sm font-bold text-zinc-900 dark:text-white">
           {campaign.name}
         </p>
-        <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           {promoDiscountLabel(campaign)}
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           {promoConditionLabel(campaign)} · {promoExpiryLabel(campaign)}
         </p>
-        <p className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
           <FiInfo aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           Cách nhận: {promoEarnHint(campaign.earn)}
         </p>
@@ -96,17 +96,17 @@ export function PromoCampaignCard({
                 className="h-full w-full origin-left rounded-full bg-zinc-700 dark:bg-zinc-300"
               />
             </div>
-            <p className="mt-1 text-xs font-medium text-zinc-600 dark:text-zinc-300">
+            <p className="mt-1 text-xs font-medium text-zinc-800 dark:text-zinc-300">
               {progress.label}
             </p>
           </div>
         ) : null}
         <p className="mt-1 flex flex-wrap gap-1.5">
-          <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
             {promoScopeLabel(campaign.scope)}
           </span>
           {slots ? (
-            <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+            <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:text-zinc-300">
               {slots}
             </span>
           ) : null}
@@ -117,7 +117,7 @@ export function PromoCampaignCard({
           scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
-          className="mt-2 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          className="mt-2 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
           Xem chi tiết
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />

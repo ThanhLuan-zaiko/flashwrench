@@ -25,15 +25,15 @@ export function PaymentPromptBanner() {
           <li key={`${prompt.kind}:${prompt.refId}`}>
             <Link
               href={prompt.href}
-              className="flex min-h-11 items-center gap-3 py-2 text-sm transition-colors duration-200 hover:text-zinc-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:text-zinc-50"
+              className="flex min-h-11 items-center gap-3 py-2 text-sm transition-colors duration-200 hover:text-[#111111] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:hover:text-zinc-50"
             >
               <FiKey
                 aria-hidden="true"
-                className="h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400"
+                className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400"
               />
               <span className="min-w-0 flex-1 truncate font-medium text-zinc-800 dark:text-zinc-200">
                 {prompt.title}
-                <span className="font-normal text-zinc-500 dark:text-zinc-400">
+                <span className="font-normal text-zinc-600 dark:text-zinc-400">
                   {" "}
                   đang chờ thanh toán · {formatVnd(prompt.amountDue)}
                 </span>

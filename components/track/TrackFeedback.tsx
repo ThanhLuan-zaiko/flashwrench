@@ -7,7 +7,7 @@ import { FiLoader, FiXCircle } from "react-icons/fi";
 // Small shared states for the public tracking screens.
 export function TrackLoading() {
   return (
-    <p className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+    <p className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
       <FiLoader
         aria-hidden="true"
         className="h-4 w-4 motion-safe:animate-spin"
@@ -19,7 +19,7 @@ export function TrackLoading() {
 
 export function TrackError() {
   return (
-    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+    <p className="text-xs text-zinc-600 dark:text-zinc-400">
       Không tải được tiến trình. Trang sẽ tự thử lại — hoặc gọi hotline để được
       hỗ trợ.
     </p>
@@ -56,14 +56,14 @@ export function TrackAborted({
         {title}
       </p>
       {body ? (
-        <p className="max-w-sm text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="max-w-sm text-sm text-zinc-800 dark:text-zinc-400">
           {body}
         </p>
       ) : null}
       {action && (
         <Link
           href={action.href}
-          className="mt-2 flex min-h-[44px] items-center justify-center rounded-xl bg-[#111111] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+          className="mt-2 flex min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           {action.label}
         </Link>

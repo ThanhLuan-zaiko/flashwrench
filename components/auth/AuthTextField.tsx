@@ -54,7 +54,7 @@ export function AuthTextField({
           readOnly={readOnly}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 read-only:cursor-default read-only:bg-zinc-100 read-only:text-zinc-600 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus-visible:ring-offset-zinc-950 dark:read-only:bg-zinc-800 dark:read-only:text-zinc-400 ${
+          className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 read-only:cursor-default read-only:bg-zinc-100 read-only:text-zinc-600 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-400 dark:focus-visible:ring-offset-zinc-950 dark:read-only:bg-zinc-800 dark:read-only:text-zinc-400 ${
             error
               ? "border-red-500 dark:border-red-400"
               : "border-zinc-300 hover:border-zinc-400 read-only:hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:read-only:hover:border-zinc-700"
@@ -67,7 +67,7 @@ export function AuthTextField({
             aria-label={visible ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
             aria-pressed={visible}
             disabled={disabled}
-            className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-zinc-500 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-800 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
             {visible ? (
               <FiEyeOff aria-hidden="true" className="h-4.5 w-4.5" />

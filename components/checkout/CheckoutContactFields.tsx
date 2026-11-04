@@ -36,18 +36,18 @@ export function CheckoutContactFields({
   return (
     <>
       {guest ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Mua không cần tài khoản — chỉ cần thông tin liên hệ bên dưới.{" "}
           <Link
             href={buildLoginHref("/checkout")}
-            className="font-semibold text-zinc-700 underline decoration-zinc-300 underline-offset-2 transition-colors duration-200 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+            className="font-semibold text-zinc-800 underline decoration-zinc-300 underline-offset-2 transition-colors duration-200 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
           >
             Đã có tài khoản? Đăng nhập
           </Link>{" "}
           để lưu lịch sử đơn hàng.
         </p>
       ) : (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Tên người nhận và số điện thoại được lấy từ tài khoản của bạn.
         </p>
       )}

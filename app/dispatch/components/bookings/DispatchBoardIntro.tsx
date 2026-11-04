@@ -24,13 +24,13 @@ export function DispatchBoardIntro({ status, month }: DispatchBoardIntroProps) {
           <h2 className="text-base font-bold tracking-tight text-[#111111] dark:text-zinc-50">
             Bàn điều phối đơn hàng
           </h2>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             Xem đơn theo trạng thái, xác nhận lịch hẹn, phân công thợ trực tuyến
             và hủy đơn khi khách yêu cầu.
           </p>
         </div>
       </div>
-      <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
+      <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-300">
         <span
           aria-hidden="true"
           className="h-1.5 w-1.5 rounded-full bg-green-600 motion-safe:animate-pulse dark:bg-green-400"

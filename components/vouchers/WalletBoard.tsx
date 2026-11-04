@@ -23,14 +23,14 @@ export function WalletBoard() {
   }
   if (wallets.isPending) {
     return (
-      <p className="text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+      <p className="text-sm text-zinc-600 motion-safe:animate-pulse dark:text-zinc-400">
         Đang tải ví voucher…
       </p>
     );
   }
   if (wallets.isError) {
     return (
-      <p className="text-sm text-zinc-600 dark:text-zinc-300">
+      <p className="text-sm text-zinc-800 dark:text-zinc-300">
         Không tải được ví voucher. Vui lòng tải lại trang.
       </p>
     );
@@ -43,7 +43,7 @@ export function WalletBoard() {
         <p className="text-sm font-semibold text-zinc-900 dark:text-white">
           Chưa có voucher nào
         </p>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           Tạo tài khoản và mua hàng để nhận voucher sửa xe dành riêng cho bạn.
         </p>
       </div>

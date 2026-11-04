@@ -42,14 +42,14 @@ export function GuestRecordsMenu({ onNavy = false }: { onNavy?: boolean }) {
         className={
           onNavy
             ? "relative flex h-10 w-10 items-center justify-center rounded-lg text-[#111111] transition-all duration-200 hover:bg-[#111111]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-95"
-            : "relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            : "relative flex h-10 w-10 items-center justify-center rounded-lg text-zinc-800 transition-all duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-95 dark:text-zinc-300 dark:hover:bg-zinc-800"
         }
       >
         <FiClipboard aria-hidden="true" className="h-5 w-5" />
         {activeCount > 0 && (
           <span
             aria-hidden="true"
-            className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#FACC15] px-1 text-[10px] font-bold text-[#111111] dark:bg-white dark:text-zinc-900"
+            className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#FB923C] px-1 text-xs font-bold text-[#111111] dark:bg-[#FB923C] dark:text-[#111111]"
           >
             {activeCount > 9 ? "9+" : activeCount}
           </span>
@@ -66,7 +66,7 @@ export function GuestRecordsMenu({ onNavy = false }: { onNavy?: boolean }) {
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               Đơn của bạn
             </p>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Đơn đã đặt trên trình duyệt này, kể cả ở tab khác.
             </p>
           </div>
@@ -84,7 +84,7 @@ export function GuestRecordsMenu({ onNavy = false }: { onNavy?: boolean }) {
               href={GUEST_LOOKUP_HREF}
               role="menuitem"
               onClick={close}
-              className="flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <FiSearch aria-hidden="true" className="h-4 w-4 shrink-0" />
               Tra cứu toàn bộ đơn bằng email

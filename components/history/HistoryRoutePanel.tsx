@@ -52,7 +52,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Lộ trình di chuyển của thợ
         </h2>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           Chọn một đơn bên cạnh để xem các vị trí được ghi nhận khi thợ đang di
           chuyển. Lộ trình được lưu tối đa một năm.
         </p>
@@ -60,8 +60,11 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
 
       {!booking && (
         <div className="flex min-h-72 flex-col items-center justify-center gap-2 p-5 text-center">
-          <FiMapPin aria-hidden="true" className="h-5 w-5 text-zinc-500" />
-          <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <FiMapPin
+            aria-hidden="true"
+            className="h-5 w-5 text-zinc-600 dark:text-zinc-400"
+          />
+          <p className="text-sm font-medium text-zinc-800 dark:text-zinc-300">
             Chọn một đơn để xem lộ trình
           </p>
         </div>
@@ -73,7 +76,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
             <p className="truncate text-xs font-semibold text-zinc-800 dark:text-zinc-200">
               {booking.serviceNames.join(", ") || "Đơn sửa xe"}
             </p>
-            <span className="shrink-0 text-[11px] text-zinc-500 dark:text-zinc-400">
+            <span className="shrink-0 text-xs text-zinc-600 dark:text-zinc-400">
               {STATUS_LABELS[booking.status]}
             </span>
           </div>
@@ -81,7 +84,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           {query.isPending && (
             <p
               aria-busy="true"
-              className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400"
+              className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400"
             >
               <FiLoader
                 aria-hidden="true"
@@ -106,7 +109,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
               <button
                 type="button"
                 onClick={() => void query.refetch()}
-                className="min-h-[44px] rounded-xl border border-red-300 px-4 py-2 text-xs font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
+                className="min-h-[44px] rounded-xl border border-red-600 px-4 py-2 text-xs font-semibold motion-safe:transition-colors motion-safe:duration-200 hover:bg-red-100 dark:border-red-800 dark:hover:bg-red-950"
               >
                 Thử tải lại
               </button>
@@ -124,7 +127,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           {query.isSuccess && points.length === 0 && map.hasMap && (
             <p
               aria-live="polite"
-              className="text-xs text-zinc-500 dark:text-zinc-400"
+              className="text-xs text-zinc-600 dark:text-zinc-400"
             >
               {booking.status === "en_route"
                 ? liveMechanic
@@ -139,7 +142,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           {query.isSuccess && points.length > 0 && latest && (
             <p
               aria-live="polite"
-              className="text-[11px] text-zinc-500 dark:text-zinc-400"
+              className="text-xs text-zinc-600 dark:text-zinc-400"
             >
               {points.length > 1
                 ? `${points.length} điểm lộ trình · Cập nhật ${new Date(latest.recordedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}`
@@ -148,7 +151,7 @@ export function HistoryRoutePanel({ booking }: HistoryRoutePanelProps) {
           )}
 
           {query.isSuccess && !map.hasMap && (
-            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-600 dark:text-zinc-300">
+            <p className="flex min-h-72 items-center justify-center p-5 text-center text-sm text-zinc-800 dark:text-zinc-300">
               Đơn này chưa có tọa độ để hiển thị trên bản đồ.
             </p>
           )}

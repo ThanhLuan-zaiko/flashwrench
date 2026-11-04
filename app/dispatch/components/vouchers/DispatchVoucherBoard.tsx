@@ -59,13 +59,13 @@ export function DispatchVoucherBoard() {
             <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
               Phát voucher đền bù / chào mừng
             </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Chỉ phát chiến dịch admin cho phép, vượt hạn mức sẽ bị chặn.
             </p>
           </div>
         </div>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <div className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <div className="flex flex-col gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300">
             <span id="grant-campaign-label">Chiến dịch</span>
             <DropdownSelect
               id="grant-campaign"
@@ -80,7 +80,7 @@ export function DispatchVoucherBoard() {
               }))}
             />
           </div>
-          <label className="flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <label className="flex flex-col gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300">
             ID khách hàng
             <input
               value={userId}
@@ -90,7 +90,7 @@ export function DispatchVoucherBoard() {
             />
           </label>
         </div>
-        <label className="mt-2 flex flex-col gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+        <label className="mt-2 flex flex-col gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-300">
           Ghi chú
           <input
             value={note}
@@ -102,7 +102,7 @@ export function DispatchVoucherBoard() {
         {message && (
           <p
             aria-live="polite"
-            className="mt-2 text-xs text-zinc-600 dark:text-zinc-300"
+            className="mt-2 text-xs text-zinc-800 dark:text-zinc-300"
           >
             {message}
           </p>
@@ -110,12 +110,12 @@ export function DispatchVoucherBoard() {
         <button
           type="submit"
           disabled={grant.isPending || !campaignId || !userId}
-          className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl bg-green-700 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-50 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+          className="mt-3 flex min-h-[44px] items-center justify-center rounded-xl px-4 text-sm font-semibold disabled:opacity-50 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           {grant.isPending ? "Đang phát…" : "Phát voucher"}
         </button>
       </form>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Thu hồi voucher thực hiện ở bảng điều phối đơn khi phát hiện gian lận —
         điều phối chỉ thu hồi voucher mình đã phát, admin thu hồi mọi voucher.
       </p>
@@ -128,16 +128,16 @@ export function DispatchVoucherBoard() {
         <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
           Khách đang thấy gì
         </h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Đúng banner công khai ngoài trang chủ — kiểm tra ảnh bìa và điều kiện
           trước khi phát tay.
         </p>
         {publicCampaigns.isPending ? (
-          <p className="py-4 text-sm text-zinc-500 motion-safe:animate-pulse dark:text-zinc-400">
+          <p className="py-4 text-sm text-zinc-600 motion-safe:animate-pulse dark:text-zinc-400">
             Đang tải ưu đãi công khai…
           </p>
         ) : publicCampaigns.isError ? (
-          <p className="py-4 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="py-4 text-sm text-zinc-600 dark:text-zinc-400">
             Không tải được ưu đãi công khai.
           </p>
         ) : visible.length === 0 ? (

@@ -47,7 +47,7 @@ export function ProductsErrorNotice({ onRetry }: { onRetry: () => void }) {
       <button
         type="button"
         onClick={onRetry}
-        className="mt-1 flex min-h-11 w-fit items-center gap-1.5 rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+        className="mt-1 flex min-h-11 w-fit items-center gap-1.5 rounded-xl border border-red-600 px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
       >
         <FiRefreshCw aria-hidden="true" className="h-4 w-4" />
         Thử tải lại
@@ -62,7 +62,7 @@ export function ProductsEmptyNotice() {
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Chưa có sản phẩm phù hợp
       </p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Hãy thử từ khóa khác hoặc chọn danh mục khác.
       </p>
     </div>
@@ -76,7 +76,7 @@ export function ProductsUnknownCategory() {
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Danh mục này không còn được áp dụng
       </p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Cửa hàng vừa thay đổi danh mục. Hãy xem toàn bộ sản phẩm đang có.
       </p>
       <Link href="/products" scroll={false} className={TEXT_LINK}>

@@ -33,7 +33,7 @@ export function RescueRouteShell() {
                 href={entry.href}
                 scroll={false}
                 prefetch
-                className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 dark:border-zinc-700 dark:text-zinc-200"
+                className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 dark:border-zinc-700 dark:text-zinc-200"
               >
                 <EntryIcon aria-hidden="true" className="h-4 w-4 shrink-0" />
                 {entry.label}
@@ -49,7 +49,7 @@ export function RescueRouteShell() {
             }
             scroll={false}
             prefetch
-            className="text-xs font-semibold text-zinc-700 underline-offset-2 hover:underline dark:text-zinc-200"
+            className="text-xs font-semibold text-zinc-800 underline-offset-2 hover:underline dark:text-zinc-200"
           >
             Về cứu hộ chờ thợ
           </Link>

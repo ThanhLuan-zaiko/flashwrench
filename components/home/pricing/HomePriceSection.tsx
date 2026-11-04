@@ -69,14 +69,14 @@ export function HomePriceSection(props: HomePriceSectionProps) {
     >
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-12 lg:px-8">
         <div>
-          <p className="text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
             Bảng giá
           </p>
           <MaskLines
             lines={["Giá niêm yết.", "Không phí ẩn."]}
             className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-50"
           />
-          <p className="mt-4 max-w-md text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
+          <p className="mt-4 max-w-md text-sm text-zinc-800 sm:text-base dark:text-zinc-400">
             Giá từng dịch vụ có trong mục Dịch vụ. Các khoản dưới đây áp dụng
             cho mọi lịch hẹn.
           </p>
@@ -91,7 +91,7 @@ export function HomePriceSection(props: HomePriceSectionProps) {
               <dt className="text-base font-bold text-zinc-900 dark:text-zinc-50">
                 {item.term}
               </dt>
-              <dd className="text-sm text-zinc-600 md:text-base dark:text-zinc-400">
+              <dd className="text-sm text-zinc-800 md:text-base dark:text-zinc-400">
                 {item.detail}
               </dd>
             </div>

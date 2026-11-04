@@ -28,7 +28,7 @@ type ComplaintDialogProps = {
 };
 
 const LABEL =
-  "flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300";
+  "flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300";
 
 // Create form for recording a report plus the handling panel for one
 // complaint. Parent passes a keyed instance so state resets per open.
@@ -88,7 +88,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
         type="button"
         aria-label="Đóng hộp thoại"
         onClick={onClose}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <DialogPanel>
         <DialogHeader
@@ -107,11 +107,11 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
               <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {handling.subject}
               </p>
-              <p className="mt-1 text-xs whitespace-pre-wrap text-zinc-600 dark:text-zinc-300">
+              <p className="mt-1 text-xs whitespace-pre-wrap text-zinc-800 dark:text-zinc-300">
                 {handling.body}
               </p>
               {handling.resolutionNote && (
-                <p className="mt-2 border-t border-zinc-200 pt-2 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                <p className="mt-2 border-t border-zinc-200 pt-2 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
                   Đã xử lý: {handling.resolutionNote}
                 </p>
               )}
@@ -137,7 +137,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
                   type="button"
                   disabled={pending}
                   onClick={() => runTransition("start-review")}
-                  className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
                 >
                   Bắt đầu xử lý
                 </button>
@@ -149,7 +149,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
                     type="button"
                     disabled={pending}
                     onClick={() => runTransition("resolve")}
-                    className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                    className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
                   >
                     {pending ? "Đang lưu…" : "Giải quyết"}
                   </button>
@@ -157,7 +157,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
                     type="button"
                     disabled={pending}
                     onClick={() => runTransition("reject")}
-                    className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
                   >
                     Từ chối
                   </button>
@@ -169,7 +169,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
                   type="button"
                   disabled={pending}
                   onClick={() => runTransition("reopen")}
-                  className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                  className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
                 >
                   {pending ? "Đang lưu…" : "Mở lại"}
                 </button>
@@ -211,7 +211,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
             >
               Hủy bỏ
             </button>
@@ -219,7 +219,7 @@ export function ComplaintDialog({ dialog, onClose }: ComplaintDialogProps) {
               type="button"
               disabled={pending}
               onClick={submitCreate}
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 dark:focus-visible:ring-zinc-400 disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               {pending ? (
                 <FiLoader

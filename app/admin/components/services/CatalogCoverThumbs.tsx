@@ -46,7 +46,7 @@ function ThumbButton({
       className={`flex min-h-[44px] items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors duration-200 disabled:opacity-60 motion-safe:active:scale-[0.98] ${
         tone === "danger"
           ? "text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/40"
-          : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          : "text-zinc-800 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
       }`}
     >
       {children}
@@ -58,7 +58,7 @@ function ThumbButton({
 function StatusBadge({ tone }: { tone: "cover" | "pending" }) {
   const cover = tone === "cover";
   return (
-    <span className="inline-flex w-fit items-center gap-1 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
+    <span className="inline-flex w-fit items-center gap-1 rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-xs font-semibold text-zinc-800 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
       {cover && <FiStar aria-hidden="true" className="h-3 w-3 shrink-0" />}
       {cover ? "Ảnh bìa" : "Chờ lưu"}
     </span>
@@ -106,7 +106,7 @@ export function CatalogCoverThumbs({
             />
             <span className="flex min-w-0 flex-1 flex-col gap-1">
               {isCover && <StatusBadge tone="cover" />}
-              <span className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {displayNameFromUrl(url)}
               </span>
             </span>
@@ -146,7 +146,7 @@ export function CatalogCoverThumbs({
             />
             <span className="flex min-w-0 flex-1 flex-col gap-1">
               <StatusBadge tone={isCover ? "cover" : "pending"} />
-              <span className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                 {item.name}
               </span>
             </span>

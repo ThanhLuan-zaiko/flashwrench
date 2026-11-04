@@ -12,8 +12,8 @@ type RevenueTransactionsTableProps = {
 };
 
 const TH =
-  "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400";
-const TD = "px-3 py-2.5 text-xs text-zinc-700 dark:text-zinc-300";
+  "px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600 dark:text-zinc-400";
+const TD = "px-3 py-2.5 text-xs text-zinc-800 dark:text-zinc-300";
 
 // Receipt-level table, client-paged by the parent. Staff columns stay
 // admin-only: dispatchers get amounts and sources, never accountability.
@@ -90,7 +90,7 @@ export function RevenueTransactionsTable({
         </tbody>
       </table>
       {truncated && (
-        <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
           Danh sách bị cắt bớt do vượt giới hạn hiển thị.
         </p>
       )}

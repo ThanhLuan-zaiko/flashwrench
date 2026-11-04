@@ -34,7 +34,7 @@ export function ProductsIntro({ live, countText }: ProductsIntroProps) {
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <p
           data-chapter-row
-          className="max-w-xl text-sm leading-relaxed text-zinc-600 md:text-base dark:text-zinc-400"
+          className="max-w-xl text-sm leading-relaxed text-zinc-800 md:text-base dark:text-zinc-400"
         >
           Giá công khai, tồn kho cập nhật trực tiếp. Thêm vào giỏ và đặt hàng
           trong vài bước.
@@ -54,7 +54,7 @@ export function ProductsIntro({ live, countText }: ProductsIntroProps) {
       <div className="flex flex-wrap items-center justify-between gap-2 py-3">
         <output
           aria-label={live ? "Realtime đang hoạt động" : "Realtime mất kết nối"}
-          className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400"
+          className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400"
         >
           <span
             aria-hidden="true"
@@ -68,7 +68,7 @@ export function ProductsIntro({ live, countText }: ProductsIntroProps) {
         </output>
         <p
           aria-live="polite"
-          className="text-xs text-zinc-500 dark:text-zinc-400"
+          className="text-xs text-zinc-600 dark:text-zinc-400"
         >
           {countText}
         </p>

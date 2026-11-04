@@ -34,18 +34,18 @@ export function AutoRuleList({ rules }: { rules: VoucherAutoRule[] }) {
           <FiZap
             aria-hidden
             size={18}
-            className="shrink-0 text-zinc-500 dark:text-zinc-300"
+            className="shrink-0 text-zinc-600 dark:text-zinc-300"
           />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
               {rule.name}
             </p>
-            <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
               {describeRule(rule)}
               {rule.campaignName ? ` · ${rule.campaignName}` : ""}
               {rule.campaignName ? "" : " · Chiến dịch đã xoá"}
             </p>
-            <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Đã phát {rule.grantedCount} lượt
             </p>
           </div>

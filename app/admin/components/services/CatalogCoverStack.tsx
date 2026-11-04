@@ -25,7 +25,7 @@ export function CatalogCoverStack({
     return (
       <span
         aria-hidden="true"
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-100 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
       >
         <FiImage aria-hidden="true" className="h-5 w-5" />
       </span>
@@ -46,7 +46,7 @@ export function CatalogCoverStack({
         />
       ))}
       {gallery.length > shown.length && (
-        <span className="-ml-4 flex h-11 min-w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-1.5 text-[11px] font-bold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200">
+        <span className="-ml-4 flex h-11 min-w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-1.5 text-xs font-bold text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200">
           +{gallery.length - shown.length}
         </span>
       )}

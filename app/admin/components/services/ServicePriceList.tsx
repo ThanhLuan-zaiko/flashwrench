@@ -34,13 +34,13 @@ type ServicePriceListProps = {
 function StatusPill({ item }: { item: ServiceItem }) {
   if (item.isDeleted) {
     return (
-      <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+      <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
         Trong thùng rác
       </span>
     );
   }
   return (
-    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+    <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
       {item.isActive ? "Đang áp dụng" : "Tạm tắt"}
     </span>
   );
@@ -113,7 +113,7 @@ export function ServicePriceList({
                 aria-hidden="true"
                 className="h-4 w-4 motion-safe:animate-spin"
               />
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs text-zinc-600 dark:text-zinc-400">
                 Đang tải bảng giá…
               </span>
             </li>
@@ -121,13 +121,13 @@ export function ServicePriceList({
         </ul>
       ) : isError ? (
         <div className="py-10 text-center">
-          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+          <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
             Không tải được bảng giá.
           </p>
           <button
             type="button"
             onClick={onRetry}
-            className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
+            className="mx-auto mt-3 flex min-h-[44px] items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-950"
           >
             Thử lại
           </button>
@@ -168,7 +168,7 @@ export function ServicePriceList({
                     <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {item.name}
                     </span>
-                    <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    <span className="block truncate text-xs text-zinc-600 dark:text-zinc-400">
                       {item.categoryName} · {formatVnd(item.basePrice)} ·{" "}
                       {PRICE_UNIT_LABELS[item.priceUnit]} ·{" "}
                       {formatDuration(item.durationMin)}
@@ -176,16 +176,16 @@ export function ServicePriceList({
                     <span className="mt-1.5 flex flex-wrap gap-1.5">
                       <StatusPill item={item} />
                       {item.isHomeSupported && (
-                        <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                        <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                           Tại nhà
                         </span>
                       )}
                       {item.isEmergencySupported && (
-                        <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                        <span className="rounded-full border border-zinc-300 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                           Cứu hộ
                         </span>
                       )}
-                      <span className="rounded-full border border-zinc-200 px-2 py-0.5 font-mono text-[11px] text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                      <span className="rounded-full border border-zinc-200 px-2 py-0.5 font-mono text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
                         {item.slug}
                       </span>
                     </span>

@@ -42,7 +42,7 @@ export function OrderReturnSection({
           <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
             Đang chờ cửa hàng duyệt
           </p>
-          <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
             Gửi lúc {formatDateTime(request.requestedAt)} · Lý do:{" "}
             {request.reason}
           </p>
@@ -75,7 +75,7 @@ export function OrderReturnSection({
           <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
             Yêu cầu đổi trả bị từ chối
           </p>
-          <p className="mt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
             {formatDateTime(request.decidedAt)}
             {request.decisionNote && ` · Lý do: ${request.decisionNote}`}
           </p>
@@ -84,14 +84,14 @@ export function OrderReturnSection({
 
       {eligible && (
         <>
-          <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400">
             Điều kiện: trong 3 ngày kể từ khi nhận hàng, sản phẩm còn nguyên
             hiện vật và có ảnh minh chứng.
           </p>
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="mt-3 inline-flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="mt-3 inline-flex min-h-[44px] items-center justify-center gap-1.5 self-start rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiRotateCcw aria-hidden="true" className="h-4 w-4" />
             {rejected

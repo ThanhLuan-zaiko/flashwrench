@@ -17,7 +17,7 @@ import { VoucherOfferTicket } from "./VoucherOfferTicket";
 import { codeMeta, codeTitle, walletMeta } from "./voucher-offer-format";
 import { WalletOfferAction } from "./WalletOfferAction";
 
-const SECTION_LABEL = "text-xs font-semibold text-zinc-500 dark:text-zinc-400";
+const SECTION_LABEL = "text-xs font-semibold text-zinc-600 dark:text-zinc-400";
 
 function walletLabel(wallet: VoucherWallet, subtotal: number): string {
   const discount = clampVoucherDiscount({
@@ -125,7 +125,7 @@ export function WalletOfferSections({
             />
           ))}
           {near.length > 3 && (
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               Còn {near.length - 3} voucher khác cần thêm tiền.
             </p>
           )}

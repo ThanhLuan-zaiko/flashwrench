@@ -19,7 +19,7 @@ type TrackingMapProps = {
 function destinationIcon(): L.DivIcon {
   return L.divIcon({
     className: "",
-    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#111111] bg-[#FACC15]"><span class="h-2.5 w-2.5 rounded-full bg-[#111111]"></span></span>',
+    html: '<span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#111111] bg-[#FB923C]"><span class="h-2.5 w-2.5 rounded-full bg-[#111111]"></span></span>',
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });
@@ -107,8 +107,8 @@ export function TrackingMap({
             positions={path}
             pathOptions={
               route
-                ? { color: "#18181b", weight: 4 }
-                : { color: "#71717a", dashArray: "6 8", weight: 2 }
+                ? { color: "#18181B", weight: 4 }
+                : { color: "#71717A", dashArray: "6 8", weight: 2 }
             }
           />
         )}

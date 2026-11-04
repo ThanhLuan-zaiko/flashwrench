@@ -63,7 +63,7 @@ export function CustomerMixBoard({
       {isPending && (
         <p
           aria-busy="true"
-          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white py-16 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400"
+          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white py-16 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400"
         >
           <FiLoader
             aria-hidden="true"
@@ -139,7 +139,7 @@ export function CustomerMixBoard({
                   emptyHint="Chưa có lượt đăng nhập nào trong kỳ này."
                 />
               </div>
-              <p className="mt-2 border-t border-zinc-100 pt-2 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+              <p className="mt-2 border-t border-zinc-100 pt-2 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
                 Đăng ký mới trong kỳ:{" "}
                 <strong className="text-zinc-800 dark:text-zinc-200">
                   {report.totals.memberSignups}
@@ -148,7 +148,7 @@ export function CustomerMixBoard({
               </p>
             </BentoCard>
           </div>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Số liệu được ghi tại thời điểm tạo đơn và xác thực — chính xác tuyệt
             đối kể từ ngày triển khai bảng đếm, dữ liệu trước đó không khôi phục
             được. "Khách duy nhất" đếm theo tài khoản (thành viên) hoặc email đã

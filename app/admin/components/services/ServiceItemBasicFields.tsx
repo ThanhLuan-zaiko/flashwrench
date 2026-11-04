@@ -53,12 +53,12 @@ export function ServiceItemBasicFields({
           </span>
         )}
         {hasNoCategories && (
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
             Chưa có loại hình nào. Hãy tạo loại hình trước khi thêm mục giá.
           </span>
         )}
       </div>
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Tên dịch vụ
         <input
           value={name}
@@ -75,7 +75,7 @@ export function ServiceItemBasicFields({
           </span>
         )}
       </label>
-      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
         Mã định danh
         <input
           value={slug}

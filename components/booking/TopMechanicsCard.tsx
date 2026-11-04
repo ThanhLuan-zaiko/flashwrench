@@ -17,13 +17,13 @@ function TopMechanicRow({ item }: { item: MechanicDirectoryItem }) {
       <div className="flex items-center gap-3">
         <FiUser
           aria-hidden="true"
-          className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-300"
+          className="h-4 w-4 shrink-0 text-zinc-800 dark:text-zinc-300"
         />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {item.displayName}
           </p>
-          <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
             <Stars
               rating={item.ratingAvg}
               size="h-3 w-3"
@@ -41,7 +41,7 @@ function TopMechanicRow({ item }: { item: MechanicDirectoryItem }) {
             <span>{item.completedJobs} đơn đã làm</span>
           </p>
           {item.skills.length > 0 && (
-            <p className="mt-0.5 truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">
               {item.skills.join(" · ")}
             </p>
           )}
@@ -51,7 +51,7 @@ function TopMechanicRow({ item }: { item: MechanicDirectoryItem }) {
           onClick={() => setOpen((prev) => !prev)}
           aria-expanded={open}
           aria-label={`Xem đánh giá của thợ ${item.displayName}`}
-          className="flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg border border-zinc-300 px-2.5 text-[11px] font-semibold text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg border border-zinc-600 px-2.5 text-xs font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           Đánh giá
           <FiChevronDown
@@ -94,7 +94,7 @@ export function TopMechanicsCard({
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Thợ được đánh giá cao
         </h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Các thợ đang trực tuyến, xếp theo điểm đánh giá của khách hàng.
         </p>
       </div>
@@ -120,7 +120,7 @@ export function TopMechanicsCard({
           <button
             type="button"
             onClick={() => void mechanics.refetch()}
-            className="mt-2 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-300 px-3 py-1.5 font-semibold transition-colors duration-200 hover:bg-red-100 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
+            className="mt-2 flex min-h-[44px] items-center gap-1.5 rounded-xl border border-red-600 px-3 py-1.5 font-semibold transition-colors duration-200 hover:bg-red-100 motion-safe:active:scale-[0.99] dark:border-red-800 dark:hover:bg-red-950"
           >
             <FiRefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
             Thử tải lại
@@ -137,7 +137,7 @@ export function TopMechanicsCard({
       )}
 
       {mechanics.isSuccess && top.length === 0 && (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Hiện chưa có thợ trực tuyến. Đơn của bạn sẽ được điều phối ngay khi có
           thợ rảnh.
         </p>

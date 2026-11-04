@@ -80,7 +80,7 @@ export function AccountPanel() {
 
   if (me.isPending) {
     return (
-      <p className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-400">
         <FiLoader
           aria-hidden="true"
           className="h-4 w-4 motion-safe:animate-spin"
@@ -97,7 +97,7 @@ export function AccountPanel() {
         <button
           type="button"
           onClick={goLogin}
-          className="rounded-lg bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-[#EAB308] motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           Đến trang đăng nhập
         </button>
@@ -123,7 +123,7 @@ export function AccountPanel() {
           </h2>
           <Link
             href="/account/password"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 motion-safe:active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-600 px-3 py-1.5 text-sm font-medium text-[#111111] transition-colors duration-200 hover:bg-zinc-100 motion-safe:active:scale-[0.98] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiKey aria-hidden="true" className="h-3.5 w-3.5" />
             Đổi mật khẩu
@@ -131,25 +131,25 @@ export function AccountPanel() {
         </div>{" "}
         <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 border-y border-zinc-200 py-3 text-sm sm:grid-cols-2 dark:border-zinc-800">
           <div>
-            <dt className="text-zinc-500 dark:text-zinc-400">Họ và tên</dt>
+            <dt className="text-zinc-600 dark:text-zinc-400">Họ và tên</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.fullName}
             </dd>
           </div>
           <div>
-            <dt className="text-zinc-500 dark:text-zinc-400">Số điện thoại</dt>
+            <dt className="text-zinc-600 dark:text-zinc-400">Số điện thoại</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.phone}
             </dd>
           </div>
           <div>
-            <dt className="text-zinc-500 dark:text-zinc-400">Email</dt>
+            <dt className="text-zinc-600 dark:text-zinc-400">Email</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.email}
             </dd>
           </div>
           <div>
-            <dt className="text-zinc-500 dark:text-zinc-400">Vai trò</dt>
+            <dt className="text-zinc-600 dark:text-zinc-400">Vai trò</dt>
             <dd className="font-medium text-zinc-900 dark:text-zinc-100">
               {user.role}
             </dd>
@@ -160,7 +160,7 @@ export function AccountPanel() {
             type="button"
             disabled={busy}
             onClick={handleLogout}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-800 transition-all duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-zinc-600 px-4 py-2.5 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-zinc-100 disabled:opacity-60 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             <FiLogOut aria-hidden="true" className="h-4 w-4" />
             {logout.isPending ? "Đang đăng xuất…" : "Đăng xuất thiết bị này"}
@@ -169,7 +169,7 @@ export function AccountPanel() {
             type="button"
             disabled={busy}
             onClick={handleLogoutAll}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-sm font-semibold text-[#111111] transition-all duration-200 hover:bg-[#EAB308] disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             <FiShield aria-hidden="true" className="h-4 w-4" />
             {logoutAll.isPending ? "Đang xử lý…" : "Đăng xuất tất cả thiết bị"}
@@ -186,7 +186,7 @@ export function AccountPanel() {
           Thiết bị đang đăng nhập
         </h2>
         {sessions.isPending ? (
-          <p className="mt-3 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-3 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-400">
             <FiLoader
               aria-hidden="true"
               className="h-4 w-4 motion-safe:animate-spin"
@@ -204,12 +204,12 @@ export function AccountPanel() {
                   <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
                     {s.deviceLabel}
                     {s.current && (
-                      <span className="ml-2 rounded-full border border-zinc-300 px-2 py-0.5 text-xs text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                      <span className="ml-2 rounded-full border border-zinc-300 px-2 py-0.5 text-xs text-zinc-800 dark:border-zinc-700 dark:text-zinc-300">
                         Thiết bị này
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                  <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                     Đăng nhập: {formatDate(s.createdAt)} · Hết hạn:{" "}
                     {formatDate(s.expiresAt)}
                   </p>
@@ -226,7 +226,7 @@ export function AccountPanel() {
               </li>
             ))}
             {(sessions.data ?? []).length === 0 && (
-              <li className="py-3 text-sm text-zinc-500 dark:text-zinc-400">
+              <li className="py-3 text-sm text-zinc-600 dark:text-zinc-400">
                 Không còn phiên nào khác.
               </li>
             )}

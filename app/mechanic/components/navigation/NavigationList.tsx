@@ -39,7 +39,7 @@ export function NavigationList({
       >
         <FiLoader
           aria-hidden="true"
-          className="h-7 w-7 text-zinc-400 motion-safe:animate-spin dark:text-zinc-500"
+          className="h-7 w-7 text-zinc-600 motion-safe:animate-spin dark:text-zinc-400"
         />
         <span className="sr-only">Đang tải danh sách điểm đến</span>
       </div>
@@ -48,14 +48,17 @@ export function NavigationList({
   if (isError) {
     return (
       <div className="mt-3 flex flex-col items-center py-10 text-center">
-        <FiAlertCircle aria-hidden="true" className="h-9 w-9 text-zinc-400" />
+        <FiAlertCircle
+          aria-hidden="true"
+          className="h-9 w-9 text-zinc-600 dark:text-zinc-400"
+        />
         <p className="mt-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Không tải được bản đồ
         </p>
         <button
           type="button"
           onClick={onRetry}
-          className="mt-3 flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          className="mt-3 flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
         >
           Tải lại
         </button>
@@ -85,14 +88,14 @@ export function NavigationList({
               aria-current={selected ? "true" : undefined}
               className={`flex min-h-[44px] w-full flex-col gap-1 rounded-xl border px-3 py-2.5 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 motion-safe:active:scale-[0.99] ${
                 selected
-                  ? "border-[#111111] bg-[#FACC15] text-[#111111] dark:border-white dark:bg-white dark:text-zinc-900"
-                  : "border-zinc-200 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900"
+                  ? "border-[#111111] bg-[#FB923C] text-[#111111] dark:border-[#FB923C] dark:bg-[#FB923C] dark:text-[#111111]"
+                  : "border-zinc-500 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-900"
               }`}
             >
               <span className="flex items-center justify-between gap-2">
                 <span className="flex min-w-0 items-center gap-1.5">
                   {target.kind === "order" && (
-                    <span className="shrink-0 rounded-full border border-current px-1.5 py-px text-[10px] font-semibold">
+                    <span className="shrink-0 rounded-full border border-current px-1.5 py-px text-xs font-semibold">
                       Giao hàng
                     </span>
                   )}
@@ -101,7 +104,7 @@ export function NavigationList({
                   </span>
                 </span>
                 <span
-                  className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium ${statusTone(target.status)}`}
+                  className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${statusTone(target.status)}`}
                 >
                   {STATUS_LABELS[target.status]}
                 </span>
@@ -109,8 +112,8 @@ export function NavigationList({
               <span
                 className={`truncate text-xs ${
                   selected
-                    ? "text-[#111111]/70 dark:text-zinc-600"
-                    : "text-zinc-500 dark:text-zinc-400"
+                    ? "text-[#111111]/80 dark:text-zinc-400"
+                    : "text-zinc-600 dark:text-zinc-400"
                 }`}
               >
                 {target.addressText}
@@ -118,8 +121,8 @@ export function NavigationList({
               <span
                 className={`flex items-center gap-2 text-xs font-medium ${
                   selected
-                    ? "text-[#111111]/85 dark:text-zinc-700"
-                    : "text-zinc-600 dark:text-zinc-300"
+                    ? "text-[#111111]/85 dark:text-zinc-400"
+                    : "text-zinc-800 dark:text-zinc-300"
                 }`}
               >
                 <span>{formatDistanceKm(target.distanceKm)}</span>

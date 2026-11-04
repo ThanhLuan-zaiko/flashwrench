@@ -47,7 +47,7 @@ export function ChatPanel({
             type="button"
             onClick={() => onSelectThread(null)}
             aria-label="Quay lại danh sách"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-800 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiArrowLeft className="h-5 w-5" aria-hidden />
           </button>
@@ -56,7 +56,7 @@ export function ChatPanel({
           <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             {showConversation ? peerName || "Cuộc trò chuyện" : "Tin nhắn"}
           </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             {isLocked
               ? "Cần đăng nhập"
               : showConversation
@@ -68,7 +68,7 @@ export function ChatPanel({
           type="button"
           onClick={onClose}
           aria-label="Đóng hộp thư"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-800 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
         >
           <FiX className="h-5 w-5" aria-hidden />
         </button>

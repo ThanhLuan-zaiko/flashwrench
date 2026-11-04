@@ -76,7 +76,7 @@ export function ProductFilter({
       <div className="relative">
         <FiSearch
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+          className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
         />
         <label htmlFor={searchId} className="sr-only">
           Tìm sản phẩm theo tên, hãng hoặc mã
@@ -87,7 +87,7 @@ export function ProductFilter({
           onChange={(event) => onQuery(event.target.value)}
           placeholder="Tìm theo tên, hãng hoặc mã linh kiện…"
           autoComplete="off"
-          className="h-12 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-[15px] text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="h-12 w-full rounded-xl border border-zinc-300 bg-white pr-3 pl-10 text-[15px] text-zinc-800 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-400"
         />
       </div>
     </div>

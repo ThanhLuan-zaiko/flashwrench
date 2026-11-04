@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FiSave } from "react-icons/fi";
 import { useToast } from "@/components/toast/useToast";
+import { TimeDropdown } from "@/components/ui/TimeDropdown";
 import {
   useAdminBusinessHours,
   useBusinessHoursMutation,
@@ -12,9 +13,6 @@ import {
   formatMinutesOfDay,
 } from "@/lib/shop/business-hours.types";
 import { ShopSettingsApiError } from "@/services/shop-settings.api";
-
-const INPUT_CLASSES =
-  "min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50";
 
 function parseHHmm(value: string): number | null {
   const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
@@ -87,51 +85,49 @@ export function BusinessHoursCard() {
       <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Giờ làm việc
       </h2>
-      <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
         {current?.isDefault === false
           ? "Đã tùy chỉnh — áp dụng ngay cho khung giờ đặt lịch."
           : "Chưa cấu hình — khách đặt được mọi khung giờ."}
       </p>
-      <label className="mt-3 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900">
+      <label className="mt-3 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-zinc-500 px-3 py-2 text-sm text-zinc-800 transition-colors duration-200 hover:bg-zinc-50 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-900">
         <input
           type="checkbox"
           checked={enabled}
           onChange={(e) => setEnabled(e.target.checked)}
           disabled={busy}
-          className="h-4 w-4 accent-[#FACC15] dark:accent-zinc-100"
+          className="h-4 w-4 accent-[#FB923C] dark:accent-zinc-100"
         />
         <span>
           <span className="block font-semibold">
             Giới hạn khung giờ đặt lịch
           </span>
-          <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="block text-xs text-zinc-600 dark:text-zinc-400">
             Khách chỉ chọn được giờ trong khung mở–đóng bên dưới.
           </span>
         </span>
       </label>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:max-w-md">
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-          Mở cửa
-          <input
-            type="time"
+        <div className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
+          <label htmlFor="business-hours-opens">Mở cửa</label>
+          <TimeDropdown
+            id="business-hours-opens"
             value={opens}
-            onChange={(e) => setOpens(e.target.value)}
+            onChange={setOpens}
             disabled={busy || !enabled}
-            className={INPUT_CLASSES}
           />
-        </label>
-        <label className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-          Đóng cửa
-          <input
-            type="time"
+        </div>
+        <div className="flex flex-col gap-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-300">
+          <label htmlFor="business-hours-closes">Đóng cửa</label>
+          <TimeDropdown
+            id="business-hours-closes"
             value={closes}
-            onChange={(e) => setCloses(e.target.value)}
+            onChange={setCloses}
             disabled={busy || !enabled}
-            className={INPUT_CLASSES}
           />
-        </label>
+        </div>
       </div>
-      <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
         Múi giờ cửa hàng: {current?.timeZone ?? DEFAULT_BUSINESS_TIME_ZONE}. Giờ
         đóng cửa phải sau giờ mở cửa (không hỗ trợ ca qua đêm).
       </p>
@@ -139,7 +135,7 @@ export function BusinessHoursCard() {
         type="button"
         onClick={handleSave}
         disabled={save.isPending}
-        className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#FACC15] px-5 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="mt-3 flex min-h-[44px] items-center gap-1.5 rounded-xl px-5 py-2 text-sm font-semibold transition-colors duration-200 disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
       >
         <FiSave aria-hidden="true" className="h-4 w-4" />
         {save.isPending ? "Đang lưu…" : "Lưu giờ làm việc"}

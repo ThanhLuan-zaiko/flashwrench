@@ -79,7 +79,7 @@ export function CatalogCoverDropzone({
         <FiUpload aria-hidden="true" className="h-4 w-4 shrink-0" />
         {dragging ? "Thả ảnh để thêm" : "Kéo thả ảnh vào đây hoặc bấm để chọn"}
       </span>
-      <span className="flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+      <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-400">
         <FiImage aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
         {canAddMore
           ? `JPEG/PNG/WebP, tối đa ${maxUploadMbLabel()}/ảnh. Đã có ${total}/${max} ảnh.`

@@ -5,7 +5,7 @@ import {
   STAFF_NAV_ROW_ACTIVE,
   STAFF_NAV_ROW_BASE,
   STAFF_NAV_ROW_IDLE,
-  STAFF_ON_YELLOW_FOCUS,
+  STAFF_ON_ORANGE_FOCUS,
   STAFF_SUB_LINK_ACTIVE,
   STAFF_SUB_LINK_BASE,
   STAFF_SUB_LINK_IDLE,
@@ -62,7 +62,7 @@ export function StaffNavGroups({
               title={group.label}
               className={`${STAFF_NAV_ROW_BASE} relative ${rowCollapsed} ${
                 selected ? STAFF_NAV_ROW_ACTIVE : STAFF_NAV_ROW_IDLE
-              } ${STAFF_ON_YELLOW_FOCUS}`}
+              } ${STAFF_ON_ORANGE_FOCUS}`}
             >
               <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />
               <span className={`flex-1 ${staffLabelClass(collapsed)}`}>
@@ -73,7 +73,7 @@ export function StaffNavGroups({
                   aria-hidden="true"
                   className={`flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                     selected
-                      ? "bg-[#FACC15] text-[#111111]"
+                      ? "bg-[#FB923C] text-[#111111]"
                       : "bg-[#111111] text-white"
                   } ${labelHidden}`}
                 >
@@ -83,7 +83,7 @@ export function StaffNavGroups({
               {pending > 0 && !selected && (
                 <span
                   aria-hidden="true"
-                  className={`absolute top-1.5 right-1.5 hidden h-2.5 w-2.5 rounded-full border-2 border-[#FACC15] bg-[#111111] ${
+                  className={`absolute top-1.5 right-1.5 hidden h-2.5 w-2.5 rounded-full border-2 border-[#FB923C] bg-[#111111] ${
                     collapsed ? "md:block" : ""
                   }`}
                 />
@@ -118,7 +118,7 @@ export function StaffNavGroups({
                         aria-current={current ? "page" : undefined}
                         className={`${STAFF_SUB_LINK_BASE} ${
                           current ? STAFF_SUB_LINK_ACTIVE : STAFF_SUB_LINK_IDLE
-                        } ${STAFF_ON_YELLOW_FOCUS}`}
+                        } ${STAFF_ON_ORANGE_FOCUS}`}
                       >
                         <span className="min-w-0 flex-1">{section.label}</span>
                         {badge > 0 && (

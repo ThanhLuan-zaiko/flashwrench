@@ -148,7 +148,7 @@ export function RescueForm({ form }: RescueFormProps) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-[#111111] px-8 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] sm:w-auto sm:min-w-64 dark:focus-visible:ring-offset-zinc-950"
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl px-8 py-2.5 text-sm font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 disabled:opacity-60 motion-safe:active:scale-[0.99] sm:w-auto sm:min-w-64 dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           <FiLifeBuoy
             aria-hidden="true"
@@ -156,7 +156,7 @@ export function RescueForm({ form }: RescueFormProps) {
           />
           {pending ? "Đang gửi yêu cầu…" : "Gửi yêu cầu cứu hộ ngay"}
         </button>
-        <p className="mt-2 text-center text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-center text-xs text-zinc-600 dark:text-zinc-400">
           {loggedIn
             ? "Đã đăng nhập — yêu cầu sẽ gắn với tài khoản của bạn."
             : "Không cần đăng nhập. Thợ trực gọi lại ngay sau khi bạn gửi."}

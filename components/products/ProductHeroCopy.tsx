@@ -36,7 +36,7 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
         <h1 className="text-2xl leading-[1.1] font-extrabold tracking-tight text-balance lg:text-3xl">
           {part.name}
         </h1>
-        <p className="mt-2 text-xs font-medium text-[#111111]/70">
+        <p className="mt-2 text-xs font-medium text-[#111111]/80">
           SKU {part.sku}
         </p>
       </div>
@@ -48,7 +48,7 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
           </span>
           {discount > 0 && part.comparePrice !== null && (
             <>
-              <span className="text-sm text-[#111111]/70 line-through">
+              <span className="text-sm text-[#111111]/80 line-through">
                 {formatVnd(part.comparePrice)}
               </span>
               <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-[#111111]">
@@ -58,7 +58,7 @@ export function ProductHeroCopy({ part, discount }: ProductHeroCopyProps) {
           )}
         </div>
         {saving > 0 && (
-          <p className="text-xs text-[#111111]/70">
+          <p className="text-xs text-[#111111]/80">
             Tiết kiệm {formatVnd(saving)} so với giá gốc
           </p>
         )}

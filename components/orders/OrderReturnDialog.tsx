@@ -122,7 +122,7 @@ export function OrderReturnDialog({
         aria-label="Đóng yêu cầu đổi trả"
         onClick={onClose}
         disabled={busy}
-        className="fixed inset-0 bg-zinc-950/50"
+        className="fixed inset-0 bg-[#111111]/50"
       />
       <div className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-5 sm:rounded-2xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between gap-2">
@@ -130,7 +130,7 @@ export function OrderReturnDialog({
             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
               Đổi trả / hoàn tiền
             </h2>
-            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
               Trong 3 ngày kể từ khi nhận hàng, sản phẩm phải còn nguyên hiện
               vật.
             </p>
@@ -140,7 +140,7 @@ export function OrderReturnDialog({
             onClick={onClose}
             disabled={busy}
             aria-label="Đóng yêu cầu đổi trả"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <FiX aria-hidden="true" className="h-5 w-5" />
           </button>
@@ -148,7 +148,7 @@ export function OrderReturnDialog({
 
         <label
           htmlFor="return-reason"
-          className="mt-4 block text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+          className="mt-4 block text-xs font-semibold text-zinc-800 dark:text-zinc-300"
         >
           Lý do đổi trả
         </label>
@@ -162,7 +162,7 @@ export function OrderReturnDialog({
           maxLength={RETURN_REASON_MAX}
           rows={3}
           placeholder="Ví dụ: bùgi bị móp đầu, sai mã so với xe…"
-          className="mt-1.5 w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+          className="mt-1.5 w-full resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
         />
         {errors.reason && (
           <p
@@ -197,7 +197,7 @@ export function OrderReturnDialog({
             type="button"
             onClick={() => void submit()}
             disabled={busy}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] dark:bg-green-500 dark:text-zinc-950 dark:hover:bg-green-400"
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-60 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
           >
             {busy && (
               <FiLoader
@@ -211,7 +211,7 @@ export function OrderReturnDialog({
             type="button"
             onClick={onClose}
             disabled={busy}
-            className="flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 disabled:opacity-60 dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
             Để sau
           </button>

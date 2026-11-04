@@ -33,7 +33,7 @@ export function StarPicker({
         {[1, 2, 3, 4, 5].map((star) => (
           <label
             key={star}
-            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-300 transition-colors duration-150 hover:text-zinc-500 motion-safe:active:scale-95 dark:text-zinc-600 dark:hover:text-zinc-300 has-focus-visible:ring-2 has-focus-visible:ring-zinc-500"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-300 transition-colors duration-150 hover:text-zinc-600 motion-safe:active:scale-95 dark:text-zinc-400 dark:hover:text-zinc-300 has-focus-visible:ring-2 has-focus-visible:ring-zinc-500"
           >
             <input
               type="radio"
@@ -54,7 +54,7 @@ export function StarPicker({
             />
           </label>
         ))}
-        <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="ml-2 text-xs text-zinc-600 dark:text-zinc-400">
           {value > 0 ? RATING_LABELS[value - 1] : hint}
         </span>
       </div>

@@ -16,7 +16,7 @@ type PublicCatalogPagerProps = {
 const LINK_CLASSES =
   "flex min-h-11 items-center gap-1.5 text-sm font-bold text-[#1D4ED8] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] motion-safe:active:scale-[0.99] dark:text-blue-300 dark:focus-visible:ring-zinc-100";
 const IDLE_CLASSES =
-  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-zinc-400 dark:text-zinc-600";
+  "flex min-h-11 items-center gap-1.5 text-sm font-bold text-zinc-600 dark:text-zinc-400";
 
 // Ruled pager for the public services list: range summary, then bold text
 // links with arrows. Hidden on a single page. Pages are real links so every
@@ -40,7 +40,7 @@ export function PublicCatalogPager({
     >
       <p
         aria-live="polite"
-        className="text-xs text-zinc-500 dark:text-zinc-400"
+        className="text-xs text-zinc-600 dark:text-zinc-400"
       >
         Hiển thị {start}–{end} trên {total} dịch vụ
       </p>
@@ -63,7 +63,7 @@ export function PublicCatalogPager({
             Trước
           </span>
         )}
-        <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+        <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-300">
           Trang {page + 1} trên {pageCount}
         </p>
         {hasNext ? (

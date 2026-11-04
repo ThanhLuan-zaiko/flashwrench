@@ -27,7 +27,7 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-[#111111]/10 bg-[#FACC15] ${taskRoute ? "max-sm:hidden" : ""}`}
+      className={`sticky top-0 z-50 border-b border-[#111111]/10 bg-[#FB923C] ${taskRoute ? "max-sm:hidden" : ""}`}
     >
       <div className="mx-auto flex h-12 max-w-7xl sm:h-16 items-center justify-between gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
         <SiteLogo onNavy />

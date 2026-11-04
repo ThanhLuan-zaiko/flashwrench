@@ -41,13 +41,13 @@ export function CampaignRedeemCode({
         <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
           Chương trình có mã ưu đãi riêng
         </p>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           Đăng nhập bằng tài khoản đủ điều kiện để xem mã và dùng ngay khi đặt
           lịch hoặc thanh toán.
         </p>
         <Link
           href={buildLoginHref(campaignDetailHref(slug))}
-          className="mt-2 inline-flex min-h-[44px] items-center rounded-xl bg-[#FACC15] px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-[#EAB308] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-2 inline-flex min-h-[44px] items-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
           Đăng nhập để xem mã
         </Link>
@@ -61,7 +61,7 @@ export function CampaignRedeemCode({
   if (visibility.status === "claimable") {
     return (
       <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
-        <p className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+        <p className="text-xs font-semibold tracking-wide text-zinc-600 uppercase dark:text-zinc-400">
           Mã ưu đãi của bạn
         </p>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
@@ -70,7 +70,7 @@ export function CampaignRedeemCode({
           </span>
           <CopyCodeButton code={visibility.code} />
         </div>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
           Nhập mã ở bước xác nhận đặt lịch hoặc thanh toán để nhận voucher và
           dùng ngay.
         </p>
@@ -81,12 +81,12 @@ export function CampaignRedeemCode({
   if (visibility.status === "owned") {
     return (
       <div className="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-zinc-800 dark:text-zinc-400">
           Bạn đã có voucher này trong ví.
         </p>
         <Link
           href={walletDetailHref(visibility.walletId)}
-          className="mt-2 inline-flex min-h-[44px] items-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          className="mt-2 inline-flex min-h-[44px] items-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
         >
           Xem voucher
         </Link>
@@ -95,7 +95,7 @@ export function CampaignRedeemCode({
   }
 
   return (
-    <div className="rounded-xl border border-zinc-200 p-3 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+    <div className="rounded-xl border border-zinc-200 p-3 text-sm text-zinc-800 dark:border-zinc-800 dark:text-zinc-400">
       Bạn đã nhận đủ số lượt của chương trình này.
     </div>
   );

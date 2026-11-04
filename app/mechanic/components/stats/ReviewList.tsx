@@ -10,11 +10,11 @@ export function ReviewList({ reviews }: { reviews: MechanicReviewItem[] }) {
       <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
         Khách nói gì
       </h3>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400">
         Nhận xét mới nhất từ khách hàng
       </p>
       {reviews.length === 0 ? (
-        <p className="mt-3 border-t border-zinc-200 pt-3 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        <p className="mt-3 border-t border-zinc-200 pt-3 text-xs text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
           Chưa có nhận xét nào. Hoàn thành đơn để nhận đánh giá đầu tiên.
         </p>
       ) : (
@@ -35,11 +35,11 @@ export function ReviewList({ reviews }: { reviews: MechanicReviewItem[] }) {
                 </span>
               </p>
               {review.comment && (
-                <p className="mt-1 line-clamp-2 text-xs text-zinc-600 dark:text-zinc-300">
+                <p className="mt-1 line-clamp-2 text-xs text-zinc-800 dark:text-zinc-300">
                   {review.comment}
                 </p>
               )}
-              <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
                 {formatShortDate(review.createdAt)}
               </p>
             </li>

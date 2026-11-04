@@ -17,7 +17,7 @@ export function VoucherGuestPanel() {
         <p className="text-base font-bold text-zinc-900 dark:text-zinc-50">
           Đăng nhập để xem ví voucher
         </p>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-zinc-800 dark:text-zinc-400">
           Voucher được lưu theo tài khoản. Khách chưa có tài khoản vẫn xem được
           các ưu đãi đang chạy bên dưới.
         </p>
