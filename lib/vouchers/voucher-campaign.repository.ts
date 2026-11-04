@@ -120,7 +120,7 @@ export async function insertCampaign(
     [
       {
         query:
-          "INSERT INTO voucher_campaigns_by_id (campaign_id, code, redeem_code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, false, ?, ?, ?)",
+          "INSERT INTO voucher_campaigns_by_id (campaign_id, code, redeem_code, slug, name, description, image_url, images, discount_type, discount_value, max_discount, min_order, scope, start_at, end_at, total_limit, granted_count, per_user_limit, allow_dispatcher_grant, dispatcher_max_value, is_active, is_deleted, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, false, ?, ?, ?)",
         params: [
           params.campaignId,
           params.code,
