@@ -26,8 +26,8 @@ export function HeaderNav({
                 className={
                   onNavy
                     ? isActive
-                      ? "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-white/15 px-4 py-2.5 text-sm font-semibold text-white"
-                      : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm 2xl:px-4 2xl:py-2.5 font-medium text-zinc-200 transition-colors duration-200 hover:bg-white/10 hover:text-white"
+                      ? "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[#111111] px-4 py-2.5 text-sm font-semibold text-white"
+                      : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm 2xl:px-4 2xl:py-2.5 font-medium text-[#111111] transition-colors duration-200 hover:bg-[#111111]/10"
                     : isActive
                       ? "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2.5 text-sm font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-white"
                       : "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm 2xl:px-4 2xl:py-2.5 font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"

@@ -1,13 +1,11 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
-import { StaffNavPanel } from "./StaffNavPanel";
-import { StaffNavRail } from "./StaffNavRail";
-import {
-  groupBadgeTotal,
-  groupIdForSection,
-  sectionsInGroup,
-} from "./staff-nav-groups";
+import { SCROLLBAR_ON_YELLOW_CLASSES } from "@/components/ui/scrollbar";
+import { StaffNavGroups } from "./StaffNavGroups";
+import { StaffSidebarFooter } from "./StaffSidebarFooter";
+import { StaffSidebarHeader } from "./StaffSidebarHeader";
+import { groupBadgeTotal, groupIdForSection } from "./staff-nav-groups";
 import type {
   StaffNavGroup,
   StaffNavSection,
@@ -28,9 +26,10 @@ type StaffSidebarProps = {
   onCloseMobile: () => void;
 };
 
-// Two-part navy sidebar shared by every staff portal: a dark icon rail of
-// nav groups plus a label panel for the selected group. Collapsing keeps
-// only the rail; picking a group from the collapsed rail expands it again.
+// Rounded yellow sidebar shared by every staff portal. Desktop shows a 248px
+// column that collapses to a 72px icon rail; phones get a drawer. The
+// selected group opens its sections as a tree; picking a group while
+// collapsed expands the sidebar again.
 export function StaffSidebar({
   copy,
   groups,
@@ -76,31 +75,49 @@ export function StaffSidebar({
 
       <aside
         aria-label={`Menu ${copy.scope}`}
-        className={`fixed inset-y-0 left-0 z-[60] flex w-[304px] max-w-[88vw] border-r border-zinc-800 bg-[#111111] text-white transition-transform duration-200 motion-safe:ease-out md:sticky md:top-16 md:bottom-auto md:z-30 md:h-[calc(100vh-4rem)] md:max-w-none md:shrink-0 md:self-start md:border-t md:border-white/10 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 ${collapsed ? "md:w-[72px]" : "md:w-[304px]"}`}
+        className={`fixed inset-y-0 left-0 z-[60] flex select-none w-[286px] max-w-[88vw] flex-col gap-3 rounded-r-3xl bg-[#FACC15] p-3 text-[#111111] duration-200 motion-safe:transition-[width,transform] motion-safe:ease-out md:sticky md:top-[76px] md:z-30 md:m-3 md:h-[calc(100vh-5.5rem)] md:shrink-0 md:self-start md:rounded-3xl md:border md:border-[#111111]/10 ${
+          collapsed ? "md:w-[72px]" : "md:w-[248px]"
+        } ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
-        <StaffNavRail
-          groups={groups}
-          selectedGroup={group?.id ?? ""}
-          groupBadges={groupBadges}
+        <StaffSidebarHeader
+          copy={copy}
+          groupLabel={group?.label ?? copy.areaName}
           collapsed={collapsed}
-          onSelectGroup={selectGroup}
-          onLogout={onLogout}
           onToggleCollapse={onToggleCollapse}
+          onCloseMobile={onCloseMobile}
+        />
+
+        <nav
+          aria-label={`Chức năng ${copy.scope}`}
+          className={`flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain ${SCROLLBAR_ON_YELLOW_CLASSES}`}
+        >
+          <StaffNavGroups
+            groups={groups}
+            sections={sections}
+            active={active}
+            selectedGroup={group?.id ?? ""}
+            groupBadges={groupBadges}
+            badges={badges}
+            collapsed={collapsed}
+            onSelectGroup={selectGroup}
+            onNavigate={onCloseMobile}
+          />
+          {panel && (
+            <div
+              className={`mt-3 rounded-2xl bg-white p-3 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 ${
+                collapsed ? "md:hidden" : ""
+              }`}
+            >
+              {panel}
+            </div>
+          )}
+        </nav>
+
+        <StaffSidebarFooter
+          collapsed={collapsed}
+          onLogout={onLogout}
           onNavigate={onCloseMobile}
         />
-        <div className={`flex min-w-0 flex-1 ${collapsed ? "md:hidden" : ""}`}>
-          <StaffNavPanel
-            copy={copy}
-            groupLabel={group?.label ?? copy.areaName}
-            sections={sectionsInGroup(sections, group?.id ?? "")}
-            active={active}
-            badges={badges}
-            panel={panel}
-            onCloseMobile={onCloseMobile}
-          />
-        </div>
       </aside>
     </>
   );

@@ -6,6 +6,6 @@
 export const SCROLLBAR_CLASSES =
   "[scrollbar-width:thin] [scrollbar-color:#a1a1aa_transparent] hover:[scrollbar-color:#71717a_transparent] dark:[scrollbar-color:#52525b_transparent] dark:hover:[scrollbar-color:#71717a_transparent]";
 
-// Same thin bar for scroll containers on the navy staff sidebar.
-export const SCROLLBAR_ON_NAVY_CLASSES =
-  "[scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.25)_transparent] hover:[scrollbar-color:rgba(255,255,255,0.45)_transparent]";
+// Same thin bar for scroll containers on the yellow staff sidebar.
+export const SCROLLBAR_ON_YELLOW_CLASSES =
+  "[scrollbar-width:thin] [scrollbar-color:rgba(17,17,17,0.25)_transparent] hover:[scrollbar-color:rgba(17,17,17,0.45)_transparent]";

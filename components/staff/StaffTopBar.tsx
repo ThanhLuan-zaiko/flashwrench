@@ -17,7 +17,7 @@ type StaffTopBarProps = {
   onOpenMenu: () => void;
 };
 
-// Sticky section bar under the navy site header: navy icon tile, navy
+// Sticky section bar under the yellow site header: bare icon, black
 // section title in the homepage headline style, live status and tour.
 // The header is 48px tall on phones and 64px from `sm` up.
 export function StaffTopBar({

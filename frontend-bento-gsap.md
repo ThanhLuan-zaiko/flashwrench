@@ -32,7 +32,7 @@ Always respect these from `AGENTS.md`:
   The brand color is yellow `#FACC15` with black `#111111`. Customer screens
   use yellow for surfaces and a black (white in dark) button for the one
   primary action per screen (see `AGENTS.md` Section 6). Staff portals use
-  a yellow header and a black sidebar (shared frame in `components/staff/`) but never the primary button. Other hues are allowed where the
+  a yellow header and a rounded, collapsible yellow sidebar with black text (shared frame in `components/staff/`) but never the primary button. Other hues are allowed where the
   design needs them, with readable contrast in both themes.
   Approved: validation errors in red (`text-red-600 dark:text-red-400`,
   alert boxes like `components/auth/FormAlert.tsx`); toasts carry a

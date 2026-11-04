@@ -25,7 +25,7 @@ type StaffShellProps = {
 };
 
 // Layout-only frame shared by the dispatch, mechanic and admin portals:
-// navy sidebar, sticky section bar and a centered content column. Each
+// yellow sidebar, sticky section bar and a centered content column. Each
 // portal shell keeps its own realtime hooks and passes copy plus slots.
 export function StaffShell({
   copy,
