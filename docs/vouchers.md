@@ -92,8 +92,10 @@ mở trang chi tiết đọc toàn bộ thông tin:
   `GET /api/vouchers/[walletId]`.
 
 Cả hai dùng tiền tố tĩnh (`c`, `w`) nên không đụng pager
-`/vouchers/page/N`. Shell `VouchersRouteShell` giữ mount một lần,
-`page.tsx` chỉ metadata như `/products/*`.
+`/vouchers/page/N`. Danh sách nằm trong route group `(list)`, được layout
+mount một lần và `page.tsx` của nó chỉ có metadata, giống `/products/(shop)`.
+Mỗi trang chi tiết là một page thật nên Next.js mở ở đầu trang và khôi phục vị
+trí cuộn của danh sách khi bấm Quay lại.
 
 ## Phase 2 — tính tiền giả lập
 

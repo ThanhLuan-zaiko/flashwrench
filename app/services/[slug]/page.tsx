@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { listPublicCatalog } from "@/lib/catalog/public-catalog.service";
+import { resolveServiceTabRedirect } from "@/lib/catalog/service-tab-slug";
 
 type TabParams = { params: Promise<{ slug: string }> };
 
@@ -37,7 +39,11 @@ export async function generateMetadata({
 }
 
 // Metadata-only: the interactive screen lives in the /services layout shell
-// so tab switches reuse it without remounting.
-export default function ServiceTabPage() {
+// so tab switches reuse it without remounting. Uppercase slugs and service
+// slugs are rewritten to the category tab they mean.
+export default async function ServiceTabPage({ params }: TabParams) {
+  const { slug } = await params;
+  const target = await resolveServiceTabRedirect(slug);
+  if (target) redirect(`/services/${encodeURIComponent(target)}`);
   return null;
 }

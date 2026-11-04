@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { DispatchCustomerMixShell } from "../components/customer-mix/DispatchCustomerMixShell";
 
 // Shared shell for /dispatch/customer-mix/[range]. Next.js keeps the layout
@@ -12,6 +13,7 @@ export default function DispatchCustomerMixLayout({
   return (
     <>
       <DispatchCustomerMixShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

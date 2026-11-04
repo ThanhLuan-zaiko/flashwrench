@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { StockBoard } from "../components/stock/StockBoard";
 
 // Shared shell for /dispatch/stock and /dispatch/stock/page/N. Next.js
@@ -12,6 +13,7 @@ export default function DispatchStockLayout({
   return (
     <>
       <StockBoard />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

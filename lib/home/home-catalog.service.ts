@@ -144,14 +144,25 @@ export async function listHomeCategories(
   }
 }
 
-async function loadHeroServices(limit: number): Promise<ServiceItem[]> {
+// /services/[slug] is a category tab, so a hero card links to the category its
+// service belongs to. Null when that category is not public.
+export type HeroService = ServiceItem & { categorySlug: string | null };
+
+async function loadHeroServices(limit: number): Promise<HeroService[]> {
   const result = await getPublicCatalog();
-  return result.ok ? pickHeroServices(result.data.services, limit) : [];
+  if (!result.ok) return [];
+  const slugById = new Map(
+    result.data.categories.map((category) => [category.id, category.slug]),
+  );
+  return pickHeroServices(result.data.services, limit).map((service) => ({
+    ...service,
+    categorySlug: slugById.get(service.categoryId) ?? null,
+  }));
 }
 
 export async function listHeroServices(
   limit = HERO_SERVICE_LIMIT,
-): Promise<ServiceItem[]> {
+): Promise<HeroService[]> {
   try {
     return await Promise.race([
       loadHeroServices(limit),

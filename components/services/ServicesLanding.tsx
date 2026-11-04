@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { HomePromoList } from "@/components/home/promotions/HomePromoList";
 import {
@@ -41,16 +41,6 @@ import { ServicesSelectionBar } from "./ServicesSelectionBar";
 // the enter animation.
 export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   const rootRef = useBentoReveal<HTMLDivElement>();
-  // The catalog always opens at the top: the browser must not restore a scroll
-  // position remembered from an earlier visit, and a plain visit starts at 0.
-  useEffect(() => {
-    const previous = history.scrollRestoration;
-    history.scrollRestoration = "manual";
-    if (!window.location.hash) window.scrollTo({ top: 0 });
-    return () => {
-      history.scrollRestoration = previous;
-    };
-  }, []);
   const searchId = useId();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -108,7 +98,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
 
   // Canonicalize: a typed /page/N beyond the last page rewrites itself to
   // the real last page once the catalog has loaded.
-  useCanonicalizePage(view.pageCount, catalog.isSuccess);
+  useCanonicalizePage(view.pageCount, catalog.isSuccess && !unknownSlug);
 
   return (
     <div

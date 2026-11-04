@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { VouchersRouteShell } from "../components/vouchers/VouchersRouteShell";
 
 // Shared shell for /admin/vouchers/[tab]. Next.js keeps the layout mounted
@@ -13,6 +14,7 @@ export default function AdminVouchersLayout({
   return (
     <>
       <VouchersRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

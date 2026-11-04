@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { AdminOrdersShell } from "../components/orders/AdminOrdersShell";
 
 // Shared shell for /admin/orders/[status]: the layout stays mounted while
@@ -11,6 +12,7 @@ export default function AdminOrdersLayout({
   return (
     <>
       <AdminOrdersShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

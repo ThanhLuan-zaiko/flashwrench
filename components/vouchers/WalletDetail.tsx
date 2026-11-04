@@ -46,7 +46,6 @@ export function WalletDetail({ walletId }: { walletId: string }) {
     <div ref={rootRef} className="flex flex-col gap-4">
       <Link
         href="/vouchers"
-        scroll={false}
         prefetch
         data-reveal
         className="flex w-fit min-h-[44px] items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800"
@@ -86,7 +85,6 @@ export function WalletDetail({ walletId }: { walletId: string }) {
             </button>
             <Link
               href="/vouchers"
-              scroll={false}
               className="flex min-h-[44px] items-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Về ví voucher
@@ -179,7 +177,6 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   {(wallet.scope === "booking" || wallet.scope === "all") && (
                     <Link
                       href="/booking"
-                      scroll={false}
                       prefetch
                       className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
                     >
@@ -189,7 +186,6 @@ export function WalletDetail({ walletId }: { walletId: string }) {
                   {(wallet.scope === "order" || wallet.scope === "all") && (
                     <Link
                       href="/products"
-                      scroll={false}
                       prefetch
                       className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"
                     >

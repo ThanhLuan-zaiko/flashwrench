@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { UsersRouteShell } from "../components/users/UsersRouteShell";
 
 // Shared shell for /admin/users/[tab]. Next.js keeps the layout mounted
@@ -13,6 +14,7 @@ export default function AdminUsersLayout({
   return (
     <>
       <UsersRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

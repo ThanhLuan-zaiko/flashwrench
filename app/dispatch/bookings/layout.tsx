@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { DispatchRouteShell } from "../components/DispatchRouteShell";
 
 // Shared shell for /dispatch/bookings and /dispatch/bookings/[status].
@@ -14,6 +15,7 @@ export default function DispatchBookingsLayout({
   return (
     <>
       <DispatchRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

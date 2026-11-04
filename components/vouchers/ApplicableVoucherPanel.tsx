@@ -64,12 +64,7 @@ export function ApplicableVoucherPanel({
             Đăng nhập để xem ưu đãi
             <FiArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
-          <Link
-            href="/vouchers"
-            scroll={false}
-            prefetch
-            className={LINK_CLASSES}
-          >
+          <Link href="/vouchers" prefetch className={LINK_CLASSES}>
             Xem ưu đãi đang chạy
           </Link>
         </div>
@@ -91,12 +86,7 @@ export function ApplicableVoucherPanel({
           Đặt hàng, đặt lịch và gửi đánh giá để hệ thống tự phát voucher vào ví
           của bạn.
         </p>
-        <Link
-          href="/vouchers"
-          scroll={false}
-          prefetch
-          className={`mt-2 ${LINK_CLASSES}`}
-        >
+        <Link href="/vouchers" prefetch className={`mt-2 ${LINK_CLASSES}`}>
           Xem cách nhận ưu đãi
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>
@@ -122,7 +112,7 @@ export function ApplicableVoucherPanel({
         Hệ thống tự áp phiếu tiết kiệm nhất khi bạn đặt lịch hoặc thanh toán.
       </p>
       <div className="mt-2">
-        <Link href="/vouchers" scroll={false} prefetch className={LINK_CLASSES}>
+        <Link href="/vouchers" prefetch className={LINK_CLASSES}>
           Xem ví voucher
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>

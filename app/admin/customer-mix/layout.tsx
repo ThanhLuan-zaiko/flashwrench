@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { AdminCustomerMixShell } from "../components/customer-mix/AdminCustomerMixShell";
 
 // Shared shell for /admin/customer-mix/[range]: the layout stays mounted
@@ -11,6 +12,7 @@ export default function AdminCustomerMixLayout({
   return (
     <>
       <AdminCustomerMixShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

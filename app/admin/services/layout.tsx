@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { CatalogRouteShell } from "../components/services/CatalogRouteShell";
 
 // Shared shell for /admin/services/[tab]. Next.js keeps the layout mounted
@@ -13,6 +14,7 @@ export default function AdminServicesLayout({
   return (
     <>
       <CatalogRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

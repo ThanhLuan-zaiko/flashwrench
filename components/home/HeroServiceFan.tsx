@@ -6,7 +6,7 @@ import {
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
 import { usePromoCarousel } from "@/hooks/usePromoCarousel";
-import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import type { HeroService } from "@/lib/home/home-catalog.service";
 
 // Visible card slots, front first. Slot 0 is the largest card in front, slot 1
 // sits behind it on the upper right and slot 2 behind on the left. Positions
@@ -27,7 +27,7 @@ const BAR_BASE =
   "block h-[3px] w-full rounded-full transition-colors duration-300 group-focus-visible:ring-2 group-focus-visible:ring-white lg:h-1";
 
 type SegmentBarsProps = {
-  services: ServiceItem[];
+  services: HeroService[];
   index: number;
   onSelect: (index: number) => void;
 };
@@ -57,8 +57,9 @@ function SegmentBars({ services, index, onSelect }: SegmentBarsProps) {
 // Print-style service cards fanned over the navy hero, the same layered
 // treatment as the auth showcase. With more than three services the stack
 // rotates on the shared carousel timer, which pauses on hover and focus and
-// stays still for reduced-motion users. Each card links to its service page.
-export function HeroServiceFan({ services }: { services: ServiceItem[] }) {
+// stays still for reduced-motion users. Each card links to its service's
+// category tab, since /services/[slug] takes a category slug.
+export function HeroServiceFan({ services }: { services: HeroService[] }) {
   const { index, go, pauseHandlers } = usePromoCarousel(services.length);
   const count = services.length;
 
@@ -74,7 +75,11 @@ export function HeroServiceFan({ services }: { services: ServiceItem[] }) {
           return (
             <Link
               key={service.id}
-              href={`/services/${encodeURIComponent(service.slug)}`}
+              href={
+                service.categorySlug
+                  ? `/services/${encodeURIComponent(service.categorySlug)}`
+                  : "/services"
+              }
               aria-label={`Xem dịch vụ ${service.name}`}
               inert={!visible}
               className={`absolute block rounded-xl bg-white p-3 text-[#111111] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out sm:p-3.5 ${visible ? `${FAN_SLOTS[slot]} motion-safe:hover:z-40 motion-safe:hover:-translate-y-1` : HIDDEN_SLOT}`}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { ProductsRouteShell } from "../components/products/ProductsRouteShell";
 
 // Shared shell for /admin/products/[tab]. Next.js keeps the layout mounted
@@ -13,6 +14,7 @@ export default function AdminProductsLayout({
   return (
     <>
       <ProductsRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

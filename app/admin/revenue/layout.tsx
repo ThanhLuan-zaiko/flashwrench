@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { AdminRevenueShell } from "../components/revenue/AdminRevenueShell";
 
 // Shared shell for /admin/revenue/[range]: the layout stays mounted while
@@ -11,6 +12,7 @@ export default function AdminRevenueLayout({
   return (
     <>
       <AdminRevenueShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

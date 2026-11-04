@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { OrdersRouteShell } from "../components/orders/OrdersRouteShell";
 
 // Shared shell for /dispatch/orders and /dispatch/orders/[status].
@@ -13,6 +14,7 @@ export default function DispatchOrdersLayout({
   return (
     <>
       <OrdersRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

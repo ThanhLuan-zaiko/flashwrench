@@ -131,7 +131,7 @@ ScyllaDB is a high-performance NoSQL wide-column store (Cassandra compatible).
 
 ### 7.1. Fast Tab Switches (URL Tabs Without Remount)
 When each tab owns its own URL (one URL per tab so links stay shareable and the browser back button works, e.g. `/services` plus `/services/[slug]`), switching tabs MUST feel instant and MUST NOT replay enter animations:
-- Mount the interactive screen ONCE in the segment `layout.tsx` (server component rendering one client shell). Keep `page.tsx` files metadata-only.
+- Mount the interactive screen ONCE in the segment `layout.tsx` (server component rendering one client shell). Keep `page.tsx` files metadata-only. Such a layout MUST also render `components/layout/ScrollTopOnEnter.tsx`: a leaf returning null gives Next.js nothing to scroll to, so entering the screen would keep the previous scroll position. A detail screen is not a tab: render it from its own `page.tsx` (route groups keep the list layout away from it, e.g. `app/products/(shop)`), and never put `scroll={false}` on a link that opens another screen.
 - The shell reads the active tab from the URL (`useParams()`), never from local tab state alone.
 - Tab controls are real `Link`s with `scroll={false}` (plus prefetch) so a switch reuses cached query data, preserves unrelated state (e.g. search text), resets only the pager, and never re-runs the GSAP reveal hook (mount-once effects stay untouched).
 - Unknown or retired tab slugs show a friendly guidance panel linking back to the default tab. Never guess or silently fall back to another tab's data.

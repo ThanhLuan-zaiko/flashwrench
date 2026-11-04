@@ -28,7 +28,13 @@ export function SiteFooter() {
   if (hidden) return null;
 
   return (
-    <footer ref={rootRef} className="bg-[#FB923C] text-[#111111]">
+    // The footer must never be a scroll anchor: while <main> is still empty it
+    // is the only anchor candidate, and the browser would then follow it down
+    // as content arrives above, landing the page at its foot.
+    <footer
+      ref={rootRef}
+      className="bg-[#FB923C] text-[#111111] [overflow-anchor:none]"
+    >
       <div className="border-b border-[#111111]/15 py-4 md:py-5">
         <MarqueeTrack
           items={FOOTER_PHRASES}

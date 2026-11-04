@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { ScheduleRouteShell } from "../components/schedule/ScheduleRouteShell";
 
 export default function MechanicScheduleLayout({
@@ -9,6 +10,7 @@ export default function MechanicScheduleLayout({
   return (
     <>
       <ScheduleRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

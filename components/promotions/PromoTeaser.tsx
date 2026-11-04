@@ -44,7 +44,6 @@ export function PromoTeaser({ audience }: PromoTeaserProps) {
       <FiGift aria-hidden="true" className="h-4 w-4 shrink-0" />
       <Link
         href={campaignDetailHref(top.slug)}
-        scroll={false}
         prefetch
         className={LINK_CLASSES}
       >
@@ -53,7 +52,7 @@ export function PromoTeaser({ audience }: PromoTeaserProps) {
       {me.isPending ? null : (
         <>
           <span aria-hidden="true">·</span>
-          <Link href={href} scroll={false} prefetch className={LINK_CLASSES}>
+          <Link href={href} prefetch className={LINK_CLASSES}>
             {cta}
           </Link>
         </>

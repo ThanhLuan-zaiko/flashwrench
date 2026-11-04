@@ -61,5 +61,8 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "patchedDependencies": {
+    "nextstepjs@2.3.0": "patches/nextstepjs@2.3.0.patch"
+  }
 }

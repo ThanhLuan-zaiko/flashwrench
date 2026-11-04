@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { CampaignDetail } from "@/components/promotions/CampaignDetail";
+import { VoucherDetailColumn } from "@/components/vouchers/VoucherDetailColumn";
+import { canonicalSlug } from "@/lib/catalog/canonical-slug";
 import { getPublicCampaignBySlug } from "@/lib/vouchers/voucher-public.service";
 
 type DetailParams = { params: Promise<{ slug: string }> };
@@ -12,7 +15,7 @@ export async function generateMetadata({
 }: DetailParams): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const result = await getPublicCampaignBySlug(slug);
+    const result = await getPublicCampaignBySlug(canonicalSlug(slug));
     if (result.ok) {
       return {
         title: `${result.data.name} | FlashWrench`,
@@ -27,7 +30,13 @@ export async function generateMetadata({
   return { title: FALLBACK_TITLE };
 }
 
-// Metadata-only: the detail screen lives in the /vouchers layout shell.
-export default function VoucherCampaignDetailPage() {
-  return null;
+export default async function VoucherCampaignDetailPage({
+  params,
+}: DetailParams) {
+  const { slug } = await params;
+  return (
+    <VoucherDetailColumn>
+      <CampaignDetail slug={canonicalSlug(slug)} />
+    </VoucherDetailColumn>
+  );
 }

@@ -114,7 +114,6 @@ export function PromoCampaignCard({
         {redeem && <PromoCardCode redeem={redeem} />}
         <Link
           href={campaignDetailHref(campaign.slug)}
-          scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
           className="mt-2 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-semibold text-[#111111] transition-colors duration-200 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] dark:border-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-900"

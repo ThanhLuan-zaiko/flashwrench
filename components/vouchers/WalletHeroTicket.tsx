@@ -56,7 +56,6 @@ export function WalletHeroTicket({ wallet }: { wallet: VoucherWallet }) {
       <p className="text-xs text-zinc-600 dark:text-zinc-400">{meta}</p>
       <Link
         href={walletDetailHref(wallet.id)}
-        scroll={false}
         prefetch
         aria-label={`Xem voucher ${wallet.campaignName} trong ví`}
         className={`mt-2 ${TEXT_LINK}`}

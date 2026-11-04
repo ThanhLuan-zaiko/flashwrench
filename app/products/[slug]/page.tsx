@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { ProductDetail } from "@/components/products/ProductDetail";
+import { canonicalSlug, needsSlugRedirect } from "@/lib/catalog/canonical-slug";
 import { getPublicPartBySlug } from "@/lib/parts/public-parts.service";
 
 type DetailParams = { params: Promise<{ slug: string }> };
@@ -12,7 +16,7 @@ export async function generateMetadata({
 }: DetailParams): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const result = await getPublicPartBySlug(decodeURIComponent(slug));
+    const result = await getPublicPartBySlug(canonicalSlug(slug));
     if (result.ok) {
       const part = result.data;
       return {
@@ -28,7 +32,17 @@ export async function generateMetadata({
   return { title: FALLBACK_TITLE };
 }
 
-// Metadata-only: the detail screen lives in the /products layout shell.
-export default function ProductDetailPage() {
-  return null;
+export default async function ProductDetailPage({ params }: DetailParams) {
+  const { slug } = await params;
+  const canonical = canonicalSlug(slug);
+  if (needsSlugRedirect(slug)) {
+    redirect(`/products/${encodeURIComponent(canonical)}`);
+  }
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 md:py-14">
+      <Suspense fallback={null}>
+        <ProductDetail slug={canonical} />
+      </Suspense>
+    </div>
+  );
 }

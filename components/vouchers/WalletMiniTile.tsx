@@ -16,7 +16,6 @@ export function WalletMiniTile({ wallet }: { wallet: VoucherWallet }) {
   return (
     <Link
       href={walletDetailHref(wallet.id)}
-      scroll={false}
       prefetch
       aria-label={`Mở voucher ${wallet.campaignName}`}
       className="group flex min-h-11 items-center justify-between gap-4 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] dark:focus-visible:ring-zinc-100"

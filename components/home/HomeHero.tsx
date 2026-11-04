@@ -2,7 +2,7 @@
 
 import { SmartCtaLink } from "@/components/auth/SmartCtaLink";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
+import type { HeroService } from "@/lib/home/home-catalog.service";
 import { HeroServiceFan } from "./HeroServiceFan";
 
 // Headline facts shown under the actions. Each one repeats a promise already
@@ -18,7 +18,7 @@ const FACTS = [
 // on the right. Without photographed services the band drops the right column
 // instead of leaving an empty box.
 // It sits directly under the sticky site header and rounds its bottom corners.
-export function HomeHero({ heroServices }: { heroServices: ServiceItem[] }) {
+export function HomeHero({ heroServices }: { heroServices: HeroService[] }) {
   const rootRef = useBentoReveal<HTMLElement>();
   const hasTiles = heroServices.length > 0;
 

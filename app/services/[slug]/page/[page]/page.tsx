@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { decodeSlugParam } from "@/lib/catalog/canonical-slug";
 import { listPublicCatalog } from "@/lib/catalog/public-catalog.service";
+import { resolveServiceTabRedirect } from "@/lib/catalog/service-tab-slug";
 import { parsePageParam } from "@/lib/pagination/page-param";
 
 type PageParams = { params: Promise<{ slug: string; page: string }> };
@@ -39,8 +41,9 @@ export async function generateMetadata({
 export default async function ServicesCategoryPage({ params }: PageParams) {
   const { slug, page } = await params;
   const n = parsePageParam(page);
-  if (n === null || n === 1) {
-    redirect(`/services/${encodeURIComponent(slug)}`);
-  }
+  const target = await resolveServiceTabRedirect(slug);
+  const tab = encodeURIComponent(target ?? decodeSlugParam(slug));
+  if (n === null || n === 1) redirect(`/services/${tab}`);
+  if (target) redirect(`/services/${tab}/page/${n}`);
   return null;
 }

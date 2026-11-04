@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { RescueRouteShell } from "../components/rescue/RescueRouteShell";
 
 // Shared shell for /dispatch/rescue and /dispatch/rescue/[status].
@@ -12,6 +13,7 @@ export default function DispatchRescueLayout({
   return (
     <>
       <RescueRouteShell />
+      <ScrollTopOnEnter />
       {children}
     </>
   );

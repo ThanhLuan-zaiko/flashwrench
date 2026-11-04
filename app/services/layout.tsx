@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
+import { ScrollTopOnEnter } from "@/components/layout/ScrollTopOnEnter";
 import { ServicesRouteShell } from "@/components/services/ServicesRouteShell";
 import { SpeculationRules } from "@/components/speculation/SpeculationRules";
 
@@ -15,6 +16,7 @@ export default function ServicesLayout({ children }: { children: ReactNode }) {
         <Suspense fallback={null}>
           <ServicesRouteShell />
         </Suspense>
+        <ScrollTopOnEnter />
         {children}
         <SpeculationRules scope="services" />
       </div>

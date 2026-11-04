@@ -65,7 +65,6 @@ export function ApplicableVoucherBadge({
   return (
     <Link
       href="/vouchers"
-      scroll={false}
       prefetch
       aria-label={`${pick.wallet.campaignName}: ${ticketDiscountText(pick.wallet, pick.discount)} cho món này`}
       className={LINK_CLASSES}

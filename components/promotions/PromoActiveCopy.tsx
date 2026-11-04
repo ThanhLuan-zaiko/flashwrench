@@ -71,7 +71,6 @@ export function PromoActiveCopy({
       <div className="flex items-center gap-2">
         <Link
           href={campaignDetailHref(campaign.slug)}
-          scroll={false}
           prefetch
           aria-label={`Xem chi tiết ${campaign.name}`}
           className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-white px-5 text-sm font-bold text-[#111111] transition-colors duration-200 hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FB923C] motion-safe:active:scale-[0.99] lg:flex-none"

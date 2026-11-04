@@ -33,7 +33,6 @@ export function CampaignDetail({ slug }: { slug: string }) {
   ) : (
     <Link
       href={guest ? "/register" : "/vouchers"}
-      scroll={false}
       prefetch
       className={BRAND_PRIMARY_BUTTON}
     >
@@ -78,7 +77,6 @@ export function CampaignDetail({ slug }: { slug: string }) {
             </button>
             <Link
               href="/vouchers"
-              scroll={false}
               className="flex min-h-[44px] items-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 motion-safe:active:scale-[0.99] bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
             >
               Xem ưu đãi đang chạy
