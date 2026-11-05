@@ -25,6 +25,8 @@ type ServiceQuickViewDialogProps = {
   service: ServiceItem;
   selected: boolean;
   disabledReason: string | null;
+  queued?: boolean;
+  separateBooking?: boolean;
   onToggle: () => void;
   onClose: () => void;
 };
@@ -36,10 +38,13 @@ export function ServiceQuickViewDialog({
   service,
   selected,
   disabledReason,
+  queued = false,
+  separateBooking = false,
   onToggle,
   onClose,
 }: ServiceQuickViewDialogProps) {
   const dialogRef = useDialogFocus<HTMLDivElement>(onClose);
+  const picked = selected || queued;
 
   return (
     <div
@@ -141,26 +146,30 @@ export function ServiceQuickViewDialog({
         <div className="flex flex-col gap-2 border-t border-zinc-200 bg-white px-5 py-3 dark:border-zinc-800 dark:bg-zinc-950">
           <button
             type="button"
-            aria-pressed={selected}
+            aria-pressed={picked}
             aria-label={
-              selected
+              picked
                 ? `Bỏ chọn ${service.name}`
                 : `Thêm ${service.name} vào lịch hẹn`
             }
-            disabled={!selected && Boolean(disabledReason)}
+            disabled={!picked && Boolean(disabledReason)}
             onClick={onToggle}
-            className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 ${selected ? "border-zinc-500 bg-zinc-100 text-zinc-800 hover:bg-zinc-200 dark:border-zinc-500 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800" : "border-[#111111] bg-[#FB923C] text-[#111111] hover:bg-[#F97316] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"}`}
+            className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 ${picked ? "border-zinc-500 bg-zinc-100 text-zinc-800 hover:bg-zinc-200 dark:border-zinc-500 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800" : "border-[#111111] bg-[#FB923C] text-[#111111] hover:bg-[#F97316] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"}`}
           >
-            {selected ? (
+            {picked ? (
               <FiCheck aria-hidden="true" className="h-4 w-4 shrink-0" />
             ) : (
               <FiPlus aria-hidden="true" className="h-4 w-4 shrink-0" />
             )}
-            {selected ? "Đã thêm · Bỏ chọn" : "Thêm vào lịch hẹn"}
+            {selected
+              ? "Đã thêm · Bỏ chọn"
+              : queued
+                ? "Lịch tiếp theo · Bỏ chọn"
+                : "Thêm vào lịch hẹn"}
           </button>
-          {!selected && disabledReason && (
+          {!picked && (disabledReason || separateBooking) && (
             <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-              {disabledReason}
+              {disabledReason ?? "Cần đặt lịch riêng"}
             </p>
           )}
         </div>

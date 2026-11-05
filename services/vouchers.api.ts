@@ -261,13 +261,32 @@ export async function fetchPublicCampaigns(): Promise<PublicVoucherCampaign[]> {
   return body.campaigns;
 }
 
+// Keeps the status so the screen can tell a finished campaign (404) from a
+// failed request (network, rate limit, server error).
+export class PublicCampaignApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+    this.name = "PublicCampaignApiError";
+  }
+}
+
 export async function fetchPublicCampaignBySlug(
   slug: string,
 ): Promise<PublicVoucherCampaign> {
   const response = await fetch(
     `/api/voucher-campaigns/public/${encodeURIComponent(slug)}`,
   );
-  if (!response.ok) throw new Error("Ưu đãi không tồn tại hoặc đã kết thúc.");
+  if (!response.ok) {
+    throw new PublicCampaignApiError(
+      response.status === 404
+        ? "Ưu đãi không tồn tại hoặc đã kết thúc."
+        : "Không tải được ưu đãi.",
+      response.status,
+    );
+  }
   const body = (await response.json()) as { campaign: PublicVoucherCampaign };
   return body.campaign;
 }

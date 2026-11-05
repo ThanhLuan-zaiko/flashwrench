@@ -8,6 +8,7 @@ import { useMe } from "@/hooks/auth";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
 import { useVoucherRealtime } from "@/hooks/useVoucherRealtime";
 import { usePublicCampaign } from "@/hooks/useVouchers";
+import { PublicCampaignApiError } from "@/services/vouchers.api";
 import { ProductGallery } from "../products/ProductGallery";
 import { CampaignHero } from "./CampaignHero";
 import { CampaignHowToGet } from "./CampaignHowToGet";
@@ -24,6 +25,9 @@ export function CampaignDetail({ slug }: { slug: string }) {
   const campaignQuery = usePublicCampaign(slug, true);
   const campaign = campaignQuery.data ?? null;
   const guest = me.isSuccess && me.data === null;
+  const finished =
+    campaignQuery.error instanceof PublicCampaignApiError &&
+    campaignQuery.error.status === 404;
 
   const action = me.isPending ? (
     <span
@@ -61,10 +65,14 @@ export function CampaignDetail({ slug }: { slug: string }) {
           className="rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
         >
           <p className="font-semibold">
-            Ưu đãi không tồn tại hoặc đã kết thúc.
+            {finished
+              ? "Ưu đãi không tồn tại hoặc đã kết thúc."
+              : "Không tải được ưu đãi."}
           </p>
           <p className="mt-1 text-xs">
-            Chương trình có thể đã tắt hoặc phát hết số lượng.
+            {finished
+              ? "Chương trình có thể đã tắt hoặc phát hết số lượng."
+              : "Vui lòng kiểm tra kết nối mạng rồi thử tải lại."}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button

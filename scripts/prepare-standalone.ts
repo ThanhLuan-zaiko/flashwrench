@@ -1,5 +1,5 @@
 // Prepares `.next/standalone` before `node .next/standalone/server.js` runs.
-// Usage: `bun run build` first; `bun run start` calls this automatically.
+// Usage: `bun run build` first; `bun run start` imports this automatically.
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { applyStandalonePlan, standalonePlan } from "./standalone";

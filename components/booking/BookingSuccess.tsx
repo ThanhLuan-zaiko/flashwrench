@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FiArrowRight, FiCheck } from "react-icons/fi";
 import { formatVnd } from "@/app/admin/components/services/catalog-format";
 import { VoucherTotals } from "@/components/vouchers/VoucherTotals";
+import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { formatDateTime } from "@/lib/datetime/format";
 import type { CreatedBooking } from "@/services/booking.api";
 import { BookingDuration } from "./BookingDuration";
@@ -10,6 +11,10 @@ import { BookingDuration } from "./BookingDuration";
 type BookingSuccessProps = {
   booking: CreatedBooking;
   guest?: boolean;
+  // Services queued for the next appointment, and the link that starts it.
+  nextServices?: readonly ServiceItem[];
+  nextHref?: string | null;
+  onContinue?: () => void;
 };
 
 // Confirmation after POST /api/bookings returns 201. Stays on /booking:
@@ -19,7 +24,11 @@ type BookingSuccessProps = {
 export function BookingSuccess({
   booking,
   guest = false,
+  nextServices = [],
+  nextHref = null,
+  onContinue,
 }: BookingSuccessProps) {
+  const hasNext = nextHref !== null && nextServices.length > 0;
   return (
     <section
       aria-label="Đặt lịch thành công"
@@ -111,13 +120,26 @@ export function BookingSuccess({
         Mã đặt lịch: {booking.bookingId}. Thợ sẽ xác nhận qua thông tin liên hệ
         của bạn trong vài phút.
       </p>
+      {hasNext && (
+        <div className="flex flex-col gap-1 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+          <h2 className="text-sm font-bold text-[#111111] dark:text-zinc-50">
+            Còn {nextServices.length} dịch vụ chưa đặt
+          </h2>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
+            {nextServices.map((service) => service.name).join(", ")}. Xe, địa
+            chỉ và thông tin liên hệ được điền sẵn, bạn chỉ cần chọn lại khung
+            giờ.
+          </p>
+        </div>
+      )}
       <div className="flex flex-col gap-2 sm:flex-row">
         <Link
-          href="/services"
+          href={hasNext ? nextHref : "/services"}
           scroll={false}
+          onClick={hasNext ? onContinue : undefined}
           className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold motion-safe:transition-colors motion-safe:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 motion-safe:active:scale-[0.99] dark:focus-visible:ring-offset-zinc-950 bg-[#1D4ED8] text-white hover:bg-[#1E40AF] dark:bg-[#60A5FA] dark:text-[#111111] dark:hover:bg-[#93C5FD]"
         >
-          Đặt thêm dịch vụ
+          {hasNext ? "Đặt tiếp dịch vụ còn lại" : "Đặt thêm dịch vụ"}
           <FiArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>
         <Link

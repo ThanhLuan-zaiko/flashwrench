@@ -180,6 +180,17 @@ export function writeBookingDraft(
   }
 }
 
+// Fields that stay valid for the next queued appointment. The slot, voucher
+// and job notes belong to the appointment that was just booked.
+export function toNextBookingDraft(draft: BookingDraft): BookingDraft {
+  return {
+    ...draft,
+    scheduledAt: "",
+    voucherCode: "",
+    vehicle: { ...draft.vehicle, notes: "" },
+  };
+}
+
 export function clearBookingDraft(storage: DraftStorage): void {
   try {
     storage.removeItem(BOOKING_DRAFT_KEY);

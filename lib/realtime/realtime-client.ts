@@ -58,13 +58,15 @@ function gatewayUrl(): string {
 // host) are sent on the WebSocket handshake. `localhost:3000` with a
 // hardcoded `127.0.0.1:3001` gateway would upgrade fine but arrive
 // cookieless, and every protected subscribe would be denied in silence.
+// The gateway never terminates TLS, so an HTTPS page always reaches it through
+// the edge (Caddy or a Cloudflare tunnel) on the page's own origin at /ws.
 export function resolveGatewayUrl(): string {
   const override = process.env.NEXT_PUBLIC_REALTIME_URL;
   if (override) return override;
   const location = typeof window === "undefined" ? null : window.location;
+  if (location?.protocol === "https:") return `wss://${location.host}/ws`;
   const host = location?.hostname || "127.0.0.1";
-  const scheme = location?.protocol === "https:" ? "wss" : "ws";
-  return `${scheme}://${host}:3001/ws`;
+  return `ws://${host}:3001/ws`;
 }
 
 function sendJson(ws: WebSocket | null, data: unknown): void {

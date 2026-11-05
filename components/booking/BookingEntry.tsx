@@ -17,7 +17,9 @@ import {
   useServiceCatalogRealtime,
 } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
+import { useBookingServiceQueue } from "@/hooks/useBookingServiceSelection";
 import { buildBookingHref, buildLoginHref } from "@/lib/auth/auth-redirect";
+import { nextBookingGroup } from "@/lib/booking/booking-service-queue";
 import {
   parseBookingServiceParams,
   readBookingServiceParams,
@@ -48,13 +50,21 @@ export function BookingEntry({
   userContact,
 }: BookingEntryProps) {
   const rootRef = useBentoReveal<HTMLDivElement>();
-  const [created, setCreated] = useState<CreateBookingResponse | null>(null);
+  const [placed, setPlaced] = useState<{
+    response: CreateBookingResponse;
+    urlKey: string;
+  } | null>(null);
   const guest = userName === null;
   const searchParams = useSearchParams();
   const current = useMemo(
     () => parseBookingServiceParams(readBookingServiceParams(searchParams)),
     [searchParams],
   );
+  // The confirmation belongs to its URL: moving to the next queued services
+  // brings the form back without remounting it on the services just booked.
+  const urlKey = current.serviceIds.join(",");
+  const created = placed?.urlKey === urlKey ? placed.response : null;
+  const queue = useBookingServiceQueue();
   const catalog = usePublicCatalog();
   useServiceCatalogRealtime(true);
   // Guest intake is an admin knob; subscribe here too so the gate below
@@ -80,11 +90,18 @@ export function BookingEntry({
     guest && bookingConfig.data?.guestBookingEnabled === false;
 
   if (created) {
+    const services = catalog.data?.services ?? [];
+    const nextIds = nextBookingGroup(queue.serviceIds, services);
     return (
       <div ref={rootRef} className="flex flex-col gap-6 md:gap-8">
         <BookingSuccess
           booking={created.booking}
           guest={guest && !created.user}
+          nextServices={services.filter((service) =>
+            queue.serviceIds.includes(service.id),
+          )}
+          nextHref={nextIds.length > 0 ? buildBookingHref(nextIds) : null}
+          onContinue={() => queue.removeServiceIds(nextIds)}
         />
       </div>
     );
@@ -224,7 +241,7 @@ export function BookingEntry({
           initialServiceIds={serviceIds}
           prefill={prefill}
           guest={guest}
-          onCreated={setCreated}
+          onCreated={(response) => setPlaced({ response, urlKey })}
         />
       )}
     </div>

@@ -7,7 +7,10 @@ import { useToast } from "@/components/toast/useToast";
 import { seedSessionUser } from "@/hooks/auth";
 import { useCreateBooking } from "@/hooks/booking";
 import { publicCatalogKeys } from "@/hooks/public-catalog";
-import { useBookingServiceSelection } from "@/hooks/useBookingServiceSelection";
+import {
+  useBookingServiceQueue,
+  useBookingServiceSelection,
+} from "@/hooks/useBookingServiceSelection";
 import { useSessionExpired } from "@/hooks/useSessionExpired";
 import { buildBookingHref } from "@/lib/auth/auth-redirect";
 import { validateCreateBookingInput } from "@/lib/booking/booking.validation";
@@ -66,6 +69,7 @@ export function useBookingForm({
   const queryClient = useQueryClient();
   const createBooking = useCreateBooking();
   const draft = useBookingServiceSelection();
+  const queue = useBookingServiceQueue();
   const [selectedIds, setSelectedIds] = useState<string[] | null>(
     initialServiceIds.length > 0 ? initialServiceIds : null,
   );
@@ -128,7 +132,7 @@ export function useBookingForm({
     () => ({ contact, scheduledAt, coords, address, vehicle, voucherCode }),
     [contact, scheduledAt, coords, address, vehicle, voucherCode],
   );
-  const { clearDraft } = useBookingDraft({
+  const { clearDraft, carryDraft } = useBookingDraft({
     values: draftValues,
     onRestore: (draft) => {
       if (guest) setContact(draft.contact);
@@ -249,11 +253,16 @@ export function useBookingForm({
     setErrors(EMPTY_ERRORS);
     createBooking.mutate(payload, {
       onSuccess: (data) => {
-        // Sent data must never come back as a draft — covers every
-        // success branch below.
-        clearDraft();
+        // Queued services keep the customer on this screen, which offers the
+        // next appointment; only those keep a draft (without the slot, voucher
+        // or notes). Sent data never comes back otherwise.
+        const booked = data.booking.serviceIds;
+        const hasNext = queue.serviceIds.some((id) => !booked.includes(id));
+        queue.removeServiceIds(booked);
+        if (hasNext) carryDraft();
+        else clearDraft();
         onCreated?.(data);
-        draft.removeServiceIds(data.booking.serviceIds);
+        draft.removeServiceIds(booked);
         // Inline signup: the same submit minted a session, so land on the
         // account-side confirmation instead of the public tracking page.
         if (data.user) {
@@ -262,10 +271,12 @@ export function useBookingForm({
             "Đặt lịch và tạo tài khoản thành công",
             "Đơn này đã nằm trong lịch sử tài khoản của bạn.",
           );
-          router.replace(BOOKING_SUCCESS_REDIRECT);
+          if (hasNext) router.refresh();
+          else router.replace(BOOKING_SUCCESS_REDIRECT);
           return;
         }
         toast.success("Đặt lịch thành công", "Thợ sẽ xác nhận trong vài phút.");
+        if (hasNext) return;
         // Guests hold no account history — the public tracking page is
         // their confirmation and follow-up channel.
         router.replace(

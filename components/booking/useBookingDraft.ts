@@ -8,6 +8,7 @@ import {
   hasBookingDraftContent,
   persistBookingDraft,
   readBookingDraft,
+  toNextBookingDraft,
 } from "./booking-draft";
 
 // Mirrors the booking form's draftable fields to sessionStorage: a
@@ -20,7 +21,7 @@ export function useBookingDraft({
 }: {
   values: BookingDraft;
   onRestore: (draft: BookingDraft) => void;
-}): { clearDraft: () => void } {
+}): { clearDraft: () => void; carryDraft: () => void } {
   const toast = useToast();
   const toastRef = useRef(toast);
   toastRef.current = toast;
@@ -56,5 +57,11 @@ export function useBookingDraft({
     clearBookingDraft(window.sessionStorage);
   }, []);
 
-  return { clearDraft };
+  // After a booking with services still queued: keep the contact, address and
+  // vehicle so the next form restores them.
+  const carryDraft = () => {
+    persistBookingDraft(window.sessionStorage, toNextBookingDraft(values));
+  };
+
+  return { clearDraft, carryDraft };
 }

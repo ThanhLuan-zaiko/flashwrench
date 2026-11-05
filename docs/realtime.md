@@ -140,10 +140,20 @@ sau mỗi thay đổi thành công).
   phía đều dùng `REALTIME_SECRET ?? AUTH_SECRET`, Bun tự đọc `.env`
   và `.env.local` từ thư mục project — kiểm tra gateway được start
   đúng từ thư mục project.
-- Mở trang bằng IP/hostname LAN mà `NEXT_PUBLIC_REALTIME_URL` vẫn là
-  `ws://127.0.0.1:3001/ws`: browser sẽ không tới được gateway. Mặc định
-  client đã bám theo hostname của trang (giữ được auth cookie trên
-  handshake) nên cứ để trống biến này khi dev; chỉ đặt khi prod/split-host.
+- Mở trang bằng IP/hostname LAN hoặc qua tunnel mà `NEXT_PUBLIC_REALTIME_URL`
+  vẫn là `ws://localhost:3001/ws`: browser sẽ không tới được gateway, kể cả
+  khi `.env.local` đã đổi mà chưa build lại (biến này bị inline lúc build).
+  Khi để trống, client bám theo trang và giữ được auth cookie trên handshake:
+  trang HTTP dùng `ws://<hostname>:3001/ws`, trang HTTPS dùng
+  `wss://<host>/ws` qua edge. Chỉ đặt biến này khi gateway nằm ở host khác.
+- Gateway trả 403 ở `/ws`: `Origin` của trang không có trong
+  `REALTIME_ALLOWED_ORIGINS`. Biến này nhận nhiều origin, cách nhau bằng dấu
+  phẩy, nên có thể để cả localhost lẫn domain tunnel. Đổi xong chỉ cần khởi
+  động lại gateway, không cần build lại.
+- Tunnel Cloudflare: route `/ws` phải đứng trước route catch-all và trỏ tới
+  `http://localhost:3001`. Trường path là regex không neo, nên nên đặt
+  `^/ws$` để không bắt nhầm các URL khác có chứa `ws`. Lỗi 530/1033 nghĩa là
+  chưa có connector `cloudflared` nào đang chạy.
 - Console browser báo `[realtime] Forbidden.`: socket nối được nhưng
   subscribe bị từ chối — thường do handshake thiếu cookie (sai host như
   trên) hoặc hết phiên đăng nhập. Đăng nhập lại rồi thử tiếp.
@@ -156,6 +166,6 @@ sau mỗi thay đổi thành công).
 | -------------------------- | --------------------------- | ------------------------------ |
 | `REALTIME_PORT`            | `3001`                      | port gateway                   |
 | `REALTIME_PUBLISH_URL`     | `http://127.0.0.1:3001/publish` | Next gọi sang gateway      |
-| `NEXT_PUBLIC_REALTIME_URL` | `ws://127.0.0.1:3001/ws`    | browser kết nối — inline lúc build, đổi xong phải `bun run build` lại |
-| `REALTIME_ALLOWED_ORIGINS` | trống = same-host           | allowlist Origin cho `/ws`; sau tunnel đặt origin HTTPS của site |
+| `NEXT_PUBLIC_REALTIME_URL` | trống = bám theo trang (HTTP: `ws://<hostname>:3001/ws`, HTTPS: `wss://<host>/ws`) | browser kết nối — inline lúc build, đổi xong phải `bun run build` lại |
+| `REALTIME_ALLOWED_ORIGINS` | trống = same-host           | allowlist Origin cho `/ws`, nhiều origin cách nhau bằng dấu phẩy; sau tunnel phải có origin HTTPS của site |
 | `REALTIME_SECRET`          | = `AUTH_SECRET`             | chỉ đặt riêng khi tách host    |

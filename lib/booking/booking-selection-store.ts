@@ -9,6 +9,7 @@ type SelectionStorage = Pick<Storage, "getItem" | "setItem">;
 
 export function createBookingSelectionStore(
   storage: () => SelectionStorage | null = () => null,
+  key: string = BOOKING_SELECTION_KEY,
 ) {
   let snapshot = "";
   let loaded = false;
@@ -18,7 +19,7 @@ export function createBookingSelectionStore(
     if (!loaded) {
       loaded = true;
       try {
-        snapshot = storage()?.getItem(BOOKING_SELECTION_KEY) ?? "";
+        snapshot = storage()?.getItem(key) ?? "";
       } catch {
         snapshot = "";
       }
@@ -39,7 +40,7 @@ export function createBookingSelectionStore(
     snapshot = next;
     loaded = true;
     try {
-      storage()?.setItem(BOOKING_SELECTION_KEY, snapshot);
+      storage()?.setItem(key, snapshot);
     } catch {}
     for (const listener of listeners) listener();
     return true;

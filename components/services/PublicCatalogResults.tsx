@@ -28,8 +28,10 @@ type PublicCatalogResultsProps = {
   hrefFor: (page: number) => string;
   onRetry: () => void;
   serviceIds: readonly string[];
-  onToggle: (id: string) => void;
+  queuedIds: readonly string[];
+  onToggle: (service: ServiceItem) => void;
   reasonFor: (service: ServiceItem) => string | null;
+  separateFor: (service: ServiceItem) => boolean;
 };
 
 export function PublicCatalogResults({
@@ -40,8 +42,10 @@ export function PublicCatalogResults({
   hrefFor,
   onRetry,
   serviceIds,
+  queuedIds,
   onToggle,
   reasonFor,
+  separateFor,
 }: PublicCatalogResultsProps) {
   // One shared quick-view per grid: the eye button on each card points the
   // dialog at that service. If the service leaves the current page (e.g. a
@@ -101,7 +105,9 @@ export function PublicCatalogResults({
                   service={service}
                   selected={serviceIds.includes(service.id)}
                   disabledReason={reasonFor(service)}
-                  onToggle={() => onToggle(service.id)}
+                  queued={queuedIds.includes(service.id)}
+                  separateBooking={separateFor(service)}
+                  onToggle={() => onToggle(service)}
                   onPreview={() => setPreviewId(service.id)}
                 />
               </li>
@@ -123,7 +129,13 @@ export function PublicCatalogResults({
           service={preview}
           selected={serviceIds.includes(preview.id)}
           disabledReason={reasonFor(preview)}
-          onToggle={() => onToggle(preview.id)}
+          queued={queuedIds.includes(preview.id)}
+          separateBooking={separateFor(preview)}
+          onToggle={() => {
+            // The conflict prompt replaces this sheet instead of stacking.
+            if (separateFor(preview)) setPreviewId(null);
+            onToggle(preview);
+          }}
           onClose={() => setPreviewId(null)}
         />
       )}

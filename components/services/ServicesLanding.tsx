@@ -10,12 +10,10 @@ import {
   useServiceCatalogRealtime,
 } from "@/hooks/public-catalog";
 import { useBentoReveal } from "@/hooks/useBentoReveal";
-import { useBookingServiceSelection } from "@/hooks/useBookingServiceSelection";
 import { useRealtimeStatus } from "@/hooks/useRealtimeStatus";
 import { useCanonicalizePage, useRoutePage } from "@/hooks/useRoutePage";
-import { getBookingServiceSelection } from "@/lib/booking/booking-service-selection";
+import { useServiceBookingPlan } from "@/hooks/useServiceBookingPlan";
 import { countServicesByCategory } from "@/lib/catalog/catalog-counts";
-import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { GuestOfferNote } from "../vouchers/GuestOfferNote";
 import { PublicCatalogFilter } from "./PublicCatalogFilter";
 import { PublicCatalogResults } from "./PublicCatalogResults";
@@ -25,6 +23,7 @@ import {
   paginatePublicServices,
   resolveTabCategory,
 } from "./public-catalog-utils";
+import { ServiceBookingConflictDialog } from "./ServiceBookingConflictDialog";
 import { ServicesCategoryHeader } from "./ServicesCategoryHeader";
 import { ServicesClosingCta } from "./ServicesClosingCta";
 import { ServicesIntro } from "./ServicesIntro";
@@ -46,7 +45,6 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   const [query, setQuery] = useState("");
   const { page, firstPageHref, hrefFor } = useRoutePage();
   const catalog = usePublicCatalog();
-  const draft = useBookingServiceSelection();
   useServiceCatalogRealtime(true);
   const realtime = useRealtimeStatus();
   const live = realtime === "live";
@@ -56,10 +54,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
     [catalog.data],
   );
   const services = useMemo(() => catalog.data?.services ?? [], [catalog.data]);
-  const selection = useMemo(
-    () => getBookingServiceSelection(draft.serviceIds, services),
-    [draft.serviceIds, services],
-  );
+  const plan = useServiceBookingPlan(services, catalog.isSuccess);
   const activeCategory = useMemo(
     () => resolveTabCategory(categories, activeSlug),
     [categories, activeSlug],
@@ -90,11 +85,6 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   };
   // view.safePage is 0-based; the URL segment is 1-based.
   const pageHref = (zeroBased: number) => hrefFor(zeroBased + 1);
-  const reasonFor = (service: ServiceItem) =>
-    draft.serviceIds.includes(service.id)
-      ? null
-      : getBookingServiceSelection([...draft.serviceIds, service.id], services)
-          .issue;
 
   // Canonicalize: a typed /page/N beyond the last page rewrites itself to
   // the real last page once the catalog has loaded.
@@ -103,7 +93,7 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
   return (
     <div
       ref={rootRef}
-      className={`flex w-full flex-col ${draft.serviceIds.length > 0 ? "pb-24 sm:pb-36" : ""}`}
+      className={`flex w-full flex-col ${plan.queuedIds.length > 0 ? "pb-36 sm:pb-48" : plan.serviceIds.length > 0 ? "pb-24 sm:pb-36" : ""}`}
     >
       <ServicesIntro
         live={live}
@@ -181,20 +171,34 @@ export function ServicesLanding({ activeSlug }: { activeSlug: string | null }) {
           view={view}
           hrefFor={pageHref}
           onRetry={() => void catalog.refetch()}
-          serviceIds={draft.serviceIds}
-          onToggle={draft.toggleService}
-          reasonFor={reasonFor}
+          serviceIds={plan.serviceIds}
+          queuedIds={plan.queuedIds}
+          onToggle={plan.toggle}
+          reasonFor={plan.reasonFor}
+          separateFor={plan.separateFor}
         />
       </div>
       <HomePromoList title="Ưu đãi cho khách đặt dịch vụ" audience="booking" />
       <ServicesClosingCta />
       <ServicesSelectionBar
-        serviceIds={draft.serviceIds}
-        selection={selection}
+        serviceIds={plan.serviceIds}
+        selection={plan.selection}
+        queuedServices={plan.queuedServices}
         ready={catalog.isSuccess}
-        onRemove={(id) => draft.toggleService(id)}
-        onClear={() => draft.setServiceIds([])}
+        onRemove={plan.remove}
+        onRemoveQueued={plan.removeQueued}
+        onClear={plan.clear}
       />
+      {plan.conflict && (
+        <ServiceBookingConflictDialog
+          service={plan.conflict.service}
+          selected={plan.conflict.selected}
+          message={plan.conflict.message}
+          onQueue={plan.queueConflict}
+          onSwitch={plan.switchToConflict}
+          onClose={plan.dismissConflict}
+        />
+      )}
     </div>
   );
 }

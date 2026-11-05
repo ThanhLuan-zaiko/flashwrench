@@ -34,14 +34,36 @@ describe("resolveGatewayUrl", () => {
     }
   });
 
-  test("follows the page hostname and scheme for cookies", () => {
+  test("uses the gateway port on the page hostname over HTTP", () => {
     const holder = globalThis as Record<string, unknown>;
     const saved = holder[WINDOW_KEY];
     holder[WINDOW_KEY] = {
-      location: { hostname: "example.com", protocol: "https:" },
+      location: {
+        host: "localhost:3000",
+        hostname: "localhost",
+        protocol: "http:",
+      },
     };
     try {
-      expect(resolveGatewayUrl()).toBe("wss://example.com:3001/ws");
+      expect(resolveGatewayUrl()).toBe("ws://localhost:3001/ws");
+    } finally {
+      if (saved === undefined) delete holder[WINDOW_KEY];
+      else holder[WINDOW_KEY] = saved;
+    }
+  });
+
+  test("stays on the page origin over HTTPS, where the edge proxies /ws", () => {
+    const holder = globalThis as Record<string, unknown>;
+    const saved = holder[WINDOW_KEY];
+    holder[WINDOW_KEY] = {
+      location: {
+        host: "example.com",
+        hostname: "example.com",
+        protocol: "https:",
+      },
+    };
+    try {
+      expect(resolveGatewayUrl()).toBe("wss://example.com/ws");
     } finally {
       if (saved === undefined) delete holder[WINDOW_KEY];
       else holder[WINDOW_KEY] = saved;

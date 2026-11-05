@@ -11,6 +11,10 @@ type PublicServiceCardProps = {
   service: ServiceItem;
   selected: boolean;
   disabledReason: string | null;
+  // Waiting for its own appointment after the current one.
+  queued?: boolean;
+  // Cannot join the current appointment; choosing it opens the conflict prompt.
+  separateBooking?: boolean;
   onToggle: () => void;
   onPreview: () => void;
 };
@@ -30,9 +34,12 @@ export function PublicServiceCard({
   service,
   selected,
   disabledReason,
+  queued = false,
+  separateBooking = false,
   onToggle,
   onPreview,
 }: PublicServiceCardProps) {
+  const picked = selected || queued;
   const attributes = [
     formatDuration(service.durationMin),
     service.isHomeSupported ? "Tại nhà" : null,
@@ -45,7 +52,7 @@ export function PublicServiceCard({
     <article
       aria-label={service.name}
       className={`group flex w-full flex-col overflow-hidden rounded-2xl border bg-white transition-colors duration-200 dark:bg-zinc-950 ${
-        selected
+        picked
           ? "border-[#111111] dark:border-zinc-100"
           : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
       }`}
@@ -106,17 +113,17 @@ export function PublicServiceCard({
             <div className="flex items-center gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
               <button
                 type="button"
-                aria-pressed={selected}
+                aria-pressed={picked}
                 aria-label={
-                  selected
+                  picked
                     ? `Bỏ chọn ${service.name}`
                     : `Thêm ${service.name} vào lịch hẹn`
                 }
-                disabled={!selected && Boolean(disabledReason)}
+                disabled={!picked && Boolean(disabledReason)}
                 onClick={onToggle}
-                className={selected ? REMOVE_BUTTON : ADD_BUTTON}
+                className={picked ? REMOVE_BUTTON : ADD_BUTTON}
               >
-                {selected ? "Đã chọn" : "Chọn"}
+                {selected ? "Đã chọn" : queued ? "Lịch tiếp theo" : "Chọn"}
               </button>
               <button
                 type="button"
@@ -128,9 +135,14 @@ export function PublicServiceCard({
                 <FiEye aria-hidden="true" className="h-5 w-5" />
               </button>
             </div>
-            {!selected && disabledReason && (
+            {!picked && disabledReason && (
               <p className="text-sm leading-relaxed text-zinc-800 dark:text-zinc-400">
                 {disabledReason}
+              </p>
+            )}
+            {!picked && !disabledReason && separateBooking && (
+              <p className="pt-1 text-xs text-zinc-600 dark:text-zinc-400">
+                Cần đặt lịch riêng
               </p>
             )}
           </div>
