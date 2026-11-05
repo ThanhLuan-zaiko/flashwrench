@@ -15,16 +15,20 @@ const CONTENT_TYPE_BY_EXT: Record<string, string> = {
 // Filenames are server-generated uuids, so the URL is unguessable and
 // immutable — safe to cache for a year. No auth: catalog and avatar
 // images render for guests too. Strict key check first, 404 otherwise
-// (never leak whether a path exists).
+// (never leak whether a path exists). The 404 is no-store: without it
+// Cloudflare caches the miss and tells browsers to keep it for hours, so
+// an image stays broken after its file comes back.
+function notFound(): NextResponse {
+  return NextResponse.json(
+    { errors: { form: "Không tìm thấy ảnh." } },
+    { status: 404, headers: { "Cache-Control": "no-store" } },
+  );
+}
+
 export async function GET(_request: Request, { params }: RouteParams) {
   const { key } = await params;
   const joined = key.join("/");
-  if (!isSafeAssetKey(joined)) {
-    return NextResponse.json(
-      { errors: { form: "Không tìm thấy ảnh." } },
-      { status: 404 },
-    );
-  }
+  if (!isSafeAssetKey(joined)) return notFound();
   try {
     const data = await readAssetFile(joined);
     const ext = joined.split(".").pop() ?? "";
@@ -37,9 +41,6 @@ export async function GET(_request: Request, { params }: RouteParams) {
       },
     });
   } catch {
-    return NextResponse.json(
-      { errors: { form: "Không tìm thấy ảnh." } },
-      { status: 404 },
-    );
+    return notFound();
   }
 }

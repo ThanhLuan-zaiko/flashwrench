@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   output: "standalone",
   allowedDevOrigins: siteHostname ? [siteHostname] : undefined,
+  // The media route reads from storage/, so tracing would otherwise copy every
+  // upload into .next/standalone. That copy blocks the junction made by
+  // scripts/standalone.ts, so new uploads land in a folder the next build wipes.
+  outputFileTracingExcludes: { "/**/*": ["./storage/**/*"] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

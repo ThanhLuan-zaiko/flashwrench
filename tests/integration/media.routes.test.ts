@@ -131,7 +131,24 @@ describe("GET /api/media/[...key]", () => {
     });
 
     expect(res.status).toBe(404);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
     expect(mediaStorageMocks.readAssetFile.mock.calls.length).toBe(0);
+  });
+
+  test("returns an uncacheable 404 when the file is missing", async () => {
+    mediaStorageMocks.readAssetFile.mockImplementationOnce(async () => {
+      throw Object.assign(new Error("missing"), { code: "ENOENT" });
+    });
+
+    const res = await mediaGet(new Request("http://localhost/x"), {
+      params: Promise.resolve({
+        key: ["service", "2026-11", "missing-uuid.jpg"],
+      }),
+    });
+
+    expect(res.status).toBe(404);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    expect(res.headers.get("Cache-Control")).not.toContain("immutable");
   });
 });
 

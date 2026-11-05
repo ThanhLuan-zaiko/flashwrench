@@ -4,7 +4,7 @@
 // miss the project root. This plan mirrors what the dockerfile does at image
 // build time, except mutable and read-only project folders are linked instead
 // of copied so uploads keep landing in the real `storage/` directory.
-import { cp, lstat, mkdir, symlink } from "node:fs/promises";
+import { cp, lstat, mkdir, realpath, rm, symlink } from "node:fs/promises";
 import { join } from "node:path";
 
 export type StandaloneStep =
@@ -47,10 +47,17 @@ export async function applyStandalonePlan(
       continue;
     }
 
-    // Keep an existing link as-is: its target never changes between runs.
-    if (await exists(step.path)) continue;
-
     await mkdir(step.target, { recursive: true });
+    if (await exists(step.path)) {
+      // Keep an existing link as-is: its target never changes between runs.
+      if ((await realpath(step.path)) === (await realpath(step.target))) {
+        continue;
+      }
+      // A real folder from an older build may hold files found nowhere else.
+      // Move them to the target, never overwriting, then link in its place.
+      await cp(step.path, step.target, { recursive: true, force: false });
+      await rm(step.path, { recursive: true, force: true });
+    }
     // "junction" needs no admin rights on Windows and is ignored elsewhere.
     await symlink(step.target, step.path, "junction");
   }
