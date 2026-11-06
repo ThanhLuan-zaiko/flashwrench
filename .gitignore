@@ -49,3 +49,6 @@ yarn-error.log*
 next-env.d.ts
 
 .CLAUDE
+# database backups (contain real data, never commit)
+/db-backup-*
+*.jsonl.gz

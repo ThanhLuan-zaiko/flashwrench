@@ -20,7 +20,9 @@
     "test:unit": "bun tests/run-suite.ts tests/unit",
     "test:integration": "bun tests/run-suite.ts tests/integration",
     "test:regression": "bun tests/run-suite.ts tests/regression",
-    "seed:admin": "bun scripts/seed-admin.ts"
+    "seed:admin": "bun scripts/seed-admin.ts",
+    "db:backup": "bun run scripts/db-backup.ts",
+    "db:restore": "bun run scripts/db-restore.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.105.0",
