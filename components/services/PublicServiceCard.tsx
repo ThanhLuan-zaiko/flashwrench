@@ -4,6 +4,7 @@ import {
   formatVnd,
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
+import { MediaImage } from "@/components/media/MediaImage";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 import { ApplicableVoucherBadge } from "../vouchers/ApplicableVoucherBadge";
 
@@ -64,19 +65,17 @@ export function PublicServiceCard({
         aria-hidden="true"
         className="block aspect-[16/10] w-full shrink-0 overflow-hidden bg-zinc-100 dark:bg-zinc-900"
       >
-        {service.imageUrl ? (
-          // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
-          <img
-            src={service.imageUrl}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]"
-          />
-        ) : (
-          <span className="flex h-full w-full items-center justify-center text-zinc-600 dark:text-zinc-400">
-            <FiTool aria-hidden="true" className="h-6 w-6" />
-          </span>
-        )}
+        <MediaImage
+          src={service.imageUrl}
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]"
+          fallback={
+            <span className="flex h-full w-full items-center justify-center text-zinc-600 dark:text-zinc-400">
+              <FiTool aria-hidden="true" className="h-6 w-6" />
+            </span>
+          }
+        />
       </button>
 
       <div className="flex flex-1 flex-col gap-4 p-4 md:p-5">

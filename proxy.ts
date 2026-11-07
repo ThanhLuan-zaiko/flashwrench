@@ -1,5 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { clientIp } from "@/lib/auth/guards";
+import {
+  resumeSessionResponse,
+  wantsSessionResume,
+} from "@/lib/auth/proxy-session";
 import { isShieldEnabled } from "@/lib/security/security.constants";
 import { evaluateShield } from "@/lib/security/shield.service";
 import { shieldRejection } from "@/lib/security/shield-response";
@@ -8,8 +12,20 @@ import { shieldRejection } from "@/lib/security/shield-response";
 // a shared repeat-offender ban list in ScyllaDB, and an instance-wide
 // admission gate that sheds excess load instead of queueing into collapse.
 export async function proxy(request: NextRequest) {
-  if (!isShieldEnabled()) return NextResponse.next();
+  if (isShieldEnabled()) {
+    const rejection = await shieldVerdict(request);
+    if (rejection) return rejection;
+  }
+  // Expired access cookie + live refresh cookie: rotate before rendering so
+  // server-gated layouts see the signed-in user instead of bouncing.
+  if (wantsSessionResume(request)) {
+    const resumed = await resumeSessionResponse(request);
+    if (resumed) return resumed;
+  }
+  return NextResponse.next();
+}
 
+async function shieldVerdict(request: NextRequest) {
   const verdict = await evaluateShield({
     ip: clientIp(request),
     pathname: request.nextUrl.pathname,
@@ -19,7 +35,7 @@ export async function proxy(request: NextRequest) {
   if (verdict.action === "reject") {
     return shieldRejection(request.nextUrl.pathname, verdict);
   }
-  return NextResponse.next();
+  return null;
 }
 
 export const config = {

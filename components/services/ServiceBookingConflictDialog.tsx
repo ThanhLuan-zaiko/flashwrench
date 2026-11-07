@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { FiTool } from "react-icons/fi";
+import { MediaImage } from "@/components/media/MediaImage";
 import {
   BRAND_OUTLINE_BUTTON,
   BRAND_PRIMARY_BUTTON,
@@ -22,22 +22,17 @@ type ServiceBookingConflictDialogProps = {
 // Small clipped photo of the picked service, with a bare icon when the service
 // has no image or the file fails to load.
 function ServiceThumb({ imageUrl }: { imageUrl: string | null | undefined }) {
-  const [failed, setFailed] = useState(false);
-  if (!imageUrl || failed) {
-    return (
-      <FiTool
-        aria-hidden="true"
-        className="mt-0.5 h-6 w-6 shrink-0 text-zinc-600 dark:text-zinc-400"
-      />
-    );
-  }
   return (
-    // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
-    <img
+    <MediaImage
       src={imageUrl}
       alt=""
-      onError={() => setFailed(true)}
       className="h-12 w-12 shrink-0 rounded-lg object-cover"
+      fallback={
+        <FiTool
+          aria-hidden="true"
+          className="mt-0.5 h-6 w-6 shrink-0 text-zinc-600 dark:text-zinc-400"
+        />
+      }
     />
   );
 }

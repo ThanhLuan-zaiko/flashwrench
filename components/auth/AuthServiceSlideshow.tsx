@@ -1,9 +1,11 @@
 "use client";
 
+import { FiTool } from "react-icons/fi";
 import {
   formatVnd,
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
+import { MediaImage } from "@/components/media/MediaImage";
 import { usePromoCarousel } from "@/hooks/usePromoCarousel";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 
@@ -77,13 +79,13 @@ export function AuthServiceSlideshow({
     >
       <div className="lg:hidden">
         {services.map((service, i) => (
-          // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit.
-          <img
+          <MediaImage
             key={service.id}
             src={service.imageUrl}
             alt=""
             aria-hidden="true"
             className={`absolute inset-0 h-full w-full object-cover motion-safe:transition-opacity motion-safe:duration-300 motion-safe:ease-out ${i === index ? "opacity-100" : "opacity-0"}`}
+            fallback={null}
           />
         ))}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#111111]/95 via-[#111111]/60 to-transparent px-5 pt-20 pb-9 sm:px-8 sm:pb-3">
@@ -124,11 +126,15 @@ export function AuthServiceSlideshow({
                 aria-hidden={!isFront}
                 className={`absolute m-0 rounded-xl bg-white p-3.5 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out xl:p-4 ${FAN_SLOTS[Math.min(slot, 3)]}`}
               >
-                {/* biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit. */}
-                <img
+                <MediaImage
                   src={service.imageUrl}
                   alt=""
                   className="aspect-[3/2] w-full rounded-md object-cover"
+                  fallback={
+                    <span className="flex aspect-[3/2] w-full items-center justify-center rounded-md bg-zinc-100 text-zinc-600">
+                      <FiTool aria-hidden="true" className="h-8 w-8" />
+                    </span>
+                  }
                 />
                 <figcaption
                   className={`flex items-end justify-between gap-4 px-2 pt-4 pb-3 text-[#111111] motion-safe:transition-opacity motion-safe:duration-300 ${isFront ? "opacity-100" : "opacity-0"}`}

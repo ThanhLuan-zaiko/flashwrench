@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { FiTool } from "react-icons/fi";
 import {
   formatVnd,
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
+import { MediaImage } from "@/components/media/MediaImage";
 import { usePromoCarousel } from "@/hooks/usePromoCarousel";
 import type { HeroService } from "@/lib/home/home-catalog.service";
 
@@ -84,11 +86,15 @@ export function HeroServiceFan({ services }: { services: HeroService[] }) {
               inert={!visible}
               className={`absolute block rounded-xl bg-white p-3 text-[#111111] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-out sm:p-3.5 ${visible ? `${FAN_SLOTS[slot]} motion-safe:hover:z-40 motion-safe:hover:-translate-y-1` : HIDDEN_SLOT}`}
             >
-              {/* biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop needs sharp for zero benefit. */}
-              <img
+              <MediaImage
                 src={service.imageUrl}
                 alt=""
                 className="aspect-[4/3] w-full rounded-md object-cover"
+                fallback={
+                  <span className="flex aspect-[4/3] w-full items-center justify-center rounded-md bg-zinc-100 text-zinc-600">
+                    <FiTool aria-hidden="true" className="h-8 w-8" />
+                  </span>
+                }
               />
               <span className="block px-1 pt-3 pb-1">
                 <span className="block truncate text-base font-extrabold tracking-tight xl:text-lg">

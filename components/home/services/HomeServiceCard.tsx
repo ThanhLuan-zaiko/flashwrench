@@ -5,6 +5,7 @@ import {
   formatVnd,
   PRICE_UNIT_LABELS,
 } from "@/app/admin/components/services/catalog-format";
+import { MediaImage } from "@/components/media/MediaImage";
 import { buildBookingHref } from "@/lib/auth/auth-redirect";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 
@@ -17,20 +18,18 @@ export function HomeServiceCard({ service }: { service: ServiceItem }) {
       className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950"
     >
       <span className="relative block h-40 w-full overflow-hidden bg-zinc-100 md:h-44 dark:bg-zinc-900">
-        {service.imageUrl ? (
-          // biome-ignore lint/performance/noImgElement: dynamic catalog cover served immutable; next/image optimizer hop adds no value here.
-          <img
-            src={service.imageUrl}
-            alt=""
-            loading="lazy"
-            data-chapter-photo
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <span className="flex h-full w-full items-center justify-center text-zinc-300 dark:text-zinc-400">
-            <FiImage aria-hidden="true" className="h-8 w-8" />
-          </span>
-        )}
+        <MediaImage
+          src={service.imageUrl}
+          alt=""
+          loading="lazy"
+          data-chapter-photo
+          className="h-full w-full object-cover"
+          fallback={
+            <span className="flex h-full w-full items-center justify-center text-zinc-600 dark:text-zinc-400">
+              <FiImage aria-hidden="true" className="h-8 w-8" />
+            </span>
+          }
+        />
       </span>
       <div className="flex flex-1 flex-col gap-3 p-4 md:p-5">
         <div className="min-w-0">

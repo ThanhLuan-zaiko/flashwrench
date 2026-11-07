@@ -3,6 +3,7 @@ import {
   formatDuration,
   formatVnd,
 } from "@/app/admin/components/services/catalog-format";
+import { MediaImage } from "@/components/media/MediaImage";
 import { BOOKING_DEFAULT_DURATION_MIN } from "@/lib/booking/booking-services.constants";
 import type { ServiceItem } from "@/lib/catalog/service-catalog.types";
 
@@ -23,17 +24,13 @@ export function BookingSelectedCard({ services }: BookingSelectedMiniProps) {
         {services.map((service) => (
           <li key={service.id} className="flex items-center gap-3 py-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-600">
-              {service.imageUrl ? (
-                // biome-ignore lint/performance/noImgElement: catalog cover served immutable from the media store.
-                <img
-                  src={service.imageUrl}
-                  alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <FiTool aria-hidden="true" className="h-5 w-5" />
-              )}
+              <MediaImage
+                src={service.imageUrl}
+                alt=""
+                loading="lazy"
+                className="h-full w-full object-cover"
+                fallback={<FiTool aria-hidden="true" className="h-5 w-5" />}
+              />
             </span>
             <span className="flex min-w-0 flex-1 flex-col">
               <span className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">
